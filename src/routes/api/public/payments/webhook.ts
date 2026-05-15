@@ -40,17 +40,17 @@ type HandlerContext = {
   };
 };
 
-function fireDispatch(order_id: string, context?: HandlerContext) {
+function fireDispatch(order_id: string, _context?: HandlerContext) {
   const url = dispatcherUrl();
   const secret = process.env.JOB_DISPATCH_SECRET;
   if (!url || !secret) return;
-  // Fire-and-forget. pg_cron will pick up if this fails to land.
   const dispatch = fetch(url, {
     method: "POST",
     headers: { "Content-Type": "application/json", Authorization: `Bearer ${secret}` },
     body: JSON.stringify({ order_id }),
   }).catch((e) => console.error("[webhook] dispatch fire-and-forget failed", e));
-  context?.executionCtx?.waitUntil?.(dispatch);
+  const ctx = (globalThis as { __executionCtx?: { waitUntil?: (p: Promise<unknown>) => void } }).__executionCtx;
+  ctx?.waitUntil?.(dispatch);
 }
 
 async function handleCheckoutCompleted(session: any, context?: HandlerContext) {
