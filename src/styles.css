@@ -110,3 +110,6 @@
 .font-serif { font-family: var(--font-serif); }
 .tracking-brand { letter-spacing: 0.25em; }
 .tracking-meta { letter-spacing: 0.15em; }
+
+.cta-premium:hover:not(:disabled) { background-color: #C9A227 !important; }
+.cta-premium:active:not(:disabled) { background-color: #B8941F !important; }
