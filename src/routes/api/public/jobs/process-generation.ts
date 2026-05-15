@@ -51,18 +51,23 @@ async function pickOrderId(body: any): Promise<string | null> {
 }
 
 async function dispatchGeneration(order_id: string, context?: HandlerContext): Promise<Response> {
-  const run = runFullGenerationPipeline(order_id).catch((e) => {
-    console.error("[process-generation] async pipeline failed", order_id, e);
-  });
+  const run = runFullGenerationPipeline(order_id);
   const globalCtx = (globalThis as { __executionCtx?: HandlerContext["executionCtx"] }).__executionCtx;
   const waitUntil = context?.executionCtx?.waitUntil ?? globalCtx?.waitUntil;
   if (waitUntil) {
-    waitUntil(run);
+    waitUntil(run.catch((e) => console.error("[process-generation] async pipeline failed", order_id, e)));
     return Response.json({ ok: true, order_id, status: "accepted" }, { status: 202 });
   }
 
-  await run;
-  return Response.json({ ok: true, order_id, status: "complete" });
+  try {
+    await run;
+    return Response.json({ ok: true, order_id, status: "complete" });
+  } catch (e: any) {
+    return Response.json(
+      { ok: false, order_id, error: String(e?.message ?? e).slice(0, 500) },
+      { status: 500 },
+    );
+  }
 }
 
 export const Route = createFileRoute("/api/public/jobs/process-generation")({
