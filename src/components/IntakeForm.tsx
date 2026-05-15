@@ -4,6 +4,8 @@ import { useNavigate } from "@tanstack/react-router";
 import { createCoreCheckout } from "@/utils/checkout.functions";
 import { getStripeEnvironment } from "@/lib/stripe";
 import { StripeEmbeddedCheckoutBox } from "@/components/StripeEmbeddedCheckout";
+import { PlaceAutocomplete } from "@/components/PlaceAutocomplete";
+import type { PlaceSuggestion } from "@/utils/places.functions";
 
 type FormState = {
   first_name: string;
@@ -25,6 +27,8 @@ const initial: FormState = {
 
 export function IntakeForm() {
   const [form, setForm] = useState<FormState>(initial);
+  const [resolvedPlace, setResolvedPlace] = useState<PlaceSuggestion | null>(null);
+  const [placeError, setPlaceError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [clientSecret, setClientSecret] = useState<string | null>(null);
   const [sessionId, setSessionId] = useState<string | null>(null);
@@ -43,6 +47,7 @@ export function IntakeForm() {
       toast.error("Please enter a valid email.");
       return;
     }
+    setPlaceError(null);
     setSubmitting(true);
     try {
       const res = await createCoreCheckout({
@@ -55,12 +60,24 @@ export function IntakeForm() {
           full_name_for_numerology: form.full_name_for_numerology || "",
           origin: window.location.origin,
           environment: getStripeEnvironment(),
+          resolved_place: resolvedPlace
+            ? {
+                latitude: resolvedPlace.latitude,
+                longitude: resolvedPlace.longitude,
+                timezone: resolvedPlace.timezone,
+                resolved_name: resolvedPlace.resolved_name,
+                country: resolvedPlace.country,
+              }
+            : undefined,
         },
       });
       setClientSecret(res.client_secret);
       setSessionId(res.session_id);
     } catch (err: any) {
-      toast.error(err?.message ?? "Could not start checkout.");
+      const msg = err?.message ?? "Could not start checkout.";
+      // If geocoding failed, surface as inline field error too.
+      if (/select your birth city/i.test(msg)) setPlaceError(msg);
+      toast.error(msg);
       setSubmitting(false);
     }
   };
@@ -138,16 +155,27 @@ export function IntakeForm() {
 
       <div>
         <label className={labelCls}>Birth city + country</label>
-        <input
-          className={inputCls}
+        <PlaceAutocomplete
           value={form.birth_city}
-          onChange={update("birth_city")}
-          placeholder="City and country, e.g. New York, United States"
+          onTextChange={(t) => {
+            setForm((f) => ({ ...f, birth_city: t }));
+            if (placeError) setPlaceError(null);
+          }}
+          onSelect={(p) => setResolvedPlace(p)}
+          inputClassName={inputCls}
+          placeholder="Start typing your birth city..."
           required
+          invalid={!!placeError}
         />
-        <p className="mt-1 text-[10px] text-muted-grey">
-          Used only to calculate your birth chart timezone and coordinates.
-        </p>
+        {placeError ? (
+          <p className="mt-1 text-[10px]" style={{ color: "#B45454" }}>
+            {placeError}
+          </p>
+        ) : (
+          <p className="mt-1 text-[10px] text-muted-grey">
+            Used only to calculate your birth chart timezone and coordinates.
+          </p>
+        )}
       </div>
 
       <div>

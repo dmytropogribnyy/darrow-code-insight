@@ -46,16 +46,33 @@ export const createCoreCheckout = createServerFn({ method: "POST" })
       full_name_for_numerology: z.string().trim().max(255).optional().or(z.literal("")),
       origin: z.string().url(),
       environment: StripeEnvSchema,
+      resolved_place: z
+        .object({
+          latitude: z.number(),
+          longitude: z.number(),
+          timezone: z.string().min(1),
+          resolved_name: z.string().min(1),
+          country: z.string().nullable().optional(),
+        })
+        .optional(),
     }).parse,
   )
   .handler(async ({ data }) => {
     const sb = admin();
 
-    // 1. Geocode (must succeed before Stripe)
-    const geo = await geocodeCity(data.birth_city);
+    // 1. Use pre-resolved place from autocomplete if present, otherwise geocode the freeform input.
+    const geo = data.resolved_place
+      ? {
+          latitude: data.resolved_place.latitude,
+          longitude: data.resolved_place.longitude,
+          timezone: data.resolved_place.timezone,
+          resolved_name: data.resolved_place.resolved_name,
+          country: data.resolved_place.country ?? null,
+        }
+      : await geocodeCity(data.birth_city);
     if (!geo) {
       throw new Error(
-        "We couldn't find that city. Please try a clearer name (e.g. 'Bratislava, Slovakia').",
+        "Please select your birth city from the list so we can calculate your chart accurately.",
       );
     }
 
