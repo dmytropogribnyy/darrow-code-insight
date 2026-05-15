@@ -9,38 +9,168 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as TermsRouteImport } from './routes/terms'
+import { Route as SampleRouteImport } from './routes/sample'
+import { Route as PrivacyRouteImport } from './routes/privacy'
+import { Route as GeneratingRouteImport } from './routes/generating'
+import { Route as ContactRouteImport } from './routes/contact'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ResultReportTokenRouteImport } from './routes/result.$reportToken'
+import { Route as DownloadReportTokenRouteImport } from './routes/download.$reportToken'
 
+const TermsRoute = TermsRouteImport.update({
+  id: '/terms',
+  path: '/terms',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SampleRoute = SampleRouteImport.update({
+  id: '/sample',
+  path: '/sample',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PrivacyRoute = PrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GeneratingRoute = GeneratingRouteImport.update({
+  id: '/generating',
+  path: '/generating',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ContactRoute = ContactRouteImport.update({
+  id: '/contact',
+  path: '/contact',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ResultReportTokenRoute = ResultReportTokenRouteImport.update({
+  id: '/result/$reportToken',
+  path: '/result/$reportToken',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DownloadReportTokenRoute = DownloadReportTokenRouteImport.update({
+  id: '/download/$reportToken',
+  path: '/download/$reportToken',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/contact': typeof ContactRoute
+  '/generating': typeof GeneratingRoute
+  '/privacy': typeof PrivacyRoute
+  '/sample': typeof SampleRoute
+  '/terms': typeof TermsRoute
+  '/download/$reportToken': typeof DownloadReportTokenRoute
+  '/result/$reportToken': typeof ResultReportTokenRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/contact': typeof ContactRoute
+  '/generating': typeof GeneratingRoute
+  '/privacy': typeof PrivacyRoute
+  '/sample': typeof SampleRoute
+  '/terms': typeof TermsRoute
+  '/download/$reportToken': typeof DownloadReportTokenRoute
+  '/result/$reportToken': typeof ResultReportTokenRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/contact': typeof ContactRoute
+  '/generating': typeof GeneratingRoute
+  '/privacy': typeof PrivacyRoute
+  '/sample': typeof SampleRoute
+  '/terms': typeof TermsRoute
+  '/download/$reportToken': typeof DownloadReportTokenRoute
+  '/result/$reportToken': typeof ResultReportTokenRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/contact'
+    | '/generating'
+    | '/privacy'
+    | '/sample'
+    | '/terms'
+    | '/download/$reportToken'
+    | '/result/$reportToken'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/contact'
+    | '/generating'
+    | '/privacy'
+    | '/sample'
+    | '/terms'
+    | '/download/$reportToken'
+    | '/result/$reportToken'
+  id:
+    | '__root__'
+    | '/'
+    | '/contact'
+    | '/generating'
+    | '/privacy'
+    | '/sample'
+    | '/terms'
+    | '/download/$reportToken'
+    | '/result/$reportToken'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  ContactRoute: typeof ContactRoute
+  GeneratingRoute: typeof GeneratingRoute
+  PrivacyRoute: typeof PrivacyRoute
+  SampleRoute: typeof SampleRoute
+  TermsRoute: typeof TermsRoute
+  DownloadReportTokenRoute: typeof DownloadReportTokenRoute
+  ResultReportTokenRoute: typeof ResultReportTokenRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/terms': {
+      id: '/terms'
+      path: '/terms'
+      fullPath: '/terms'
+      preLoaderRoute: typeof TermsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sample': {
+      id: '/sample'
+      path: '/sample'
+      fullPath: '/sample'
+      preLoaderRoute: typeof SampleRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/privacy': {
+      id: '/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof PrivacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/generating': {
+      id: '/generating'
+      path: '/generating'
+      fullPath: '/generating'
+      preLoaderRoute: typeof GeneratingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/contact': {
+      id: '/contact'
+      path: '/contact'
+      fullPath: '/contact'
+      preLoaderRoute: typeof ContactRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -48,12 +178,43 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/result/$reportToken': {
+      id: '/result/$reportToken'
+      path: '/result/$reportToken'
+      fullPath: '/result/$reportToken'
+      preLoaderRoute: typeof ResultReportTokenRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/download/$reportToken': {
+      id: '/download/$reportToken'
+      path: '/download/$reportToken'
+      fullPath: '/download/$reportToken'
+      preLoaderRoute: typeof DownloadReportTokenRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  ContactRoute: ContactRoute,
+  GeneratingRoute: GeneratingRoute,
+  PrivacyRoute: PrivacyRoute,
+  SampleRoute: SampleRoute,
+  TermsRoute: TermsRoute,
+  DownloadReportTokenRoute: DownloadReportTokenRoute,
+  ResultReportTokenRoute: ResultReportTokenRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
