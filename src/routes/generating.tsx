@@ -28,10 +28,10 @@ function GeneratingPage() {
           return;
         }
         if (res.order_status === "paid") setStatus("Payment received — building your report…");
-        if (res.generation_status === "running")
+        if (res.generation_status === "processing")
           setStatus("Synthesising your patterns…");
-        if (res.generation_status === "failed")
-          setStatus("Something went wrong. Please contact support.");
+        if (res.generation_status === "failed_generation")
+          setStatus("A small delay — we'll email you when it's ready.");
       } catch {
         // ignore — keep polling
       }
