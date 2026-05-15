@@ -47,6 +47,7 @@ export function IntakeForm() {
       toast.error("Please enter a valid email.");
       return;
     }
+    setPlaceError(null);
     setSubmitting(true);
     try {
       const res = await createCoreCheckout({
@@ -59,12 +60,24 @@ export function IntakeForm() {
           full_name_for_numerology: form.full_name_for_numerology || "",
           origin: window.location.origin,
           environment: getStripeEnvironment(),
+          resolved_place: resolvedPlace
+            ? {
+                latitude: resolvedPlace.latitude,
+                longitude: resolvedPlace.longitude,
+                timezone: resolvedPlace.timezone,
+                resolved_name: resolvedPlace.resolved_name,
+                country: resolvedPlace.country,
+              }
+            : undefined,
         },
       });
       setClientSecret(res.client_secret);
       setSessionId(res.session_id);
     } catch (err: any) {
-      toast.error(err?.message ?? "Could not start checkout.");
+      const msg = err?.message ?? "Could not start checkout.";
+      // If geocoding failed, surface as inline field error too.
+      if (/select your birth city/i.test(msg)) setPlaceError(msg);
+      toast.error(msg);
       setSubmitting(false);
     }
   };
