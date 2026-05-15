@@ -1,12 +1,13 @@
-// Stripe webhook — fast path only.
+// Stripe webhook — fast path.
 // Verifies signature, dedupes via stripe_events, marks order paid,
-// records purchased modules, enqueues a generation_jobs row.
-// The actual pipeline runs in PROMPT 1C.
+// records purchased modules (idempotent), and runs the placeholder
+// generation pipeline so /generating can progress to /result.
 
 import { createFileRoute } from "@tanstack/react-router";
 import { createClient } from "@supabase/supabase-js";
 import { type StripeEnv, verifyWebhook } from "@/lib/stripe.server";
 import { MODULE_CODES, type ModuleCode } from "@/lib/modules";
+import { runPlaceholderGeneration } from "@/lib/generation.server";
 
 let _sb: any = null;
 function sb(): any {
@@ -40,19 +41,17 @@ async function handleCheckoutCompleted(session: any) {
     return;
   }
 
-  // Mark order paid
   await sb()
     .from("orders")
     .update({ status: "paid", stripe_session_id: session.id })
     .eq("id", order_id);
 
-  // Record purchased modules
-  let modules: ModuleCode[];
-  if (order_type === "CORE") {
-    modules = []; // CORE is implicit on the report; no module rows
-  } else {
-    modules = parseModules(modules_raw);
-  }
+  const modules: ModuleCode[] =
+    order_type === "FULL_CODE_UPGRADE"
+      ? [...MODULE_CODES]
+      : order_type === "ADDONS"
+        ? parseModules(modules_raw)
+        : []; // CORE — implicit on the report
 
   if (modules.length > 0) {
     const rows = modules.map((m) => ({
@@ -61,26 +60,47 @@ async function handleCheckoutCompleted(session: any) {
       order_id,
       module_code: m,
     }));
-    await sb().from("modules_purchased").insert(rows);
+    // Ignore duplicates (e.g. FULL_CODE upgrade after some add-ons already owned)
+    const { error } = await sb()
+      .from("modules_purchased")
+      .upsert(rows, {
+        onConflict: "customer_id,intake_id,module_code",
+        ignoreDuplicates: true,
+      });
+    if (error) console.error("[webhook] modules upsert", error);
   }
 
-  // Enqueue generation job (one per order)
-  await sb().from("generation_jobs").insert({ order_id, status: "queued" });
+  // Track job for observability; not strictly required by the polling flow.
+  await sb().from("generation_jobs").insert({ order_id, status: "processing" });
+
+  try {
+    await runPlaceholderGeneration(order_id);
+    await sb()
+      .from("generation_jobs")
+      .update({ status: "complete", updated_at: new Date().toISOString() })
+      .eq("order_id", order_id);
+  } catch (e: any) {
+    console.error("[webhook] generation failed", e);
+    await sb()
+      .from("generation_jobs")
+      .update({
+        status: "failed",
+        last_error: String(e?.message ?? e),
+        updated_at: new Date().toISOString(),
+      })
+      .eq("order_id", order_id);
+    await sb().from("orders").update({ status: "failed_generation" }).eq("id", order_id);
+  }
 }
 
 async function handleEvent(event: { id: string; type: string; data: { object: any } }) {
-  // Idempotency — record event id
   const { error: dupErr } = await sb()
     .from("stripe_events")
     .insert({ stripe_event_id: event.id });
-  if (dupErr) {
-    // unique violation = already processed
-    return;
-  }
+  if (dupErr) return; // already processed
 
   switch (event.type) {
     case "checkout.session.completed":
-    case "transaction.completed":
       await handleCheckoutCompleted(event.data.object);
       break;
     default:
