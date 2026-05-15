@@ -11,6 +11,8 @@ import { renderReportHtml } from "@/lib/pdf/template";
 import { renderHtmlToPdf } from "@/lib/pdf/apitemplate.server";
 import { sendEmail, reportReadyEmail, reportDelayEmail } from "@/lib/email/resend.server";
 
+const STUCK_PROCESSING_MS = 10 * 60 * 1000; // 10 min
+
 let _sb: any = null;
 function admin(): any {
   if (!_sb) {
@@ -82,6 +84,37 @@ async function upsertReportProcessing(intake_id: string, customer_id: string, mo
   return created as { id: string; download_token: string };
 }
 
+async function claimGenerationJob(sb: any, order_id: string): Promise<boolean> {
+  const { data: job, error } = await sb
+    .from("generation_jobs")
+    .select("id, status, attempt_count, updated_at")
+    .eq("order_id", order_id)
+    .maybeSingle();
+  if (error) throw new Error(`could not load generation job: ${error.message}`);
+  if (!job) throw new Error(`generation job for order ${order_id} not found`);
+  if (job.status === "complete") return false;
+
+  const updatedAtMs = Date.parse(job.updated_at ?? "");
+  const isStuckProcessing =
+    job.status === "processing" && Number.isFinite(updatedAtMs) && Date.now() - updatedAtMs > STUCK_PROCESSING_MS;
+  if (job.status !== "queued" && !isStuckProcessing) return false;
+
+  const { data: claimed, error: claimErr } = await sb
+    .from("generation_jobs")
+    .update({
+      status: "processing",
+      attempt_count: (job.attempt_count ?? 0) + 1,
+      last_error: null,
+      updated_at: new Date().toISOString(),
+    })
+    .eq("id", job.id)
+    .eq("updated_at", job.updated_at)
+    .select("id")
+    .maybeSingle();
+  if (claimErr) throw new Error(`could not claim generation job: ${claimErr.message}`);
+  return !!claimed;
+}
+
 export async function runFullGenerationPipeline(order_id: string): Promise<void> {
   const sb = admin();
   let report_id: string | null = null;
@@ -90,12 +123,9 @@ export async function runFullGenerationPipeline(order_id: string): Promise<void>
   let customerEmail: string | null = null;
 
   try {
-    // Mark job processing.
-    await sb.from("generation_jobs").update({
-      status: "processing",
-      attempt_count: (await sb.from("generation_jobs").select("attempt_count").eq("order_id", order_id).maybeSingle()).data?.attempt_count + 1 || 1,
-      updated_at: new Date().toISOString(),
-    }).eq("order_id", order_id);
+    // Atomically claim the queued/stuck job so duplicate dispatches do not run paid AI/PDF work twice.
+    const claimed = await claimGenerationJob(sb, order_id);
+    if (!claimed) return;
 
     const { order, intake, customer, modules } = await loadOrderContext(order_id);
     firstName = customer?.first_name ?? null;
