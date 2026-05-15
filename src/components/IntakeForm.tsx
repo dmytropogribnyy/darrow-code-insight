@@ -4,6 +4,8 @@ import { useNavigate } from "@tanstack/react-router";
 import { createCoreCheckout } from "@/utils/checkout.functions";
 import { getStripeEnvironment } from "@/lib/stripe";
 import { StripeEmbeddedCheckoutBox } from "@/components/StripeEmbeddedCheckout";
+import { PlaceAutocomplete } from "@/components/PlaceAutocomplete";
+import type { PlaceSuggestion } from "@/utils/places.functions";
 
 type FormState = {
   first_name: string;
