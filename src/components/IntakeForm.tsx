@@ -167,9 +167,15 @@ export function IntakeForm() {
         <button
           type="submit"
           disabled={submitting}
-          className="w-full bg-gold text-navy font-sans font-semibold tracking-wide rounded-[6px] py-3.5 hover:brightness-105 active:brightness-95 transition disabled:opacity-60 flex items-center justify-center gap-3"
+          style={{
+            backgroundColor: "#D4AF37",
+            color: "#0A0F1E",
+            border: "1px solid rgba(10,15,30,0.18)",
+            boxShadow: "0 10px 24px rgba(212,175,55,0.18)",
+          }}
+          className="cta-premium w-full font-sans font-semibold tracking-wide rounded-[6px] py-3.5 transition disabled:opacity-60 flex items-center justify-center gap-3"
         >
-          <span>{submitting ? "Preparing…" : "Generate my CORE Report"}</span>
+          <span>{submitting ? "Preparing…" : "Unlock My CORE Report"}</span>
           <span className="bg-navy text-gold font-mono text-[12px] px-2 py-1 rounded">$4.99</span>
         </button>
         <p className="mt-3 text-[11px] text-muted-grey">
