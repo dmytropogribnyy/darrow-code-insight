@@ -74,7 +74,9 @@ export default {
   async fetch(request: Request, env: unknown, ctx: ExecutionContextLike) {
     try {
       const handler = await getServerEntry();
-      const response = await handler.fetch(request, { context: { executionCtx: ctx } }, env);
+      // Expose executionCtx globally so server functions (e.g. webhook) can use ctx.waitUntil
+      (globalThis as { __executionCtx?: ExecutionContextLike }).__executionCtx = ctx;
+      const response = await handler.fetch(request, env, ctx);
       return await normalizeCatastrophicSsrResponse(response);
     } catch (error) {
       console.error(error);
