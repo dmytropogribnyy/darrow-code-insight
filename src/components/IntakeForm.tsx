@@ -155,16 +155,27 @@ export function IntakeForm() {
 
       <div>
         <label className={labelCls}>Birth city + country</label>
-        <input
-          className={inputCls}
+        <PlaceAutocomplete
           value={form.birth_city}
-          onChange={update("birth_city")}
-          placeholder="City and country, e.g. New York, United States"
+          onTextChange={(t) => {
+            setForm((f) => ({ ...f, birth_city: t }));
+            if (placeError) setPlaceError(null);
+          }}
+          onSelect={(p) => setResolvedPlace(p)}
+          inputClassName={inputCls}
+          placeholder="Start typing your birth city..."
           required
+          invalid={!!placeError}
         />
-        <p className="mt-1 text-[10px] text-muted-grey">
-          Used only to calculate your birth chart timezone and coordinates.
-        </p>
+        {placeError ? (
+          <p className="mt-1 text-[10px]" style={{ color: "#B45454" }}>
+            {placeError}
+          </p>
+        ) : (
+          <p className="mt-1 text-[10px] text-muted-grey">
+            Used only to calculate your birth chart timezone and coordinates.
+          </p>
+        )}
       </div>
 
       <div>
