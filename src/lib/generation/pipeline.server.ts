@@ -187,7 +187,7 @@ export async function runFullGenerationPipeline(order_id: string): Promise<void>
         generation_error: msg,
       }).eq("id", report_id);
     }
-    await sb.from("orders").update({ status: "failed_generation" }).eq("id", order_id);
+    await sb.from("orders").update({ status: "paid" }).eq("id", order_id);
     await sb.from("generation_jobs").update({
       status: "failed",
       last_error: msg,
