@@ -8,7 +8,7 @@ import { DarrowReportSchema, darrowReportJsonSchema, type DarrowReport } from ".
 import { DARROW_SYSTEM_PROMPT } from "./system-prompt";
 
 const ANTHROPIC_URL = "https://api.anthropic.com/v1/messages";
-const MAX_TOKENS = 8000;
+const MAX_TOKENS = 12000;
 const TOOL_NAME = "emit_darrow_report";
 
 interface CallArgs {
