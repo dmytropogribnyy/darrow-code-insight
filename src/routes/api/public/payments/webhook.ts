@@ -7,7 +7,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { createClient } from "@supabase/supabase-js";
 import { type StripeEnv, verifyWebhook } from "@/lib/stripe.server";
 import { MODULE_CODES, type ModuleCode } from "@/lib/modules";
-import { runPlaceholderGeneration } from "@/utils/generation.functions";
+import { runPlaceholderGeneration } from "@/lib/generation.server";
 
 let _sb: any = null;
 function sb(): any {
