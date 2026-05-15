@@ -27,6 +27,8 @@ const initial: FormState = {
 
 export function IntakeForm() {
   const [form, setForm] = useState<FormState>(initial);
+  const [resolvedPlace, setResolvedPlace] = useState<PlaceSuggestion | null>(null);
+  const [placeError, setPlaceError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [clientSecret, setClientSecret] = useState<string | null>(null);
   const [sessionId, setSessionId] = useState<string | null>(null);
