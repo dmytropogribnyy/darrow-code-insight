@@ -8,8 +8,8 @@ import { createClient } from "@supabase/supabase-js";
 import { type StripeEnv, verifyWebhook } from "@/lib/stripe.server";
 import { MODULE_CODES, type ModuleCode } from "@/lib/modules";
 
-let _sb: ReturnType<typeof createClient> | null = null;
-function sb() {
+let _sb: any = null;
+function sb(): any {
   if (!_sb) {
     _sb = createClient(
       process.env.SUPABASE_URL!,

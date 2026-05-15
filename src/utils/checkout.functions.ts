@@ -13,8 +13,8 @@ import {
   type ModuleCode,
 } from "@/lib/modules";
 
-let _supabase: ReturnType<typeof createClient> | null = null;
-function admin() {
+let _supabase: any = null;
+function admin(): any {
   if (!_supabase) {
     _supabase = createClient(
       process.env.SUPABASE_URL!,
