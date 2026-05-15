@@ -139,7 +139,7 @@ export const Route = createFileRoute("/api/public/payments/webhook")({
         const env: StripeEnv = rawEnv;
         try {
           const event = await verifyWebhook(request, env);
-          await handleEvent(event, context as HandlerContext);
+          await handleEvent(event, context as unknown as HandlerContext);
           return Response.json({ received: true });
         } catch (e) {
           console.error("[webhook] error:", e);
