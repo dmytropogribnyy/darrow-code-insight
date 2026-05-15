@@ -50,7 +50,8 @@ function fireDispatch(order_id: string, _context?: HandlerContext) {
     body: JSON.stringify({ order_id }),
   }).catch((e) => console.error("[webhook] dispatch fire-and-forget failed", e));
   const ctx = (globalThis as { __executionCtx?: { waitUntil?: (p: Promise<unknown>) => void } }).__executionCtx;
-  ctx?.waitUntil?.(dispatch);
+  const waitUntil = _context?.executionCtx?.waitUntil ?? ctx?.waitUntil;
+  waitUntil?.(dispatch);
 }
 
 async function handleCheckoutCompleted(session: any, context?: HandlerContext) {

@@ -16,6 +16,20 @@ function sb(): any {
 
 const STUCK_PROCESSING_MS = 10 * 60 * 1000; // 10 min
 
+type HandlerContext = {
+  executionCtx?: {
+    waitUntil?: (promise: Promise<unknown>) => void;
+  };
+};
+
+function isAuthorized(request: Request): boolean {
+  const secret = process.env.JOB_DISPATCH_SECRET;
+  if (!secret) return false;
+  const auth = request.headers.get("authorization") ?? "";
+  const provided = auth.startsWith("Bearer ") ? auth.slice(7) : request.headers.get("x-job-secret") ?? "";
+  return provided === secret;
+}
+
 async function pickOrderId(body: any): Promise<string | null> {
   if (typeof body?.order_id === "string" && body.order_id.length > 0) {
     return body.order_id;
@@ -36,31 +50,47 @@ async function pickOrderId(body: any): Promise<string | null> {
   return null;
 }
 
+async function dispatchGeneration(order_id: string, context?: HandlerContext): Promise<Response> {
+  const run = runFullGenerationPipeline(order_id);
+  const globalCtx = (globalThis as { __executionCtx?: HandlerContext["executionCtx"] }).__executionCtx;
+  const waitUntil = context?.executionCtx?.waitUntil ?? globalCtx?.waitUntil;
+  if (waitUntil) {
+    waitUntil(run.catch((e) => console.error("[process-generation] async pipeline failed", order_id, e)));
+    return Response.json({ ok: true, order_id, status: "accepted" }, { status: 202 });
+  }
+
+  try {
+    await run;
+    return Response.json({ ok: true, order_id, status: "complete" });
+  } catch (e: any) {
+    return Response.json(
+      { ok: false, order_id, error: String(e?.message ?? e).slice(0, 500) },
+      { status: 500 },
+    );
+  }
+}
+
 export const Route = createFileRoute("/api/public/jobs/process-generation")({
   server: {
     handlers: {
-      POST: async ({ request }) => {
-        const secret = process.env.JOB_DISPATCH_SECRET;
-        if (!secret) return new Response("not configured", { status: 500 });
-        const auth = request.headers.get("authorization") ?? "";
-        const provided = auth.startsWith("Bearer ") ? auth.slice(7) : request.headers.get("x-job-secret") ?? "";
-        if (provided !== secret) return new Response("Unauthorized", { status: 401 });
+      POST: async ({ request, context }) => {
+        if (!process.env.JOB_DISPATCH_SECRET) return new Response("not configured", { status: 500 });
+        if (!isAuthorized(request)) return new Response("Unauthorized", { status: 401 });
 
         let body: any = {};
         try { body = await request.json(); } catch {}
 
         const order_id = await pickOrderId(body);
         if (!order_id) return Response.json({ ok: true, picked: null });
+        return dispatchGeneration(order_id, context as unknown as HandlerContext);
+      },
+      GET: async ({ request, context }) => {
+        if (!process.env.JOB_DISPATCH_SECRET) return new Response("not configured", { status: 500 });
+        if (!isAuthorized(request)) return new Response("Unauthorized", { status: 401 });
 
-        try {
-          await runFullGenerationPipeline(order_id);
-          return Response.json({ ok: true, order_id, status: "complete" });
-        } catch (e: any) {
-          return Response.json(
-            { ok: false, order_id, error: String(e?.message ?? e).slice(0, 500) },
-            { status: 500 },
-          );
-        }
+        const order_id = await pickOrderId({});
+        if (!order_id) return Response.json({ ok: true, picked: null });
+        return dispatchGeneration(order_id, context as unknown as HandlerContext);
       },
     },
   },
