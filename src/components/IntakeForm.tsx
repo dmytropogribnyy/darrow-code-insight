@@ -178,9 +178,9 @@ export function IntakeForm() {
           <span>{submitting ? "Preparing…" : "Unlock My CORE Report"}</span>
           <span className="bg-navy text-gold font-mono text-[12px] px-2 py-1 rounded">$4.99</span>
         </button>
-        <p className="mt-3 text-[11px] text-ivory/75">
+        <p className="mt-3 text-[11px]" style={{ color: "#6B6B6B" }}>
           Start instantly · Usually 60–90 seconds · Multi-page PDF ·{" "}
-          <span className="text-gold">No subscription required</span> · Yours forever
+          <span style={{ color: "#D4AF37" }}>No subscription required</span> · Yours forever
         </p>
       </div>
     </form>
