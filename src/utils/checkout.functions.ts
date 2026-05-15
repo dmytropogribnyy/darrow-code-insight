@@ -288,3 +288,29 @@ export const getGenerationStatus = createServerFn({ method: "POST" })
         report?.generation_status === "complete" ? (report.download_token as string) : null,
     };
   });
+
+// ============================================================
+// Read by /result page to know which modules to offer / hide
+// ============================================================
+export const getReportContext = createServerFn({ method: "POST" })
+  .inputValidator(z.object({ report_token: z.string().min(1).max(255) }).parse)
+  .handler(async ({ data }) => {
+    const sb = admin();
+    const { data: report } = await sb
+      .from("reports")
+      .select("id, intake_id, customer_id, modules_array, generation_status")
+      .eq("download_token", data.report_token)
+      .maybeSingle();
+    if (!report) return null;
+
+    const { data: owned } = await sb
+      .from("modules_purchased")
+      .select("module_code")
+      .eq("intake_id", report.intake_id);
+
+    return {
+      intake_id: report.intake_id as string,
+      generation_status: report.generation_status as string,
+      owned_modules: ((owned ?? []).map((r: any) => r.module_code)) as string[],
+    };
+  });
