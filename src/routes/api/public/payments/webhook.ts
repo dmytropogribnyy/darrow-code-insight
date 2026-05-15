@@ -34,19 +34,26 @@ function dispatcherUrl(): string | null {
   return `${base}/api/public/jobs/process-generation`;
 }
 
-function fireDispatch(order_id: string) {
+type HandlerContext = {
+  executionCtx?: {
+    waitUntil?: (promise: Promise<unknown>) => void;
+  };
+};
+
+function fireDispatch(order_id: string, context?: HandlerContext) {
   const url = dispatcherUrl();
   const secret = process.env.JOB_DISPATCH_SECRET;
   if (!url || !secret) return;
   // Fire-and-forget. pg_cron will pick up if this fails to land.
-  fetch(url, {
+  const dispatch = fetch(url, {
     method: "POST",
     headers: { "Content-Type": "application/json", Authorization: `Bearer ${secret}` },
     body: JSON.stringify({ order_id }),
   }).catch((e) => console.error("[webhook] dispatch fire-and-forget failed", e));
+  context?.executionCtx?.waitUntil?.(dispatch);
 }
 
-async function handleCheckoutCompleted(session: any) {
+async function handleCheckoutCompleted(session: any, context?: HandlerContext) {
   const meta = session?.metadata ?? {};
   const order_id = meta.order_id as string | undefined;
   const customer_id = meta.customer_id as string | undefined;
@@ -95,10 +102,13 @@ async function handleCheckoutCompleted(session: any) {
       { onConflict: "order_id" },
     );
 
-  fireDispatch(order_id);
+  fireDispatch(order_id, context);
 }
 
-async function handleEvent(event: { id: string; type: string; data: { object: any } }) {
+async function handleEvent(
+  event: { id: string; type: string; data: { object: any } },
+  context?: HandlerContext,
+) {
   const { error: dupErr } = await sb()
     .from("stripe_events")
     .insert({ stripe_event_id: event.id });
@@ -106,7 +116,7 @@ async function handleEvent(event: { id: string; type: string; data: { object: an
 
   switch (event.type) {
     case "checkout.session.completed":
-      await handleCheckoutCompleted(event.data.object);
+      await handleCheckoutCompleted(event.data.object, context);
       break;
     default:
       console.log("[webhook] unhandled", event.type);
@@ -121,7 +131,7 @@ async function handleEvent(event: { id: string; type: string; data: { object: an
 export const Route = createFileRoute("/api/public/payments/webhook")({
   server: {
     handlers: {
-      POST: async ({ request }) => {
+      POST: async ({ request, context }) => {
         const rawEnv = new URL(request.url).searchParams.get("env");
         if (rawEnv !== "sandbox" && rawEnv !== "live") {
           return Response.json({ received: true, ignored: "invalid env" });
@@ -129,7 +139,7 @@ export const Route = createFileRoute("/api/public/payments/webhook")({
         const env: StripeEnv = rawEnv;
         try {
           const event = await verifyWebhook(request, env);
-          await handleEvent(event);
+          await handleEvent(event, context as HandlerContext);
           return Response.json({ received: true });
         } catch (e) {
           console.error("[webhook] error:", e);
