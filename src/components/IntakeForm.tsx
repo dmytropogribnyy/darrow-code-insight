@@ -142,7 +142,7 @@ export function IntakeForm() {
           className={inputCls}
           value={form.birth_city}
           onChange={update("birth_city")}
-          placeholder="City and country, e.g. Bratislava, Slovakia"
+          placeholder="City and country, e.g. New York, United States"
           required
         />
         <p className="mt-1 text-[10px] text-muted-grey">
