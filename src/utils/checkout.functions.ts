@@ -26,29 +26,10 @@ function admin(): any {
 
 const StripeEnvSchema = z.enum(["sandbox", "live"]);
 
-// ---------- Geocoding (Open-Meteo, no key) ----------
-async function geocodeCity(city: string): Promise<{
-  latitude: number;
-  longitude: number;
-  timezone: string;
-  resolved_name: string;
-  country: string | null;
-} | null> {
-  const url =
-    "https://geocoding-api.open-meteo.com/v1/search?count=1&language=en&format=json&name=" +
-    encodeURIComponent(city);
-  const res = await fetch(url);
-  if (!res.ok) return null;
-  const data = (await res.json()) as any;
-  const hit = data?.results?.[0];
-  if (!hit) return null;
-  return {
-    latitude: hit.latitude,
-    longitude: hit.longitude,
-    timezone: hit.timezone,
-    resolved_name: [hit.name, hit.admin1, hit.country].filter(Boolean).join(", "),
-    country: hit.country ?? null,
-  };
+// ---------- Geocoding (Geoapify) ----------
+async function geocodeCity(city: string) {
+  const { geocodeCityGeoapify } = await import("@/lib/geocoding.server");
+  return geocodeCityGeoapify(city);
 }
 
 // ============================================================
@@ -113,8 +94,8 @@ export const createCoreCheckout = createServerFn({ method: "POST" })
         timezone: geo.timezone,
         resolved_birth_place_name: geo.resolved_name,
         birth_country: geo.country,
-        timezone_source: "open-meteo",
-        geocoding_provider: "open-meteo",
+        timezone_source: "geoapify",
+        geocoding_provider: "geoapify",
         full_name_for_numerology: data.full_name_for_numerology || null,
       })
       .select("id")
