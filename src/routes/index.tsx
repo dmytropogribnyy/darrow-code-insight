@@ -91,6 +91,17 @@ function LandingPage() {
           >
             Western Astrology · Chinese Bazi · Numerology · Pattern Psychology · AI Synthesis
           </p>
+
+          {/* Optional chapters teaser */}
+          <p className="mt-5 text-center text-[12px] text-[#9CA3AF] max-w-[520px] mx-auto leading-relaxed">
+            Optional focused chapters available after your CORE Report:{" "}
+            <span className="text-[#D4AF37]">LOVE</span>{" "}·{" "}
+            <span className="text-[#D4AF37]">MONEY</span>{" "}·{" "}
+            <span className="text-[#D4AF37]">BODY</span>{" "}·{" "}
+            <span className="text-[#D4AF37]">YEAR</span>{" "}·{" "}
+            <span className="text-[#D4AF37]">STYLE</span>{" "}·{" "}
+            <span className="text-[#D4AF37]">PLACE</span>
+          </p>
         </div>
       </section>
 
