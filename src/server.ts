@@ -7,6 +7,10 @@ type ServerEntry = {
   fetch: (request: Request, env: unknown, ctx: unknown) => Promise<Response> | Response;
 };
 
+type ExecutionContextLike = {
+  waitUntil?: (promise: Promise<unknown>) => void;
+};
+
 let serverEntryPromise: Promise<ServerEntry> | undefined;
 
 async function getServerEntry(): Promise<ServerEntry> {
@@ -67,10 +71,10 @@ async function normalizeCatastrophicSsrResponse(response: Response): Promise<Res
 }
 
 export default {
-  async fetch(request: Request, env: unknown, ctx: unknown) {
+  async fetch(request: Request, env: unknown, ctx: ExecutionContextLike) {
     try {
       const handler = await getServerEntry();
-      const response = await handler.fetch(request, env, ctx);
+      const response = await handler.fetch(request, { context: { executionCtx: ctx } }, env);
       return await normalizeCatastrophicSsrResponse(response);
     } catch (error) {
       console.error(error);
