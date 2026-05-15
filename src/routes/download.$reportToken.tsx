@@ -19,7 +19,7 @@ function DownloadPage() {
     setBusy(true);
     try {
       const { url } = await getReportDownloadUrl({ data: { report_token: reportToken } });
-      window.location.href = url;
+      window.open(url, "_blank", "noopener,noreferrer");
     } catch (e: any) {
       toast.error(e?.message ?? "Could not download report.");
     } finally {
