@@ -1,5 +1,9 @@
 import { useState } from "react";
 import { toast } from "sonner";
+import { useNavigate } from "@tanstack/react-router";
+import { createCoreCheckout } from "@/utils/checkout.functions";
+import { getStripeEnvironment } from "@/lib/stripe";
+import { StripeEmbeddedCheckoutBox } from "@/components/StripeEmbeddedCheckout";
 
 type FormState = {
   first_name: string;
@@ -22,6 +26,9 @@ const initial: FormState = {
 export function IntakeForm() {
   const [form, setForm] = useState<FormState>(initial);
   const [submitting, setSubmitting] = useState(false);
+  const [clientSecret, setClientSecret] = useState<string | null>(null);
+  const [sessionId, setSessionId] = useState<string | null>(null);
+  const navigate = useNavigate();
 
   const update = (k: keyof FormState) => (e: React.ChangeEvent<HTMLInputElement>) =>
     setForm((f) => ({ ...f, [k]: e.target.value }));
@@ -37,10 +44,51 @@ export function IntakeForm() {
       return;
     }
     setSubmitting(true);
-    // Stripe checkout wired in PROMPT 1B.
-    toast.info("Checkout will be wired up in the next step.");
-    setSubmitting(false);
+    try {
+      const res = await createCoreCheckout({
+        data: {
+          first_name: form.first_name.trim(),
+          email: form.email.trim(),
+          date_of_birth: form.date_of_birth,
+          birth_time: form.birth_time || "",
+          birth_city: form.birth_city.trim(),
+          full_name_for_numerology: form.full_name_for_numerology || "",
+          origin: window.location.origin,
+          environment: getStripeEnvironment(),
+        },
+      });
+      setClientSecret(res.client_secret);
+      setSessionId(res.session_id);
+    } catch (err: any) {
+      toast.error(err?.message ?? "Could not start checkout.");
+      setSubmitting(false);
+    }
   };
+
+  if (clientSecret) {
+    return (
+      <div className="w-full max-w-[480px] mx-auto">
+        <StripeEmbeddedCheckoutBox
+          fetchClientSecret={async () => clientSecret}
+        />
+        <p className="mt-3 text-center text-[11px] text-muted-grey">
+          After payment you'll be redirected to your report.
+          {sessionId && (
+            <>
+              {" "}
+              <button
+                type="button"
+                className="underline"
+                onClick={() => navigate({ to: "/generating", search: { session_id: sessionId } })}
+              >
+                Continue
+              </button>
+            </>
+          )}
+        </p>
+      </div>
+    );
+  }
 
   const labelCls = "block text-[11px] tracking-meta uppercase text-neutral-grey mb-1.5";
   const inputCls =
@@ -103,7 +151,9 @@ export function IntakeForm() {
       </div>
 
       <div>
-        <label className={labelCls + " opacity-70"}>Full name <span className="normal-case tracking-normal text-muted-grey">— optional</span></label>
+        <label className={labelCls + " opacity-70"}>
+          Full name <span className="normal-case tracking-normal text-muted-grey">— optional</span>
+        </label>
         <input
           className={inputCls + " text-[13px]"}
           value={form.full_name_for_numerology}
@@ -119,12 +169,8 @@ export function IntakeForm() {
           disabled={submitting}
           className="w-full bg-gold text-navy font-sans font-semibold tracking-wide rounded-[6px] py-3.5 hover:brightness-105 active:brightness-95 transition disabled:opacity-60 flex items-center justify-center gap-3"
         >
-          <span>Generate my CORE Report</span>
-          <span
-            className="bg-navy text-gold font-mono text-[12px] px-2 py-1 rounded"
-          >
-            $4.99
-          </span>
+          <span>{submitting ? "Preparing…" : "Generate my CORE Report"}</span>
+          <span className="bg-navy text-gold font-mono text-[12px] px-2 py-1 rounded">$4.99</span>
         </button>
         <p className="mt-3 text-[11px] text-muted-grey">
           Start instantly · Usually 60–90 seconds · Multi-page PDF ·{" "}
