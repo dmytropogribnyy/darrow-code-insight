@@ -18,6 +18,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as ResultReportTokenRouteImport } from './routes/result.$reportToken'
 import { Route as DownloadReportTokenRouteImport } from './routes/download.$reportToken'
 import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/public/payments/webhook'
+import { Route as ApiPublicJobsProcessGenerationRouteImport } from './routes/api/public/jobs/process-generation'
 
 const TermsRoute = TermsRouteImport.update({
   id: '/terms',
@@ -65,6 +66,12 @@ const ApiPublicPaymentsWebhookRoute =
     path: '/api/public/payments/webhook',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicJobsProcessGenerationRoute =
+  ApiPublicJobsProcessGenerationRouteImport.update({
+    id: '/api/public/jobs/process-generation',
+    path: '/api/public/jobs/process-generation',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -75,6 +82,7 @@ export interface FileRoutesByFullPath {
   '/terms': typeof TermsRoute
   '/download/$reportToken': typeof DownloadReportTokenRoute
   '/result/$reportToken': typeof ResultReportTokenRoute
+  '/api/public/jobs/process-generation': typeof ApiPublicJobsProcessGenerationRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
 }
 export interface FileRoutesByTo {
@@ -86,6 +94,7 @@ export interface FileRoutesByTo {
   '/terms': typeof TermsRoute
   '/download/$reportToken': typeof DownloadReportTokenRoute
   '/result/$reportToken': typeof ResultReportTokenRoute
+  '/api/public/jobs/process-generation': typeof ApiPublicJobsProcessGenerationRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
 }
 export interface FileRoutesById {
@@ -98,6 +107,7 @@ export interface FileRoutesById {
   '/terms': typeof TermsRoute
   '/download/$reportToken': typeof DownloadReportTokenRoute
   '/result/$reportToken': typeof ResultReportTokenRoute
+  '/api/public/jobs/process-generation': typeof ApiPublicJobsProcessGenerationRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
 }
 export interface FileRouteTypes {
@@ -111,6 +121,7 @@ export interface FileRouteTypes {
     | '/terms'
     | '/download/$reportToken'
     | '/result/$reportToken'
+    | '/api/public/jobs/process-generation'
     | '/api/public/payments/webhook'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -122,6 +133,7 @@ export interface FileRouteTypes {
     | '/terms'
     | '/download/$reportToken'
     | '/result/$reportToken'
+    | '/api/public/jobs/process-generation'
     | '/api/public/payments/webhook'
   id:
     | '__root__'
@@ -133,6 +145,7 @@ export interface FileRouteTypes {
     | '/terms'
     | '/download/$reportToken'
     | '/result/$reportToken'
+    | '/api/public/jobs/process-generation'
     | '/api/public/payments/webhook'
   fileRoutesById: FileRoutesById
 }
@@ -145,6 +158,7 @@ export interface RootRouteChildren {
   TermsRoute: typeof TermsRoute
   DownloadReportTokenRoute: typeof DownloadReportTokenRoute
   ResultReportTokenRoute: typeof ResultReportTokenRoute
+  ApiPublicJobsProcessGenerationRoute: typeof ApiPublicJobsProcessGenerationRoute
   ApiPublicPaymentsWebhookRoute: typeof ApiPublicPaymentsWebhookRoute
 }
 
@@ -213,6 +227,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicPaymentsWebhookRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/jobs/process-generation': {
+      id: '/api/public/jobs/process-generation'
+      path: '/api/public/jobs/process-generation'
+      fullPath: '/api/public/jobs/process-generation'
+      preLoaderRoute: typeof ApiPublicJobsProcessGenerationRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -225,6 +246,7 @@ const rootRouteChildren: RootRouteChildren = {
   TermsRoute: TermsRoute,
   DownloadReportTokenRoute: DownloadReportTokenRoute,
   ResultReportTokenRoute: ResultReportTokenRoute,
+  ApiPublicJobsProcessGenerationRoute: ApiPublicJobsProcessGenerationRoute,
   ApiPublicPaymentsWebhookRoute: ApiPublicPaymentsWebhookRoute,
 }
 export const routeTree = rootRouteImport

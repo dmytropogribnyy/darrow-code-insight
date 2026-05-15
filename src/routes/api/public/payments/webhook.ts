@@ -1,13 +1,13 @@
-// Stripe webhook — fast path.
+// Stripe webhook — THIN.
 // Verifies signature, dedupes via stripe_events, marks order paid,
-// records purchased modules (idempotent), and runs the placeholder
-// generation pipeline so /generating can progress to /result.
+// records purchased modules, enqueues a generation_jobs row, then
+// best-effort fires the async dispatcher and returns 200 immediately.
+// pg_cron sweeps queued/stuck jobs as a safety net.
 
 import { createFileRoute } from "@tanstack/react-router";
 import { createClient } from "@supabase/supabase-js";
 import { type StripeEnv, verifyWebhook } from "@/lib/stripe.server";
 import { MODULE_CODES, type ModuleCode } from "@/lib/modules";
-import { runPlaceholderGeneration } from "@/lib/generation.server";
 
 let _sb: any = null;
 function sb(): any {
@@ -26,6 +26,24 @@ function parseModules(raw: string | undefined): ModuleCode[] {
     .split(",")
     .map((m) => m.trim().toUpperCase())
     .filter((m): m is ModuleCode => (MODULE_CODES as string[]).includes(m));
+}
+
+function dispatcherUrl(): string | null {
+  const base = process.env.APP_BASE_URL?.replace(/\/$/, "");
+  if (!base) return null;
+  return `${base}/api/public/jobs/process-generation`;
+}
+
+function fireDispatch(order_id: string) {
+  const url = dispatcherUrl();
+  const secret = process.env.JOB_DISPATCH_SECRET;
+  if (!url || !secret) return;
+  // Fire-and-forget. pg_cron will pick up if this fails to land.
+  fetch(url, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", Authorization: `Bearer ${secret}` },
+    body: JSON.stringify({ order_id }),
+  }).catch((e) => console.error("[webhook] dispatch fire-and-forget failed", e));
 }
 
 async function handleCheckoutCompleted(session: any) {
@@ -51,7 +69,7 @@ async function handleCheckoutCompleted(session: any) {
       ? [...MODULE_CODES]
       : order_type === "ADDONS"
         ? parseModules(modules_raw)
-        : []; // CORE — implicit on the report
+        : [];
 
   if (modules.length > 0) {
     const rows = modules.map((m) => ({
@@ -60,7 +78,6 @@ async function handleCheckoutCompleted(session: any) {
       order_id,
       module_code: m,
     }));
-    // Ignore duplicates (e.g. FULL_CODE upgrade after some add-ons already owned)
     const { error } = await sb()
       .from("modules_purchased")
       .upsert(rows, {
@@ -70,34 +87,22 @@ async function handleCheckoutCompleted(session: any) {
     if (error) console.error("[webhook] modules upsert", error);
   }
 
-  // Track job for observability; not strictly required by the polling flow.
-  await sb().from("generation_jobs").insert({ order_id, status: "processing" });
+  // Enqueue (or reset) the generation job. Pipeline runs asynchronously.
+  await sb()
+    .from("generation_jobs")
+    .upsert(
+      { order_id, status: "queued", last_error: null, updated_at: new Date().toISOString() },
+      { onConflict: "order_id" },
+    );
 
-  try {
-    await runPlaceholderGeneration(order_id);
-    await sb()
-      .from("generation_jobs")
-      .update({ status: "complete", updated_at: new Date().toISOString() })
-      .eq("order_id", order_id);
-  } catch (e: any) {
-    console.error("[webhook] generation failed", e);
-    await sb()
-      .from("generation_jobs")
-      .update({
-        status: "failed",
-        last_error: String(e?.message ?? e),
-        updated_at: new Date().toISOString(),
-      })
-      .eq("order_id", order_id);
-    await sb().from("orders").update({ status: "failed_generation" }).eq("id", order_id);
-  }
+  fireDispatch(order_id);
 }
 
 async function handleEvent(event: { id: string; type: string; data: { object: any } }) {
   const { error: dupErr } = await sb()
     .from("stripe_events")
     .insert({ stripe_event_id: event.id });
-  if (dupErr) return; // already processed
+  if (dupErr) return;
 
   switch (event.type) {
     case "checkout.session.completed":
