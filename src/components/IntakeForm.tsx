@@ -173,12 +173,12 @@ export function IntakeForm() {
             border: "1px solid rgba(10,15,30,0.18)",
             boxShadow: "0 10px 24px rgba(212,175,55,0.18)",
           }}
-          className="cta-premium w-full font-sans font-semibold tracking-wide rounded-[6px] py-3.5 transition disabled:opacity-60 flex items-center justify-center gap-3"
+          className="cta-premium w-full font-sans font-semibold tracking-wide rounded-[6px] py-3.5 transition disabled:opacity-60 flex items-center justify-center gap-2"
         >
           <span>{submitting ? "Preparing…" : "Unlock My CORE Report"}</span>
           <span className="bg-navy text-gold font-mono text-[12px] px-2 py-1 rounded">$4.99</span>
         </button>
-        <p className="mt-3 text-[11px] text-muted-grey">
+        <p className="mt-3 text-[11px] text-ivory/75">
           Start instantly · Usually 60–90 seconds · Multi-page PDF ·{" "}
           <span className="text-gold">No subscription required</span> · Yours forever
         </p>
