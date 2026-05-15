@@ -137,7 +137,7 @@ export function IntakeForm() {
       </div>
 
       <div>
-        <label className={labelCls}>City of birth</label>
+        <label className={labelCls}>Birth city + country</label>
         <input
           className={inputCls}
           value={form.birth_city}
