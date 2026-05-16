@@ -21,7 +21,7 @@ export const getReportDownloadUrl = createServerFn({ method: "POST" })
     }
     const { data: signed, error } = await sb.storage
       .from("reports")
-      .createSignedUrl(report.pdf_url, 300);
+      .createSignedUrl(report.pdf_url, 300, { download: "darrow-code-report.pdf" });
     if (error || !signed) throw new Error("Could not create download link");
     return { url: signed.signedUrl as string };
   });
