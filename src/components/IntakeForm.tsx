@@ -190,7 +190,7 @@ export function IntakeForm() {
       </div>
 
       <div className="pt-3 text-center">
-        <p className="text-[10px] tracking-meta uppercase text-gold mb-2">Launch price</p>
+        <p className="text-[11px] sm:text-[12px] tracking-[0.14em] sm:tracking-[0.16em] uppercase text-gold mb-2 font-semibold">Launch price</p>
         <button
           type="submit"
           disabled={submitting}
