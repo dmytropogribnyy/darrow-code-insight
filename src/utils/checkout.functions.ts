@@ -317,7 +317,6 @@ export const getReportContext = createServerFn({ method: "POST" })
       .eq("intake_id", report.intake_id);
 
     return {
-      intake_id: report.intake_id as string,
       generation_status: report.generation_status as string,
       owned_modules: ((owned ?? []).map((r: any) => r.module_code)) as string[],
     };
