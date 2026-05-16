@@ -52,6 +52,13 @@ async function handleCheckoutCompleted(session: any) {
     order_type,
     modules_raw,
   });
+  logStage({
+    stage: "webhook_received",
+    result: "success",
+    order_id,
+    stripe_session_id: session.id,
+    extra: { order_type },
+  });
 
   const { data: existingOrder } = await sb()
     .from("orders")
