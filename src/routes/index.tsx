@@ -65,10 +65,12 @@ function LandingPage() {
 
           {/* Tagline */}
           <p
-            className="font-serif italic mt-5 text-gold"
-            style={{ fontSize: 17 }}
+            className="font-serif italic mt-5 text-gold leading-[1.3]"
+            style={{ fontSize: "clamp(16px, 2.2vw, 18px)" }}
           >
-            More than a horoscope. Less than a consultation.
+            More than a horoscope.
+            <br />
+            Your private birth code.
           </p>
 
           {/* Brand continuity */}
