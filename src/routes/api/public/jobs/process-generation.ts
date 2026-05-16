@@ -22,6 +22,12 @@ type HandlerContext = {
   };
 };
 
+function waitUntilFrom(context?: HandlerContext): ((promise: Promise<unknown>) => void) | undefined {
+  if (context?.executionCtx?.waitUntil) return context.executionCtx.waitUntil.bind(context.executionCtx);
+  const globalCtx = (globalThis as { __executionCtx?: HandlerContext["executionCtx"] }).__executionCtx;
+  return globalCtx?.waitUntil?.bind(globalCtx);
+}
+
 function isAuthorized(request: Request): boolean {
   const secret = process.env.JOB_DISPATCH_SECRET;
   if (!secret) return false;
@@ -52,8 +58,7 @@ async function pickOrderId(body: any): Promise<string | null> {
 
 async function dispatchGeneration(order_id: string, context?: HandlerContext): Promise<Response> {
   const run = runFullGenerationPipeline(order_id);
-  const globalCtx = (globalThis as { __executionCtx?: HandlerContext["executionCtx"] }).__executionCtx;
-  const waitUntil = context?.executionCtx?.waitUntil ?? globalCtx?.waitUntil;
+  const waitUntil = waitUntilFrom(context);
   if (waitUntil) {
     waitUntil(run.catch((e) => console.error("[process-generation] async pipeline failed", order_id, e)));
     return Response.json({ ok: true, order_id, status: "accepted" }, { status: 202 });
