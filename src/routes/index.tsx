@@ -155,11 +155,23 @@ function LandingPage() {
         />
       </section>
 
+      {/* PRODUCT SELECTOR — paper section */}
+      <section>
+        <div className="max-w-[560px] mx-auto px-4 sm:px-6 pt-10 sm:pt-12">
+          <ProductSelector
+            selected={selected}
+            onToggle={toggle}
+            onSelectAll={selectAll}
+            onClear={clear}
+          />
+        </div>
+      </section>
+
       {/* INTAKE — paper section */}
       <section className="flex-1">
-        <div className="max-w-[480px] mx-auto px-4 sm:px-6 pt-8 sm:pt-10 pb-4 sm:pb-5">
+        <div className="max-w-[480px] mx-auto px-4 sm:px-6 pt-6 sm:pt-8 pb-4 sm:pb-5">
           <p className="text-center font-medium text-[13px] sm:text-[14px] mb-5" style={{ color: "#4A402D" }}>
-            Start instantly. Your private report is generated after checkout.
+            Enter your birth data — checkout and your private report come next.
           </p>
           <div className="relative">
             {/* Subtle gold accent line above card */}
@@ -172,7 +184,7 @@ function LandingPage() {
               }}
             />
             <div className="intake-card">
-              <IntakeForm />
+              <IntakeForm chapters={Array.from(selected)} />
             </div>
           </div>
         </div>
