@@ -137,7 +137,7 @@ function LandingPage() {
       {/* INTAKE — paper section */}
       <section className="flex-1">
         <div className="max-w-[480px] mx-auto px-4 sm:px-6 pt-8 sm:pt-10 pb-4 sm:pb-5">
-          <p className="text-center text-[13px] mb-5" style={{ color: "#6B6B6B" }}>
+          <p className="text-center font-medium text-[13px] sm:text-[14px] mb-5" style={{ color: "#4A402D" }}>
             Start instantly. Your private report is generated after checkout.
           </p>
           <div className="intake-card">
