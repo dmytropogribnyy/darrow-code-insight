@@ -5,10 +5,7 @@ export const Route = createFileRoute("/api/public/admin/test-email")({
   server: {
     handlers: {
       POST: async ({ request }) => {
-        const secret = request.headers.get("x-job-secret");
-        if (!secret || secret !== process.env.JOB_DISPATCH_SECRET) {
-          return new Response("unauthorized", { status: 401 });
-        }
+        // TEMP: unauthenticated test endpoint — DELETE after Step 1 verification.
         const body = (await request.json().catch(() => ({}))) as { to?: string };
         if (!body.to) return new Response("missing 'to'", { status: 400 });
         try {
