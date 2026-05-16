@@ -21,9 +21,12 @@ export function SiteHeader({ onDark = false }: { onDark?: boolean }) {
         <Link
           to="/sample"
           className={
-            "text-[12px] " +
-            (onDark ? "text-muted-grey hover:text-light-grey" : "text-neutral-grey hover:text-charcoal")
+            "font-sans font-medium transition-colors duration-200 " +
+            (onDark
+              ? "text-light-grey hover:text-gold hover:underline underline-offset-4 decoration-gold/50"
+              : "text-neutral-grey hover:text-charcoal hover:underline underline-offset-4 decoration-charcoal/40")
           }
+          style={{ fontSize: "clamp(13px, 1.1vw, 14px)" }}
         >
           See a sample →
         </Link>
