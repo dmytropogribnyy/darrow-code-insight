@@ -11,7 +11,8 @@ import { renderReportHtml } from "@/lib/pdf/template";
 import { renderHtmlToPdf } from "@/lib/pdf/apitemplate.server";
 import { sendEmail, reportReadyEmail, reportDelayEmail } from "@/lib/email/resend.server";
 
-const STUCK_PROCESSING_MS = 10 * 60 * 1000; // 10 min
+const STUCK_PROCESSING_MS = 4 * 60 * 1000; // 4 min
+const STEP_TIMEOUT_MS = 90 * 1000;
 
 let _sb: any = null;
 function admin(): any {
@@ -25,6 +26,28 @@ function appBaseUrl(): string {
   const u = process.env.APP_BASE_URL;
   if (!u) throw new Error("APP_BASE_URL is not configured");
   return u.replace(/\/$/, "");
+}
+
+async function withTimeout<T>(label: string, promise: Promise<T>, ms = STEP_TIMEOUT_MS): Promise<T> {
+  let timeout: ReturnType<typeof setTimeout> | undefined;
+  try {
+    return await Promise.race([
+      promise,
+      new Promise<never>((_, reject) => {
+        timeout = setTimeout(() => reject(new Error(`${label} timed out after ${Math.round(ms / 1000)}s`)), ms);
+      }),
+    ]);
+  } finally {
+    if (timeout) clearTimeout(timeout);
+  }
+}
+
+async function heartbeat(order_id: string): Promise<void> {
+  await admin()
+    .from("generation_jobs")
+    .update({ updated_at: new Date().toISOString() })
+    .eq("order_id", order_id)
+    .eq("status", "processing");
 }
 
 async function loadOrderContext(order_id: string) {
@@ -147,7 +170,8 @@ export async function runFullGenerationPipeline(order_id: string): Promise<void>
       timezone: intake.timezone ?? "UTC",
       full_name_for_numerology: intake.full_name_for_numerology ?? customer?.first_name ?? null,
     };
-    const chart = await provider.computeNatal(natal);
+    const chart = await withTimeout("Astro calculation", provider.computeNatal(natal), 30 * 1000);
+    await heartbeat(order_id);
 
     await sb.from("astro_data").insert({
       intake_id: intake.id,
@@ -169,11 +193,13 @@ export async function runFullGenerationPipeline(order_id: string): Promise<void>
       modules,
       chart,
     });
-    const { report, model_used } = await generateDarrowReport(userPrompt);
+    const { report, model_used } = await withTimeout("AI report generation", generateDarrowReport(userPrompt));
+    await heartbeat(order_id);
 
     // 3) HTML → PDF.
     const html = renderReportHtml(report, { assetsBaseUrl: appBaseUrl() });
-    const pdfBytes = await renderHtmlToPdf(html);
+    const pdfBytes = await withTimeout("PDF rendering", renderHtmlToPdf(html));
+    await heartbeat(order_id);
 
     // 4) Upload PDF.
     const path = `${download_token}.pdf`;
