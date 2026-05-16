@@ -1,7 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useState } from "react";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { IntakeForm } from "@/components/IntakeForm";
+import { ProductSelector } from "@/components/ProductSelector";
+import { MODULE_CODES, type ModuleCode } from "@/lib/modules";
 
 export const Route = createFileRoute("/")({
   head: () => ({
