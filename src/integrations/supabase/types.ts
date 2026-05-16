@@ -298,6 +298,7 @@ export type Database = {
           model_used: string | null
           modules_array: Database["public"]["Enums"]["module_code"][]
           pdf_url: string | null
+          ready_email_sent_at: string | null
         }
         Insert: {
           ai_content_json?: Json | null
@@ -311,6 +312,7 @@ export type Database = {
           model_used?: string | null
           modules_array?: Database["public"]["Enums"]["module_code"][]
           pdf_url?: string | null
+          ready_email_sent_at?: string | null
         }
         Update: {
           ai_content_json?: Json | null
@@ -324,6 +326,7 @@ export type Database = {
           model_used?: string | null
           modules_array?: Database["public"]["Enums"]["module_code"][]
           pdf_url?: string | null
+          ready_email_sent_at?: string | null
         }
         Relationships: [
           {

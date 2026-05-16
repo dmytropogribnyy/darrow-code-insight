@@ -1,0 +1,1 @@
+ALTER TABLE public.reports ADD COLUMN IF NOT EXISTS ready_email_sent_at timestamptz;
