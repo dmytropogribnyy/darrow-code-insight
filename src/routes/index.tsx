@@ -27,6 +27,17 @@ export const Route = createFileRoute("/")({
 });
 
 function LandingPage() {
+  const [selected, setSelected] = useState<Set<ModuleCode>>(new Set());
+  const toggle = (code: ModuleCode) =>
+    setSelected((s) => {
+      const n = new Set(s);
+      if (n.has(code)) n.delete(code);
+      else n.add(code);
+      return n;
+    });
+  const selectAll = () => setSelected(new Set(MODULE_CODES));
+  const clear = () => setSelected(new Set());
+
   return (
     <div className="min-h-screen flex flex-col bg-paper">
       <SiteHeader onDark />
