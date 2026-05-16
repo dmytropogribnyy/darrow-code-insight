@@ -63,7 +63,7 @@ Covered by `src/routes/api/public/jobs/process-generation.test.ts`. Run
 
 ## Health endpoint
 
-`GET /api/health/generation-pipeline` (no auth, no PII):
+`GET /api/public/health/generation-pipeline` (no auth, no PII):
 
 ```json
 {
