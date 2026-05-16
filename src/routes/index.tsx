@@ -119,6 +119,16 @@ function LandingPage() {
             </div>
           </div>
         </div>
+
+        {/* Gold hairline divider between hero and intake */}
+        <div
+          aria-hidden="true"
+          className="h-px w-full"
+          style={{
+            background:
+              "linear-gradient(90deg, transparent 0%, rgba(212,175,55,0.45) 50%, transparent 100%)",
+          }}
+        />
       </section>
 
       {/* INTAKE — paper section */}
@@ -127,8 +137,19 @@ function LandingPage() {
           <p className="text-center font-medium text-[13px] sm:text-[14px] mb-5" style={{ color: "#4A402D" }}>
             Start instantly. Your private report is generated after checkout.
           </p>
-          <div className="intake-card">
-            <IntakeForm />
+          <div className="relative">
+            {/* Subtle gold accent line above card */}
+            <div
+              aria-hidden="true"
+              className="absolute -top-px left-6 right-6 h-px"
+              style={{
+                background:
+                  "linear-gradient(90deg, transparent 0%, rgba(212,175,55,0.5) 50%, transparent 100%)",
+              }}
+            />
+            <div className="intake-card">
+              <IntakeForm />
+            </div>
           </div>
         </div>
       </section>
