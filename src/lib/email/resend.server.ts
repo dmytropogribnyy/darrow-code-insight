@@ -112,6 +112,8 @@ export function reportDelayEmail(args: {
         <div style="padding:32px 28px">
           <h1 style="font-family:'Cormorant Garamond',Georgia,serif;font-weight:500;font-size:22px;color:#4A402D;margin:0 0 14px">A short delay${name ? `, ${name}` : ""}.</h1>
           <p style="font-size:14px;line-height:1.6;color:#151922;margin:0 0 14px">Your report didn't render on the first pass. We've been notified and will send it as soon as it's ready — usually within a few hours. No action needed from you.</p>
+          <p style="font-size:14px;line-height:1.6;color:#151922;margin:0 0 14px"><strong>Your payment is safe.</strong> You have <strong>not</strong> been charged a second time and you will not be. The original charge already covers the report we are about to deliver.</p>
+          <p style="font-size:13px;line-height:1.6;color:#6B6B6B;margin:0 0 14px">If you'd like to reach us directly, just reply to this email.</p>
           <p style="color:#9CA3AF;font-size:11px;margin-top:32px;font-style:italic;font-family:'Cormorant Garamond',Georgia,serif">More than a horoscope. Your private birth code.</p>
         </div>
       </div>
