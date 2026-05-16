@@ -10,6 +10,7 @@ import { DARROW_SYSTEM_PROMPT } from "./system-prompt";
 const ANTHROPIC_URL = "https://api.anthropic.com/v1/messages";
 const MAX_TOKENS = 12000;
 const TOOL_NAME = "emit_darrow_report";
+const MODEL_TIMEOUT_MS = 6 * 60 * 1000;
 
 interface CallArgs {
   userPrompt: string;
@@ -20,34 +21,48 @@ async function callAnthropic({ userPrompt, model }: CallArgs): Promise<DarrowRep
   const apiKey = process.env.ANTHROPIC_API_KEY;
   if (!apiKey) throw new Error("ANTHROPIC_API_KEY is not configured");
 
-  const res = await fetch(ANTHROPIC_URL, {
-    method: "POST",
-    headers: {
-      "x-api-key": apiKey,
-      "anthropic-version": "2023-06-01",
-      "content-type": "application/json",
-    },
-    body: JSON.stringify({
-      model,
-      max_tokens: MAX_TOKENS,
-      system: [
-        {
-          type: "text",
-          text: DARROW_SYSTEM_PROMPT,
-          cache_control: { type: "ephemeral" },
-        },
-      ],
-      tools: [
-        {
-          name: TOOL_NAME,
-          description: "Emit the final Darrow report as structured JSON.",
-          input_schema: darrowReportJsonSchema,
-        },
-      ],
-      tool_choice: { type: "tool", name: TOOL_NAME },
-      messages: [{ role: "user", content: userPrompt }],
-    }),
-  });
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), MODEL_TIMEOUT_MS);
+
+  let res: Response;
+  try {
+    res = await fetch(ANTHROPIC_URL, {
+      method: "POST",
+      signal: controller.signal,
+      headers: {
+        "x-api-key": apiKey,
+        "anthropic-version": "2023-06-01",
+        "content-type": "application/json",
+      },
+      body: JSON.stringify({
+        model,
+        max_tokens: MAX_TOKENS,
+        system: [
+          {
+            type: "text",
+            text: DARROW_SYSTEM_PROMPT,
+            cache_control: { type: "ephemeral" },
+          },
+        ],
+        tools: [
+          {
+            name: TOOL_NAME,
+            description: "Emit the final Darrow report as structured JSON.",
+            input_schema: darrowReportJsonSchema,
+          },
+        ],
+        tool_choice: { type: "tool", name: TOOL_NAME },
+        messages: [{ role: "user", content: userPrompt }],
+      }),
+    });
+  } catch (e: any) {
+    if (controller.signal.aborted) {
+      throw new Error(`Anthropic ${model} timed out after ${Math.round(MODEL_TIMEOUT_MS / 1000)}s`);
+    }
+    throw e;
+  } finally {
+    clearTimeout(timeout);
+  }
 
   if (!res.ok) {
     const text = await res.text();
