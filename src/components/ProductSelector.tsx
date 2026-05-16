@@ -81,6 +81,7 @@ export function ProductSelector({ selected, onToggle, onSelectAll, onClear }: Pr
 
       {/* CORE Complete bundle card */}
       <button
+        id="chapter-COMPLETE"
         type="button"
         onClick={allSelected ? onClear : onSelectAll}
         className="w-full text-left rounded-[10px] border-2 px-4 py-4 mb-5 transition flex items-start gap-3"
