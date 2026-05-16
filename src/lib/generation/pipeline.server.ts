@@ -274,7 +274,7 @@ export async function runFullGenerationPipeline(order_id: string): Promise<void>
       const downloadUrl = `${appBaseUrl()}/download/${download_token}`;
       const resultUrl = `${appBaseUrl()}/result/${download_token}`;
       const chapterCount = modules.filter((m) => m !== "CORE").length;
-      const { subject, html } = reportReadyEmail({ first_name: firstName, download_url: downloadUrl, result_url: resultUrl, assets_base_url: appBaseUrl(), has_core: modules.includes("CORE" as any), chapter_count: chapterCount });
+      const { subject, html } = reportReadyEmail({ first_name: firstName, download_url: downloadUrl, result_url: resultUrl, assets_base_url: appBaseUrl(), has_core: modules.includes("CORE" as any), chapter_count: chapterCount, modules: modules as string[] });
       const tMail = Date.now();
       try {
         await sendEmail({ to: customerEmail, subject, html });
