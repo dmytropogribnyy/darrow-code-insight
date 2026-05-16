@@ -35,7 +35,7 @@ function LandingPage() {
           <div className="inline-flex items-center border border-gold/60 rounded-full px-4 py-2">
             <span
               className="font-sans font-semibold text-gold uppercase"
-              style={{ fontSize: "clamp(11px, 1.2vw, 12px)", letterSpacing: "0.18em" }}
+              style={{ fontSize: "clamp(11.5px, 1.2vw, 12px)", letterSpacing: "0.12em" }}
             >
               AI-POWERED PERSONAL ASTROLOGY REPORT · DARROW CODE METHOD · PDF
             </span>
