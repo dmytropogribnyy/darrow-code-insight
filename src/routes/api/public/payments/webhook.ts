@@ -9,6 +9,10 @@ import { createClient } from "@supabase/supabase-js";
 import { type StripeEnv, verifyWebhook } from "@/lib/stripe.server";
 import { MODULE_CODES, type ModuleCode } from "@/lib/modules";
 
+// All values that can land in modules_purchased.module_code (DB enum).
+const ALL_MODULE_VALUES: string[] = ["CORE", ...MODULE_CODES];
+type AnyModule = "CORE" | ModuleCode;
+
 let _sb: any = null;
 function sb(): any {
   if (!_sb) {
@@ -20,12 +24,12 @@ function sb(): any {
   return _sb;
 }
 
-function parseModules(raw: string | undefined): ModuleCode[] {
+function parseModules(raw: string | undefined): AnyModule[] {
   if (!raw) return [];
   return raw
     .split(",")
     .map((m) => m.trim().toUpperCase())
-    .filter((m): m is ModuleCode => (MODULE_CODES as string[]).includes(m));
+    .filter((m): m is AnyModule => ALL_MODULE_VALUES.includes(m));
 }
 
 function dispatcherUrl(): string | null {
@@ -77,12 +81,26 @@ async function handleCheckoutCompleted(session: any, context?: HandlerContext) {
     .update({ status: "paid", stripe_session_id: session.id })
     .eq("id", order_id);
 
-  const modules: ModuleCode[] =
-    order_type === "FULL_CODE_UPGRADE"
-      ? [...MODULE_CODES]
-      : order_type === "ADDONS"
-        ? parseModules(modules_raw)
-        : [];
+  // Determine modules to write to modules_purchased.
+  // Accept both legacy (CORE/ADDONS/FULL_CODE_UPGRADE) and new canonical
+  // (core/core_plus_modules/core_complete/core_complete_upgrade/addon) values.
+  const type = order_type.toLowerCase();
+  let modules: AnyModule[];
+  if (type === "full_code_upgrade" || type === "core_complete_upgrade") {
+    // Upgrade existing CORE-only customer to all 6 chapters (CORE row already exists implicitly).
+    modules = [...MODULE_CODES];
+  } else if (type === "core_complete") {
+    // First-purchase CORE Complete: CORE + all 6 chapters.
+    modules = ["CORE", ...MODULE_CODES];
+  } else if (type === "addons" || type === "addon" || type === "core_plus_modules") {
+    modules = parseModules(modules_raw);
+  } else if (type === "core") {
+    // Explicit CORE row for new flows; legacy CORE orders left implicit.
+    modules = parseModules(modules_raw);
+    if (modules.length === 0) modules = ["CORE"];
+  } else {
+    modules = parseModules(modules_raw);
+  }
 
   if (modules.length > 0) {
     const rows = modules.map((m) => ({

@@ -1,7 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useState } from "react";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { IntakeForm } from "@/components/IntakeForm";
+import { ProductSelector } from "@/components/ProductSelector";
+import { MODULE_CODES, type ModuleCode } from "@/lib/modules";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -24,6 +27,17 @@ export const Route = createFileRoute("/")({
 });
 
 function LandingPage() {
+  const [selected, setSelected] = useState<Set<ModuleCode>>(new Set());
+  const toggle = (code: ModuleCode) =>
+    setSelected((s) => {
+      const n = new Set(s);
+      if (n.has(code)) n.delete(code);
+      else n.add(code);
+      return n;
+    });
+  const selectAll = () => setSelected(new Set(MODULE_CODES));
+  const clear = () => setSelected(new Set());
+
   return (
     <div className="min-h-screen flex flex-col bg-paper">
       <SiteHeader onDark />
@@ -110,10 +124,10 @@ function LandingPage() {
             Western Astrology · Chinese Bazi · Numerology · Pattern Psychology · AI Synthesis
           </p>
 
-          {/* Optional chapters teaser */}
+          {/* Focused chapters teaser */}
           <div className="mt-3 sm:mt-4 max-w-[520px] mx-auto">
             <p className="text-center font-sans text-[14px] sm:text-[15px] md:text-[16px] text-light-grey leading-relaxed">
-              Optional focused chapters available after your CORE Report:
+              Start with CORE, add focused chapters, or get CORE Complete:
             </p>
             <div className="mt-2 flex flex-wrap justify-center gap-x-2.5 gap-y-1">
               {["LOVE", "MONEY", "BODY", "YEAR", "STYLE", "PLACE"].map((m, i) => (
@@ -141,11 +155,23 @@ function LandingPage() {
         />
       </section>
 
+      {/* PRODUCT SELECTOR — paper section */}
+      <section>
+        <div className="max-w-[560px] mx-auto px-4 sm:px-6 pt-10 sm:pt-12">
+          <ProductSelector
+            selected={selected}
+            onToggle={toggle}
+            onSelectAll={selectAll}
+            onClear={clear}
+          />
+        </div>
+      </section>
+
       {/* INTAKE — paper section */}
       <section className="flex-1">
-        <div className="max-w-[480px] mx-auto px-4 sm:px-6 pt-8 sm:pt-10 pb-4 sm:pb-5">
+        <div className="max-w-[480px] mx-auto px-4 sm:px-6 pt-6 sm:pt-8 pb-4 sm:pb-5">
           <p className="text-center font-medium text-[13px] sm:text-[14px] mb-5" style={{ color: "#4A402D" }}>
-            Start instantly. Your private report is generated after checkout.
+            Enter your birth data — checkout and your private report come next.
           </p>
           <div className="relative">
             {/* Subtle gold accent line above card */}
@@ -158,7 +184,7 @@ function LandingPage() {
               }}
             />
             <div className="intake-card">
-              <IntakeForm />
+              <IntakeForm chapters={Array.from(selected)} />
             </div>
           </div>
         </div>

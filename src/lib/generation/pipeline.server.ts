@@ -201,7 +201,8 @@ export async function runFullGenerationPipeline(order_id: string): Promise<void>
     if (customerEmail) {
       const downloadUrl = `${appBaseUrl()}/download/${download_token}`;
       const resultUrl = `${appBaseUrl()}/result/${download_token}`;
-      const { subject, html } = reportReadyEmail({ first_name: firstName, download_url: downloadUrl, result_url: resultUrl, assets_base_url: appBaseUrl() });
+      const chapterCount = modules.filter((m) => m !== "CORE").length;
+      const { subject, html } = reportReadyEmail({ first_name: firstName, download_url: downloadUrl, result_url: resultUrl, assets_base_url: appBaseUrl(), has_core: modules.includes("CORE" as any), chapter_count: chapterCount });
       try {
         await sendEmail({ to: customerEmail, subject, html });
         await sb.from("reports").update({ ready_email_sent_at: new Date().toISOString() }).eq("id", report_id);

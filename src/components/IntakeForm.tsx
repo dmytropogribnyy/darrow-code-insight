@@ -1,11 +1,16 @@
 import { useState } from "react";
 import { toast } from "sonner";
 import { useNavigate } from "@tanstack/react-router";
-import { createCoreCheckout } from "@/utils/checkout.functions";
+import { createCheckout } from "@/utils/checkout.functions";
 import { getStripeEnvironment } from "@/lib/stripe";
 import { StripeEmbeddedCheckoutBox } from "@/components/StripeEmbeddedCheckout";
 import { PlaceAutocomplete } from "@/components/PlaceAutocomplete";
 import type { PlaceSuggestion } from "@/utils/places.functions";
+import {
+  priceForModules,
+  type ModuleCode,
+} from "@/lib/modules";
+import { ctaLabelFor } from "@/components/ProductSelector";
 
 type FormState = {
   first_name: string;
@@ -25,7 +30,7 @@ const initial: FormState = {
   full_name_for_numerology: "",
 };
 
-export function IntakeForm() {
+export function IntakeForm({ chapters = [] }: { chapters?: ModuleCode[] } = {}) {
   const [form, setForm] = useState<FormState>(initial);
   const [resolvedPlace, setResolvedPlace] = useState<PlaceSuggestion | null>(null);
   const [placeError, setPlaceError] = useState<string | null>(null);
@@ -33,6 +38,10 @@ export function IntakeForm() {
   const [clientSecret, setClientSecret] = useState<string | null>(null);
   const [sessionId, setSessionId] = useState<string | null>(null);
   const navigate = useNavigate();
+
+  const quote = priceForModules(chapters, true);
+  const ctaText = ctaLabelFor(chapters);
+  const ctaPrice = `$${(quote.cents / 100).toFixed(2)}`;
 
   const update = (k: keyof FormState) => (e: React.ChangeEvent<HTMLInputElement>) =>
     setForm((f) => ({ ...f, [k]: e.target.value }));
@@ -50,8 +59,9 @@ export function IntakeForm() {
     setPlaceError(null);
     setSubmitting(true);
     try {
-      const res = await createCoreCheckout({
+      const res = await createCheckout({
         data: {
+          modules: chapters,
           first_name: form.first_name.trim(),
           email: form.email.trim(),
           date_of_birth: form.date_of_birth,
@@ -207,12 +217,12 @@ export function IntakeForm() {
           }}
           className="cta-premium w-full font-sans font-semibold rounded-[10px] py-3.5 px-4 text-[15px] sm:text-[16px] flex items-center justify-center gap-2.5 disabled:opacity-60"
         >
-          <span>{submitting ? "Preparing…" : "Unlock My CORE Report"}</span>
+          <span>{submitting ? "Preparing…" : ctaText}</span>
           <span
             className="font-mono text-[13px] px-2 py-[3px] rounded"
             style={{ backgroundColor: "#0A0F1E", color: "#D4AF37" }}
           >
-            $4.99
+            {ctaPrice}
           </span>
         </button>
         <p className="mt-4 text-[12.5px] sm:text-[13px] font-medium leading-relaxed" style={{ color: "#4A402D" }}>
