@@ -74,30 +74,17 @@ function LandingPage() {
           </p>
 
           {/* Brand continuity */}
-          <p className="mt-3 text-[13px] sm:text-[14px] md:text-[15px] text-light-grey leading-[1.6] font-sans">
+          <p className="mt-3 text-[14px] sm:text-[15px] md:text-[16px] text-light-grey leading-[1.6] font-sans font-medium">
             AI-powered · Built from your birth data · Decoded through the Darrow Code Method
           </p>
 
           {/* Explainer */}
-          <p className="mt-8 text-[14px] sm:text-[15px] md:text-[16px] text-muted-grey max-w-[620px] mx-auto leading-[1.65]">
-            Get a private AI-powered astrology report built from your birth chart — revealing your{" "}
-            <span className="text-paper">love pattern</span>,{" "}
-            <span className="text-paper">money code</span>,{" "}
-            <span className="text-paper">body rhythm</span>,{" "}
-            <span className="text-paper">timing cycle</span> and{" "}
-            <span className="text-paper">direction signal</span>.
-          </p>
-
-          {/* Editorial whisper */}
-          <p
-            className="mt-7 sm:mt-8 max-w-[520px] mx-auto text-center font-serif italic leading-[1.5]"
-            style={{ fontSize: "clamp(14px, 1.8vw, 16px)", color: "#9CA3AF" }}
-          >
-            When the pattern becomes visible, life gets easier to read.
+          <p className="mt-6 sm:mt-7 text-[15px] sm:text-[16px] md:text-[17px] text-muted-grey max-w-[620px] mx-auto leading-[1.6] font-sans">
+            Get a private AI-powered astrology report built from your birth data — revealing your personal pattern: how you think, react, choose and move through change.
           </p>
 
           {/* Quote box */}
-          <div className="mt-7 sm:mt-8 max-w-[460px] mx-auto text-left bg-white/[0.03] border-l-2 border-gold pl-5 py-4 rounded-r-sm">
+          <div className="mt-6 sm:mt-7 max-w-[460px] mx-auto text-left bg-white/[0.03] border-l-2 border-gold pl-5 py-4 rounded-r-sm">
             <p className="font-serif italic text-light-grey text-[16px] leading-snug">
               "One astrology tradition shows part of the picture.
               <br />
