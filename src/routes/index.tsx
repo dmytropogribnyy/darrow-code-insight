@@ -38,6 +38,16 @@ function LandingPage() {
   const selectAll = () => setSelected(new Set(MODULE_CODES));
   const clear = () => setSelected(new Set());
 
+  const jumpToChapter = (key: string) => {
+    const el = document.getElementById(`chapter-${key}`);
+    if (!el) return;
+    el.scrollIntoView({ behavior: "smooth", block: "center" });
+    el.classList.remove("chapter-pulse");
+    void el.offsetWidth; // restart animation
+    el.classList.add("chapter-pulse");
+    window.setTimeout(() => el.classList.remove("chapter-pulse"), 1800);
+  };
+
   return (
     <div className="min-h-screen flex flex-col bg-paper">
       <SiteHeader onDark />
