@@ -190,7 +190,13 @@ export function IntakeForm() {
       </div>
 
       <div className="pt-3 text-center">
-        <p className="text-[11px] sm:text-[12px] tracking-[0.14em] sm:tracking-[0.16em] uppercase text-gold mb-2 font-semibold">Launch price</p>
+        <div className="flex items-center justify-center gap-3 mb-2.5" aria-hidden="false">
+          <span className="h-px w-8 sm:w-10" style={{ backgroundColor: "rgba(212,175,55,0.45)" }} />
+          <p className="text-[11px] sm:text-[12px] tracking-[0.18em] sm:tracking-[0.2em] uppercase text-gold font-semibold">
+            Launch price
+          </p>
+          <span className="h-px w-8 sm:w-10" style={{ backgroundColor: "rgba(212,175,55,0.45)" }} />
+        </div>
         <button
           type="submit"
           disabled={submitting}
