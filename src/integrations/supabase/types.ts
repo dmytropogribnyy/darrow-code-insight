@@ -14,6 +14,21 @@ export type Database = {
   }
   public: {
     Tables: {
+      admin_alerts: {
+        Row: {
+          kind: string
+          last_sent_at: string
+        }
+        Insert: {
+          kind: string
+          last_sent_at?: string
+        }
+        Update: {
+          kind?: string
+          last_sent_at?: string
+        }
+        Relationships: []
+      }
       astro_data: {
         Row: {
           birth_time_source: string | null
@@ -403,7 +418,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      last_sweeper_run_at: { Args: never; Returns: string }
     }
     Enums: {
       generation_job_status: "queued" | "processing" | "complete" | "failed"
