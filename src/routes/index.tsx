@@ -132,9 +132,23 @@ function LandingPage() {
             <div className="mt-2 flex flex-wrap justify-center gap-x-2.5 gap-y-1">
               {["LOVE", "MONEY", "BODY", "YEAR", "STYLE", "PLACE"].map((m, i) => (
                 <span key={m} className="flex items-center gap-x-2.5">
-                  <span className="font-sans font-semibold text-[13.5px] sm:text-[14px] md:text-[15px] text-[#D4AF37]">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const el = document.getElementById(`chapter-${m}`);
+                      if (!el) return;
+                      el.scrollIntoView({ behavior: "smooth", block: "center" });
+                      el.classList.remove("chapter-pulse");
+                      // restart animation
+                      void el.offsetWidth;
+                      el.classList.add("chapter-pulse");
+                      window.setTimeout(() => el.classList.remove("chapter-pulse"), 1800);
+                    }}
+                    aria-label={`Jump to ${m} chapter`}
+                    className="font-sans font-semibold text-[13.5px] sm:text-[14px] md:text-[15px] text-[#D4AF37] cursor-pointer border-b border-transparent hover:border-[#D4AF37]/70 hover:text-[#E6C35A] transition-colors duration-150 pb-px"
+                  >
                     {m}
-                  </span>
+                  </button>
                   {i < 5 && (
                     <span className="text-[#6B6B6B] text-[12px]">·</span>
                   )}
