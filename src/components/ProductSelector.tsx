@@ -146,6 +146,7 @@ export function ProductSelector({ selected, onToggle, onSelectAll, onClear }: Pr
           return (
             <button
               key={code}
+              id={`chapter-${code}`}
               type="button"
               onClick={() => onToggle(code)}
               className="text-left rounded-[8px] border px-3.5 py-3 transition flex items-start gap-2.5"
