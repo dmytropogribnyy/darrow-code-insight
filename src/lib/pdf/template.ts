@@ -171,9 +171,16 @@ function renderAddon(code: string, mod: DarrowModule, clientName: string): strin
   `;
 }
 
-function renderCrossSell(generated: string[]): string {
+function renderCrossSell(generated: string[], symbolSmall: string): string {
   const remaining = ADDONS.filter((a) => !generated.includes(a.code));
-  if (!remaining.length) return "";
+  const closing = `
+    <section class="page page-closing">
+      <img class="closing-symbol" src="${symbolSmall}" alt="" />
+      <div class="brand">Darrow Code</div>
+      <p class="watermark-note">More than a horoscope. Less than a consultation.</p>
+    </section>
+  `;
+  if (!remaining.length) return closing;
   return `
     <section class="page page-crosssell">
       <div class="brand">Darrow Code · Ecosystem</div>
@@ -189,11 +196,7 @@ function renderCrossSell(generated: string[]): string {
         `).join("")}
       </div>
     </section>
-    <section class="page page-closing">
-      <img class="closing-symbol" src="${symbolSmall}" alt="" />
-      <div class="brand">Darrow Code</div>
-      <p class="watermark-note">More than a horoscope. Less than a consultation.</p>
-    </section>
+    ${closing}
   `;
 }
 
