@@ -30,7 +30,7 @@ const initial: FormState = {
   full_name_for_numerology: "",
 };
 
-export function IntakeForm() {
+export function IntakeForm({ chapters = [] }: { chapters?: ModuleCode[] } = {}) {
   const [form, setForm] = useState<FormState>(initial);
   const [resolvedPlace, setResolvedPlace] = useState<PlaceSuggestion | null>(null);
   const [placeError, setPlaceError] = useState<string | null>(null);
@@ -38,6 +38,10 @@ export function IntakeForm() {
   const [clientSecret, setClientSecret] = useState<string | null>(null);
   const [sessionId, setSessionId] = useState<string | null>(null);
   const navigate = useNavigate();
+
+  const quote = priceForModules(chapters, true);
+  const ctaText = ctaLabelFor(chapters);
+  const ctaPrice = `$${(quote.cents / 100).toFixed(2)}`;
 
   const update = (k: keyof FormState) => (e: React.ChangeEvent<HTMLInputElement>) =>
     setForm((f) => ({ ...f, [k]: e.target.value }));
