@@ -388,8 +388,23 @@ export const getReportContext = createServerFn({ method: "POST" })
     // New orders write an explicit CORE row; we union both so the UI is consistent.
     const ownedSet = new Set<string>(["CORE", ...(owned ?? []).map((r: any) => r.module_code)]);
 
+    // All sibling reports for the same intake — each is its own PDF.
+    const { data: siblings } = await sb
+      .from("reports")
+      .select("download_token, modules_array, generation_status, generation_error, created_at")
+      .eq("intake_id", report.intake_id)
+      .order("created_at", { ascending: false });
+
     return {
       generation_status: report.generation_status as string,
       owned_modules: Array.from(ownedSet),
+      reports: (siblings ?? []).map((r: any) => ({
+        report_token: r.download_token as string,
+        modules: (r.modules_array ?? []) as string[],
+        status: r.generation_status as string,
+        error: (r.generation_error as string | null) ?? null,
+        created_at: r.created_at as string,
+        is_current: (r.download_token as string) === data.report_token,
+      })),
     };
   });
