@@ -311,6 +311,13 @@ export async function runFullGenerationPipeline(order_id: string): Promise<void>
       updated_at: new Date().toISOString(),
     }).eq("order_id", order_id);
     console.error("[pipeline] job failure recorded", { order_id, should_retry: shouldRetry, error: msg });
+    logStage({
+      stage: "status_updated",
+      result: shouldRetry ? "retry" : "failed",
+      order_id,
+      error: msg,
+      extra: { attempt_count: failedJob?.attempt_count ?? 0 },
+    });
 
     if (shouldRetry) return;
 
