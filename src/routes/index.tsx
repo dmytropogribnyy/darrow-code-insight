@@ -128,7 +128,7 @@ function LandingPage() {
 
       {/* INTAKE — paper section */}
       <section className="flex-1">
-        <div className="max-w-[480px] mx-auto px-4 sm:px-6 pt-8 sm:pt-10 pb-8 sm:pb-10">
+        <div className="max-w-[480px] mx-auto px-4 sm:px-6 pt-8 sm:pt-10 pb-4 sm:pb-5">
           <p className="text-center text-[13px] mb-5" style={{ color: "#6B6B6B" }}>
             Start instantly. Your private report is generated after checkout.
           </p>
@@ -137,6 +137,11 @@ function LandingPage() {
           </div>
         </div>
       </section>
+
+      {/* Divider */}
+      <div className="max-w-[480px] mx-auto px-4 sm:px-6">
+        <div className="border-t border-[#E5E7EB]/40" />
+      </div>
 
       <SiteFooter />
     </div>
