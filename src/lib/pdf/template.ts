@@ -177,7 +177,7 @@ function renderCrossSell(generated: string[], symbolSmall: string): string {
     <section class="page page-closing">
       <img class="closing-symbol" src="${symbolSmall}" alt="" />
       <div class="brand">Darrow Code</div>
-      <p class="watermark-note">More than a horoscope. Less than a consultation.</p>
+      <p class="watermark-note">More than a horoscope. Your private birth code.</p>
     </section>
   `;
   if (!remaining.length) return closing;
