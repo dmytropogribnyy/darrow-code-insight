@@ -61,7 +61,7 @@ export const Route = createFileRoute("/api/public/jobs/resend-ready-email")({
         const modulesArray: string[] = Array.isArray(rep.modules_array) ? rep.modules_array : [];
         const hasCore = modulesArray.includes("CORE");
         const chapterCount = modulesArray.filter((m) => m !== "CORE").length;
-        const { subject, html } = reportReadyEmail({ first_name: customer.first_name ?? null, download_url: downloadUrl, result_url: resultUrl, assets_base_url: appBaseUrl(), has_core: hasCore, chapter_count: chapterCount });
+        const { subject, html } = reportReadyEmail({ first_name: customer.first_name ?? null, download_url: downloadUrl, result_url: resultUrl, assets_base_url: appBaseUrl(), has_core: hasCore, chapter_count: chapterCount, modules: modulesArray });
         try {
           const result = await sendEmail({ to: customer.email, subject, html });
           await s.from("reports").update({ ready_email_sent_at: new Date().toISOString() }).eq("id", rep.id);
