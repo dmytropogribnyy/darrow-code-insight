@@ -19,7 +19,7 @@ function sb(): any {
 
 function isAuthorized(request: Request): boolean {
   const secret = process.env.JOB_DISPATCH_SECRET;
-  const publishableKey = process.env.SUPABASE_PUBLISHABLE_KEY;
+  const publishableKey = process.env.SUPABASE_PUBLISHABLE_KEY ?? process.env.VITE_SUPABASE_PUBLISHABLE_KEY;
   const auth = request.headers.get("authorization") ?? "";
   const provided = auth.startsWith("Bearer ") ? auth.slice(7) : request.headers.get("x-job-secret") ?? "";
   const apikey = request.headers.get("apikey") ?? "";

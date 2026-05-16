@@ -11,6 +11,7 @@ const ANTHROPIC_URL = "https://api.anthropic.com/v1/messages";
 const MAX_TOKENS = 12000;
 const TOOL_NAME = "emit_darrow_report";
 const MODEL_TIMEOUT_MS = 6 * 60 * 1000;
+const KNOWN_MODULES = ["CORE", "LOVE", "MONEY", "BODY", "YEAR", "STYLE", "PLACE"];
 
 interface CallArgs {
   userPrompt: string;
@@ -89,20 +90,84 @@ export interface GenerateResult {
   model_used: string;
 }
 
-export async function generateDarrowReport(userPrompt: string): Promise<GenerateResult> {
-  const def = process.env.ANTHROPIC_MODEL_DEFAULT;
-  const fb = process.env.ANTHROPIC_MODEL_FALLBACK;
-  if (!def) throw new Error("ANTHROPIC_MODEL_DEFAULT is not configured");
+function requestedModules(userPrompt: string): string[] {
+  const modulesLine = userPrompt.match(/Modules to include \(in order\):\s*(.+)/)?.[1] ?? "CORE";
+  const modules = modulesLine
+    .split(",")
+    .map((m) => m.trim().toUpperCase())
+    .filter((m) => KNOWN_MODULES.includes(m));
+  return modules.includes("CORE") ? modules : ["CORE", ...modules];
+}
 
+function promptForModules(userPrompt: string, modules: string[]): string {
+  const replaced = userPrompt.replace(
+    /Modules to include \(in order\):\s*.+/,
+    `Modules to include (in order): ${modules.join(", ")}`,
+  );
+  return `${replaced}\n\nGeneration scope for this call: return generated_modules exactly ${modules.join(", ")}. Do not include paid modules outside this scope.`;
+}
+
+async function callWithFallback(userPrompt: string, firstModel: string, fallbackModel?: string): Promise<GenerateResult> {
   try {
-    const report = await callAnthropic({ userPrompt, model: def });
-    return { report, model_used: def };
+    const report = await callAnthropic({ userPrompt, model: firstModel });
+    return { report, model_used: firstModel };
   } catch (e: any) {
     const status = e?.status as number | undefined;
     const retryable = !status || status >= 500 || status === 429 || status === 408;
-    if (!fb || !retryable) throw e;
-    console.warn(`[anthropic] default model failed, falling back to ${fb}:`, e?.message);
-    const report = await callAnthropic({ userPrompt, model: fb });
-    return { report, model_used: fb };
+    if (!fallbackModel || fallbackModel === firstModel || !retryable) throw e;
+    console.warn(`[anthropic] ${firstModel} failed, falling back to ${fallbackModel}:`, e?.message);
+    const report = await callAnthropic({ userPrompt, model: fallbackModel });
+    return { report, model_used: fallbackModel };
   }
+}
+
+async function mapWithConcurrency<T, R>(items: T[], limit: number, fn: (item: T) => Promise<R>): Promise<R[]> {
+  const results: R[] = [];
+  let index = 0;
+  async function worker() {
+    while (index < items.length) {
+      const current = index++;
+      results[current] = await fn(items[current]);
+    }
+  }
+  await Promise.all(Array.from({ length: Math.min(limit, items.length) }, worker));
+  return results;
+}
+
+async function generateChunkedReport(userPrompt: string, modules: string[], model: string, fallbackModel?: string): Promise<GenerateResult> {
+  console.log("[anthropic] using chunked generation", { modules });
+  const core = await callWithFallback(promptForModules(userPrompt, ["CORE"]), model, fallbackModel);
+  const addons = modules.filter((m) => m !== "CORE");
+  const addonResults = await mapWithConcurrency(addons, 2, async (moduleCode) => {
+    const result = await callWithFallback(promptForModules(userPrompt, ["CORE", moduleCode]), model, fallbackModel);
+    const moduleBody = result.report.modules?.[moduleCode];
+    if (!moduleBody) throw new Error(`Anthropic chunk returned no ${moduleCode} module`);
+    return { moduleCode, moduleBody, model_used: result.model_used };
+  });
+
+  const merged: DarrowReport = {
+    ...core.report,
+    generated_modules: modules,
+    modules: { CORE: core.report.modules.CORE },
+    closing: {
+      ...core.report.closing,
+      grand_synthesis: core.report.closing.grand_synthesis ?? core.report.closing.executive_summary,
+    },
+  };
+  for (const chunk of addonResults) merged.modules[chunk.moduleCode] = chunk.moduleBody;
+  const parsed = DarrowReportSchema.safeParse(merged);
+  if (!parsed.success) throw new Error(`Merged Anthropic chunks failed schema: ${parsed.error.message.slice(0, 400)}`);
+  return { report: parsed.data, model_used: Array.from(new Set([core.model_used, ...addonResults.map((r) => r.model_used)])).join("+") };
+}
+
+export async function generateDarrowReport(userPrompt: string): Promise<GenerateResult> {
+  const def = process.env.ANTHROPIC_MODEL_DEFAULT;
+  const fb = process.env.ANTHROPIC_MODEL_FALLBACK;
+  const premium = process.env.ANTHROPIC_MODEL_PREMIUM;
+  if (!def) throw new Error("ANTHROPIC_MODEL_DEFAULT is not configured");
+  const modules = requestedModules(userPrompt);
+  if (modules.length >= 4) return generateChunkedReport(userPrompt, modules, def, fb);
+
+  const firstModel = modules.length >= 3 && premium ? premium : def;
+  return callWithFallback(userPrompt, firstModel, fb);
 }

@@ -25,6 +25,7 @@ function admin(): any {
 
 const StripeEnvSchema = z.enum(["sandbox", "live"]);
 const ModuleCodeSchema = z.enum(MODULE_CODES as [ModuleCode, ...ModuleCode[]]);
+const STUCK_PROCESSING_MS = 4 * 60 * 1000;
 
 async function geocodeCity(city: string) {
   const { geocodeCityGeoapify } = await import("@/lib/geocoding.server");
@@ -321,6 +322,27 @@ export const getGenerationStatus = createServerFn({ method: "POST" })
       return { order_status: "pending" as const, generation_status: null, report_token: null };
     }
 
+    let { data: job } = await sb
+      .from("generation_jobs")
+      .select("status, attempt_count, last_error, updated_at")
+      .eq("order_id", order.id)
+      .maybeSingle();
+
+    if ((order.status === "paid" || order.status === "processing") && !job) {
+      const { data: createdJob } = await sb
+        .from("generation_jobs")
+        .insert({ order_id: order.id, status: "queued" })
+        .select("status, attempt_count, last_error, updated_at")
+        .single();
+      job = createdJob;
+      console.log("[generation-status] recreated missing job", { order_id: order.id });
+    }
+
+    const jobAgeMs = job?.updated_at ? Date.now() - new Date(job.updated_at).getTime() : null;
+    const jobLooksStuck =
+      (job?.status === "queued" && jobAgeMs !== null && jobAgeMs > 60 * 1000) ||
+      (job?.status === "processing" && jobAgeMs !== null && jobAgeMs > STUCK_PROCESSING_MS);
+
     const { data: report } = await sb
       .from("reports")
       .select("download_token, generation_status, generation_error")
@@ -333,6 +355,11 @@ export const getGenerationStatus = createServerFn({ method: "POST" })
       order_status: order.status as string,
       generation_status: (report?.generation_status as string) ?? null,
       generation_error: (report?.generation_error as string | null) ?? null,
+      job_status: (job?.status as string | null) ?? null,
+      job_attempt_count: (job?.attempt_count as number | null) ?? null,
+      job_last_error: (job?.last_error as string | null) ?? null,
+      job_age_ms: jobAgeMs,
+      job_recovery_pending: jobLooksStuck,
       report_token:
         report?.generation_status === "complete" ? (report.download_token as string) : null,
     };
