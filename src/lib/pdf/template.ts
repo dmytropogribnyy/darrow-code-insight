@@ -257,7 +257,7 @@ export function renderReportHtml(report: DarrowReport, opts: { assetsBaseUrl?: s
     }
     @bottom-left {
       content: "";
-      background-image: url("${base}/brand/darrow-symbol-small.png");
+      background-image: url("${symbolDataUrl}");
       background-repeat: no-repeat;
       background-size: contain;
       background-position: left center;
