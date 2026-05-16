@@ -75,6 +75,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
+      { name: "theme-color", content: "#0A0F1E" },
       { title: "Darrow Code Astro Report" },
       {
         name: "description",
@@ -89,14 +90,21 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
           "Your private AI-powered astrology report — built from your birth data and decoded through the Darrow Code Method.",
       },
       { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary" },
-      { name: "twitter:site", content: "@Lovable" },
+      { property: "og:image", content: "/brand/darrow-social-preview.png" },
+      { property: "og:image:width", content: "1200" },
+      { property: "og:image:height", content: "630" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:image", content: "/brand/darrow-social-preview.png" },
+      { name: "twitter:title", content: "Darrow Code Astro Report" },
+      {
+        name: "twitter:description",
+        content: "AI-powered personal astrology · Darrow Code Method.",
+      },
     ],
     links: [
-      {
-        rel: "stylesheet",
-        href: appCss,
-      },
+      { rel: "icon", type: "image/png", href: "/brand/darrow-favicon.png" },
+      { rel: "apple-touch-icon", href: "/brand/darrow-favicon.png" },
+      { rel: "stylesheet", href: appCss },
     ],
   }),
   shellComponent: RootShell,
