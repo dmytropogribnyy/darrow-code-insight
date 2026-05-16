@@ -240,18 +240,27 @@ export async function runFullGenerationPipeline(order_id: string): Promise<void>
     const msg = String(e?.message ?? e).slice(0, 1000);
     console.error("[pipeline] failed for order", order_id, msg);
 
+    const { data: failedJob } = await sb
+      .from("generation_jobs")
+      .select("attempt_count")
+      .eq("order_id", order_id)
+      .maybeSingle();
+    const shouldRetry = (failedJob?.attempt_count ?? 0) < 2;
+
     if (report_id) {
       await sb.from("reports").update({
-        generation_status: "failed_generation",
+        generation_status: shouldRetry ? "processing" : "failed_generation",
         generation_error: msg,
       }).eq("id", report_id);
     }
     await sb.from("orders").update({ status: "paid" }).eq("id", order_id);
     await sb.from("generation_jobs").update({
-      status: "failed",
+      status: shouldRetry ? "queued" : "failed",
       last_error: msg,
       updated_at: new Date().toISOString(),
     }).eq("order_id", order_id);
+
+    if (shouldRetry) return;
 
     // Delay email + admin alert.
     if (customerEmail) {
