@@ -10,6 +10,7 @@ import { buildUserPrompt } from "@/lib/ai/user-prompt";
 import { renderReportHtml } from "@/lib/pdf/template";
 import { renderHtmlToPdf } from "@/lib/pdf/apitemplate.server";
 import { sendEmail, reportReadyEmail, reportDelayEmail } from "@/lib/email/resend.server";
+import { logStage } from "@/lib/observability/pipeline-log";
 
 const STUCK_PROCESSING_MS = 4 * 60 * 1000; // 4 min
 const STEP_TIMEOUT_MS = 8 * 60 * 1000;
