@@ -46,6 +46,7 @@ export function ProductSelector({ selected, onToggle, onSelectAll, onClear }: Pr
 
       {/* CORE card — locked on (foundation) */}
       <div
+        id="chapter-CORE"
         className="rounded-[10px] border-2 px-4 py-4 mb-3 flex items-start gap-3"
         style={{
           borderColor: "#D4AF37",
