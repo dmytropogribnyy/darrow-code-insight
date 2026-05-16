@@ -1,0 +1,1 @@
+UPDATE public.reports SET ready_email_sent_at = now() WHERE id = '093f0c66-3aab-485b-9aa5-39afa8f4fb27' AND ready_email_sent_at IS NULL;
