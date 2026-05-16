@@ -36,7 +36,6 @@ function ResultPage() {
     queryFn: () => getReportContext({ data: { report_token: reportToken } }),
   });
 
-  const intakeId = ctxQ.data?.intake_id;
   const owned = new Set<string>(ctxQ.data?.owned_modules ?? []);
   const remaining = MODULES.filter((m) => !owned.has(m.code));
   const ownsOnlyCore = owned.size === 0;
@@ -52,7 +51,7 @@ function ResultPage() {
   const total = selected.size * 2.99;
 
   async function startUpsell(orderType: "ADDONS" | "FULL_CODE_UPGRADE") {
-    if (!intakeId) return;
+    if (!ctxQ.data) return;
     setBusy(true);
     try {
       const modules =
@@ -61,7 +60,7 @@ function ResultPage() {
           : (Array.from(selected) as ModuleCode[]);
       const res = await createUpsellCheckout({
         data: {
-          intake_id: intakeId,
+          report_token: reportToken,
           modules,
           order_type: orderType,
           origin: window.location.origin,
