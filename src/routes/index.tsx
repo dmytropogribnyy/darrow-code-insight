@@ -30,7 +30,7 @@ function LandingPage() {
 
       {/* HERO — dark navy section */}
       <section className="bg-navy text-light-grey">
-        <div className="max-w-3xl mx-auto px-6 pt-16 pb-12 text-center">
+        <div className="max-w-3xl mx-auto px-6 pt-12 sm:pt-16 pb-10 sm:pb-12 text-center">
           {/* Top badge */}
           <div className="inline-flex items-center border border-gold/60 rounded-full px-4 py-2">
             <span
