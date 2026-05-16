@@ -16,18 +16,6 @@ function sb(): any {
 
 const STUCK_PROCESSING_MS = 4 * 60 * 1000; // 4 min
 
-type HandlerContext = {
-  executionCtx?: {
-    waitUntil?: (promise: Promise<unknown>) => void;
-  };
-};
-
-function waitUntilFrom(context?: HandlerContext): ((promise: Promise<unknown>) => void) | undefined {
-  if (context?.executionCtx?.waitUntil) return context.executionCtx.waitUntil.bind(context.executionCtx);
-  const globalCtx = (globalThis as { __executionCtx?: HandlerContext["executionCtx"] }).__executionCtx;
-  return globalCtx?.waitUntil?.bind(globalCtx);
-}
-
 function isAuthorized(request: Request): boolean {
   const secret = process.env.JOB_DISPATCH_SECRET;
   const publishableKey = process.env.SUPABASE_PUBLISHABLE_KEY;
@@ -57,7 +45,7 @@ async function pickOrderId(body: any): Promise<string | null> {
   return null;
 }
 
-async function dispatchGeneration(order_id: string, context?: HandlerContext): Promise<Response> {
+async function dispatchGeneration(order_id: string): Promise<Response> {
   const run = runFullGenerationPipeline(order_id);
   try {
     await run;
@@ -73,7 +61,7 @@ async function dispatchGeneration(order_id: string, context?: HandlerContext): P
 export const Route = createFileRoute("/api/public/jobs/process-generation")({
   server: {
     handlers: {
-      POST: async ({ request, context }) => {
+      POST: async ({ request }) => {
         if (!process.env.JOB_DISPATCH_SECRET) return new Response("not configured", { status: 500 });
         if (!isAuthorized(request)) return new Response("Unauthorized", { status: 401 });
 
@@ -82,15 +70,15 @@ export const Route = createFileRoute("/api/public/jobs/process-generation")({
 
         const order_id = await pickOrderId(body);
         if (!order_id) return Response.json({ ok: true, picked: null });
-        return dispatchGeneration(order_id, context as unknown as HandlerContext);
+        return dispatchGeneration(order_id);
       },
-      GET: async ({ request, context }) => {
+      GET: async ({ request }) => {
         if (!process.env.JOB_DISPATCH_SECRET) return new Response("not configured", { status: 500 });
         if (!isAuthorized(request)) return new Response("Unauthorized", { status: 401 });
 
         const order_id = await pickOrderId({});
         if (!order_id) return Response.json({ ok: true, picked: null });
-        return dispatchGeneration(order_id, context as unknown as HandlerContext);
+        return dispatchGeneration(order_id);
       },
     },
   },
