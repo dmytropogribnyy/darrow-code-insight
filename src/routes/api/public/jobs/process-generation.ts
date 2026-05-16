@@ -137,6 +137,7 @@ async function sendOneMissingReadyEmail(): Promise<boolean> {
     assets_base_url: appBaseUrl(),
     has_core: modulesArray.includes("CORE"),
     chapter_count: modulesArray.filter((m) => m !== "CORE").length,
+    modules: modulesArray,
   });
   await sendEmail({ to: customer.email, subject, html });
   await s.from("reports").update({ ready_email_sent_at: new Date().toISOString() }).eq("id", rep.id);
