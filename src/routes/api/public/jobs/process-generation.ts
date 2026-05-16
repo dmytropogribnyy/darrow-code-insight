@@ -30,10 +30,11 @@ function waitUntilFrom(context?: HandlerContext): ((promise: Promise<unknown>) =
 
 function isAuthorized(request: Request): boolean {
   const secret = process.env.JOB_DISPATCH_SECRET;
-  if (!secret) return false;
+  const publishableKey = process.env.SUPABASE_PUBLISHABLE_KEY;
   const auth = request.headers.get("authorization") ?? "";
   const provided = auth.startsWith("Bearer ") ? auth.slice(7) : request.headers.get("x-job-secret") ?? "";
-  return provided === secret;
+  const apikey = request.headers.get("apikey") ?? "";
+  return (!!secret && provided === secret) || (!!publishableKey && apikey === publishableKey);
 }
 
 async function pickOrderId(body: any): Promise<string | null> {
