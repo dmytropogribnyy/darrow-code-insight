@@ -11,7 +11,9 @@ import { renderReportHtml } from "@/lib/pdf/template";
 import { renderHtmlToPdf } from "@/lib/pdf/apitemplate.server";
 import { sendEmail, reportReadyEmail, reportDelayEmail } from "@/lib/email/resend.server";
 
-const STUCK_PROCESSING_MS = 10 * 60 * 1000; // 10 min
+const STUCK_PROCESSING_MS = 4 * 60 * 1000; // 4 min
+const STEP_TIMEOUT_MS = 8 * 60 * 1000;
+const MAX_GENERATION_ATTEMPTS = 2;
 
 let _sb: any = null;
 function admin(): any {
@@ -25,6 +27,35 @@ function appBaseUrl(): string {
   const u = process.env.APP_BASE_URL;
   if (!u) throw new Error("APP_BASE_URL is not configured");
   return u.replace(/\/$/, "");
+}
+
+async function withTimeout<T>(label: string, promise: Promise<T>, ms = STEP_TIMEOUT_MS, onTick?: () => Promise<void>): Promise<T> {
+  let timeout: ReturnType<typeof setTimeout> | undefined;
+  let interval: ReturnType<typeof setInterval> | undefined;
+  try {
+    if (onTick) {
+      interval = setInterval(() => {
+        onTick().catch((e) => console.error(`[pipeline] ${label} heartbeat failed`, e));
+      }, 30 * 1000);
+    }
+    return await Promise.race([
+      promise,
+      new Promise<never>((_, reject) => {
+        timeout = setTimeout(() => reject(new Error(`${label} timed out after ${Math.round(ms / 1000)}s`)), ms);
+      }),
+    ]);
+  } finally {
+    if (timeout) clearTimeout(timeout);
+    if (interval) clearInterval(interval);
+  }
+}
+
+async function heartbeat(order_id: string): Promise<void> {
+  await admin()
+    .from("generation_jobs")
+    .update({ updated_at: new Date().toISOString() })
+    .eq("order_id", order_id)
+    .eq("status", "processing");
 }
 
 async function loadOrderContext(order_id: string) {
@@ -99,6 +130,23 @@ async function claimGenerationJob(sb: any, order_id: string): Promise<boolean> {
     job.status === "processing" && Number.isFinite(updatedAtMs) && Date.now() - updatedAtMs > STUCK_PROCESSING_MS;
   if (job.status !== "queued" && !isStuckProcessing) return false;
 
+  if ((job.attempt_count ?? 0) >= MAX_GENERATION_ATTEMPTS) {
+    const msg = `Generation timed out after ${MAX_GENERATION_ATTEMPTS} attempts`;
+    const { data: order } = await sb.from("orders").select("intake_id").eq("id", order_id).maybeSingle();
+    if (order?.intake_id) {
+      await sb.from("reports").update({
+        generation_status: "failed_generation",
+        generation_error: msg,
+      }).eq("intake_id", order.intake_id).neq("generation_status", "complete");
+    }
+    await sb.from("generation_jobs").update({
+      status: "failed",
+      last_error: msg,
+      updated_at: new Date().toISOString(),
+    }).eq("id", job.id);
+    return false;
+  }
+
   const { data: claimed, error: claimErr } = await sb
     .from("generation_jobs")
     .update({
@@ -147,7 +195,8 @@ export async function runFullGenerationPipeline(order_id: string): Promise<void>
       timezone: intake.timezone ?? "UTC",
       full_name_for_numerology: intake.full_name_for_numerology ?? customer?.first_name ?? null,
     };
-    const chart = await provider.computeNatal(natal);
+    const chart = await withTimeout("Astro calculation", provider.computeNatal(natal), 30 * 1000, () => heartbeat(order_id));
+    await heartbeat(order_id);
 
     await sb.from("astro_data").insert({
       intake_id: intake.id,
@@ -169,11 +218,13 @@ export async function runFullGenerationPipeline(order_id: string): Promise<void>
       modules,
       chart,
     });
-    const { report, model_used } = await generateDarrowReport(userPrompt);
+    const { report, model_used } = await withTimeout("AI report generation", generateDarrowReport(userPrompt), STEP_TIMEOUT_MS, () => heartbeat(order_id));
+    await heartbeat(order_id);
 
     // 3) HTML → PDF.
     const html = renderReportHtml(report, { assetsBaseUrl: appBaseUrl() });
-    const pdfBytes = await renderHtmlToPdf(html);
+    const pdfBytes = await withTimeout("PDF rendering", renderHtmlToPdf(html), 3 * 60 * 1000, () => heartbeat(order_id));
+    await heartbeat(order_id);
 
     // 4) Upload PDF.
     const path = `${download_token}.pdf`;
@@ -214,18 +265,27 @@ export async function runFullGenerationPipeline(order_id: string): Promise<void>
     const msg = String(e?.message ?? e).slice(0, 1000);
     console.error("[pipeline] failed for order", order_id, msg);
 
+    const { data: failedJob } = await sb
+      .from("generation_jobs")
+      .select("attempt_count")
+      .eq("order_id", order_id)
+      .maybeSingle();
+    const shouldRetry = (failedJob?.attempt_count ?? 0) < 2;
+
     if (report_id) {
       await sb.from("reports").update({
-        generation_status: "failed_generation",
+        generation_status: shouldRetry ? "processing" : "failed_generation",
         generation_error: msg,
       }).eq("id", report_id);
     }
     await sb.from("orders").update({ status: "paid" }).eq("id", order_id);
     await sb.from("generation_jobs").update({
-      status: "failed",
+      status: shouldRetry ? "queued" : "failed",
       last_error: msg,
       updated_at: new Date().toISOString(),
     }).eq("order_id", order_id);
+
+    if (shouldRetry) return;
 
     // Delay email + admin alert.
     if (customerEmail) {

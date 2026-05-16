@@ -14,7 +14,7 @@ function sb(): any {
   return _sb;
 }
 
-const STUCK_PROCESSING_MS = 10 * 60 * 1000; // 10 min
+const STUCK_PROCESSING_MS = 4 * 60 * 1000; // 4 min
 
 type HandlerContext = {
   executionCtx?: {
