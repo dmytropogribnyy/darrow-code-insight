@@ -107,18 +107,46 @@ function promptForModules(userPrompt: string, modules: string[]): string {
   return `${replaced}\n\nGeneration scope for this call: return generated_modules exactly ${modules.join(", ")}. Do not include paid modules outside this scope.`;
 }
 
+const MAX_DEFAULT_ATTEMPTS = 3; // exp backoff 1s / 3s / 9s on retryable errors
+const BACKOFF_MS = [1000, 3000, 9000];
+
+function isRetryable(e: any): boolean {
+  const status = e?.status as number | undefined;
+  if (!status) return true; // network/abort/timeout — retry
+  return status >= 500 || status === 429 || status === 408;
+}
+
+async function sleep(ms: number) {
+  await new Promise((r) => setTimeout(r, ms));
+}
+
 async function callWithFallback(userPrompt: string, firstModel: string, fallbackModel?: string): Promise<GenerateResult> {
-  try {
-    const report = await callAnthropic({ userPrompt, model: firstModel });
-    return { report, model_used: firstModel };
-  } catch (e: any) {
-    const status = e?.status as number | undefined;
-    const retryable = !status || status >= 500 || status === 429 || status === 408;
-    if (!fallbackModel || fallbackModel === firstModel || !retryable) throw e;
-    console.warn(`[anthropic] ${firstModel} failed, falling back to ${fallbackModel}:`, e?.message);
-    const report = await callAnthropic({ userPrompt, model: fallbackModel });
-    return { report, model_used: fallbackModel };
+  // 1) Up to MAX_DEFAULT_ATTEMPTS against the default model with exponential backoff.
+  let lastErr: any;
+  for (let attempt = 0; attempt < MAX_DEFAULT_ATTEMPTS; attempt++) {
+    try {
+      const report = await callAnthropic({ userPrompt, model: firstModel });
+      return { report, model_used: firstModel };
+    } catch (e: any) {
+      lastErr = e;
+      if (!isRetryable(e) || attempt === MAX_DEFAULT_ATTEMPTS - 1) break;
+      const wait = BACKOFF_MS[attempt] ?? 9000;
+      console.warn(`[anthropic] ${firstModel} attempt ${attempt + 1}/${MAX_DEFAULT_ATTEMPTS} failed (${e?.status ?? "net"}); retrying in ${wait}ms`);
+      await sleep(wait);
+    }
   }
+
+  // 2) One last attempt on the fallback model, if configured + error was retryable.
+  if (fallbackModel && fallbackModel !== firstModel && isRetryable(lastErr)) {
+    console.warn(`[anthropic] ${firstModel} exhausted, falling back to ${fallbackModel}:`, lastErr?.message);
+    try {
+      const report = await callAnthropic({ userPrompt, model: fallbackModel });
+      return { report, model_used: fallbackModel };
+    } catch (fbErr) {
+      throw fbErr;
+    }
+  }
+  throw lastErr;
 }
 
 async function mapWithConcurrency<T, R>(items: T[], limit: number, fn: (item: T) => Promise<R>): Promise<R[]> {
