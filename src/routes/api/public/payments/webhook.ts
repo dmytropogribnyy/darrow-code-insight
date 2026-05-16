@@ -182,8 +182,13 @@ async function ensureGenerationJob(order_id: string, intake_id: string) {
     status: "queued",
     last_error: null,
   });
-  if (error) console.error("[webhook] job create failed", { order_id, error });
-  else console.log("[webhook] generation job created", { order_id });
+  if (error) {
+    console.error("[webhook] job create failed", { order_id, error });
+    logStage({ stage: "job_enqueued", result: "failed", order_id, error: error.message });
+  } else {
+    console.log("[webhook] generation job created", { order_id });
+    logStage({ stage: "job_enqueued", result: "success", order_id });
+  }
 }
 
 async function handleEvent(
