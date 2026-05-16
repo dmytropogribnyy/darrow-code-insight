@@ -79,7 +79,17 @@ function GeneratingPage() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-navy text-light-grey flex items-center justify-center px-6">
+    <div
+      className="min-h-screen text-light-grey flex items-center justify-center px-6"
+      style={{
+        background: `
+          radial-gradient(circle at 50% 18%, rgba(212,175,55,0.06), transparent 28%),
+          radial-gradient(circle at 80% 20%, rgba(229,231,235,0.035), transparent 30%),
+          linear-gradient(180deg, #0A0F1E 0%, rgba(0,0,0,0.25) 100%)
+        `,
+        backgroundColor: "#0A0F1E",
+      }}
+    >
       <div className="text-center max-w-md">
         <img
           src={BRAND_ASSETS.symbolGold}
