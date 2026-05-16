@@ -313,6 +313,6 @@ export function renderReportHtml(report: DarrowReport, opts: { assetsBaseUrl?: s
   ${cover}
   ${renderCoreChapter(core, report.client_snapshot, report.closing)}
   ${addonCodes.map((c) => report.modules[c] ? renderAddon(c, report.modules[c]!, clientName) : "").join("")}
-  ${renderCrossSell(generated)}
+  ${renderCrossSell(generated, symbolSmall)}
 </body></html>`;
 }
