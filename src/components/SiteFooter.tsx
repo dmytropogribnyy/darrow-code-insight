@@ -5,12 +5,6 @@ export function SiteFooter() {
     <footer>
       <div className="max-w-2xl mx-auto px-6 pt-8 sm:pt-10 pb-10 text-center">
         <p
-          className="font-serif italic text-[13px] sm:text-[14px]"
-          style={{ color: "#4A402D" }}
-        >
-          When the pattern becomes visible, life gets easier to read.
-        </p>
-        <p
           className="mt-4 font-sans font-medium text-[11px] uppercase"
           style={{ color: "#4A402D", letterSpacing: "0.18em" }}
         >
