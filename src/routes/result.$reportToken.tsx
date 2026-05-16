@@ -465,7 +465,7 @@ function ResultPage() {
                   {quote.saved_cents > 0 && (
                     <div className="flex items-center justify-between text-[11.5px] mt-1">
                       <span style={{ color: "#7A6F58" }}>
-                        <span className="line-through">{fmt(quote.separate_cents)}</span> separately
+                        if bought separately: <span className="line-through">{fmt(quote.separate_cents)}</span>
                       </span>
                       <span className="font-mono text-gold">save {fmt(quote.saved_cents)}</span>
                     </div>
