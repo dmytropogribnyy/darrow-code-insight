@@ -80,7 +80,7 @@ function LandingPage() {
           {/* Headline */}
           <h1
             className="font-serif mt-8 text-paper leading-[1.05]"
-            style={{ fontSize: "clamp(34px,5.2vw,44px)", color: "var(--paper)" }}
+            style={{ fontSize: "clamp(38px, 6vw, 56px)", color: "var(--paper)" }}
           >
             Your zodiac sign
             <br />
@@ -90,7 +90,7 @@ function LandingPage() {
           {/* Tagline */}
           <p
             className="font-serif italic mt-5 text-gold leading-[1.3]"
-            style={{ fontSize: "clamp(16px, 2.2vw, 18px)" }}
+            style={{ fontSize: "clamp(18px, 2.6vw, 22px)" }}
           >
             More than a horoscope.
             <br />
@@ -98,12 +98,12 @@ function LandingPage() {
           </p>
 
           {/* Brand continuity */}
-          <p className="mt-3 text-[14px] sm:text-[15px] md:text-[16px] text-light-grey leading-[1.6] font-sans font-medium">
+          <p className="mt-3 text-[15px] sm:text-[16px] md:text-[17px] text-light-grey leading-[1.6] font-sans font-medium">
             AI-powered · Built from your birth data · Decoded through the Darrow Code Method
           </p>
 
           {/* Explainer */}
-          <p className="mt-6 sm:mt-7 text-[15px] sm:text-[16px] md:text-[17px] text-muted-grey max-w-[620px] mx-auto leading-[1.6] font-sans">
+          <p className="mt-6 sm:mt-7 text-[16px] sm:text-[17px] md:text-[18px] text-muted-grey max-w-[640px] mx-auto leading-[1.6] font-sans">
             Get a private AI-powered astrology report built from your birth data — revealing your personal pattern: how you think, react, choose and move through change.
           </p>
 
