@@ -226,7 +226,7 @@ export function IntakeForm({ chapters = [] }: { chapters?: ModuleCode[] } = {}) 
           </span>
         </button>
         <p className="mt-4 text-[12.5px] sm:text-[13px] font-medium leading-relaxed" style={{ color: "#4A402D" }}>
-          Start instantly · Usually 60–90 seconds · Multi-page PDF ·{" "}
+          Start instantly · Ready in a few minutes · Multi-page PDF ·{" "}
           <span style={{ color: "#D4AF37" }}>No subscription required</span> · Yours forever
         </p>
       </div>
