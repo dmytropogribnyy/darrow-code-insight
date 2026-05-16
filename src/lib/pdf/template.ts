@@ -212,9 +212,12 @@ export function renderReportHtml(report: DarrowReport, opts: { assetsBaseUrl?: s
   const generated = report.generated_modules ?? Object.keys(report.modules);
   const addonCodes = generated.filter((c) => c !== "CORE");
   const clientName = report.client_name || "you";
-  const base = (opts.assetsBaseUrl ?? "").replace(/\/$/, "");
-  const symbolGold = `${base}/brand/darrow-symbol-gold.png`;
-  const symbolSmall = `${base}/brand/darrow-symbol-small.png`;
+  // Note: `assetsBaseUrl` is intentionally unused for brand imagery — the
+  // symbol is inlined as a base64 data URL above so it always renders, even
+  // when the PDF service can't reach the configured public host.
+  void opts.assetsBaseUrl;
+  const symbolGold = symbolDataUrl;
+  const symbolSmall = symbolDataUrl;
 
   const cover = `
     <section class="page page-cover">
