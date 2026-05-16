@@ -10,6 +10,7 @@ import { buildUserPrompt } from "@/lib/ai/user-prompt";
 import { renderReportHtml } from "@/lib/pdf/template";
 import { renderHtmlToPdf } from "@/lib/pdf/apitemplate.server";
 import { sendEmail, reportReadyEmail, reportDelayEmail } from "@/lib/email/resend.server";
+import { logStage } from "@/lib/observability/pipeline-log";
 
 const STUCK_PROCESSING_MS = 4 * 60 * 1000; // 4 min
 const STEP_TIMEOUT_MS = 8 * 60 * 1000;
@@ -164,7 +165,10 @@ async function claimGenerationJob(sb: any, order_id: string): Promise<boolean> {
     .select("id")
     .maybeSingle();
   if (claimErr) throw new Error(`could not claim generation job: ${claimErr.message}`);
-  if (claimed) console.log("[pipeline] job claimed", { order_id, attempt: (job.attempt_count ?? 0) + 1 });
+  if (claimed) {
+    console.log("[pipeline] job claimed", { order_id, attempt: (job.attempt_count ?? 0) + 1 });
+    logStage({ stage: "worker_claimed", result: "success", order_id, generation_job_id: job.id, extra: { attempt: (job.attempt_count ?? 0) + 1 } });
+  }
   return !!claimed;
 }
 
@@ -205,6 +209,7 @@ export async function runFullGenerationPipeline(order_id: string): Promise<void>
     const chart = await withTimeout("Astro calculation", provider.computeNatal(natal), 30 * 1000, () => heartbeat(order_id));
     await heartbeat(order_id);
 
+    const tAstro = Date.now();
     await sb.from("astro_data").insert({
       intake_id: intake.id,
       provider_name: chart.meta.provider_name,
@@ -216,6 +221,7 @@ export async function runFullGenerationPipeline(order_id: string): Promise<void>
       normalized_json: chart,
       raw_json: null,
     });
+    logStage({ stage: "astro_data_generated", result: "success", order_id, duration_ms: Date.now() - tAstro });
 
     // 2) AI generation via Anthropic.
     const userPrompt = buildUserPrompt({
@@ -225,15 +231,20 @@ export async function runFullGenerationPipeline(order_id: string): Promise<void>
       modules,
       chart,
     });
+    logStage({ stage: "ai_generation_started", result: "success", order_id, extra: { modules } });
+    const tAi = Date.now();
     const { report, model_used } = await withTimeout("AI report generation", generateDarrowReport(userPrompt), STEP_TIMEOUT_MS, () => heartbeat(order_id));
     await heartbeat(order_id);
     console.log("[pipeline] AI done", { order_id, report_id, model_used });
+    logStage({ stage: "ai_generation_completed", result: "success", order_id, duration_ms: Date.now() - tAi, extra: { model_used } });
 
     // 3) HTML → PDF.
     const html = renderReportHtml(report, { assetsBaseUrl: appBaseUrl() });
+    const tPdf = Date.now();
     const pdfBytes = await withTimeout("PDF rendering", renderHtmlToPdf(html), 3 * 60 * 1000, () => heartbeat(order_id));
     await heartbeat(order_id);
     console.log("[pipeline] PDF done", { order_id, report_id, bytes: pdfBytes.byteLength });
+    logStage({ stage: "pdf_generated", result: "success", order_id, duration_ms: Date.now() - tPdf, extra: { bytes: pdfBytes.byteLength } });
 
     // 4) Upload PDF.
     const path = `${download_token}.pdf`;
@@ -256,6 +267,7 @@ export async function runFullGenerationPipeline(order_id: string): Promise<void>
       status: "complete",
       updated_at: new Date().toISOString(),
     }).eq("order_id", order_id);
+    logStage({ stage: "status_updated", result: "success", order_id, extra: { status: "complete" } });
 
     // 6) Send "report ready" email.
     if (customerEmail) {
@@ -263,12 +275,15 @@ export async function runFullGenerationPipeline(order_id: string): Promise<void>
       const resultUrl = `${appBaseUrl()}/result/${download_token}`;
       const chapterCount = modules.filter((m) => m !== "CORE").length;
       const { subject, html } = reportReadyEmail({ first_name: firstName, download_url: downloadUrl, result_url: resultUrl, assets_base_url: appBaseUrl(), has_core: modules.includes("CORE" as any), chapter_count: chapterCount });
+      const tMail = Date.now();
       try {
         await sendEmail({ to: customerEmail, subject, html });
         await sb.from("reports").update({ ready_email_sent_at: new Date().toISOString() }).eq("id", report_id);
         console.log("[pipeline] email sent", { order_id, report_id, to: customerEmail });
-      } catch (mailErr) {
+        logStage({ stage: "email_sent", result: "success", order_id, duration_ms: Date.now() - tMail });
+      } catch (mailErr: any) {
         console.error("[pipeline] report-ready email failed", mailErr);
+        logStage({ stage: "email_sent", result: "failed", order_id, duration_ms: Date.now() - tMail, error: mailErr?.message });
       }
     }
     console.log("[pipeline] job completed", { order_id, report_id, download_token });
@@ -296,6 +311,13 @@ export async function runFullGenerationPipeline(order_id: string): Promise<void>
       updated_at: new Date().toISOString(),
     }).eq("order_id", order_id);
     console.error("[pipeline] job failure recorded", { order_id, should_retry: shouldRetry, error: msg });
+    logStage({
+      stage: "status_updated",
+      result: shouldRetry ? "retry" : "failed",
+      order_id,
+      error: msg,
+      extra: { attempt_count: failedJob?.attempt_count ?? 0 },
+    });
 
     if (shouldRetry) return;
 

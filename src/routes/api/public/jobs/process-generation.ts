@@ -6,6 +6,9 @@ import { createFileRoute } from "@tanstack/react-router";
 import { createClient } from "@supabase/supabase-js";
 import { runFullGenerationPipeline } from "@/lib/generation/pipeline.server";
 import { reportReadyEmail, sendEmail } from "@/lib/email/resend.server";
+import { checkWorkerAuth, unauthorizedResponse } from "@/lib/jobs/auth";
+import { checkAlertConditions } from "@/lib/observability/alerts.server";
+import { logStage } from "@/lib/observability/pipeline-log";
 
 let _sb: any = null;
 function sb(): any {
@@ -24,29 +27,6 @@ function appBaseUrl(): string {
   return u.replace(/\/$/, "");
 }
 
-function isAuthorized(request: Request): boolean {
-  const secret = process.env.JOB_DISPATCH_SECRET;
-  const publishableKey = process.env.SUPABASE_PUBLISHABLE_KEY ?? process.env.VITE_SUPABASE_PUBLISHABLE_KEY;
-  const auth = request.headers.get("authorization") ?? "";
-  const provided = auth.startsWith("Bearer ") ? auth.slice(7) : request.headers.get("x-job-secret") ?? "";
-  const apikey = request.headers.get("apikey") ?? "";
-  return (!!secret && provided === secret) || (!!publishableKey && apikey === publishableKey) || isProjectAnonKey(apikey) || isProjectAnonKey(provided);
-}
-
-function isProjectAnonKey(apikey: string): boolean {
-  if (!apikey.includes(".")) return false;
-  try {
-    const [, payload] = apikey.split(".");
-    const json = JSON.parse(atob(payload.replace(/-/g, "+").replace(/_/g, "/")));
-    const expectedRef =
-      process.env.SUPABASE_PROJECT_ID ??
-      process.env.VITE_SUPABASE_PROJECT_ID ??
-      process.env.SUPABASE_URL?.match(/^https:\/\/([^.]+)\./)?.[1];
-    return !!expectedRef && json?.role === "anon" && json?.ref === expectedRef;
-  } catch {
-    return false;
-  }
-}
 
 async function pickOrderId(body: any): Promise<string | null> {
   if (typeof body?.order_id === "string" && body.order_id.length > 0) {
@@ -164,16 +144,26 @@ async function sendOneMissingReadyEmail(): Promise<boolean> {
   return true;
 }
 
+async function runSweeperHousekeeping(): Promise<void> {
+  await repairPaidOrdersWithoutJobs();
+  try {
+    await checkAlertConditions();
+  } catch (e: any) {
+    logStage({ stage: "alert_sent", result: "failed", error: e?.message });
+  }
+}
+
 export const Route = createFileRoute("/api/public/jobs/process-generation")({
   server: {
     handlers: {
       POST: async ({ request }) => {
         if (!process.env.JOB_DISPATCH_SECRET) return new Response("not configured", { status: 500 });
-        if (!isAuthorized(request)) return new Response("Unauthorized", { status: 401 });
+        const auth = checkWorkerAuth(request.headers);
+        if (!auth.ok) return unauthorizedResponse(auth);
 
         let body: any = {};
         try { body = await request.json(); } catch {}
-        await repairPaidOrdersWithoutJobs();
+        await runSweeperHousekeeping();
 
         const order_id = await pickOrderId(body);
         if (!order_id) return Response.json({ ok: true, picked: null, email_recovery: await sendOneMissingReadyEmail() });
@@ -181,9 +171,10 @@ export const Route = createFileRoute("/api/public/jobs/process-generation")({
       },
       GET: async ({ request }) => {
         if (!process.env.JOB_DISPATCH_SECRET) return new Response("not configured", { status: 500 });
-        if (!isAuthorized(request)) return new Response("Unauthorized", { status: 401 });
+        const auth = checkWorkerAuth(request.headers);
+        if (!auth.ok) return unauthorizedResponse(auth);
 
-        await repairPaidOrdersWithoutJobs();
+        await runSweeperHousekeeping();
         const order_id = await pickOrderId({});
         if (!order_id) return Response.json({ ok: true, picked: null, email_recovery: await sendOneMissingReadyEmail() });
         return dispatchGeneration(order_id);
@@ -191,3 +182,4 @@ export const Route = createFileRoute("/api/public/jobs/process-generation")({
     },
   },
 });
+

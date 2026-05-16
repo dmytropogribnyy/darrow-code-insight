@@ -8,6 +8,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { createClient } from "@supabase/supabase-js";
 import { type StripeEnv, verifyWebhook } from "@/lib/stripe.server";
 import { MODULE_CODES, type ModuleCode } from "@/lib/modules";
+import { logStage } from "@/lib/observability/pipeline-log";
 
 // All values that can land in modules_purchased.module_code (DB enum).
 const ALL_MODULE_VALUES: string[] = ["CORE", ...MODULE_CODES];
@@ -50,6 +51,13 @@ async function handleCheckoutCompleted(session: any) {
     order_id,
     order_type,
     modules_raw,
+  });
+  logStage({
+    stage: "webhook_received",
+    result: "success",
+    order_id,
+    stripe_session_id: session.id,
+    extra: { order_type },
   });
 
   const { data: existingOrder } = await sb()
@@ -174,8 +182,13 @@ async function ensureGenerationJob(order_id: string, intake_id: string) {
     status: "queued",
     last_error: null,
   });
-  if (error) console.error("[webhook] job create failed", { order_id, error });
-  else console.log("[webhook] generation job created", { order_id });
+  if (error) {
+    console.error("[webhook] job create failed", { order_id, error });
+    logStage({ stage: "job_enqueued", result: "failed", order_id, error: error.message });
+  } else {
+    console.log("[webhook] generation job created", { order_id });
+    logStage({ stage: "job_enqueued", result: "success", order_id });
+  }
 }
 
 async function handleEvent(
