@@ -86,16 +86,33 @@ function ReportCard({
   row,
   onDownload,
   isDownloading,
+  onRefresh,
 }: {
   row: ReportRow;
   onDownload: () => void;
   isDownloading: boolean;
+  onRefresh: () => void;
 }) {
   const info = describeReport(row.modules);
   const complete = row.status === "complete";
   const failed = row.status === "failed";
   const pending = !complete && !failed;
   const isPremium = info.kind === "complete";
+
+  // Adaptive ETA copy + stuck detection for pending reports
+  const ageMs = Date.now() - new Date(row.created_at).getTime();
+  const ageMin = Math.floor(ageMs / 60000);
+  const expectedMin = isPremium ? 7 : info.kind === "addons" ? Math.max(2, row.modules.length) : 2;
+  const takingLonger = pending && ageMin >= expectedMin + 2;
+
+  let pendingCopy: string;
+  if (isPremium) {
+    pendingCopy = "Composing your full reading… ~5–7 min · all 7 chapters + grand synthesis";
+  } else if (info.kind === "addons" && row.modules.length > 2) {
+    pendingCopy = `Composing ${row.modules.length} chapters… ~${expectedMin} min · we'll email you`;
+  } else {
+    pendingCopy = "Generating… ETA ~2 min · we'll email you";
+  }
 
   return (
     <div
@@ -149,12 +166,34 @@ function ReportCard({
           </button>
         )}
         {pending && (
-          <div
-            className="w-full inline-flex items-center justify-center gap-2 rounded-[6px] py-3 text-[13px]"
-            style={{ background: "rgba(184,134,11,0.06)", color: "#7A6F58" }}
-          >
-            <Loader2 className="w-4 h-4 animate-spin" />
-            Generating… ETA ~2 min · we'll email you
+          <div className="space-y-2">
+            <div
+              className="w-full inline-flex items-center justify-center gap-2 rounded-[6px] py-3 text-[12.5px] text-center px-3"
+              style={{ background: "rgba(184,134,11,0.06)", color: "#7A6F58" }}
+            >
+              <Loader2 className="w-4 h-4 animate-spin shrink-0" />
+              <span>{pendingCopy}</span>
+            </div>
+            {takingLonger && (
+              <div
+                className="flex items-start gap-2 rounded-[6px] py-2.5 px-3 text-[11.5px]"
+                style={{ background: "rgba(184,134,11,0.04)", color: "#7A6F58" }}
+              >
+                <AlertCircle className="w-3.5 h-3.5 shrink-0 mt-0.5 text-gold/80" />
+                <span className="flex-1">
+                  Taking a bit longer than usual — we're still on it. Your PDF will arrive by email
+                  the moment it's ready.
+                </span>
+                <button
+                  type="button"
+                  onClick={onRefresh}
+                  className="inline-flex items-center gap-1 text-gold hover:text-warm-brown font-semibold shrink-0"
+                  aria-label="Refresh status"
+                >
+                  <RefreshCw className="w-3 h-3" /> refresh
+                </button>
+              </div>
+            )}
           </div>
         )}
         {failed && (
