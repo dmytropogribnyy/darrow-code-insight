@@ -107,11 +107,13 @@ function LandingPage() {
 
       {/* INTAKE — paper section */}
       <section className="flex-1">
-        <div className="max-w-xl mx-auto px-6 py-14">
-          <p className="text-center text-[13px] text-muted-grey mb-6">
+        <div className="max-w-xl mx-auto px-5 sm:px-6 pt-8 sm:pt-10 pb-14">
+          <p className="text-center text-[13px] mb-5" style={{ color: "#6B6B6B" }}>
             Start instantly. Your private report is generated after checkout.
           </p>
-          <IntakeForm />
+          <div className="intake-card">
+            <IntakeForm />
+          </div>
         </div>
       </section>
 
