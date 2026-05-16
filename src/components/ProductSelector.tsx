@@ -28,12 +28,15 @@ export function ProductSelector({ selected, onToggle, onSelectAll, onClear }: Pr
   return (
     <div className="w-full">
       <div className="text-center mb-5">
-        <p className="text-[11px] tracking-[0.2em] uppercase text-gold font-semibold">
+        <p
+          className="text-[11px] tracking-[0.22em] uppercase font-bold"
+          style={{ color: "#A07B1F" }}
+        >
           Choose your report
         </p>
         <h2
           className="font-serif mt-2 leading-[1.1]"
-          style={{ fontSize: "clamp(22px,3vw,26px)", color: "#4A402D" }}
+          style={{ fontSize: "clamp(22px,3vw,26px)", color: "#1F1A10" }}
         >
           CORE Report is your foundation.
           <br />
@@ -43,29 +46,33 @@ export function ProductSelector({ selected, onToggle, onSelectAll, onClear }: Pr
 
       {/* CORE card — locked on (foundation) */}
       <div
-        className="rounded-[10px] border px-4 py-4 mb-3 flex items-start gap-3"
+        className="rounded-[10px] border-2 px-4 py-4 mb-3 flex items-start gap-3"
         style={{
-          borderColor: "rgba(212,175,55,0.55)",
-          background: "rgba(212,175,55,0.06)",
+          borderColor: "#D4AF37",
+          background: "rgba(212,175,55,0.12)",
+          boxShadow: "0 1px 0 rgba(255,255,255,0.6) inset, 0 6px 18px -10px rgba(160,123,31,0.45)",
         }}
       >
         <div
           className="mt-0.5 w-4 h-4 rounded-sm flex items-center justify-center text-[10px] font-bold"
-          style={{ backgroundColor: "#D4AF37", color: "#0A0F1E" }}
+          style={{ backgroundColor: "#B8860B", color: "#FFF7E0" }}
         >
           ✓
         </div>
         <div className="flex-1">
-          <p className="text-[12px] tracking-[0.16em] uppercase text-gold font-semibold">
+          <p
+            className="text-[12px] tracking-[0.18em] uppercase font-bold"
+            style={{ color: "#8B6914" }}
+          >
             CORE Report — foundation
           </p>
-          <p className="text-[13px] leading-relaxed mt-1" style={{ color: "#4A402D" }}>
+          <p className="text-[13px] leading-relaxed mt-1" style={{ color: "#2A2418" }}>
             Your private birth code: how you think, react, choose and move through change.
           </p>
         </div>
         <span
-          className="font-mono text-[14px] whitespace-nowrap font-semibold"
-          style={{ color: "#4A402D" }}
+          className="font-mono text-[14px] whitespace-nowrap font-bold"
+          style={{ color: "#1F1A10" }}
         >
           $4.99
         </span>
@@ -77,47 +84,57 @@ export function ProductSelector({ selected, onToggle, onSelectAll, onClear }: Pr
         onClick={allSelected ? onClear : onSelectAll}
         className="w-full text-left rounded-[10px] border-2 px-4 py-4 mb-5 transition flex items-start gap-3"
         style={{
-          borderColor: allSelected ? "#D4AF37" : "rgba(212,175,55,0.4)",
-          background: allSelected ? "rgba(212,175,55,0.10)" : "rgba(212,175,55,0.03)",
+          borderColor: allSelected ? "#B8860B" : "#D4AF37",
+          background: allSelected ? "rgba(212,175,55,0.16)" : "rgba(212,175,55,0.06)",
+          boxShadow: allSelected
+            ? "0 1px 0 rgba(255,255,255,0.6) inset, 0 10px 26px -12px rgba(160,123,31,0.55)"
+            : "0 1px 0 rgba(255,255,255,0.5) inset, 0 4px 14px -10px rgba(160,123,31,0.35)",
         }}
       >
         <div
           className="mt-0.5 w-4 h-4 rounded-sm flex items-center justify-center text-[10px] font-bold border"
           style={{
-            backgroundColor: allSelected ? "#D4AF37" : "transparent",
-            color: "#0A0F1E",
-            borderColor: "#D4AF37",
+            backgroundColor: allSelected ? "#B8860B" : "transparent",
+            color: "#FFF7E0",
+            borderColor: "#B8860B",
           }}
         >
           {allSelected ? "✓" : ""}
         </div>
         <div className="flex-1">
           <div className="flex items-baseline gap-2 flex-wrap">
-            <p className="text-[12px] tracking-[0.16em] uppercase text-gold font-semibold">
+            <p
+              className="text-[12px] tracking-[0.18em] uppercase font-bold"
+              style={{ color: "#8B6914" }}
+            >
               CORE Complete
             </p>
             <span
-              className="text-[10px] tracking-[0.16em] uppercase px-2 py-0.5 rounded"
-              style={{ backgroundColor: "#0A0F1E", color: "#D4AF37" }}
+              className="text-[10px] tracking-[0.18em] uppercase px-2 py-0.5 rounded font-bold"
+              style={{
+                backgroundColor: "#0A0F1E",
+                color: "#F5D87A",
+                boxShadow: "0 2px 8px -3px rgba(10,15,30,0.5)",
+              }}
             >
               Best value · Save $7.94
             </span>
           </div>
-          <p className="text-[13px] leading-relaxed mt-1" style={{ color: "#4A402D" }}>
+          <p className="text-[13px] leading-relaxed mt-1" style={{ color: "#2A2418" }}>
             CORE Report + all 6 Focused Chapters in one reading.
           </p>
         </div>
         <span
-          className="font-mono text-[14px] whitespace-nowrap font-semibold"
-          style={{ color: "#4A402D" }}
+          className="font-mono text-[14px] whitespace-nowrap font-bold"
+          style={{ color: "#1F1A10" }}
         >
           $14.99
         </span>
       </button>
 
       <p
-        className="text-center text-[11px] tracking-[0.18em] uppercase mb-3"
-        style={{ color: "#7A6F58" }}
+        className="text-center text-[11px] tracking-[0.2em] uppercase mb-3 font-semibold"
+        style={{ color: "#5C5340" }}
       >
         — or pick individual chapters —
       </p>
@@ -133,33 +150,39 @@ export function ProductSelector({ selected, onToggle, onSelectAll, onClear }: Pr
               onClick={() => onToggle(code)}
               className="text-left rounded-[8px] border px-3.5 py-3 transition flex items-start gap-2.5"
               style={{
-                borderColor: active ? "#D4AF37" : "rgba(74,64,45,0.18)",
-                background: active ? "rgba(212,175,55,0.08)" : "rgba(255,255,255,0.4)",
+                borderColor: active ? "#B8860B" : "rgba(74,64,45,0.28)",
+                background: active ? "rgba(212,175,55,0.14)" : "rgba(255,255,255,0.65)",
+                boxShadow: active
+                  ? "0 4px 14px -8px rgba(160,123,31,0.5)"
+                  : "0 1px 0 rgba(255,255,255,0.5) inset",
               }}
             >
               <div
                 className="mt-0.5 w-3.5 h-3.5 rounded-sm flex items-center justify-center text-[9px] font-bold border"
                 style={{
-                  backgroundColor: active ? "#D4AF37" : "transparent",
-                  color: "#0A0F1E",
-                  borderColor: active ? "#D4AF37" : "rgba(74,64,45,0.4)",
+                  backgroundColor: active ? "#B8860B" : "transparent",
+                  color: "#FFF7E0",
+                  borderColor: active ? "#B8860B" : "rgba(74,64,45,0.5)",
                 }}
               >
                 {active ? "✓" : ""}
               </div>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center justify-between gap-2">
-                  <p className="text-[12px] tracking-[0.14em] uppercase text-gold font-semibold">
+                  <p
+                    className="text-[12px] tracking-[0.16em] uppercase font-bold"
+                    style={{ color: "#8B6914" }}
+                  >
                     {meta.title}
                   </p>
                   <span
-                    className="font-mono text-[12px] whitespace-nowrap"
-                    style={{ color: "#4A402D" }}
+                    className="font-mono text-[12px] whitespace-nowrap font-semibold"
+                    style={{ color: "#1F1A10" }}
                   >
                     +$2.99
                   </span>
                 </div>
-                <p className="text-[12px] leading-snug mt-0.5" style={{ color: "#5C5340" }}>
+                <p className="text-[12px] leading-snug mt-0.5" style={{ color: "#3A3225" }}>
                   {meta.desc}
                 </p>
               </div>
@@ -170,25 +193,28 @@ export function ProductSelector({ selected, onToggle, onSelectAll, onClear }: Pr
 
       {/* Order summary */}
       <div
-        className="rounded-[8px] px-4 py-3.5 mb-1 border"
+        className="rounded-[8px] px-4 py-3.5 mb-1 border-2"
         style={{
-          borderColor: "rgba(74,64,45,0.2)",
-          background: "rgba(255,255,255,0.55)",
+          borderColor: "rgba(74,64,45,0.35)",
+          background: "rgba(255,255,255,0.85)",
+          boxShadow: "0 4px 16px -10px rgba(31,26,16,0.35)",
         }}
       >
         <div className="flex items-center justify-between text-[13px]">
-          <span style={{ color: "#4A402D" }}>{quote.label}</span>
-          <span className="font-mono font-semibold" style={{ color: "#0A0F1E" }}>
+          <span className="font-semibold" style={{ color: "#1F1A10" }}>{quote.label}</span>
+          <span className="font-mono font-bold text-[15px]" style={{ color: "#0A0F1E" }}>
             {formatPrice(quote.cents)}
           </span>
         </div>
         {quote.saved_cents > 0 && (
           <div className="flex items-center justify-between text-[11.5px] mt-1">
-            <span style={{ color: "#7A6F58" }}>
+            <span style={{ color: "#5C5340" }}>
               <span className="line-through">{formatPrice(quote.separate_cents)}</span>{" "}
               separately
             </span>
-            <span className="font-mono text-gold">save {formatPrice(quote.saved_cents)}</span>
+            <span className="font-mono font-bold" style={{ color: "#8B6914" }}>
+              save {formatPrice(quote.saved_cents)}
+            </span>
           </div>
         )}
       </div>
