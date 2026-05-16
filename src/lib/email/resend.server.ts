@@ -44,20 +44,34 @@ export function reportReadyEmail(args: {
   download_url: string;
   result_url?: string;
   assets_base_url?: string;
+  /** Whether the report includes CORE. Defaults to true (CORE-first MVP). */
+  has_core?: boolean;
+  /** Number of focused chapters (excluding CORE) in the report. */
+  chapter_count?: number;
 }): { subject: string; html: string } {
   const name = args.first_name ?? "";
   const base = (args.assets_base_url ?? "").replace(/\/$/, "");
   const header = `${base}/brand/email-header.png`;
   const symbol = `${base}/brand/darrow-symbol-small.png`;
   const resultUrl = args.result_url ?? args.download_url;
+  const hasCore = args.has_core ?? true;
+  const chapters = args.chapter_count ?? 0;
+
+  // Subject variants (Phase A: CORE-inclusive only; chapter-only kept for forward compat)
+  let subject: string;
+  if (hasCore && chapters === 0) subject = "Your Darrow Code CORE Report is ready";
+  else if (hasCore && chapters === 6) subject = "Your Darrow Code Complete reading is ready";
+  else if (hasCore) subject = "Your Darrow Code Report is ready";
+  else if (chapters === 1) subject = "Your Darrow Code Focused Chapter is ready";
+  else subject = "Your Darrow Code Focused Chapters are ready";
+
   return {
-    subject: "Your Darrow Code report is ready",
+    subject,
     html: `<!doctype html><html><body style="font-family:Georgia,serif;color:#151922;background:#F6F4EF;margin:0;padding:0">
       <div style="max-width:600px;margin:0 auto;background:#F6F4EF">
         <a href="${base}" style="display:block;background:#0A0F1E;text-decoration:none">
           <img src="${header}" alt="Darrow Code — Personal orientation for a better quality of life" width="600" style="display:block;width:100%;height:auto;border:0;outline:none" />
         </a>
-        <!-- text fallback header if image blocked -->
         <div style="background:#0A0F1E;padding:14px 0;text-align:center;mso-hide:all">
           <div style="font-family:'Cormorant Garamond',Georgia,serif;font-size:11px;letter-spacing:6px;color:#D4AF37;text-transform:uppercase">Darrow Code</div>
         </div>
