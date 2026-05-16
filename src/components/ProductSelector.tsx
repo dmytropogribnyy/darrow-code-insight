@@ -212,8 +212,8 @@ export function ProductSelector({ selected, onToggle, onSelectAll, onClear }: Pr
         {quote.saved_cents > 0 && (
           <div className="flex items-center justify-between text-[11.5px] mt-1">
             <span style={{ color: "#5C5340" }}>
-              <span className="line-through">{formatPrice(quote.separate_cents)}</span>{" "}
-              separately
+              if bought separately:{" "}
+              <span className="line-through">{formatPrice(quote.separate_cents)}</span>
             </span>
             <span className="font-mono font-bold" style={{ color: "#8B6914" }}>
               save {formatPrice(quote.saved_cents)}
