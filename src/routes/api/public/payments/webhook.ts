@@ -24,12 +24,12 @@ function sb(): any {
   return _sb;
 }
 
-function parseModules(raw: string | undefined): ModuleCode[] {
+function parseModules(raw: string | undefined): AnyModule[] {
   if (!raw) return [];
   return raw
     .split(",")
     .map((m) => m.trim().toUpperCase())
-    .filter((m): m is ModuleCode => (MODULE_CODES as string[]).includes(m));
+    .filter((m): m is AnyModule => ALL_MODULE_VALUES.includes(m));
 }
 
 function dispatcherUrl(): string | null {
