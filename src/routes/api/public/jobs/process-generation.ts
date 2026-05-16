@@ -14,7 +14,7 @@ function sb(): any {
   return _sb;
 }
 
-const STUCK_PROCESSING_MS = 10 * 60 * 1000; // 10 min
+const STUCK_PROCESSING_MS = 4 * 60 * 1000; // 4 min
 
 type HandlerContext = {
   executionCtx?: {
@@ -59,12 +59,6 @@ async function pickOrderId(body: any): Promise<string | null> {
 
 async function dispatchGeneration(order_id: string, context?: HandlerContext): Promise<Response> {
   const run = runFullGenerationPipeline(order_id);
-  const waitUntil = waitUntilFrom(context);
-  if (waitUntil) {
-    waitUntil(run.catch((e) => console.error("[process-generation] async pipeline failed", order_id, e)));
-    return Response.json({ ok: true, order_id, status: "accepted" }, { status: 202 });
-  }
-
   try {
     await run;
     return Response.json({ ok: true, order_id, status: "complete" });
