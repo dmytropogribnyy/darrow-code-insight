@@ -200,7 +200,8 @@ export async function runFullGenerationPipeline(order_id: string): Promise<void>
     // 6) Send "report ready" email.
     if (customerEmail) {
       const downloadUrl = `${appBaseUrl()}/download/${download_token}`;
-      const { subject, html } = reportReadyEmail({ first_name: firstName, download_url: downloadUrl, assets_base_url: appBaseUrl() });
+      const resultUrl = `${appBaseUrl()}/result/${download_token}`;
+      const { subject, html } = reportReadyEmail({ first_name: firstName, download_url: downloadUrl, result_url: resultUrl, assets_base_url: appBaseUrl() });
       try {
         await sendEmail({ to: customerEmail, subject, html });
         await sb.from("reports").update({ ready_email_sent_at: new Date().toISOString() }).eq("id", report_id);
