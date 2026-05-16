@@ -179,7 +179,7 @@ export function IntakeForm() {
 
       <div>
         <label className={labelCls} style={{ opacity: 0.75 }}>
-          Full name <span className="normal-case tracking-normal" style={{ color: "#9CA3AF" }}>— optional</span>
+          Full name <span className="normal-case tracking-normal" style={{ color: "#6B6B6B" }}>— optional</span>
         </label>
         <input
           className={inputCls}
@@ -209,7 +209,7 @@ export function IntakeForm() {
             $4.99
           </span>
         </button>
-        <p className="mt-4 text-[12px] leading-relaxed" style={{ color: "#6B6B6B" }}>
+        <p className="mt-4 text-[12.5px] sm:text-[13px] font-medium leading-relaxed" style={{ color: "#4A402D" }}>
           Start instantly · Usually 60–90 seconds · Multi-page PDF ·{" "}
           <span style={{ color: "#D4AF37" }}>No subscription required</span> · Yours forever
         </p>
