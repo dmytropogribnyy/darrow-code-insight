@@ -79,8 +79,13 @@ async function dispatchGeneration(order_id: string): Promise<Response> {
   try {
     console.log("[dispatcher] generation dispatch started", { order_id });
     await runFullGenerationPipeline(order_id);
-    console.log("[dispatcher] generation dispatch finished", { order_id });
-    return Response.json({ ok: true, order_id, status: "complete" });
+    const { data: job } = await sb()
+      .from("generation_jobs")
+      .select("status, attempt_count, last_error")
+      .eq("order_id", order_id)
+      .maybeSingle();
+    console.log("[dispatcher] generation dispatch finished", { order_id, status: job?.status });
+    return Response.json({ ok: true, order_id, status: job?.status ?? "unknown", attempt_count: job?.attempt_count ?? null, last_error: job?.last_error ?? null });
   } catch (e: any) {
     console.error("[dispatcher] generation dispatch failed", { order_id, error: e?.message ?? e });
     return Response.json(
