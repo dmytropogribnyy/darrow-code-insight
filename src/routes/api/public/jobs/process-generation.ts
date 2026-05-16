@@ -30,7 +30,7 @@ function isAuthorized(request: Request): boolean {
   const auth = request.headers.get("authorization") ?? "";
   const provided = auth.startsWith("Bearer ") ? auth.slice(7) : request.headers.get("x-job-secret") ?? "";
   const apikey = request.headers.get("apikey") ?? "";
-  return (!!secret && provided === secret) || (!!publishableKey && apikey === publishableKey) || isProjectAnonKey(apikey);
+  return (!!secret && provided === secret) || (!!publishableKey && apikey === publishableKey) || isProjectAnonKey(apikey) || isProjectAnonKey(provided);
 }
 
 function isProjectAnonKey(apikey: string): boolean {
