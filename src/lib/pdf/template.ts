@@ -250,10 +250,10 @@ export function renderReportHtml(report: DarrowReport, opts: { assetsBaseUrl?: s
     margin: 22mm 20mm;
     @bottom-right {
       content: counter(page);
-      font-family: 'Inter', sans-serif;
-      font-size: 8pt;
-      color: #9CA3AF;
-      letter-spacing: 1pt;
+      font-family: 'Cormorant Garamond', 'Times New Roman', serif;
+      font-size: 10pt;
+      color: #D4AF37;
+      letter-spacing: 1.5pt;
     }
     @bottom-left {
       content: "";
