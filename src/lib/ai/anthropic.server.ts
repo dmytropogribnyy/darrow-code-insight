@@ -92,15 +92,19 @@ export interface GenerateResult {
 export async function generateDarrowReport(userPrompt: string): Promise<GenerateResult> {
   const def = process.env.ANTHROPIC_MODEL_DEFAULT;
   const fb = process.env.ANTHROPIC_MODEL_FALLBACK;
+  const premium = process.env.ANTHROPIC_MODEL_PREMIUM;
   if (!def) throw new Error("ANTHROPIC_MODEL_DEFAULT is not configured");
+  const modulesLine = userPrompt.match(/Modules to include \(in order\):\s*(.+)/)?.[1] ?? "";
+  const moduleCount = modulesLine.split(",").map((m) => m.trim()).filter(Boolean).length;
+  const firstModel = moduleCount >= 5 && premium ? premium : def;
 
   try {
-    const report = await callAnthropic({ userPrompt, model: def });
-    return { report, model_used: def };
+    const report = await callAnthropic({ userPrompt, model: firstModel });
+    return { report, model_used: firstModel };
   } catch (e: any) {
     const status = e?.status as number | undefined;
     const retryable = !status || status >= 500 || status === 429 || status === 408;
-    if (!fb || !retryable) throw e;
+    if (!fb || fb === firstModel || !retryable) throw e;
     console.warn(`[anthropic] default model failed, falling back to ${fb}:`, e?.message);
     const report = await callAnthropic({ userPrompt, model: fb });
     return { report, model_used: fb };
