@@ -18,6 +18,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as ResultReportTokenRouteImport } from './routes/result.$reportToken'
 import { Route as DownloadReportTokenRouteImport } from './routes/download.$reportToken'
 import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/public/payments/webhook'
+import { Route as ApiPublicJobsResendReadyEmailRouteImport } from './routes/api/public/jobs/resend-ready-email'
 import { Route as ApiPublicJobsProcessGenerationRouteImport } from './routes/api/public/jobs/process-generation'
 
 const TermsRoute = TermsRouteImport.update({
@@ -66,6 +67,12 @@ const ApiPublicPaymentsWebhookRoute =
     path: '/api/public/payments/webhook',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicJobsResendReadyEmailRoute =
+  ApiPublicJobsResendReadyEmailRouteImport.update({
+    id: '/api/public/jobs/resend-ready-email',
+    path: '/api/public/jobs/resend-ready-email',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicJobsProcessGenerationRoute =
   ApiPublicJobsProcessGenerationRouteImport.update({
     id: '/api/public/jobs/process-generation',
@@ -83,6 +90,7 @@ export interface FileRoutesByFullPath {
   '/download/$reportToken': typeof DownloadReportTokenRoute
   '/result/$reportToken': typeof ResultReportTokenRoute
   '/api/public/jobs/process-generation': typeof ApiPublicJobsProcessGenerationRoute
+  '/api/public/jobs/resend-ready-email': typeof ApiPublicJobsResendReadyEmailRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
 }
 export interface FileRoutesByTo {
@@ -95,6 +103,7 @@ export interface FileRoutesByTo {
   '/download/$reportToken': typeof DownloadReportTokenRoute
   '/result/$reportToken': typeof ResultReportTokenRoute
   '/api/public/jobs/process-generation': typeof ApiPublicJobsProcessGenerationRoute
+  '/api/public/jobs/resend-ready-email': typeof ApiPublicJobsResendReadyEmailRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
 }
 export interface FileRoutesById {
@@ -108,6 +117,7 @@ export interface FileRoutesById {
   '/download/$reportToken': typeof DownloadReportTokenRoute
   '/result/$reportToken': typeof ResultReportTokenRoute
   '/api/public/jobs/process-generation': typeof ApiPublicJobsProcessGenerationRoute
+  '/api/public/jobs/resend-ready-email': typeof ApiPublicJobsResendReadyEmailRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
 }
 export interface FileRouteTypes {
@@ -122,6 +132,7 @@ export interface FileRouteTypes {
     | '/download/$reportToken'
     | '/result/$reportToken'
     | '/api/public/jobs/process-generation'
+    | '/api/public/jobs/resend-ready-email'
     | '/api/public/payments/webhook'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -134,6 +145,7 @@ export interface FileRouteTypes {
     | '/download/$reportToken'
     | '/result/$reportToken'
     | '/api/public/jobs/process-generation'
+    | '/api/public/jobs/resend-ready-email'
     | '/api/public/payments/webhook'
   id:
     | '__root__'
@@ -146,6 +158,7 @@ export interface FileRouteTypes {
     | '/download/$reportToken'
     | '/result/$reportToken'
     | '/api/public/jobs/process-generation'
+    | '/api/public/jobs/resend-ready-email'
     | '/api/public/payments/webhook'
   fileRoutesById: FileRoutesById
 }
@@ -159,6 +172,7 @@ export interface RootRouteChildren {
   DownloadReportTokenRoute: typeof DownloadReportTokenRoute
   ResultReportTokenRoute: typeof ResultReportTokenRoute
   ApiPublicJobsProcessGenerationRoute: typeof ApiPublicJobsProcessGenerationRoute
+  ApiPublicJobsResendReadyEmailRoute: typeof ApiPublicJobsResendReadyEmailRoute
   ApiPublicPaymentsWebhookRoute: typeof ApiPublicPaymentsWebhookRoute
 }
 
@@ -227,6 +241,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicPaymentsWebhookRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/jobs/resend-ready-email': {
+      id: '/api/public/jobs/resend-ready-email'
+      path: '/api/public/jobs/resend-ready-email'
+      fullPath: '/api/public/jobs/resend-ready-email'
+      preLoaderRoute: typeof ApiPublicJobsResendReadyEmailRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/jobs/process-generation': {
       id: '/api/public/jobs/process-generation'
       path: '/api/public/jobs/process-generation'
@@ -247,6 +268,7 @@ const rootRouteChildren: RootRouteChildren = {
   DownloadReportTokenRoute: DownloadReportTokenRoute,
   ResultReportTokenRoute: ResultReportTokenRoute,
   ApiPublicJobsProcessGenerationRoute: ApiPublicJobsProcessGenerationRoute,
+  ApiPublicJobsResendReadyEmailRoute: ApiPublicJobsResendReadyEmailRoute,
   ApiPublicPaymentsWebhookRoute: ApiPublicPaymentsWebhookRoute,
 }
 export const routeTree = rootRouteImport

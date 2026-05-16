@@ -203,6 +203,7 @@ export async function runFullGenerationPipeline(order_id: string): Promise<void>
       const { subject, html } = reportReadyEmail({ first_name: firstName, download_url: downloadUrl, assets_base_url: appBaseUrl() });
       try {
         await sendEmail({ to: customerEmail, subject, html });
+        await sb.from("reports").update({ ready_email_sent_at: new Date().toISOString() }).eq("id", report_id);
       } catch (mailErr) {
         console.error("[pipeline] report-ready email failed", mailErr);
       }
