@@ -124,10 +124,10 @@ function LandingPage() {
             Western Astrology · Chinese Bazi · Numerology · Pattern Psychology · AI Synthesis
           </p>
 
-          {/* Optional chapters teaser */}
+          {/* Focused chapters teaser */}
           <div className="mt-3 sm:mt-4 max-w-[520px] mx-auto">
             <p className="text-center font-sans text-[14px] sm:text-[15px] md:text-[16px] text-light-grey leading-relaxed">
-              Optional focused chapters available after your CORE Report:
+              Start with CORE, add focused chapters, or get CORE Complete:
             </p>
             <div className="mt-2 flex flex-wrap justify-center gap-x-2.5 gap-y-1">
               {["LOVE", "MONEY", "BODY", "YEAR", "STYLE", "PLACE"].map((m, i) => (
