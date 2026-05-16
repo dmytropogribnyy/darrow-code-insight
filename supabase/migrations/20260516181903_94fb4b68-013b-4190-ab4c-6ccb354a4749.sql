@@ -1,0 +1,1 @@
+REVOKE EXECUTE ON FUNCTION public.last_sweeper_run_at() FROM anon, authenticated;
