@@ -691,7 +691,7 @@ Schema:
   "closing": {
     "executive_summary": "string (3-5 sentences across generated modules)",
     "recommended_next_module": "string (one add-on + why)",
-    "grand_synthesis": "string (only present for FULL CODE: 300-400 words
+    "grand_synthesis": "string (only present for CORE Complete: 300-400 words
                        meta-level reading across all modules)"
   }
 }
@@ -760,7 +760,7 @@ Page 3 must render `unique_signature` as a highlighted editorial block and `prac
 | 7 | Next + Cross-sell | modules.{X}.next + cross-sell |
 | 8 | Closing watermark page | static |
 
-### FULL CODE Layout (~50 pages)
+### CORE Complete Layout (~50 pages)
 
 Combines master cover + methodology + CORE (10 pp) + 6 add-ons (5-6 pp each)
 + grand synthesis (2 pp) + closing (1 pp).
@@ -814,7 +814,7 @@ NOT in the app or PDF).
    - System prompt: ~2500 tokens (cached after first call)
    - User prompt + data: ~1500-2000 tokens
    - Output (CORE): ~1500-2000 tokens
-   - Output (FULL CODE all 7): ~8000-10000 tokens
+   - Output (CORE Complete all 7): ~8000-10000 tokens
 7. **For STYLE module** — derive color_palette from element/sign correspondences
    (e.g., Cancer Moon → pearl, silver, deep navy).
 8. **For BODY module** — wrap with "your system may respond to..." pattern.
