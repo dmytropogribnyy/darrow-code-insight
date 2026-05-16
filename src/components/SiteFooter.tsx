@@ -2,26 +2,32 @@ import { Link } from "@tanstack/react-router";
 
 export function SiteFooter() {
   return (
-    <footer className="border-t border-border/60 mt-10 sm:mt-12">
-      <div className="max-w-2xl mx-auto px-6 py-10 text-center">
-        <p className="font-serif italic text-[14px] text-neutral-grey">
+    <footer>
+      <div className="max-w-2xl mx-auto px-6 pt-8 sm:pt-10 pb-10 text-center">
+        <p
+          className="font-serif italic text-[13px] sm:text-[14px]"
+          style={{ color: "#4A402D" }}
+        >
           When the pattern becomes visible, life gets easier to read.
         </p>
         <p
-          className="mt-4 font-sans text-[11px] text-muted-grey uppercase"
-          style={{ letterSpacing: "0.12em" }}
+          className="mt-4 font-sans font-medium text-[11px] uppercase"
+          style={{ color: "#4A402D", letterSpacing: "0.18em" }}
         >
           Powered by the Darrow Code Method
         </p>
-        <p className="mt-6 text-[11px] text-neutral-grey leading-relaxed">
+        <p
+          className="mt-5 text-[10px] sm:text-[11px] leading-[1.5]"
+          style={{ color: "#6B6B6B" }}
+        >
           For self-reflection and personal insight.
           <br />
           Not medical, legal or financial advice.
         </p>
-        <div className="mt-6 flex justify-center gap-5 text-[12px] text-[#4A402D]">
-          <Link to="/privacy" className="hover:text-charcoal transition-colors">Privacy</Link>
-          <Link to="/terms" className="hover:text-charcoal transition-colors">Terms</Link>
-          <Link to="/contact" className="hover:text-charcoal transition-colors">Contact</Link>
+        <div className="mt-6 flex justify-center gap-6 text-[13px]" style={{ color: "#151922" }}>
+          <Link to="/privacy" className="font-medium hover:text-gold hover:underline underline-offset-4 decoration-gold/40 transition-colors">Privacy</Link>
+          <Link to="/terms" className="font-medium hover:text-gold hover:underline underline-offset-4 decoration-gold/40 transition-colors">Terms</Link>
+          <Link to="/contact" className="font-medium hover:text-gold hover:underline underline-offset-4 decoration-gold/40 transition-colors">Contact</Link>
         </div>
       </div>
     </footer>
