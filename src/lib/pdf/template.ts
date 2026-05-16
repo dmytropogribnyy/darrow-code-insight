@@ -254,6 +254,8 @@ export function renderReportHtml(report: DarrowReport, opts: { assetsBaseUrl?: s
   .cover-divider { width: 60pt; height: 1pt; background: #D4AF37; margin: 28pt auto; }
   .cover-prepared { font-size: 10pt; letter-spacing: 3px; text-transform: uppercase; color: #9CA3AF; margin-bottom: 8pt; }
   .cover-name { font-family: 'Cormorant Garamond', serif; font-size: 22pt; color: #F6F4EF; }
+  .cover-symbol { display: block; width: 90pt; height: auto; margin: 0 auto 28pt; opacity: 0.95; }
+  .closing-symbol { display: block; width: 56pt; height: auto; margin: 0 auto 28pt; opacity: 0.9; }
 
   /* Module covers */
   .module-cover { background: #0A0F1E; color: #E5E7EB; margin: -22mm -20mm; padding: 60mm 30mm; min-height: 257mm; }
