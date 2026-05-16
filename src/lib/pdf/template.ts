@@ -278,7 +278,7 @@ export function renderReportHtml(report: DarrowReport, opts: { assetsBaseUrl?: s
   .brand { font-family: 'Inter', sans-serif; letter-spacing: 4px; font-size: 9pt; color: #D4AF37; text-transform: uppercase; margin-bottom: 18pt; }
 
   /* Cover */
-  .page-cover { background: #0A0F1E; color: #E5E7EB; min-height: 257mm; display: flex; align-items: center; justify-content: center; margin: -22mm -20mm; padding: 40mm 30mm; }
+  .page-cover { box-sizing: border-box; background: #0A0F1E; color: #E5E7EB; height: 297mm; display: flex; align-items: center; justify-content: center; margin: -22mm -20mm; padding: 40mm 30mm; overflow: hidden; }
   .cover-inner { text-align: center; }
   .brand-cover { font-family: 'Inter', sans-serif; letter-spacing: 6px; font-size: 11pt; color: #D4AF37; text-transform: uppercase; margin-bottom: 36pt; }
   .cover-title { font-family: 'Cormorant SC', 'Cormorant Garamond', serif; font-size: 36pt; color: #D4AF37; margin: 0; line-height: 1.2; font-weight: 400; }
@@ -289,7 +289,7 @@ export function renderReportHtml(report: DarrowReport, opts: { assetsBaseUrl?: s
   .closing-symbol { display: block; width: 56pt; height: auto; margin: 0 auto 28pt; opacity: 0.9; }
 
   /* Module covers */
-  .module-cover { background: #0A0F1E; color: #E5E7EB; margin: -22mm -20mm; padding: 60mm 30mm; min-height: 257mm; }
+  .module-cover { box-sizing: border-box; background: #0A0F1E; color: #E5E7EB; margin: -22mm -20mm; padding: 60mm 30mm; height: 297mm; overflow: hidden; }
   .module-title { font-family: 'Cormorant SC', serif; font-size: 30pt; color: #D4AF37; margin: 24pt 0 16pt; font-weight: 400; }
   .module-cover .brand { color: #D4AF37; }
   .prepared { color: #9CA3AF; font-size: 10pt; letter-spacing: 2px; text-transform: uppercase; }
@@ -338,7 +338,7 @@ export function renderReportHtml(report: DarrowReport, opts: { assetsBaseUrl?: s
   .addon-name { font-family: 'Cormorant Garamond', serif; font-size: 16pt; color: #4A402D; margin: 2pt 0 4pt; }
   .addon-tag { color: #6B6B6B; font-size: 10pt; }
 
-  .page-closing { background: #0A0F1E; color: #E5E7EB; margin: -22mm -20mm; padding: 80mm 30mm; min-height: 257mm; text-align: center; }
+  .page-closing { box-sizing: border-box; background: #0A0F1E; color: #E5E7EB; margin: -22mm -20mm; padding: 80mm 30mm; height: 297mm; text-align: center; overflow: hidden; }
   .page-closing .brand { color: #D4AF37; margin-bottom: 28pt; }
   .watermark-note { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 14pt; color: #9CA3AF; }
 </style></head>
