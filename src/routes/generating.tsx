@@ -2,6 +2,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { z } from "zod";
 import { getGenerationStatus } from "@/utils/checkout.functions";
+import { BRAND_ASSETS } from "@/lib/brand/assets";
 
 export const Route = createFileRoute("/generating")({
   validateSearch: z.object({ session_id: z.string().optional() }).parse,
@@ -47,7 +48,12 @@ function GeneratingPage() {
   return (
     <div className="min-h-screen bg-navy text-light-grey flex items-center justify-center px-6">
       <div className="text-center max-w-md">
-        <div className="mx-auto mb-8 w-10 h-10 rounded-full border-2 border-gold/30 border-t-gold animate-spin" />
+        <img
+          src={BRAND_ASSETS.symbolGold}
+          alt=""
+          aria-hidden="true"
+          className="mx-auto mb-10 w-24 h-24 sm:w-28 sm:h-28 darrow-symbol-pulse"
+        />
         <h1 className="font-serif text-paper" style={{ fontSize: 28, color: "var(--paper)" }}>
           {status}
         </h1>
