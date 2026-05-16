@@ -86,28 +86,36 @@ function LandingPage() {
 
           {/* Method line */}
           <p
-            className="mt-10 text-muted-grey uppercase"
-            style={{ fontSize: 10, letterSpacing: "0.15em" }}
+            className="mt-10 font-sans text-[11px] sm:text-[13px] text-[#9CA3AF] uppercase"
+            style={{ letterSpacing: "0.12em" }}
           >
             Western Astrology · Chinese Bazi · Numerology · Pattern Psychology · AI Synthesis
           </p>
 
           {/* Optional chapters teaser */}
-          <p className="mt-5 text-center text-[12px] text-[#9CA3AF] max-w-[520px] mx-auto leading-relaxed">
-            Optional focused chapters available after your CORE Report:{" "}
-            <span className="text-[#D4AF37]">LOVE</span>{" "}·{" "}
-            <span className="text-[#D4AF37]">MONEY</span>{" "}·{" "}
-            <span className="text-[#D4AF37]">BODY</span>{" "}·{" "}
-            <span className="text-[#D4AF37]">YEAR</span>{" "}·{" "}
-            <span className="text-[#D4AF37]">STYLE</span>{" "}·{" "}
-            <span className="text-[#D4AF37]">PLACE</span>
-          </p>
+          <div className="mt-5 max-w-[520px] mx-auto">
+            <p className="text-center font-sans text-[13px] sm:text-[15px] text-[#9CA3AF] leading-relaxed">
+              Optional focused chapters available after your CORE Report:
+            </p>
+            <div className="mt-2 flex flex-wrap justify-center gap-x-2.5 gap-y-1">
+              {["LOVE", "MONEY", "BODY", "YEAR", "STYLE", "PLACE"].map((m, i) => (
+                <span key={m} className="flex items-center gap-x-2.5">
+                  <span className="font-sans font-semibold text-[13px] sm:text-[14px] text-[#D4AF37]">
+                    {m}
+                  </span>
+                  {i < 5 && (
+                    <span className="text-[#6B6B6B] text-[12px]">·</span>
+                  )}
+                </span>
+              ))}
+            </div>
+          </div>
         </div>
       </section>
 
       {/* INTAKE — paper section */}
       <section className="flex-1">
-        <div className="max-w-xl mx-auto px-5 sm:px-6 pt-8 sm:pt-10 pb-14">
+        <div className="max-w-[480px] mx-auto px-4 sm:px-6 pt-8 sm:pt-10 pb-8 sm:pb-10">
           <p className="text-center text-[13px] mb-5" style={{ color: "#6B6B6B" }}>
             Start instantly. Your private report is generated after checkout.
           </p>
