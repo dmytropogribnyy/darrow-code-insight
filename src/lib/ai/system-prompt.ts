@@ -6,8 +6,13 @@
 // That markdown file is the permanent operating system of the report generator.
 // Do NOT inline, summarize, or fork the prompt elsewhere. To change report
 // voice, structure, JSON schema guidance, PDF page mapping, STYLE palette
-// logic, BODY disclaimers, FULL CODE assembly, or any other narrative
+// logic, BODY disclaimers, CORE Complete assembly, or any other narrative
 // behavior — edit the markdown file. This module just loads it.
+//
+// Delivery guarantee: the full prompt is sent verbatim in `system:` on EVERY
+// Anthropic call (single-shot AND each chunk in chunked generation), with
+// cache_control: ephemeral so Anthropic caches it server-side — full
+// instructions every time, no token waste.
 //
 // Loaded via Vite `?raw` so the file ships in the server bundle but stays
 // editable as a real .md document.
