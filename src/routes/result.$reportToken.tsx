@@ -218,6 +218,9 @@ function ResultPage() {
   const [clientSecret, setClientSecret] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [downloadingToken, setDownloadingToken] = useState<string | null>(null);
+  const queryClient = useQueryClient();
+  const refreshReports = () =>
+    queryClient.invalidateQueries({ queryKey: ["report-context", reportToken] });
 
   const ctxQ = useQuery({
     queryKey: ["report-context", reportToken],
