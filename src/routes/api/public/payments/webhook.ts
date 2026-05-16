@@ -8,6 +8,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { createClient } from "@supabase/supabase-js";
 import { type StripeEnv, verifyWebhook } from "@/lib/stripe.server";
 import { MODULE_CODES, type ModuleCode } from "@/lib/modules";
+import { logStage } from "@/lib/observability/pipeline-log";
 
 // All values that can land in modules_purchased.module_code (DB enum).
 const ALL_MODULE_VALUES: string[] = ["CORE", ...MODULE_CODES];
