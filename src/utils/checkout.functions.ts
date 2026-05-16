@@ -165,7 +165,7 @@ export const createCoreCheckout = createServerFn({ method: "POST" })
 export const createUpsellCheckout = createServerFn({ method: "POST" })
   .inputValidator(
     z.object({
-      intake_id: z.string().uuid(),
+      report_token: z.string().min(8).max(255),
       modules: z.array(z.enum(MODULE_CODES as [ModuleCode, ...ModuleCode[]])).min(1).max(6),
       order_type: z.enum(["ADDONS", "FULL_CODE_UPGRADE"]),
       origin: z.string().url(),
@@ -175,20 +175,28 @@ export const createUpsellCheckout = createServerFn({ method: "POST" })
   .handler(async ({ data }) => {
     const sb = admin();
 
-    // Resolve customer
-    const { data: intake, error: intakeErr } = await sb
-      .from("intakes")
-      .select("id, customer_id")
-      .eq("id", data.intake_id)
-      .single();
-    if (intakeErr || !intake) throw new Error("Intake not found");
-    const customer_id = intake.customer_id as string;
+    // Resolve intake + customer server-side from report_token only.
+    const { data: report } = await sb
+      .from("reports")
+      .select("intake_id, customer_id")
+      .eq("download_token", data.report_token)
+      .maybeSingle();
+    if (!report) throw new Error("Report not found");
+    const intake_id = report.intake_id as string;
+    const customer_id = report.customer_id as string;
 
     const { data: customer } = await sb
       .from("customers")
       .select("email")
       .eq("id", customer_id)
       .single();
+
+    // Block already-owned modules for ADDONS to prevent duplicate checkout.
+    const { data: ownedRows } = await sb
+      .from("modules_purchased")
+      .select("module_code")
+      .eq("intake_id", intake_id);
+    const owned = new Set<string>((ownedRows ?? []).map((r: any) => r.module_code));
 
     // Determine modules + amount
     let modules: ModuleCode[];
