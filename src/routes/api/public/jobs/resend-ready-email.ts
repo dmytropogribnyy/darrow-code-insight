@@ -5,7 +5,11 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { createClient } from "@supabase/supabase-js";
 import { sendEmail, reportReadyEmail } from "@/lib/email/resend.server";
-import { appBaseUrl } from "@/lib/brand/site";
+function appBaseUrl(): string {
+  const u = process.env.APP_BASE_URL;
+  if (!u) throw new Error("APP_BASE_URL is not configured");
+  return u.replace(/\/$/, "");
+}
 
 let _sb: any = null;
 function sb(): any {
