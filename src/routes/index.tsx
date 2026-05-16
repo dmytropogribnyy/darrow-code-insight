@@ -29,7 +29,17 @@ function LandingPage() {
       <SiteHeader onDark />
 
       {/* HERO — dark navy section */}
-      <section className="bg-navy text-light-grey">
+      <section
+        className="text-light-grey"
+        style={{
+          background: `
+            radial-gradient(circle at 50% 18%, rgba(212,175,55,0.06), transparent 28%),
+            radial-gradient(circle at 80% 20%, rgba(229,231,235,0.035), transparent 30%),
+            linear-gradient(180deg, #0A0F1E 0%, rgba(0,0,0,0.25) 100%)
+          `,
+          backgroundColor: "#0A0F1E",
+        }}
+      >
         <div className="max-w-3xl mx-auto px-6 pt-12 sm:pt-16 pb-10 sm:pb-12 text-center">
           {/* Top badge */}
           <div className="inline-flex items-center border border-gold/60 rounded-full px-4 py-2">
