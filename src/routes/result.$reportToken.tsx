@@ -9,6 +9,7 @@ import { StripeEmbeddedCheckoutBox } from "@/components/StripeEmbeddedCheckout";
 import { getReportContext, createUpsellCheckout } from "@/utils/checkout.functions";
 import { getStripeEnvironment } from "@/lib/stripe";
 import { MODULE_CODES, type ModuleCode } from "@/lib/modules";
+import { BRAND_ASSETS } from "@/lib/brand/assets";
 
 export const Route = createFileRoute("/result/$reportToken")({
   head: () => ({ meta: [{ title: "Your report is ready — Darrow Code" }] }),
@@ -82,6 +83,12 @@ function ResultPage() {
       <main className="flex-1 max-w-xl mx-auto px-6 py-16 w-full">
         {/* Top success block */}
         <div className="text-center">
+          <img
+            src={BRAND_ASSETS.symbolGold}
+            alt=""
+            aria-hidden="true"
+            className="mx-auto mb-4 w-14 h-14 opacity-95"
+          />
           <div className="inline-flex items-center justify-center w-10 h-10 rounded-full border border-gold text-gold">
             <Check className="w-5 h-5" />
           </div>

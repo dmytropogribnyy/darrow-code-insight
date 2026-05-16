@@ -113,3 +113,16 @@
 
 .cta-premium:hover:not(:disabled) { background-color: #C9A227 !important; }
 .cta-premium:active:not(:disabled) { background-color: #B8941F !important; }
+
+/* Darrow Code symbol — slow ritual pulse on generating screen */
+@keyframes darrow-symbol-pulse {
+  0%, 100% { opacity: 0.85; transform: scale(1); filter: drop-shadow(0 0 0 rgba(212, 175, 55, 0)); }
+  50%      { opacity: 1;    transform: scale(1.04); filter: drop-shadow(0 0 14px rgba(212, 175, 55, 0.35)); }
+}
+.darrow-symbol-pulse {
+  animation: darrow-symbol-pulse 2.2s ease-in-out infinite;
+  will-change: transform, opacity, filter;
+}
+@media (prefers-reduced-motion: reduce) {
+  .darrow-symbol-pulse { animation: none; }
+}
