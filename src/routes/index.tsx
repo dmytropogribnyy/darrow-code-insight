@@ -32,15 +32,26 @@ function LandingPage() {
       <section className="bg-navy text-light-grey">
         <div className="max-w-3xl mx-auto px-6 pt-16 pb-12 text-center">
           {/* Top badge */}
-          <div className="inline-flex items-center gap-2 border border-gold/60 rounded-full px-3.5 py-1.5">
-            <span className="w-1 h-1 rounded-full bg-gold" />
+          <div className="inline-flex items-center border border-gold/60 rounded-full px-4 py-2">
             <span
-              className="text-gold uppercase"
-              style={{ fontSize: 10, letterSpacing: "0.2em" }}
+              className="font-sans font-semibold text-gold uppercase"
+              style={{ fontSize: "clamp(11px, 1.2vw, 12px)", letterSpacing: "0.18em" }}
             >
-              AI-Powered Personal Astrology Report · Darrow Code Method · PDF
+              AI-POWERED PERSONAL ASTROLOGY REPORT · DARROW CODE METHOD · PDF
             </span>
           </div>
+
+          {/* Darrow symbol */}
+          <img
+            src="/brand/darrow-symbol-small.png"
+            alt="Darrow Code"
+            className="mx-auto mt-5 sm:mt-7 mb-[18px] sm:mb-6 opacity-95"
+            style={{
+              width: "clamp(44px, 8vw, 56px)",
+              height: "auto",
+              imageRendering: "-webkit-optimize-contrast",
+            }}
+          />
 
           {/* Headline */}
           <h1
