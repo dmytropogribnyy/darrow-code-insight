@@ -235,7 +235,28 @@ export function renderReportHtml(report: DarrowReport, opts: { assetsBaseUrl?: s
 <html lang="en"><head><meta charset="utf-8"/>
 <title>Darrow Code — Prepared for ${escape(clientName)}</title>
 <style>
-  @page { size: A4; margin: 22mm 20mm; }
+  @page {
+    size: A4;
+    margin: 22mm 20mm;
+    @bottom-right {
+      content: counter(page);
+      font-family: 'Inter', sans-serif;
+      font-size: 8pt;
+      color: #9CA3AF;
+      letter-spacing: 1pt;
+    }
+    @bottom-left {
+      content: "";
+      background-image: url("${base}/brand/darrow-symbol-small.png");
+      background-repeat: no-repeat;
+      background-size: contain;
+      background-position: left center;
+      width: 14pt;
+      height: 14pt;
+      opacity: 0.07;
+    }
+  }
+  @page :first { @bottom-right { content: ""; } @bottom-left { background-image: none; } }
   body { font-family: 'Inter', 'Helvetica', sans-serif; color: #151922; font-size: 11pt; line-height: 1.6; background: #F6F4EF; margin: 0; }
   .page { page-break-after: always; min-height: 240mm; }
   .page:last-child { page-break-after: auto; }
