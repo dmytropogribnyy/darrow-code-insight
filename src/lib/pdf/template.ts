@@ -196,15 +196,19 @@ function renderCrossSell(generated: string[]): string {
   `;
 }
 
-export function renderReportHtml(report: DarrowReport): string {
+export function renderReportHtml(report: DarrowReport, opts: { assetsBaseUrl?: string } = {}): string {
   const core = report.modules.CORE;
   const generated = report.generated_modules ?? Object.keys(report.modules);
   const addonCodes = generated.filter((c) => c !== "CORE");
   const clientName = report.client_name || "you";
+  const base = (opts.assetsBaseUrl ?? "").replace(/\/$/, "");
+  const symbolGold = `${base}/brand/darrow-symbol-gold.png`;
+  const symbolSmall = `${base}/brand/darrow-symbol-small.png`;
 
   const cover = `
     <section class="page page-cover">
       <div class="cover-inner">
+        <img class="cover-symbol" src="${symbolGold}" alt="" />
         <div class="brand-cover">Darrow Code</div>
         <h1 class="cover-title">The Personal Architecture Report</h1>
         <div class="cover-divider"></div>
