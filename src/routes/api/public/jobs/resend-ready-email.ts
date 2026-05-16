@@ -5,6 +5,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { createClient } from "@supabase/supabase-js";
 import { sendEmail, reportReadyEmail } from "@/lib/email/resend.server";
+import { checkWorkerAuth, unauthorizedResponse } from "@/lib/jobs/auth";
 function appBaseUrl(): string {
   const u = process.env.APP_BASE_URL;
   if (!u) throw new Error("APP_BASE_URL is not configured");
@@ -17,20 +18,12 @@ function sb(): any {
   return _sb;
 }
 
-function isAuthorized(request: Request): boolean {
-  const secret = process.env.JOB_DISPATCH_SECRET;
-  const publishableKey = process.env.SUPABASE_PUBLISHABLE_KEY ?? process.env.VITE_SUPABASE_PUBLISHABLE_KEY;
-  const auth = request.headers.get("authorization") ?? "";
-  const provided = auth.startsWith("Bearer ") ? auth.slice(7) : request.headers.get("x-job-secret") ?? "";
-  const apikey = request.headers.get("apikey") ?? "";
-  return (!!secret && provided === secret) || (!!publishableKey && apikey === publishableKey);
-}
-
 export const Route = createFileRoute("/api/public/jobs/resend-ready-email")({
   server: {
     handlers: {
       POST: async ({ request }) => {
-        if (!isAuthorized(request)) return new Response("unauthorized", { status: 401 });
+        const auth = checkWorkerAuth(request.headers);
+        if (!auth.ok) return unauthorizedResponse(auth);
         let body: any = {};
         try { body = await request.json(); } catch {}
         const orderId: string | undefined = body?.order_id;
