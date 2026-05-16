@@ -88,8 +88,16 @@ function LandingPage() {
             <span className="text-paper">direction signal</span>.
           </p>
 
+          {/* Editorial whisper */}
+          <p
+            className="mt-7 sm:mt-8 max-w-[520px] mx-auto text-center font-serif italic leading-[1.5]"
+            style={{ fontSize: "clamp(14px, 1.8vw, 16px)", color: "#9CA3AF" }}
+          >
+            When the pattern becomes visible, life gets easier to read.
+          </p>
+
           {/* Quote box */}
-          <div className="mt-8 sm:mt-10 max-w-[460px] mx-auto text-left bg-white/[0.03] border-l-2 border-gold pl-5 py-4 rounded-r-sm">
+          <div className="mt-7 sm:mt-8 max-w-[460px] mx-auto text-left bg-white/[0.03] border-l-2 border-gold pl-5 py-4 rounded-r-sm">
             <p className="font-serif italic text-light-grey text-[16px] leading-snug">
               "One astrology tradition shows part of the picture.
               <br />
