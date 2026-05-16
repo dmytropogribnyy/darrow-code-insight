@@ -213,7 +213,9 @@ export const createUpsellCheckout = createServerFn({ method: "POST" })
       if (!prices.data.length) throw new Error("Upgrade price not found");
       line_items = [{ price: prices.data[0].id, quantity: 1 }];
     } else {
-      modules = data.modules;
+      const requested = data.modules.filter((m) => !owned.has(m));
+      if (requested.length === 0) throw new Error("All requested modules already purchased");
+      modules = requested;
       amount_cents = modules.length * MODULE_PRICE_CENTS;
       const prices = await stripe.prices.list({
         lookup_keys: modules.map((m) => MODULE_PRICE_ID[m]),
@@ -232,7 +234,7 @@ export const createUpsellCheckout = createServerFn({ method: "POST" })
       .from("orders")
       .insert({
         customer_id,
-        intake_id: data.intake_id,
+        intake_id,
         amount_cents,
         status: "pending",
       })
@@ -249,7 +251,7 @@ export const createUpsellCheckout = createServerFn({ method: "POST" })
       ...(customer?.email && { customer_email: customer.email as string }),
       metadata: {
         customer_id,
-        intake_id: data.intake_id,
+        intake_id,
         order_id,
         order_type: data.order_type,
         modules_to_purchase: modules.join(","),
