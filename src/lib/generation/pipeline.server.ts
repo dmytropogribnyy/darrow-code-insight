@@ -172,7 +172,7 @@ export async function runFullGenerationPipeline(order_id: string): Promise<void>
     const { report, model_used } = await generateDarrowReport(userPrompt);
 
     // 3) HTML → PDF.
-    const html = renderReportHtml(report);
+    const html = renderReportHtml(report, { assetsBaseUrl: appBaseUrl() });
     const pdfBytes = await renderHtmlToPdf(html);
 
     // 4) Upload PDF.
@@ -200,7 +200,7 @@ export async function runFullGenerationPipeline(order_id: string): Promise<void>
     // 6) Send "report ready" email.
     if (customerEmail) {
       const downloadUrl = `${appBaseUrl()}/download/${download_token}`;
-      const { subject, html } = reportReadyEmail({ first_name: firstName, download_url: downloadUrl });
+      const { subject, html } = reportReadyEmail({ first_name: firstName, download_url: downloadUrl, assets_base_url: appBaseUrl() });
       try {
         await sendEmail({ to: customerEmail, subject, html });
       } catch (mailErr) {
@@ -227,7 +227,7 @@ export async function runFullGenerationPipeline(order_id: string): Promise<void>
     // Delay email + admin alert.
     if (customerEmail) {
       try {
-        const m = reportDelayEmail({ first_name: firstName });
+        const m = reportDelayEmail({ first_name: firstName, assets_base_url: appBaseUrl() });
         await sendEmail({ to: customerEmail, subject: m.subject, html: m.html });
       } catch (err) {
         console.error("[pipeline] delay email failed", err);

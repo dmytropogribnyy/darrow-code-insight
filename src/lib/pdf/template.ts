@@ -171,9 +171,16 @@ function renderAddon(code: string, mod: DarrowModule, clientName: string): strin
   `;
 }
 
-function renderCrossSell(generated: string[]): string {
+function renderCrossSell(generated: string[], symbolSmall: string): string {
   const remaining = ADDONS.filter((a) => !generated.includes(a.code));
-  if (!remaining.length) return "";
+  const closing = `
+    <section class="page page-closing">
+      <img class="closing-symbol" src="${symbolSmall}" alt="" />
+      <div class="brand">Darrow Code</div>
+      <p class="watermark-note">More than a horoscope. Less than a consultation.</p>
+    </section>
+  `;
+  if (!remaining.length) return closing;
   return `
     <section class="page page-crosssell">
       <div class="brand">Darrow Code · Ecosystem</div>
@@ -189,22 +196,23 @@ function renderCrossSell(generated: string[]): string {
         `).join("")}
       </div>
     </section>
-    <section class="page page-closing">
-      <div class="brand">Darrow Code</div>
-      <p class="watermark-note">More than a horoscope. Less than a consultation.</p>
-    </section>
+    ${closing}
   `;
 }
 
-export function renderReportHtml(report: DarrowReport): string {
+export function renderReportHtml(report: DarrowReport, opts: { assetsBaseUrl?: string } = {}): string {
   const core = report.modules.CORE;
   const generated = report.generated_modules ?? Object.keys(report.modules);
   const addonCodes = generated.filter((c) => c !== "CORE");
   const clientName = report.client_name || "you";
+  const base = (opts.assetsBaseUrl ?? "").replace(/\/$/, "");
+  const symbolGold = `${base}/brand/darrow-symbol-gold.png`;
+  const symbolSmall = `${base}/brand/darrow-symbol-small.png`;
 
   const cover = `
     <section class="page page-cover">
       <div class="cover-inner">
+        <img class="cover-symbol" src="${symbolGold}" alt="" />
         <div class="brand-cover">Darrow Code</div>
         <h1 class="cover-title">The Personal Architecture Report</h1>
         <div class="cover-divider"></div>
@@ -246,6 +254,8 @@ export function renderReportHtml(report: DarrowReport): string {
   .cover-divider { width: 60pt; height: 1pt; background: #D4AF37; margin: 28pt auto; }
   .cover-prepared { font-size: 10pt; letter-spacing: 3px; text-transform: uppercase; color: #9CA3AF; margin-bottom: 8pt; }
   .cover-name { font-family: 'Cormorant Garamond', serif; font-size: 22pt; color: #F6F4EF; }
+  .cover-symbol { display: block; width: 90pt; height: auto; margin: 0 auto 28pt; opacity: 0.95; }
+  .closing-symbol { display: block; width: 56pt; height: auto; margin: 0 auto 28pt; opacity: 0.9; }
 
   /* Module covers */
   .module-cover { background: #0A0F1E; color: #E5E7EB; margin: -22mm -20mm; padding: 60mm 30mm; min-height: 257mm; }
@@ -305,6 +315,6 @@ export function renderReportHtml(report: DarrowReport): string {
   ${cover}
   ${renderCoreChapter(core, report.client_snapshot, report.closing)}
   ${addonCodes.map((c) => report.modules[c] ? renderAddon(c, report.modules[c]!, clientName) : "").join("")}
-  ${renderCrossSell(generated)}
+  ${renderCrossSell(generated, symbolSmall)}
 </body></html>`;
 }

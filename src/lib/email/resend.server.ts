@@ -42,32 +42,48 @@ export async function sendEmail(args: SendEmailArgs): Promise<{ id?: string }> {
 export function reportReadyEmail(args: {
   first_name: string | null;
   download_url: string;
+  assets_base_url?: string;
 }): { subject: string; html: string } {
   const name = args.first_name ?? "";
+  const base = (args.assets_base_url ?? "").replace(/\/$/, "");
+  const header = `${base}/brand/email-header.png`;
   return {
     subject: "Your Darrow Code report is ready",
-    html: `<!doctype html><html><body style="font-family:Georgia,serif;color:#222;max-width:560px;margin:0 auto;padding:24px">
-      <div style="font-size:11px;letter-spacing:3px;color:#c9a84c;text-transform:uppercase">Darrow Code</div>
-      <h1 style="font-weight:500;font-size:22px;margin:8px 0 18px">Your report is ready${name ? `, ${name}` : ""}.</h1>
-      <p>Quietly written, individually produced. Open it when you have a few minutes to read carefully.</p>
-      <p style="margin:28px 0">
-        <a href="${args.download_url}" style="display:inline-block;background:#1a1a1f;color:#fff;text-decoration:none;padding:12px 22px;border-radius:2px;letter-spacing:1px;font-size:13px">Open your report</a>
-      </p>
-      <p style="color:#888;font-size:12px">This link is private to you. Save the PDF if you'd like a copy.</p>
-      <p style="color:#aaa;font-size:11px;margin-top:32px;font-style:italic">More than a horoscope. Less than a consultation.</p>
+    html: `<!doctype html><html><body style="font-family:Georgia,serif;color:#151922;background:#F6F4EF;margin:0;padding:0">
+      <div style="max-width:600px;margin:0 auto;background:#F6F4EF">
+        <img src="${header}" alt="Darrow Code" width="600" style="display:block;width:100%;height:auto;border:0" />
+        <div style="padding:32px 28px">
+          <h1 style="font-family:'Cormorant Garamond',Georgia,serif;font-weight:500;font-size:24px;color:#4A402D;margin:0 0 18px">Your report is ready${name ? `, ${name}` : ""}.</h1>
+          <p style="font-size:14px;line-height:1.6;color:#151922;margin:0 0 14px">Quietly written, individually produced. Open it when you have a few minutes to read carefully.</p>
+          <p style="margin:28px 0">
+            <a href="${args.download_url}" style="display:inline-block;background:#0A0F1E;color:#D4AF37;text-decoration:none;padding:14px 26px;letter-spacing:2px;font-size:12px;text-transform:uppercase">Open your report</a>
+          </p>
+          <p style="color:#6B6B6B;font-size:12px;margin:0">This link is private to you. Save the PDF if you'd like a copy.</p>
+          <p style="color:#9CA3AF;font-size:11px;margin-top:32px;font-style:italic;font-family:'Cormorant Garamond',Georgia,serif">More than a horoscope. Less than a consultation.</p>
+        </div>
+      </div>
     </body></html>`,
   };
 }
 
-export function reportDelayEmail(args: { first_name: string | null }): { subject: string; html: string } {
+export function reportDelayEmail(args: {
+  first_name: string | null;
+  assets_base_url?: string;
+}): { subject: string; html: string } {
   const name = args.first_name ?? "";
+  const base = (args.assets_base_url ?? "").replace(/\/$/, "");
+  const header = `${base}/brand/email-header.png`;
   return {
     subject: "A small delay on your Darrow Code report",
-    html: `<!doctype html><html><body style="font-family:Georgia,serif;color:#222;max-width:560px;margin:0 auto;padding:24px">
-      <div style="font-size:11px;letter-spacing:3px;color:#c9a84c;text-transform:uppercase">Darrow Code</div>
-      <h1 style="font-weight:500;font-size:20px">A short delay${name ? `, ${name}` : ""}.</h1>
-      <p>Your report didn't render on the first pass. We've been notified and will send it as soon as it's ready — usually within a few hours. No action needed from you.</p>
-      <p style="color:#aaa;font-size:11px;margin-top:32px;font-style:italic">More than a horoscope. Less than a consultation.</p>
+    html: `<!doctype html><html><body style="font-family:Georgia,serif;color:#151922;background:#F6F4EF;margin:0;padding:0">
+      <div style="max-width:600px;margin:0 auto;background:#F6F4EF">
+        <img src="${header}" alt="Darrow Code" width="600" style="display:block;width:100%;height:auto;border:0" />
+        <div style="padding:32px 28px">
+          <h1 style="font-family:'Cormorant Garamond',Georgia,serif;font-weight:500;font-size:22px;color:#4A402D;margin:0 0 14px">A short delay${name ? `, ${name}` : ""}.</h1>
+          <p style="font-size:14px;line-height:1.6;color:#151922;margin:0 0 14px">Your report didn't render on the first pass. We've been notified and will send it as soon as it's ready — usually within a few hours. No action needed from you.</p>
+          <p style="color:#9CA3AF;font-size:11px;margin-top:32px;font-style:italic;font-family:'Cormorant Garamond',Georgia,serif">More than a horoscope. Less than a consultation.</p>
+        </div>
+      </div>
     </body></html>`,
   };
 }
