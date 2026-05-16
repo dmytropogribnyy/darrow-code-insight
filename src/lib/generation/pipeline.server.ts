@@ -12,7 +12,7 @@ import { renderHtmlToPdf } from "@/lib/pdf/apitemplate.server";
 import { sendEmail, reportReadyEmail, reportDelayEmail } from "@/lib/email/resend.server";
 
 const STUCK_PROCESSING_MS = 4 * 60 * 1000; // 4 min
-const STEP_TIMEOUT_MS = 90 * 1000;
+const STEP_TIMEOUT_MS = 8 * 60 * 1000;
 
 let _sb: any = null;
 function admin(): any {
@@ -28,9 +28,15 @@ function appBaseUrl(): string {
   return u.replace(/\/$/, "");
 }
 
-async function withTimeout<T>(label: string, promise: Promise<T>, ms = STEP_TIMEOUT_MS): Promise<T> {
+async function withTimeout<T>(label: string, promise: Promise<T>, ms = STEP_TIMEOUT_MS, onTick?: () => Promise<void>): Promise<T> {
   let timeout: ReturnType<typeof setTimeout> | undefined;
+  let interval: ReturnType<typeof setInterval> | undefined;
   try {
+    if (onTick) {
+      interval = setInterval(() => {
+        onTick().catch((e) => console.error(`[pipeline] ${label} heartbeat failed`, e));
+      }, 30 * 1000);
+    }
     return await Promise.race([
       promise,
       new Promise<never>((_, reject) => {
@@ -39,6 +45,7 @@ async function withTimeout<T>(label: string, promise: Promise<T>, ms = STEP_TIME
     ]);
   } finally {
     if (timeout) clearTimeout(timeout);
+    if (interval) clearInterval(interval);
   }
 }
 
@@ -170,7 +177,7 @@ export async function runFullGenerationPipeline(order_id: string): Promise<void>
       timezone: intake.timezone ?? "UTC",
       full_name_for_numerology: intake.full_name_for_numerology ?? customer?.first_name ?? null,
     };
-    const chart = await withTimeout("Astro calculation", provider.computeNatal(natal), 30 * 1000);
+    const chart = await withTimeout("Astro calculation", provider.computeNatal(natal), 30 * 1000, () => heartbeat(order_id));
     await heartbeat(order_id);
 
     await sb.from("astro_data").insert({
@@ -193,12 +200,12 @@ export async function runFullGenerationPipeline(order_id: string): Promise<void>
       modules,
       chart,
     });
-    const { report, model_used } = await withTimeout("AI report generation", generateDarrowReport(userPrompt));
+    const { report, model_used } = await withTimeout("AI report generation", generateDarrowReport(userPrompt), STEP_TIMEOUT_MS, () => heartbeat(order_id));
     await heartbeat(order_id);
 
     // 3) HTML → PDF.
     const html = renderReportHtml(report, { assetsBaseUrl: appBaseUrl() });
-    const pdfBytes = await withTimeout("PDF rendering", renderHtmlToPdf(html));
+    const pdfBytes = await withTimeout("PDF rendering", renderHtmlToPdf(html), 3 * 60 * 1000, () => heartbeat(order_id));
     await heartbeat(order_id);
 
     // 4) Upload PDF.
