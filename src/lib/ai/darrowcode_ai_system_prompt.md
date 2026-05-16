@@ -211,7 +211,7 @@ ADD-ON MODULE TARGETS (renders 6-8 pages):
 
 ADD-ON total: ~480-690 words
 
-FULL CODE TARGETS (all 7 modules together, renders ~50 pages):
+CORE COMPLETE TARGETS (all 7 modules together, renders ~50 pages):
 - Generate CORE at full target
 - Generate each of the 6 add-ons at ~85% of standalone size (slightly
   compressed since they share the same document)
