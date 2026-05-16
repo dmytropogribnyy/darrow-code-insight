@@ -64,7 +64,7 @@ async function lastSweeperRunAt(s: any): Promise<string | null> {
   }
 }
 
-export const Route = createFileRoute("/api/health/generation-pipeline")({
+export const Route = createFileRoute("/api/public/health/generation-pipeline")({
   server: {
     handlers: {
       GET: async () => {
