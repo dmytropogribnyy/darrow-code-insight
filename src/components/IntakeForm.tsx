@@ -217,12 +217,12 @@ export function IntakeForm({ chapters = [] }: { chapters?: ModuleCode[] } = {}) 
           }}
           className="cta-premium w-full font-sans font-semibold rounded-[10px] py-3.5 px-4 text-[15px] sm:text-[16px] flex items-center justify-center gap-2.5 disabled:opacity-60"
         >
-          <span>{submitting ? "Preparing…" : "Unlock My CORE Report"}</span>
+          <span>{submitting ? "Preparing…" : ctaText}</span>
           <span
             className="font-mono text-[13px] px-2 py-[3px] rounded"
             style={{ backgroundColor: "#0A0F1E", color: "#D4AF37" }}
           >
-            $4.99
+            {ctaPrice}
           </span>
         </button>
         <p className="mt-4 text-[12.5px] sm:text-[13px] font-medium leading-relaxed" style={{ color: "#4A402D" }}>
