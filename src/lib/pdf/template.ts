@@ -242,6 +242,9 @@ function renderCrossSell(generated: string[], symbolSmall: string): string {
 }
 
 export function renderReportHtml(report: DarrowReport, opts: { assetsBaseUrl?: string } = {}): string {
+  // Defensive: normalize known AI typos of "PROTOCOL" across all string fields
+  // before any rendering. Does not modify AI prompts or generation logic.
+  report = normalizeReport(report);
   const core = report.modules.CORE;
   const generated = report.generated_modules ?? Object.keys(report.modules);
   const addonCodes = generated.filter((c) => c !== "CORE");
