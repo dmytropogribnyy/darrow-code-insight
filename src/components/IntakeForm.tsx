@@ -107,16 +107,14 @@ export function IntakeForm() {
     );
   }
 
-  const labelCls = "block text-[11px] tracking-meta uppercase text-neutral-grey mb-1.5";
-  const inputCls =
-    "w-full bg-paper border border-border rounded-[6px] px-3 py-2.5 text-[14px] text-charcoal " +
-    "placeholder:text-neutral-grey/70 focus:outline-none focus:border-gold focus:ring-1 focus:ring-gold transition";
+  const labelCls = "intake-label";
+  const inputCls = "intake-input";
 
   return (
-    <form onSubmit={onSubmit} className="w-full max-w-[380px] mx-auto space-y-4">
+    <form onSubmit={onSubmit} className="w-full space-y-[18px]">
       <div>
         <label className={labelCls}>First name</label>
-        <input className={inputCls} value={form.first_name} onChange={update("first_name")} required />
+        <input className={inputCls} value={form.first_name} onChange={update("first_name")} placeholder="Your first name" required />
       </div>
 
       <div>
@@ -126,11 +124,12 @@ export function IntakeForm() {
           className={inputCls}
           value={form.email}
           onChange={update("email")}
+          placeholder="you@example.com"
           required
         />
       </div>
 
-      <div className="grid gap-3" style={{ gridTemplateColumns: "1.4fr 1fr" }}>
+      <div className="grid gap-[18px] sm:grid-cols-[1.4fr_1fr] grid-cols-1">
         <div>
           <label className={labelCls}>Date of birth</label>
           <input
@@ -168,29 +167,29 @@ export function IntakeForm() {
           invalid={!!placeError}
         />
         {placeError ? (
-          <p className="mt-1 text-[10px]" style={{ color: "#B45454" }}>
+          <p className="mt-1.5 text-[11px]" style={{ color: "#B23A3A" }}>
             {placeError}
           </p>
         ) : (
-          <p className="mt-1 text-[10px] text-muted-grey">
+          <p className="mt-1.5 text-[11px]" style={{ color: "#9CA3AF" }}>
             Used only to calculate your birth chart timezone and coordinates.
           </p>
         )}
       </div>
 
       <div>
-        <label className={labelCls + " opacity-70"}>
-          Full name <span className="normal-case tracking-normal text-muted-grey">— optional</span>
+        <label className={labelCls} style={{ opacity: 0.75 }}>
+          Full name <span className="normal-case tracking-normal" style={{ color: "#9CA3AF" }}>— optional</span>
         </label>
         <input
-          className={inputCls + " text-[13px]"}
+          className={inputCls}
           value={form.full_name_for_numerology}
           onChange={update("full_name_for_numerology")}
-          placeholder="Full name for deeper numerology — optional"
+          placeholder="Full name for deeper numerology"
         />
       </div>
 
-      <div className="pt-2 text-center">
+      <div className="pt-3 text-center">
         <p className="text-[10px] tracking-meta uppercase text-gold mb-2">Launch price</p>
         <button
           type="submit"
@@ -198,15 +197,19 @@ export function IntakeForm() {
           style={{
             backgroundColor: "#D4AF37",
             color: "#0A0F1E",
-            border: "1px solid rgba(10,15,30,0.18)",
-            boxShadow: "0 10px 24px rgba(212,175,55,0.18)",
+            boxShadow: "0 8px 22px rgba(212,175,55,0.28), 0 1px 0 rgba(10,15,30,0.06) inset",
           }}
-          className="cta-premium w-full font-sans font-semibold tracking-wide rounded-[6px] py-3.5 transition disabled:opacity-60 flex items-center justify-center gap-2"
+          className="cta-premium w-full font-sans font-semibold rounded-[10px] py-3.5 px-4 text-[15px] sm:text-[16px] flex items-center justify-center gap-2.5 disabled:opacity-60"
         >
           <span>{submitting ? "Preparing…" : "Unlock My CORE Report"}</span>
-          <span className="bg-navy text-gold font-mono text-[12px] px-2 py-1 rounded">$4.99</span>
+          <span
+            className="font-mono text-[13px] px-2 py-[3px] rounded"
+            style={{ backgroundColor: "#0A0F1E", color: "#D4AF37" }}
+          >
+            $4.99
+          </span>
         </button>
-        <p className="mt-3 text-[11px]" style={{ color: "#6B6B6B" }}>
+        <p className="mt-4 text-[12px] leading-relaxed" style={{ color: "#6B6B6B" }}>
           Start instantly · Usually 60–90 seconds · Multi-page PDF ·{" "}
           <span style={{ color: "#D4AF37" }}>No subscription required</span> · Yours forever
         </p>
