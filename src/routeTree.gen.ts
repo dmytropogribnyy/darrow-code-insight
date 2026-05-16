@@ -17,10 +17,10 @@ import { Route as ContactRouteImport } from './routes/contact'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ResultReportTokenRouteImport } from './routes/result.$reportToken'
 import { Route as DownloadReportTokenRouteImport } from './routes/download.$reportToken'
-import { Route as ApiHealthGenerationPipelineRouteImport } from './routes/api/health/generation-pipeline'
 import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/public/payments/webhook'
 import { Route as ApiPublicJobsResendReadyEmailRouteImport } from './routes/api/public/jobs/resend-ready-email'
 import { Route as ApiPublicJobsProcessGenerationRouteImport } from './routes/api/public/jobs/process-generation'
+import { Route as ApiPublicHealthGenerationPipelineRouteImport } from './routes/api/public/health/generation-pipeline'
 
 const TermsRoute = TermsRouteImport.update({
   id: '/terms',
@@ -62,12 +62,6 @@ const DownloadReportTokenRoute = DownloadReportTokenRouteImport.update({
   path: '/download/$reportToken',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiHealthGenerationPipelineRoute =
-  ApiHealthGenerationPipelineRouteImport.update({
-    id: '/api/health/generation-pipeline',
-    path: '/api/health/generation-pipeline',
-    getParentRoute: () => rootRouteImport,
-  } as any)
 const ApiPublicPaymentsWebhookRoute =
   ApiPublicPaymentsWebhookRouteImport.update({
     id: '/api/public/payments/webhook',
@@ -86,6 +80,12 @@ const ApiPublicJobsProcessGenerationRoute =
     path: '/api/public/jobs/process-generation',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicHealthGenerationPipelineRoute =
+  ApiPublicHealthGenerationPipelineRouteImport.update({
+    id: '/api/public/health/generation-pipeline',
+    path: '/api/public/health/generation-pipeline',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -96,7 +96,7 @@ export interface FileRoutesByFullPath {
   '/terms': typeof TermsRoute
   '/download/$reportToken': typeof DownloadReportTokenRoute
   '/result/$reportToken': typeof ResultReportTokenRoute
-  '/api/health/generation-pipeline': typeof ApiHealthGenerationPipelineRoute
+  '/api/public/health/generation-pipeline': typeof ApiPublicHealthGenerationPipelineRoute
   '/api/public/jobs/process-generation': typeof ApiPublicJobsProcessGenerationRoute
   '/api/public/jobs/resend-ready-email': typeof ApiPublicJobsResendReadyEmailRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
@@ -110,7 +110,7 @@ export interface FileRoutesByTo {
   '/terms': typeof TermsRoute
   '/download/$reportToken': typeof DownloadReportTokenRoute
   '/result/$reportToken': typeof ResultReportTokenRoute
-  '/api/health/generation-pipeline': typeof ApiHealthGenerationPipelineRoute
+  '/api/public/health/generation-pipeline': typeof ApiPublicHealthGenerationPipelineRoute
   '/api/public/jobs/process-generation': typeof ApiPublicJobsProcessGenerationRoute
   '/api/public/jobs/resend-ready-email': typeof ApiPublicJobsResendReadyEmailRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
@@ -125,7 +125,7 @@ export interface FileRoutesById {
   '/terms': typeof TermsRoute
   '/download/$reportToken': typeof DownloadReportTokenRoute
   '/result/$reportToken': typeof ResultReportTokenRoute
-  '/api/health/generation-pipeline': typeof ApiHealthGenerationPipelineRoute
+  '/api/public/health/generation-pipeline': typeof ApiPublicHealthGenerationPipelineRoute
   '/api/public/jobs/process-generation': typeof ApiPublicJobsProcessGenerationRoute
   '/api/public/jobs/resend-ready-email': typeof ApiPublicJobsResendReadyEmailRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
@@ -141,7 +141,7 @@ export interface FileRouteTypes {
     | '/terms'
     | '/download/$reportToken'
     | '/result/$reportToken'
-    | '/api/health/generation-pipeline'
+    | '/api/public/health/generation-pipeline'
     | '/api/public/jobs/process-generation'
     | '/api/public/jobs/resend-ready-email'
     | '/api/public/payments/webhook'
@@ -155,7 +155,7 @@ export interface FileRouteTypes {
     | '/terms'
     | '/download/$reportToken'
     | '/result/$reportToken'
-    | '/api/health/generation-pipeline'
+    | '/api/public/health/generation-pipeline'
     | '/api/public/jobs/process-generation'
     | '/api/public/jobs/resend-ready-email'
     | '/api/public/payments/webhook'
@@ -169,7 +169,7 @@ export interface FileRouteTypes {
     | '/terms'
     | '/download/$reportToken'
     | '/result/$reportToken'
-    | '/api/health/generation-pipeline'
+    | '/api/public/health/generation-pipeline'
     | '/api/public/jobs/process-generation'
     | '/api/public/jobs/resend-ready-email'
     | '/api/public/payments/webhook'
@@ -184,7 +184,7 @@ export interface RootRouteChildren {
   TermsRoute: typeof TermsRoute
   DownloadReportTokenRoute: typeof DownloadReportTokenRoute
   ResultReportTokenRoute: typeof ResultReportTokenRoute
-  ApiHealthGenerationPipelineRoute: typeof ApiHealthGenerationPipelineRoute
+  ApiPublicHealthGenerationPipelineRoute: typeof ApiPublicHealthGenerationPipelineRoute
   ApiPublicJobsProcessGenerationRoute: typeof ApiPublicJobsProcessGenerationRoute
   ApiPublicJobsResendReadyEmailRoute: typeof ApiPublicJobsResendReadyEmailRoute
   ApiPublicPaymentsWebhookRoute: typeof ApiPublicPaymentsWebhookRoute
@@ -248,13 +248,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DownloadReportTokenRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/health/generation-pipeline': {
-      id: '/api/health/generation-pipeline'
-      path: '/api/health/generation-pipeline'
-      fullPath: '/api/health/generation-pipeline'
-      preLoaderRoute: typeof ApiHealthGenerationPipelineRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/api/public/payments/webhook': {
       id: '/api/public/payments/webhook'
       path: '/api/public/payments/webhook'
@@ -276,6 +269,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicJobsProcessGenerationRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/health/generation-pipeline': {
+      id: '/api/public/health/generation-pipeline'
+      path: '/api/public/health/generation-pipeline'
+      fullPath: '/api/public/health/generation-pipeline'
+      preLoaderRoute: typeof ApiPublicHealthGenerationPipelineRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -288,7 +288,8 @@ const rootRouteChildren: RootRouteChildren = {
   TermsRoute: TermsRoute,
   DownloadReportTokenRoute: DownloadReportTokenRoute,
   ResultReportTokenRoute: ResultReportTokenRoute,
-  ApiHealthGenerationPipelineRoute: ApiHealthGenerationPipelineRoute,
+  ApiPublicHealthGenerationPipelineRoute:
+    ApiPublicHealthGenerationPipelineRoute,
   ApiPublicJobsProcessGenerationRoute: ApiPublicJobsProcessGenerationRoute,
   ApiPublicJobsResendReadyEmailRoute: ApiPublicJobsResendReadyEmailRoute,
   ApiPublicPaymentsWebhookRoute: ApiPublicPaymentsWebhookRoute,
@@ -296,3 +297,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
