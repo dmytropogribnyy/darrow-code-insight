@@ -112,18 +112,27 @@ export async function checkAlertConditions(): Promise<void> {
     );
   }
 
-  // 4) Any failed_generation reports in the last 24h (announce once per kind per 30 min).
-  const dayAgo = new Date(now - 24 * 60 * 60 * 1000).toISOString();
+  // 4) failed_generation reports that appeared SINCE the last alert we sent for this kind.
+  // Prevents re-sending the same failure every 30 min for 24h.
+  const { data: lastAlert } = await s
+    .from("admin_alerts")
+    .select("last_sent_at")
+    .eq("kind", "failed_generation")
+    .maybeSingle();
+  // First-ever alert: look back 24h. Otherwise: only reports created after last alert.
+  const sinceIso = lastAlert?.last_sent_at
+    ? new Date(lastAlert.last_sent_at).toISOString()
+    : new Date(now - 24 * 60 * 60 * 1000).toISOString();
   const { data: failed } = await s
     .from("reports")
     .select("id, intake_id, generation_error, created_at")
     .eq("generation_status", "failed_generation")
-    .gte("created_at", dayAgo)
+    .gt("created_at", sinceIso)
     .limit(20);
   if ((failed ?? []).length > 0) {
     await emit(
       "failed_generation",
-      `${failed!.length} report(s) marked failed_generation in last 24h`,
+      `${failed!.length} new report(s) marked failed_generation since ${sinceIso}`,
       failed!.map((r: any) => `- report=${r.id}  intake=${r.intake_id}  at=${r.created_at}\n  error=${r.generation_error ?? "(none)"}`).join("\n\n"),
     );
   }
