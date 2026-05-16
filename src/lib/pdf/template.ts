@@ -303,7 +303,7 @@ export function renderReportHtml(report: DarrowReport, opts: { assetsBaseUrl?: s
       opacity: 0.07;
     }
   }
-  @page :first { @bottom-right { content: ""; } @bottom-left { background-image: none; } }
+  @page :first { margin-bottom: 0; @bottom-right { content: ""; } @bottom-left { background-image: none; } }
   body { font-family: 'Inter', 'Helvetica', sans-serif; color: #151922; font-size: 11pt; line-height: 1.6; background: #F6F4EF; margin: 0; }
   .page { page-break-after: always; min-height: 240mm; }
   .page:last-child { page-break-after: auto; }
