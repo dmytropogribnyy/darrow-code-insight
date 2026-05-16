@@ -94,21 +94,21 @@ function LandingPage() {
 
           {/* Method line */}
           <p
-            className="mt-8 sm:mt-10 font-sans text-[11px] sm:text-[13px] text-[#9CA3AF] uppercase"
-            style={{ letterSpacing: "0.12em" }}
+            className="mt-7 sm:mt-8 font-sans font-medium text-[11.5px] sm:text-[13px] text-[#9CA3AF] uppercase"
+            style={{ letterSpacing: "0.1em" }}
           >
             Western Astrology · Chinese Bazi · Numerology · Pattern Psychology · AI Synthesis
           </p>
 
           {/* Optional chapters teaser */}
-          <div className="mt-4 sm:mt-5 max-w-[520px] mx-auto">
-            <p className="text-center font-sans text-[13px] sm:text-[15px] text-[#9CA3AF] leading-relaxed">
+          <div className="mt-3 sm:mt-4 max-w-[520px] mx-auto">
+            <p className="text-center font-sans text-[14px] sm:text-[15px] md:text-[16px] text-light-grey leading-relaxed">
               Optional focused chapters available after your CORE Report:
             </p>
             <div className="mt-2 flex flex-wrap justify-center gap-x-2.5 gap-y-1">
               {["LOVE", "MONEY", "BODY", "YEAR", "STYLE", "PLACE"].map((m, i) => (
                 <span key={m} className="flex items-center gap-x-2.5">
-                  <span className="font-sans font-semibold text-[13px] sm:text-[14px] text-[#D4AF37]">
+                  <span className="font-sans font-semibold text-[13.5px] sm:text-[14px] md:text-[15px] text-[#D4AF37]">
                     {m}
                   </span>
                   {i < 5 && (
