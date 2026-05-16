@@ -13,6 +13,7 @@ import { sendEmail, reportReadyEmail, reportDelayEmail } from "@/lib/email/resen
 
 const STUCK_PROCESSING_MS = 4 * 60 * 1000; // 4 min
 const STEP_TIMEOUT_MS = 8 * 60 * 1000;
+const MAX_GENERATION_ATTEMPTS = 2;
 
 let _sb: any = null;
 function admin(): any {
@@ -128,6 +129,23 @@ async function claimGenerationJob(sb: any, order_id: string): Promise<boolean> {
   const isStuckProcessing =
     job.status === "processing" && Number.isFinite(updatedAtMs) && Date.now() - updatedAtMs > STUCK_PROCESSING_MS;
   if (job.status !== "queued" && !isStuckProcessing) return false;
+
+  if ((job.attempt_count ?? 0) >= MAX_GENERATION_ATTEMPTS) {
+    const msg = `Generation timed out after ${MAX_GENERATION_ATTEMPTS} attempts`;
+    const { data: order } = await sb.from("orders").select("intake_id").eq("id", order_id).maybeSingle();
+    if (order?.intake_id) {
+      await sb.from("reports").update({
+        generation_status: "failed_generation",
+        generation_error: msg,
+      }).eq("intake_id", order.intake_id).neq("generation_status", "complete");
+    }
+    await sb.from("generation_jobs").update({
+      status: "failed",
+      last_error: msg,
+      updated_at: new Date().toISOString(),
+    }).eq("id", job.id);
+    return false;
+  }
 
   const { data: claimed, error: claimErr } = await sb
     .from("generation_jobs")
