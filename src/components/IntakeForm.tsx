@@ -59,8 +59,9 @@ export function IntakeForm({ chapters = [] }: { chapters?: ModuleCode[] } = {}) 
     setPlaceError(null);
     setSubmitting(true);
     try {
-      const res = await createCoreCheckout({
+      const res = await createCheckout({
         data: {
+          modules: chapters,
           first_name: form.first_name.trim(),
           email: form.email.trim(),
           date_of_birth: form.date_of_birth,
