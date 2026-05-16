@@ -26,7 +26,7 @@ function GeneratingPage() {
   const { session_id } = Route.useSearch();
   const navigate = useNavigate();
   const [status, setStatus] = useState<string>("Reading the full pattern…");
-  const [detail, setDetail] = useState<string>("Usually 60–90 seconds");
+  const [detail, setDetail] = useState<string>("Usually 1–5 minutes depending on your selection");
   const [atmosphericIdx, setAtmosphericIdx] = useState(0);
   const [atmosphericVisible, setAtmosphericVisible] = useState(true);
   const [showReassurance, setShowReassurance] = useState(false);
@@ -114,17 +114,20 @@ function GeneratingPage() {
           aria-hidden="true"
           className="mx-auto mb-10 w-24 h-24 sm:w-28 sm:h-28 darrow-symbol-ritual"
         />
-        <h1 className="font-serif text-paper" style={{ fontSize: 28, color: "var(--paper)" }}>
+        <h1
+          className="font-serif text-paper"
+          style={{ fontSize: "clamp(30px, 4.2vw, 38px)", color: "var(--paper)", lineHeight: 1.2 }}
+        >
           {status}
         </h1>
-        <p className="mt-3 text-[13px] sm:text-[14px] text-light-grey/85">
+        <p className="mt-4 text-[15px] sm:text-[17px] text-light-grey/90">
           Building your private Darrow Code report
         </p>
-        <p className="mt-2 text-[12px] sm:text-[13px] text-muted-grey">
+        <p className="mt-2 text-[14px] sm:text-[15px] text-muted-grey">
           {detail}
         </p>
         <p
-          className="mt-6 text-[12px] sm:text-[13px] text-muted-grey/80 italic"
+          className="mt-7 text-[14px] sm:text-[15px] text-muted-grey/85 italic"
           style={{
             opacity: atmosphericVisible ? 1 : 0,
             transition: "opacity 400ms ease",
@@ -135,10 +138,10 @@ function GeneratingPage() {
           {ATMOSPHERIC_MESSAGES[atmosphericIdx]}
         </p>
         {showReassurance && (
-          <p className="mt-8 text-[12px] text-muted-grey/75 leading-relaxed max-w-sm mx-auto">
+          <p className="mt-8 text-[13px] sm:text-[14px] text-muted-grey/80 leading-relaxed max-w-md mx-auto">
             {failed
               ? "Your payment is safe and your order is recorded. Support has enough information to recover it without charging you again."
-              : "This can take up to a couple of minutes. You can keep this page open — we'll also email your report when it's ready."}
+              : "Larger readings can take a few more minutes to assemble. You can keep this page open — we'll email your report when it's ready."}
           </p>
         )}
       </div>
