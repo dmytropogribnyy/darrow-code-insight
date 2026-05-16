@@ -31,24 +31,37 @@ const PREVIEWS = [
 ] as const;
 
 function PreviewImage({ src, caption }: { src: string; caption: string }) {
+  const [loaded, setLoaded] = useState(false);
   const [failed, setFailed] = useState(false);
+  const show = loaded && !failed;
   return (
     <figure className="border border-border rounded-md overflow-hidden bg-white/60 shadow-sm">
-      {failed ? (
-        <div className="aspect-[3/4] flex items-center justify-center bg-paper">
-          <p className="text-[11px] tracking-meta uppercase text-muted-grey">
-            {caption} — preview pending
-          </p>
-        </div>
-      ) : (
+      <div className="relative aspect-[3/4] bg-paper">
+        {!show && (
+          <div className="absolute inset-0 flex items-center justify-center">
+            <p className="text-[11px] tracking-meta uppercase text-muted-grey">
+              {caption} — preview pending
+            </p>
+          </div>
+        )}
+        {/* Probe image — kept mounted so onLoad/onError fire; hidden until proven good */}
         <img
           src={src}
           alt={`Darrow Code report ${caption.toLowerCase()} preview`}
           loading="lazy"
-          className="block w-full h-auto"
+          onLoad={(e) => {
+            const img = e.currentTarget;
+            // Reject SPA HTML fallbacks that "decode" with zero dimensions
+            if (img.naturalWidth > 0 && img.naturalHeight > 0) setLoaded(true);
+            else setFailed(true);
+          }}
           onError={() => setFailed(true)}
+          className={
+            "absolute inset-0 w-full h-full object-cover transition-opacity " +
+            (show ? "opacity-100" : "opacity-0 pointer-events-none")
+          }
         />
-      )}
+      </div>
       <figcaption className="text-[11px] tracking-meta uppercase text-muted-grey text-center py-2.5 border-t border-border bg-paper">
         {caption}
       </figcaption>
