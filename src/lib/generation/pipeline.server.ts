@@ -123,7 +123,10 @@ async function claimGenerationJob(sb: any, order_id: string): Promise<boolean> {
     .maybeSingle();
   if (error) throw new Error(`could not load generation job: ${error.message}`);
   if (!job) throw new Error(`generation job for order ${order_id} not found`);
-  if (job.status === "complete") return false;
+  if (job.status === "complete") {
+    console.log("[pipeline] job already complete; skipping", { order_id });
+    return false;
+  }
 
   const updatedAtMs = Date.parse(job.updated_at ?? "");
   const isStuckProcessing =
@@ -144,6 +147,7 @@ async function claimGenerationJob(sb: any, order_id: string): Promise<boolean> {
       last_error: msg,
       updated_at: new Date().toISOString(),
     }).eq("id", job.id);
+    console.error("[pipeline] max attempts exhausted", { order_id, attempts: job.attempt_count, error: msg });
     return false;
   }
 
@@ -160,6 +164,7 @@ async function claimGenerationJob(sb: any, order_id: string): Promise<boolean> {
     .select("id")
     .maybeSingle();
   if (claimErr) throw new Error(`could not claim generation job: ${claimErr.message}`);
+  if (claimed) console.log("[pipeline] job claimed", { order_id, attempt: (job.attempt_count ?? 0) + 1 });
   return !!claimed;
 }
 
@@ -176,8 +181,10 @@ export async function runFullGenerationPipeline(order_id: string): Promise<void>
     if (!claimed) return;
 
     const { order, intake, customer, modules } = await loadOrderContext(order_id);
+    if (order.status === "pending") throw new Error(`order ${order_id} is not paid yet`);
     firstName = customer?.first_name ?? null;
     customerEmail = customer?.email ?? null;
+    console.log("[pipeline] generation started", { order_id, intake_id: intake.id, modules });
 
     // Pre-create reports row in 'processing' so polling UI sees it.
     const r = await upsertReportProcessing(intake.id, order.customer_id, modules);
@@ -220,11 +227,13 @@ export async function runFullGenerationPipeline(order_id: string): Promise<void>
     });
     const { report, model_used } = await withTimeout("AI report generation", generateDarrowReport(userPrompt), STEP_TIMEOUT_MS, () => heartbeat(order_id));
     await heartbeat(order_id);
+    console.log("[pipeline] AI done", { order_id, report_id, model_used });
 
     // 3) HTML → PDF.
     const html = renderReportHtml(report, { assetsBaseUrl: appBaseUrl() });
     const pdfBytes = await withTimeout("PDF rendering", renderHtmlToPdf(html), 3 * 60 * 1000, () => heartbeat(order_id));
     await heartbeat(order_id);
+    console.log("[pipeline] PDF done", { order_id, report_id, bytes: pdfBytes.byteLength });
 
     // 4) Upload PDF.
     const path = `${download_token}.pdf`;
@@ -257,10 +266,12 @@ export async function runFullGenerationPipeline(order_id: string): Promise<void>
       try {
         await sendEmail({ to: customerEmail, subject, html });
         await sb.from("reports").update({ ready_email_sent_at: new Date().toISOString() }).eq("id", report_id);
+        console.log("[pipeline] email sent", { order_id, report_id, to: customerEmail });
       } catch (mailErr) {
         console.error("[pipeline] report-ready email failed", mailErr);
       }
     }
+    console.log("[pipeline] job completed", { order_id, report_id, download_token });
   } catch (e: any) {
     const msg = String(e?.message ?? e).slice(0, 1000);
     console.error("[pipeline] failed for order", order_id, msg);
@@ -284,6 +295,7 @@ export async function runFullGenerationPipeline(order_id: string): Promise<void>
       last_error: msg,
       updated_at: new Date().toISOString(),
     }).eq("order_id", order_id);
+    console.error("[pipeline] job failure recorded", { order_id, should_retry: shouldRetry, error: msg });
 
     if (shouldRetry) return;
 

@@ -45,10 +45,33 @@ async function handleCheckoutCompleted(session: any) {
     return;
   }
 
-  await sb()
+  console.log("[webhook] checkout.session.completed received", {
+    session_id: session.id,
+    order_id,
+    order_type,
+    modules_raw,
+  });
+
+  const { data: existingOrder } = await sb()
+    .from("orders")
+    .select("status")
+    .eq("id", order_id)
+    .maybeSingle();
+
+  if (!existingOrder) {
+    console.error("[webhook] order not found", { order_id, session_id: session.id });
+    return;
+  }
+
+  if (existingOrder.status !== "complete") {
+    await sb()
     .from("orders")
     .update({ status: "paid", stripe_session_id: session.id })
     .eq("id", order_id);
+    console.log("[webhook] order marked paid", { order_id });
+  } else {
+    console.log("[webhook] order already complete; not downgrading", { order_id });
+  }
 
   // Determine modules to write to modules_purchased.
   // Accept both legacy (CORE/ADDONS/FULL_CODE_UPGRADE) and new canonical
@@ -85,24 +108,91 @@ async function handleCheckoutCompleted(session: any) {
         ignoreDuplicates: true,
       });
     if (error) console.error("[webhook] modules upsert", error);
+    else console.log("[webhook] modules recorded", { order_id, modules });
   }
 
-  // Enqueue (or reset) the generation job. Pipeline runs asynchronously.
-  await sb()
+  await ensureGenerationJob(order_id, intake_id);
+}
+
+async function ensureGenerationJob(order_id: string, intake_id: string) {
+  const s = sb();
+  const { data: completeReport } = await s
+    .from("reports")
+    .select("id, pdf_url, generation_status, modules_array")
+    .eq("intake_id", intake_id)
+    .eq("generation_status", "complete")
+    .not("pdf_url", "is", null)
+    .order("created_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  const { data: existingJob } = await s
     .from("generation_jobs")
-    .upsert(
-      { order_id, status: "queued", last_error: null, updated_at: new Date().toISOString() },
-      { onConflict: "order_id" },
-    );
+    .select("id, status, attempt_count")
+    .eq("order_id", order_id)
+    .maybeSingle();
+
+  if (completeReport) {
+    const { data: ownedRows } = await s
+      .from("modules_purchased")
+      .select("module_code")
+      .eq("intake_id", intake_id);
+    const owned = new Set<string>(["CORE", ...((ownedRows ?? []).map((r: any) => r.module_code))]);
+    const reportModules = new Set<string>(Array.isArray(completeReport.modules_array) ? completeReport.modules_array : []);
+    const reportAlreadyCoversOwnedModules = Array.from(owned).every((m) => reportModules.has(m));
+
+    if (!reportAlreadyCoversOwnedModules) {
+      console.log("[webhook] existing report needs regeneration for newly purchased modules", {
+        order_id,
+        report_id: completeReport.id,
+        owned: Array.from(owned),
+        report_modules: Array.from(reportModules),
+      });
+    } else {
+    if (existingJob?.status !== "complete") {
+      await s.from("generation_jobs").upsert(
+        { order_id, status: "complete", last_error: null, updated_at: new Date().toISOString() },
+        { onConflict: "order_id" },
+      );
+    }
+    console.log("[webhook] report already complete; job reconciled", { order_id, report_id: completeReport.id });
+    return;
+    }
+  }
+
+  if (existingJob) {
+    console.log("[webhook] generation job already exists; keeping state", {
+      order_id,
+      status: existingJob.status,
+      attempt_count: existingJob.attempt_count,
+    });
+    return;
+  }
+
+  const { error } = await s.from("generation_jobs").insert({
+    order_id,
+    status: "queued",
+    last_error: null,
+  });
+  if (error) console.error("[webhook] job create failed", { order_id, error });
+  else console.log("[webhook] generation job created", { order_id });
 }
 
 async function handleEvent(
   event: { id: string; type: string; data: { object: any } },
 ) {
-  const { error: dupErr } = await sb()
+  console.log("[webhook] event received", { event_id: event.id, type: event.type });
+  const { error: eventErr } = await sb()
     .from("stripe_events")
     .insert({ stripe_event_id: event.id });
-  if (dupErr) return;
+  const duplicate = !!eventErr;
+  if (eventErr) {
+    console.log("[webhook] duplicate event or event insert issue; continuing idempotent handling", {
+      event_id: event.id,
+      code: eventErr.code,
+      message: eventErr.message,
+    });
+  }
 
   switch (event.type) {
     case "checkout.session.completed":
@@ -116,6 +206,7 @@ async function handleEvent(
     .from("stripe_events")
     .update({ processed_at: new Date().toISOString() })
     .eq("stripe_event_id", event.id);
+  if (!duplicate) console.log("[webhook] event processed", { event_id: event.id });
 }
 
 export const Route = createFileRoute("/api/public/payments/webhook")({
