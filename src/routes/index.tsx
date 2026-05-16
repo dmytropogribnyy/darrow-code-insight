@@ -84,8 +84,8 @@ function LandingPage() {
           </p>
 
           {/* Quote box */}
-          <div className="mt-6 sm:mt-7 max-w-[460px] mx-auto text-left bg-white/[0.03] border-l-2 border-gold pl-5 py-4 rounded-r-sm">
-            <p className="font-serif italic text-light-grey text-[16px] leading-snug">
+          <div className="mt-6 sm:mt-7 max-w-[460px] mx-auto text-left bg-white/[0.04] border-l-2 border-gold/80 pl-5 pr-4 py-4 rounded-r-[6px]">
+            <p className="font-serif italic text-light-grey text-[16px] sm:text-[17px] leading-[1.45]">
               "One astrology tradition shows part of the picture.
               <br />
               <span className="not-italic text-gold">Darrow Code reads the full pattern.</span>"
