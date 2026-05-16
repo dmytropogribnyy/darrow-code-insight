@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Check, Download } from "lucide-react";
+import { Download } from "lucide-react";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
@@ -7,6 +7,7 @@ import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
 import { StripeEmbeddedCheckoutBox } from "@/components/StripeEmbeddedCheckout";
 import { getReportContext, createUpsellCheckout } from "@/utils/checkout.functions";
+import { getReportDownloadUrl } from "@/utils/generation.functions";
 import { getStripeEnvironment } from "@/lib/stripe";
 import { MODULE_CODES, priceForModules, type ModuleCode } from "@/lib/modules";
 import { BRAND_ASSETS } from "@/lib/brand/assets";
@@ -34,13 +35,13 @@ function ResultPage() {
   const [selected, setSelected] = useState<Set<ModuleCode>>(new Set());
   const [clientSecret, setClientSecret] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const [downloading, setDownloading] = useState(false);
 
   const ctxQ = useQuery({
     queryKey: ["report-context", reportToken],
     queryFn: () => getReportContext({ data: { report_token: reportToken } }),
   });
 
-  // owned includes "CORE" + any owned chapter codes (server-side union).
   const owned = new Set<string>(ctxQ.data?.owned_modules ?? []);
   const ownedChapters = MODULE_CODES.filter((m) => owned.has(m));
   const remaining = MODULES.filter((m) => !owned.has(m.code));
@@ -54,10 +55,21 @@ function ResultPage() {
       return n;
     });
 
-  // Bundle-priced quote for currently selected remaining chapters (no CORE — customer already owns it).
   const selectedArr = Array.from(selected) as ModuleCode[];
   const quote =
     selectedArr.length > 0 ? priceForModules(selectedArr, false) : null;
+
+  async function handleDownload() {
+    setDownloading(true);
+    try {
+      const { url } = await getReportDownloadUrl({ data: { report_token: reportToken } });
+      window.open(url, "_blank", "noopener,noreferrer");
+    } catch (e: any) {
+      toast.error(e?.message ?? "Could not download report.");
+    } finally {
+      setDownloading(false);
+    }
+  }
 
   async function startUpsell(orderType: "ADDONS" | "FULL_CODE_UPGRADE") {
     if (!ctxQ.data) return;
@@ -86,39 +98,65 @@ function ResultPage() {
 
   return (
     <div className="min-h-screen flex flex-col bg-paper">
-      <SiteHeader />
+      <SiteHeader onDark />
 
-      <main className="flex-1 max-w-xl mx-auto px-6 py-16 w-full">
-        <div className="text-center">
+      {/* TOP — dark navy hero, same treatment as homepage */}
+      <section
+        className="text-light-grey"
+        style={{
+          background: `
+            radial-gradient(circle at 50% 18%, rgba(212,175,55,0.06), transparent 28%),
+            radial-gradient(circle at 80% 20%, rgba(229,231,235,0.035), transparent 30%),
+            linear-gradient(180deg, #0A0F1E 0%, rgba(0,0,0,0.25) 100%)
+          `,
+          backgroundColor: "#0A0F1E",
+        }}
+      >
+        <div className="max-w-xl mx-auto px-6 pt-16 pb-20 text-center">
           <img
             src={BRAND_ASSETS.symbolGold}
             alt=""
             aria-hidden="true"
-            className="mx-auto mb-4 w-14 h-14 opacity-95"
+            className="mx-auto mb-6 opacity-95"
+            style={{ width: "clamp(48px, 8vw, 64px)", height: "auto" }}
           />
-          <div className="inline-flex items-center justify-center w-10 h-10 rounded-full border border-gold text-gold">
-            <Check className="w-5 h-5" />
-          </div>
-          <p className="mt-4 text-[11px] tracking-meta uppercase text-gold">Your report is ready</p>
+          <p
+            className="text-gold font-sans font-semibold uppercase"
+            style={{ fontSize: "clamp(11px, 1.2vw, 12px)", letterSpacing: "0.18em" }}
+          >
+            Your report is ready
+          </p>
+          <h1
+            className="font-serif text-paper mt-4"
+            style={{ fontSize: "clamp(28px, 4vw, 36px)", color: "var(--paper)", lineHeight: 1.2 }}
+          >
+            Your Darrow Code Report
+          </h1>
 
-          <a
-            href={`/download/${reportToken}`}
-            className="mt-6 inline-flex items-center gap-2 border border-gold text-gold px-6 py-3 rounded-[6px] text-[14px] font-medium hover:bg-gold hover:text-navy transition"
+          <button
+            type="button"
+            onClick={handleDownload}
+            disabled={downloading}
+            className="mt-8 inline-flex items-center gap-2 border border-gold text-gold px-7 py-3.5 rounded-[6px] text-[14px] font-medium hover:bg-gold hover:text-navy transition disabled:opacity-60"
           >
             <Download className="w-4 h-4" />
-            Download your PDF
-          </a>
-          <p className="mt-3 text-[12px] text-muted-grey">Also sent to your email · No account required</p>
+            {downloading ? "Preparing…" : "Download your PDF"}
+          </button>
+          <p className="mt-3 text-[12px] text-muted-grey">
+            Also sent to your email · No account required
+          </p>
 
-          {/* Owned summary */}
-          <p className="mt-5 text-[12px]" style={{ color: "#5C5340" }}>
+          <p className="mt-6 text-[12px]">
             <span className="uppercase tracking-[0.16em] text-gold font-semibold">Owned:</span>{" "}
-            CORE{ownedChapters.length > 0 ? ", " + ownedChapters.join(", ") : ""}
+            <span className="text-light-grey/85">
+              CORE{ownedChapters.length > 0 ? ", " + ownedChapters.join(", ") : ""}
+            </span>
           </p>
         </div>
+      </section>
 
-        <div className="my-12 border-t border-border" />
-
+      {/* BOTTOM — warm paper add-on selection */}
+      <main className="flex-1 max-w-xl mx-auto px-6 py-16 w-full">
         {clientSecret ? (
           <div className="max-w-[480px] mx-auto">
             <StripeEmbeddedCheckoutBox fetchClientSecret={async () => clientSecret} />
@@ -131,7 +169,7 @@ function ResultPage() {
           </div>
         ) : (
           <>
-            <h2 className="font-serif text-center text-warm-brown" style={{ fontSize: 22 }}>
+            <h2 className="font-serif text-center text-warm-brown" style={{ fontSize: 24 }}>
               Want to go deeper?
             </h2>
             <p className="text-center text-[13px] mt-1" style={{ color: "#5C5340" }}>
@@ -172,7 +210,6 @@ function ResultPage() {
               })}
             </div>
 
-            {/* CORE Complete upgrade — only when customer owns only CORE */}
             {ownsOnlyCore && (
               <button
                 type="button"
