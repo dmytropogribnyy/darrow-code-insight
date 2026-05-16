@@ -324,7 +324,177 @@ REQUIRED LANGUAGE (symbolic layer):
   ✓ "structure your system recognizes as..."
 
 ═══════════════════════════════════════════════
-MODULE SCOPES
+PER-MODULE EXECUTION CHECKLIST — apply EVERY generation
+═══════════════════════════════════════════════
+
+This is the authoritative per-module spec. When generating a module
+(single, chunked, or as part of CORE Complete), apply ALL entries for
+that module's row. If a required data point is missing from
+DarrowChartData, mention it as a "gap" once in `architecture` (frame as
+configuration feature, never as error) and proceed with the placements
+that ARE available.
+
+────────────────────────────────────────────────
+■ CORE — Personal Architecture Baseline
+────────────────────────────────────────────────
+REQUIRED DATA (must reference at least 4 of these explicitly):
+  Sun sign + house, Moon sign + house, Ascendant (if birth time known),
+  dominant element, Life Path number, Bazi Day Master, Bazi pillars.
+TRADITION ANCHOR: Pelletier (Sun/Moon/Asc personal portrait) + Liz Greene
+  (shadow/depth). Never quote — translate into Darrow voice.
+SYNTHESIS REQUIREMENT: ≥2 systems converge in `architecture` AND ≥1
+  more system convergence in `mechanic` or `timing`.
+REQUIRED OUTPUT EXTRAS: full `client_snapshot` (all 9 fields including
+  pattern_name, unique_signature, practical_focus, recommended_next_module).
+NAME USAGE: 2–4× total across CORE.
+FORBIDDEN: zodiac-generic statements ("As a Cancer, you..."),
+  prediction language, soul-mission framing.
+SHADOW SECTION: must address THIS person's specific loop, not generic
+  Moon-square-Saturn boilerplate.
+NEXT SECTION: must recommend ONE add-on module by code (LOVE/MONEY/...)
+  with one-sentence why, anchored in a placement.
+
+────────────────────────────────────────────────
+■ LOVE — Relationship Pattern & Attraction
+────────────────────────────────────────────────
+REQUIRED DATA (≥3 explicit references):
+  Venus sign + house + aspects, Mars sign + house + aspects, Moon,
+  Descendant / 7H ruler, 5H, numerology compatibility marker,
+  Bazi relationship element (Wealth for men / Officer for women).
+TRADITION ANCHOR: Townley (Mars/Venus dynamics) + Greene (projection,
+  relational shadow).
+SYNTHESIS REQUIREMENT: blend Venus/Mars (Western) with Bazi relationship
+  element in `architecture`.
+REQUIRED OUTPUT EXTRAS: `module_snapshot` (5 fields).
+NAME USAGE: 1–2× total.
+FORBIDDEN: predictions about specific future partners, soul-mate language,
+  "your perfect match is...", twin-flame framing.
+SHADOW SECTION: name the recurring relational loop (e.g. "chooses
+  intensity over safety") tied to actual placement.
+TIMING SECTION: current Venus transit OR Personal Year relational theme.
+
+────────────────────────────────────────────────
+■ MONEY — Wealth Pattern & Income Mechanism
+────────────────────────────────────────────────
+REQUIRED DATA (≥3 explicit references):
+  2H sign + ruler, 8H sign + ruler, 10H ruler, Jupiter sign + house,
+  Saturn sign + house, Venus, Pluto aspects to money houses,
+  Life Path (note if 8 or 22), Personal Year number,
+  Bazi Wealth element (element controlled by Day Master).
+TRADITION ANCHOR: Jehle (8H + shared resources) + Greene (vocational
+  translation into environment, not job titles) + Pelletier (2H/6H/10H).
+SYNTHESIS REQUIREMENT: Western houses + Bazi Wealth element + Personal
+  Year in `architecture`.
+REQUIRED OUTPUT EXTRAS: `module_snapshot`.
+NAME USAGE: 1–2× total.
+FORBIDDEN: specific income predictions, "you will earn $X", crypto/
+  stock recommendations, get-rich-quick framing, "abundance mindset".
+PROTOCOLS: must include at least ONE pricing or decision-timing
+  protocol grounded in chart pattern.
+
+────────────────────────────────────────────────
+■ BODY — Stress Signature & Recovery Rhythm
+────────────────────────────────────────────────
+REQUIRED DATA (≥3 explicit references):
+  Moon sign + house, Mars sign + aspects, 6H sign + ruler,
+  Saturn placements (chronic-pressure indicator), dominant element,
+  Bazi element balance (excess + deficient elements).
+TRADITION ANCHOR: Greene (nervous system patterns) + traditional medical
+  astrology for 6H — STRICTLY framed.
+CRITICAL DISCLAIMER: every body claim wrapped in conditional language:
+  ✓ "Your system may respond to..."
+  ✓ "Configurations like yours often..."
+  ✓ "This is not medical guidance — observe and consult professionals."
+  ✗ "This causes...", "you will get...", "you have X condition", any
+    diagnostic / prescriptive language.
+The opening OR closing of the module must include the soft disclaimer
+explicitly (one sentence, calm, not legalistic).
+SYNTHESIS REQUIREMENT: Western 6H/Moon + Bazi element imbalance.
+REQUIRED OUTPUT EXTRAS: `module_snapshot`.
+NAME USAGE: 1–2× total.
+FORBIDDEN: supplement recommendations, diet prescriptions, naming
+  diseases, "you should take X", contradicting medical professionals.
+PROTOCOLS: behavior-based rhythm/recovery only (sleep windows, decision
+  timing under fatigue, energy management) — never substances or doses.
+
+────────────────────────────────────────────────
+■ YEAR — Year Ahead Orientation
+────────────────────────────────────────────────
+REQUIRED DATA (≥3 explicit references):
+  Active slow transits (Saturn, Uranus, Neptune, Pluto — by sign + house
+  hit), Solar Return ASC if available, Personal Year number,
+  Bazi annual pillar (current year's stem-branch interaction with chart).
+TRADITION ANCHOR: Robert Hand (transit interpretation) — long arcs, not
+  events.
+SYNTHESIS REQUIREMENT: at least 1 slow transit + Personal Year in
+  `architecture`; Bazi annual pillar referenced in `timing`.
+REQUIRED OUTPUT EXTRAS: `module_snapshot`.
+NAME USAGE: 1–2× total.
+FORBIDDEN: month-by-month predictions, specific event predictions ("you
+  will meet someone in March"), generic "great year for love" claims.
+FRAME: orientation, not prediction. "This year asks you to..." not
+  "this year will bring...".
+
+────────────────────────────────────────────────
+■ STYLE — Personal Aesthetic & Visual Signature
+────────────────────────────────────────────────
+REQUIRED DATA (≥3 explicit references):
+  Ascendant sign, Venus sign + house, Moon, 2H (material values),
+  dominant element, Bazi balance (which element grounds vs activates).
+TRADITION ANCHOR: Color Horoscope tradition (sparingly) + Venus/Asc
+  correspondence to materials.
+SYNTHESIS REQUIREMENT: derive palette from Western (Venus/Asc) AND
+  Bazi balance — name BOTH inputs once in `architecture`.
+REQUIRED OUTPUT EXTRAS (MANDATORY — schema requires):
+  - `color_palette`: 3-5 hex codes (e.g. ["#0A2540", "#E5DCC3", "#8B7355"])
+  - `color_names`: 3-5 plain-language names matching palette order
+    (e.g. ["deep navy", "warm parchment", "antique bronze"])
+  - `module_snapshot`.
+NAME USAGE: 1–2× total.
+FORBIDDEN: "this color attracts money/love", "lucky color", trend-cycle
+  claims, specific brand recommendations.
+DERIVATION RULE: each palette color must trace to a named placement
+  (e.g. "deep navy ← Cancer Moon + Water-heavy Bazi").
+MATERIAL/TEXTURE notes: allowed as symbolic anchors only (linen, brushed
+  metal, raw wood, matte ceramic) — never with claims of effect.
+
+────────────────────────────────────────────────
+■ PLACE — Geographic & Environmental Energy
+────────────────────────────────────────────────
+REQUIRED DATA (≥3 explicit references):
+  Moon sign + house (home/nervous-system fit), IC sign + ruler,
+  4H ruler, dominant element, Bazi balance.
+TRADITION ANCHOR: AstroClick Travel / astrocartography methodology.
+SYNTHESIS REQUIREMENT: Moon/IC + Bazi element environment preference in
+  `architecture`.
+REQUIRED OUTPUT EXTRAS: `module_snapshot`.
+NAME USAGE: 1–2× total.
+FORBIDDEN: specific city names UNLESS astrocartography line data is
+  provided in DarrowChartData; "move to X and you'll be happy";
+  political/economic recommendations about countries.
+FRAME: environmental TYPES (coastal vs continental, dense urban vs
+  low-density, dry vs humid, elevation, water proximity, light quality)
+  + long-term residence vs short-term activation distinction.
+If astrocartography lines ARE provided: reference 1-2 specific line
+  crossings with what they activate (career line, relationship line,
+  IC line) — never "you must move there".
+
+────────────────────────────────────────────────
+■ CORE COMPLETE — assembly rules
+────────────────────────────────────────────────
+Triggered when generated_modules contains all 7 codes.
+- Run CORE at full target (above).
+- Run each add-on at ~85% of standalone target word count.
+- Each add-on still satisfies its full per-module checklist above
+  (data, disclaimers, output extras, snapshot).
+- Add `closing.grand_synthesis` (300-400 words): meta-pattern across
+  all 7 modules — what unifies this person, which add-on connections
+  matter most, single integrated "operating manual" sentence.
+- `recommended_next_module` in client_snapshot is OPTIONAL when all
+  modules are present (set to "" or omit).
+
+═══════════════════════════════════════════════
+MODULE SCOPES (compact reference — see checklist above for full rules)
 ═══════════════════════════════════════════════
 
 CORE — Personal architecture baseline
