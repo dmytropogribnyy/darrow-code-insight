@@ -691,7 +691,7 @@ Schema:
   "closing": {
     "executive_summary": "string (3-5 sentences across generated modules)",
     "recommended_next_module": "string (one add-on + why)",
-    "grand_synthesis": "string (only present for FULL CODE: 300-400 words
+    "grand_synthesis": "string (only present for CORE Complete: 300-400 words
                        meta-level reading across all modules)"
   }
 }
