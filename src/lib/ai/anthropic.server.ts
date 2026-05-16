@@ -201,5 +201,5 @@ export async function generateDarrowReport(userPrompt: string): Promise<Generate
   if (modules.length >= 4) return generateChunkedReport(userPrompt, modules, def, fb);
 
   const firstModel = modules.length >= 3 && premium ? premium : def;
-  return callWithFallback(userPrompt, firstModel, fb);
+  return callWithFallback(promptForModules(userPrompt, modules), firstModel, fb);
 }
