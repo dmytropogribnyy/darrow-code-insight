@@ -9,6 +9,10 @@ import { createClient } from "@supabase/supabase-js";
 import { type StripeEnv, verifyWebhook } from "@/lib/stripe.server";
 import { MODULE_CODES, type ModuleCode } from "@/lib/modules";
 
+// All values that can land in modules_purchased.module_code (DB enum).
+const ALL_MODULE_VALUES: string[] = ["CORE", ...MODULE_CODES];
+type AnyModule = "CORE" | ModuleCode;
+
 let _sb: any = null;
 function sb(): any {
   if (!_sb) {
