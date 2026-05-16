@@ -176,3 +176,24 @@ Also useful:
 - `[pipeline]` — legacy pipeline progress logs (kept alongside structured logs).
 - `[webhook]` — Stripe webhook handler.
 - `[anthropic]` — model fallback and chunked generation notes.
+
+---
+
+## Pre-publish checklist
+
+Run through this list before every publish. Do not skip steps — the order matters.
+
+1. **Run unit tests**: `bun run test` must report **7/7 pass** (worker-auth regression suite). A failure here means the cron sweeper auth contract is broken — do not publish.
+2. **Type check**: `tsc --noEmit` must be clean. No `any` leaks, no unresolved imports.
+3. **Publish the app**, then immediately curl the health endpoint:
+   ```bash
+   curl -s https://project--3b6e1dad-b8e6-4d27-9267-46e36c3e34e3.lovable.app/api/public/health/generation-pipeline | jq
+   ```
+4. Response MUST include `"healthy": true` and HTTP status **200**. A 503 means the pipeline is degraded — investigate before announcing launch.
+5. **Critical counters must all be `0`**:
+   - `paid_orders_without_job_24h`
+   - `queued_older_than_5m`
+   - `processing_older_than_10m`
+6. **`failed_generation_24h`**: may legitimately be `1` if a prior force-failed test order is still inside the 24h window. Cross-check the offending `order_id` against the known historical force-fail test record. **If it's a new failure**, stop and investigate before proceeding to live mode.
+7. **Stripe mode**: do NOT switch Stripe to Live Mode until the post-publish Test Mode smoke (3 scenarios — CORE, CORE+chapter, returning-customer add-on) all pass cleanly with zero alerts.
+
