@@ -30,7 +30,7 @@ function LandingPage() {
 
       {/* HERO — dark navy section */}
       <section className="bg-navy text-light-grey">
-        <div className="max-w-3xl mx-auto px-6 pt-16 pb-20 text-center">
+        <div className="max-w-3xl mx-auto px-6 pt-16 pb-12 text-center">
           {/* Top badge */}
           <div className="inline-flex items-center gap-2 border border-gold/60 rounded-full px-3.5 py-1.5">
             <span className="w-1 h-1 rounded-full bg-gold" />
@@ -107,11 +107,13 @@ function LandingPage() {
 
       {/* INTAKE — paper section */}
       <section className="flex-1">
-        <div className="max-w-xl mx-auto px-6 py-14">
-          <p className="text-center text-[13px] text-muted-grey mb-6">
+        <div className="max-w-xl mx-auto px-5 sm:px-6 pt-8 sm:pt-10 pb-14">
+          <p className="text-center text-[13px] mb-5" style={{ color: "#6B6B6B" }}>
             Start instantly. Your private report is generated after checkout.
           </p>
-          <IntakeForm />
+          <div className="intake-card">
+            <IntakeForm />
+          </div>
         </div>
       </section>
 
