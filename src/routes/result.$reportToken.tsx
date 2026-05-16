@@ -357,6 +357,7 @@ function ResultPage() {
                     row={r}
                     onDownload={() => handleDownload(r.report_token)}
                     isDownloading={downloadingToken === r.report_token}
+                    onRefresh={refreshReports}
                   />
                 ))}
               </div>
