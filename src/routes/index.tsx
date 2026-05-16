@@ -38,6 +38,16 @@ function LandingPage() {
   const selectAll = () => setSelected(new Set(MODULE_CODES));
   const clear = () => setSelected(new Set());
 
+  const jumpToChapter = (key: string) => {
+    const el = document.getElementById(`chapter-${key}`);
+    if (!el) return;
+    el.scrollIntoView({ behavior: "smooth", block: "center" });
+    el.classList.remove("chapter-pulse");
+    void el.offsetWidth; // restart animation
+    el.classList.add("chapter-pulse");
+    window.setTimeout(() => el.classList.remove("chapter-pulse"), 1800);
+  };
+
   return (
     <div className="min-h-screen flex flex-col bg-paper">
       <SiteHeader onDark />
@@ -127,23 +137,32 @@ function LandingPage() {
           {/* Focused chapters teaser */}
           <div className="mt-3 sm:mt-4 max-w-[520px] mx-auto">
             <p className="text-center font-sans text-[14px] sm:text-[15px] md:text-[16px] text-light-grey leading-relaxed">
-              Start with CORE, add focused chapters, or get CORE Complete:
+              Start with{" "}
+              <button
+                type="button"
+                onClick={() => jumpToChapter("CORE")}
+                className="font-semibold text-[#D4AF37] border-b border-transparent hover:border-[#D4AF37]/70 hover:text-[#E6C35A] transition-colors duration-150 pb-px cursor-pointer"
+                aria-label="Jump to CORE Report"
+              >
+                CORE
+              </button>
+              , add focused chapters, or get{" "}
+              <button
+                type="button"
+                onClick={() => jumpToChapter("COMPLETE")}
+                className="font-semibold text-[#D4AF37] border-b border-transparent hover:border-[#D4AF37]/70 hover:text-[#E6C35A] transition-colors duration-150 pb-px cursor-pointer"
+                aria-label="Jump to CORE Complete bundle"
+              >
+                CORE Complete
+              </button>
+              :
             </p>
             <div className="mt-2 flex flex-wrap justify-center gap-x-2.5 gap-y-1">
               {["LOVE", "MONEY", "BODY", "YEAR", "STYLE", "PLACE"].map((m, i) => (
                 <span key={m} className="flex items-center gap-x-2.5">
                   <button
                     type="button"
-                    onClick={() => {
-                      const el = document.getElementById(`chapter-${m}`);
-                      if (!el) return;
-                      el.scrollIntoView({ behavior: "smooth", block: "center" });
-                      el.classList.remove("chapter-pulse");
-                      // restart animation
-                      void el.offsetWidth;
-                      el.classList.add("chapter-pulse");
-                      window.setTimeout(() => el.classList.remove("chapter-pulse"), 1800);
-                    }}
+                    onClick={() => jumpToChapter(m)}
                     aria-label={`Jump to ${m} chapter`}
                     className="font-sans font-semibold text-[13.5px] sm:text-[14px] md:text-[15px] text-[#D4AF37] cursor-pointer border-b border-transparent hover:border-[#D4AF37]/70 hover:text-[#E6C35A] transition-colors duration-150 pb-px"
                   >
