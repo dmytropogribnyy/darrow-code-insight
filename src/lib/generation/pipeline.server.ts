@@ -165,7 +165,10 @@ async function claimGenerationJob(sb: any, order_id: string): Promise<boolean> {
     .select("id")
     .maybeSingle();
   if (claimErr) throw new Error(`could not claim generation job: ${claimErr.message}`);
-  if (claimed) console.log("[pipeline] job claimed", { order_id, attempt: (job.attempt_count ?? 0) + 1 });
+  if (claimed) {
+    console.log("[pipeline] job claimed", { order_id, attempt: (job.attempt_count ?? 0) + 1 });
+    logStage({ stage: "worker_claimed", result: "success", order_id, generation_job_id: job.id, extra: { attempt: (job.attempt_count ?? 0) + 1 } });
+  }
   return !!claimed;
 }
 
