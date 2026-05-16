@@ -209,6 +209,7 @@ export async function runFullGenerationPipeline(order_id: string): Promise<void>
     const chart = await withTimeout("Astro calculation", provider.computeNatal(natal), 30 * 1000, () => heartbeat(order_id));
     await heartbeat(order_id);
 
+    const tAstro = Date.now();
     await sb.from("astro_data").insert({
       intake_id: intake.id,
       provider_name: chart.meta.provider_name,
@@ -220,6 +221,7 @@ export async function runFullGenerationPipeline(order_id: string): Promise<void>
       normalized_json: chart,
       raw_json: null,
     });
+    logStage({ stage: "astro_data_generated", result: "success", order_id, duration_ms: Date.now() - tAstro });
 
     // 2) AI generation via Anthropic.
     const userPrompt = buildUserPrompt({
@@ -229,15 +231,20 @@ export async function runFullGenerationPipeline(order_id: string): Promise<void>
       modules,
       chart,
     });
+    logStage({ stage: "ai_generation_started", result: "success", order_id, extra: { modules } });
+    const tAi = Date.now();
     const { report, model_used } = await withTimeout("AI report generation", generateDarrowReport(userPrompt), STEP_TIMEOUT_MS, () => heartbeat(order_id));
     await heartbeat(order_id);
     console.log("[pipeline] AI done", { order_id, report_id, model_used });
+    logStage({ stage: "ai_generation_completed", result: "success", order_id, duration_ms: Date.now() - tAi, extra: { model_used } });
 
     // 3) HTML → PDF.
     const html = renderReportHtml(report, { assetsBaseUrl: appBaseUrl() });
+    const tPdf = Date.now();
     const pdfBytes = await withTimeout("PDF rendering", renderHtmlToPdf(html), 3 * 60 * 1000, () => heartbeat(order_id));
     await heartbeat(order_id);
     console.log("[pipeline] PDF done", { order_id, report_id, bytes: pdfBytes.byteLength });
+    logStage({ stage: "pdf_generated", result: "success", order_id, duration_ms: Date.now() - tPdf, extra: { bytes: pdfBytes.byteLength } });
 
     // 4) Upload PDF.
     const path = `${download_token}.pdf`;
