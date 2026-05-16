@@ -172,7 +172,7 @@ function ResultPage() {
             <h2 className="font-serif text-center text-warm-brown" style={{ fontSize: 24 }}>
               Want to go deeper?
             </h2>
-            <p className="text-center text-[13px] mt-1" style={{ color: "#5C5340" }}>
+            <p className="text-center text-[14px] mt-2" style={{ color: "#2E2519" }}>
               Add a focused chapter — $2.99 each, or bundle to save.
             </p>
 
@@ -192,10 +192,10 @@ function ResultPage() {
                     }
                   >
                     <div className="flex-1">
-                      <p className="text-[12px] tracking-meta uppercase text-gold font-semibold">
+                      <p className="text-[12px] tracking-meta uppercase font-bold" style={{ color: "#B8860B" }}>
                         {m.title}
                       </p>
-                      <p className="text-[13px] mt-1" style={{ color: "#5C5340" }}>
+                      <p className="text-[14px] mt-1.5 leading-snug" style={{ color: "#1F1A12" }}>
                         {m.desc}
                       </p>
                     </div>
@@ -217,10 +217,10 @@ function ResultPage() {
                 disabled={busy}
                 className="mt-4 w-full text-left border-2 border-gold rounded-[8px] px-4 py-4 bg-gold/5 hover:bg-gold/10 transition disabled:opacity-60"
               >
-                <p className="text-[12px] tracking-meta uppercase text-gold font-semibold">
+                <p className="text-[12px] tracking-meta uppercase font-bold" style={{ color: "#B8860B" }}>
                   Complete your reading — CORE Complete
                 </p>
-                <p className="text-[13px] mt-1" style={{ color: "#5C5340" }}>
+                <p className="text-[14px] mt-1.5 leading-snug" style={{ color: "#1F1A12" }}>
                   Unlock all 6 Focused Chapters in one upgrade. Save $7.94.
                 </p>
                 <p className="font-mono text-[14px] mt-2 font-semibold" style={{ color: "#0A0F1E" }}>
