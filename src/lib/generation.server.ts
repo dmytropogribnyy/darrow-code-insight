@@ -54,7 +54,7 @@ async function buildPlaceholderPdf(args: {
     page.drawText(line, { x: 50, y, size: 12, font: serif, color: charcoal });
     y -= 18;
   }
-  page.drawText("More than a horoscope. Less than a consultation.", {
+  page.drawText("More than a horoscope. Your private birth code.", {
     x: 50, y: 60, size: 10, font: serif, color: muted,
   });
   return doc.save();

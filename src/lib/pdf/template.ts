@@ -1,4 +1,11 @@
 import type { DarrowReport, DarrowModule } from "@/lib/ai/schema";
+// Inline the brand symbol as a base64 data URL so PDF renderers (APITemplate.io)
+// never have to fetch it from an external host. Previously we relied on
+// `${APP_BASE_URL}/brand/darrow-symbol-*.png`, which broke whenever the
+// configured base URL did not actually serve `/public` assets (e.g. preview
+// builds, unpublished domains), producing broken-image placeholders on the
+// cover and closing pages.
+import symbolDataUrl from "@/assets/darrow-symbol-small.png?inline";
 
 const escape = (s: string) =>
   s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
@@ -177,7 +184,7 @@ function renderCrossSell(generated: string[], symbolSmall: string): string {
     <section class="page page-closing">
       <img class="closing-symbol" src="${symbolSmall}" alt="" />
       <div class="brand">Darrow Code</div>
-      <p class="watermark-note">More than a horoscope. Less than a consultation.</p>
+      <p class="watermark-note">More than a horoscope. Your private birth code.</p>
     </section>
   `;
   if (!remaining.length) return closing;
@@ -205,9 +212,12 @@ export function renderReportHtml(report: DarrowReport, opts: { assetsBaseUrl?: s
   const generated = report.generated_modules ?? Object.keys(report.modules);
   const addonCodes = generated.filter((c) => c !== "CORE");
   const clientName = report.client_name || "you";
-  const base = (opts.assetsBaseUrl ?? "").replace(/\/$/, "");
-  const symbolGold = `${base}/brand/darrow-symbol-gold.png`;
-  const symbolSmall = `${base}/brand/darrow-symbol-small.png`;
+  // Note: `assetsBaseUrl` is intentionally unused for brand imagery — the
+  // symbol is inlined as a base64 data URL above so it always renders, even
+  // when the PDF service can't reach the configured public host.
+  void opts.assetsBaseUrl;
+  const symbolGold = symbolDataUrl;
+  const symbolSmall = symbolDataUrl;
 
   const cover = `
     <section class="page page-cover">
@@ -247,7 +257,7 @@ export function renderReportHtml(report: DarrowReport, opts: { assetsBaseUrl?: s
     }
     @bottom-left {
       content: "";
-      background-image: url("${base}/brand/darrow-symbol-small.png");
+      background-image: url("${symbolDataUrl}");
       background-repeat: no-repeat;
       background-size: contain;
       background-position: left center;
@@ -268,7 +278,7 @@ export function renderReportHtml(report: DarrowReport, opts: { assetsBaseUrl?: s
   .brand { font-family: 'Inter', sans-serif; letter-spacing: 4px; font-size: 9pt; color: #D4AF37; text-transform: uppercase; margin-bottom: 18pt; }
 
   /* Cover */
-  .page-cover { background: #0A0F1E; color: #E5E7EB; min-height: 257mm; display: flex; align-items: center; justify-content: center; margin: -22mm -20mm; padding: 40mm 30mm; }
+  .page-cover { box-sizing: border-box; background: #0A0F1E; color: #E5E7EB; height: 297mm; display: flex; align-items: center; justify-content: center; margin: -22mm -20mm; padding: 40mm 30mm; overflow: hidden; }
   .cover-inner { text-align: center; }
   .brand-cover { font-family: 'Inter', sans-serif; letter-spacing: 6px; font-size: 11pt; color: #D4AF37; text-transform: uppercase; margin-bottom: 36pt; }
   .cover-title { font-family: 'Cormorant SC', 'Cormorant Garamond', serif; font-size: 36pt; color: #D4AF37; margin: 0; line-height: 1.2; font-weight: 400; }
@@ -279,7 +289,7 @@ export function renderReportHtml(report: DarrowReport, opts: { assetsBaseUrl?: s
   .closing-symbol { display: block; width: 56pt; height: auto; margin: 0 auto 28pt; opacity: 0.9; }
 
   /* Module covers */
-  .module-cover { background: #0A0F1E; color: #E5E7EB; margin: -22mm -20mm; padding: 60mm 30mm; min-height: 257mm; }
+  .module-cover { box-sizing: border-box; background: #0A0F1E; color: #E5E7EB; margin: -22mm -20mm; padding: 60mm 30mm; height: 297mm; overflow: hidden; }
   .module-title { font-family: 'Cormorant SC', serif; font-size: 30pt; color: #D4AF37; margin: 24pt 0 16pt; font-weight: 400; }
   .module-cover .brand { color: #D4AF37; }
   .prepared { color: #9CA3AF; font-size: 10pt; letter-spacing: 2px; text-transform: uppercase; }
@@ -328,7 +338,7 @@ export function renderReportHtml(report: DarrowReport, opts: { assetsBaseUrl?: s
   .addon-name { font-family: 'Cormorant Garamond', serif; font-size: 16pt; color: #4A402D; margin: 2pt 0 4pt; }
   .addon-tag { color: #6B6B6B; font-size: 10pt; }
 
-  .page-closing { background: #0A0F1E; color: #E5E7EB; margin: -22mm -20mm; padding: 80mm 30mm; min-height: 257mm; text-align: center; }
+  .page-closing { box-sizing: border-box; background: #0A0F1E; color: #E5E7EB; margin: -22mm -20mm; padding: 80mm 30mm; height: 297mm; text-align: center; overflow: hidden; }
   .page-closing .brand { color: #D4AF37; margin-bottom: 28pt; }
   .watermark-note { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 14pt; color: #9CA3AF; }
 </style></head>
