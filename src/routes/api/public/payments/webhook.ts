@@ -1,7 +1,7 @@
 // Stripe webhook — THIN.
 // Verifies signature, dedupes via stripe_events, marks order paid,
-// records purchased modules, enqueues a generation_jobs row, then
-// best-effort fires the async dispatcher and returns 200 immediately.
+// records purchased modules and enqueues a generation_jobs row.
+// pg_cron is the durable worker that runs the long generation request.
 // pg_cron sweeps queued/stuck jobs as a safety net.
 
 import { createFileRoute } from "@tanstack/react-router";
@@ -32,38 +32,7 @@ function parseModules(raw: string | undefined): AnyModule[] {
     .filter((m): m is AnyModule => ALL_MODULE_VALUES.includes(m));
 }
 
-function dispatcherUrl(): string | null {
-  const base = process.env.APP_BASE_URL?.replace(/\/$/, "");
-  if (!base) return null;
-  return `${base}/api/public/jobs/process-generation`;
-}
-
-type HandlerContext = {
-  executionCtx?: {
-    waitUntil?: (promise: Promise<unknown>) => void;
-  };
-};
-
-function waitUntilFrom(context?: HandlerContext): ((promise: Promise<unknown>) => void) | undefined {
-  if (context?.executionCtx?.waitUntil) return context.executionCtx.waitUntil.bind(context.executionCtx);
-  const ctx = (globalThis as { __executionCtx?: { waitUntil?: (p: Promise<unknown>) => void } }).__executionCtx;
-  return ctx?.waitUntil?.bind(ctx);
-}
-
-function fireDispatch(order_id: string, _context?: HandlerContext) {
-  const url = dispatcherUrl();
-  const secret = process.env.JOB_DISPATCH_SECRET;
-  if (!url || !secret) return;
-  const dispatch = fetch(url, {
-    method: "POST",
-    headers: { "Content-Type": "application/json", Authorization: `Bearer ${secret}` },
-    body: JSON.stringify({ order_id }),
-  }).catch((e) => console.error("[webhook] dispatch fire-and-forget failed", e));
-  const waitUntil = waitUntilFrom(_context);
-  waitUntil?.(dispatch);
-}
-
-async function handleCheckoutCompleted(session: any, context?: HandlerContext) {
+async function handleCheckoutCompleted(session: any) {
   const meta = session?.metadata ?? {};
   const order_id = meta.order_id as string | undefined;
   const customer_id = meta.customer_id as string | undefined;
@@ -125,13 +94,10 @@ async function handleCheckoutCompleted(session: any, context?: HandlerContext) {
       { order_id, status: "queued", last_error: null, updated_at: new Date().toISOString() },
       { onConflict: "order_id" },
     );
-
-  fireDispatch(order_id, context);
 }
 
 async function handleEvent(
   event: { id: string; type: string; data: { object: any } },
-  context?: HandlerContext,
 ) {
   const { error: dupErr } = await sb()
     .from("stripe_events")
@@ -140,7 +106,7 @@ async function handleEvent(
 
   switch (event.type) {
     case "checkout.session.completed":
-      await handleCheckoutCompleted(event.data.object, context);
+      await handleCheckoutCompleted(event.data.object);
       break;
     default:
       console.log("[webhook] unhandled", event.type);
@@ -155,7 +121,7 @@ async function handleEvent(
 export const Route = createFileRoute("/api/public/payments/webhook")({
   server: {
     handlers: {
-      POST: async ({ request, context }) => {
+      POST: async ({ request }) => {
         const rawEnv = new URL(request.url).searchParams.get("env");
         if (rawEnv !== "sandbox" && rawEnv !== "live") {
           return Response.json({ received: true, ignored: "invalid env" });
@@ -163,7 +129,7 @@ export const Route = createFileRoute("/api/public/payments/webhook")({
         const env: StripeEnv = rawEnv;
         try {
           const event = await verifyWebhook(request, env);
-          await handleEvent(event, context as unknown as HandlerContext);
+          await handleEvent(event);
           return Response.json({ received: true });
         } catch (e) {
           console.error("[webhook] error:", e);

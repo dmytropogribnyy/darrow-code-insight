@@ -323,7 +323,7 @@ export const getGenerationStatus = createServerFn({ method: "POST" })
 
     const { data: report } = await sb
       .from("reports")
-      .select("download_token, generation_status")
+      .select("download_token, generation_status, generation_error")
       .eq("intake_id", order.intake_id)
       .order("created_at", { ascending: false })
       .limit(1)
@@ -332,6 +332,7 @@ export const getGenerationStatus = createServerFn({ method: "POST" })
     return {
       order_status: order.status as string,
       generation_status: (report?.generation_status as string) ?? null,
+      generation_error: (report?.generation_error as string | null) ?? null,
       report_token:
         report?.generation_status === "complete" ? (report.download_token as string) : null,
     };
