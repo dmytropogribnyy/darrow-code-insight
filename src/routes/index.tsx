@@ -30,17 +30,28 @@ function LandingPage() {
 
       {/* HERO — dark navy section */}
       <section className="bg-navy text-light-grey">
-        <div className="max-w-3xl mx-auto px-6 pt-16 pb-12 text-center">
+        <div className="max-w-3xl mx-auto px-6 pt-12 sm:pt-16 pb-10 sm:pb-12 text-center">
           {/* Top badge */}
-          <div className="inline-flex items-center gap-2 border border-gold/60 rounded-full px-3.5 py-1.5">
-            <span className="w-1 h-1 rounded-full bg-gold" />
+          <div className="inline-flex items-center border border-gold/60 rounded-full px-4 py-2">
             <span
-              className="text-gold uppercase"
-              style={{ fontSize: 10, letterSpacing: "0.2em" }}
+              className="font-sans font-semibold text-gold uppercase"
+              style={{ fontSize: "clamp(11px, 1.2vw, 12px)", letterSpacing: "0.18em" }}
             >
-              AI-Powered Personal Astrology Report · Darrow Code Method · PDF
+              AI-POWERED PERSONAL ASTROLOGY REPORT · DARROW CODE METHOD · PDF
             </span>
           </div>
+
+          {/* Darrow symbol */}
+          <img
+            src="/brand/darrow-symbol-small.png"
+            alt="Darrow Code"
+            className="mx-auto mt-5 sm:mt-7 mb-[18px] sm:mb-6 opacity-95"
+            style={{
+              width: "clamp(44px, 8vw, 56px)",
+              height: "auto",
+              imageRendering: "-webkit-optimize-contrast",
+            }}
+          />
 
           {/* Headline */}
           <h1
@@ -61,12 +72,12 @@ function LandingPage() {
           </p>
 
           {/* Brand continuity */}
-          <p className="mt-3 text-[12px] text-muted-grey">
+          <p className="mt-3 text-[13px] sm:text-[14px] md:text-[15px] text-light-grey leading-[1.6] font-sans">
             AI-powered · Built from your birth data · Decoded through the Darrow Code Method
           </p>
 
           {/* Explainer */}
-          <p className="mt-8 text-[15px] text-muted-grey max-w-[480px] mx-auto leading-relaxed">
+          <p className="mt-8 text-[14px] sm:text-[15px] md:text-[16px] text-muted-grey max-w-[620px] mx-auto leading-[1.65]">
             Get a private AI-powered astrology report built from your birth chart — revealing your{" "}
             <span className="text-paper">love pattern</span>,{" "}
             <span className="text-paper">money code</span>,{" "}
@@ -76,7 +87,7 @@ function LandingPage() {
           </p>
 
           {/* Quote box */}
-          <div className="mt-10 max-w-[460px] mx-auto text-left bg-white/[0.03] border-l-2 border-gold pl-5 py-4 rounded-r-sm">
+          <div className="mt-8 sm:mt-10 max-w-[460px] mx-auto text-left bg-white/[0.03] border-l-2 border-gold pl-5 py-4 rounded-r-sm">
             <p className="font-serif italic text-light-grey text-[16px] leading-snug">
               "One astrology tradition shows part of the picture.
               <br />
@@ -86,14 +97,14 @@ function LandingPage() {
 
           {/* Method line */}
           <p
-            className="mt-10 font-sans text-[11px] sm:text-[13px] text-[#9CA3AF] uppercase"
+            className="mt-8 sm:mt-10 font-sans text-[11px] sm:text-[13px] text-[#9CA3AF] uppercase"
             style={{ letterSpacing: "0.12em" }}
           >
             Western Astrology · Chinese Bazi · Numerology · Pattern Psychology · AI Synthesis
           </p>
 
           {/* Optional chapters teaser */}
-          <div className="mt-5 max-w-[520px] mx-auto">
+          <div className="mt-4 sm:mt-5 max-w-[520px] mx-auto">
             <p className="text-center font-sans text-[13px] sm:text-[15px] text-[#9CA3AF] leading-relaxed">
               Optional focused chapters available after your CORE Report:
             </p>
