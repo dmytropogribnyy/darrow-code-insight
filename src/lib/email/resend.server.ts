@@ -98,7 +98,7 @@ export function reportDelayEmail(args: {
         <div style="padding:32px 28px">
           <h1 style="font-family:'Cormorant Garamond',Georgia,serif;font-weight:500;font-size:22px;color:#4A402D;margin:0 0 14px">A short delay${name ? `, ${name}` : ""}.</h1>
           <p style="font-size:14px;line-height:1.6;color:#151922;margin:0 0 14px">Your report didn't render on the first pass. We've been notified and will send it as soon as it's ready — usually within a few hours. No action needed from you.</p>
-          <p style="color:#9CA3AF;font-size:11px;margin-top:32px;font-style:italic;font-family:'Cormorant Garamond',Georgia,serif">More than a horoscope. Less than a consultation.</p>
+          <p style="color:#9CA3AF;font-size:11px;margin-top:32px;font-style:italic;font-family:'Cormorant Garamond',Georgia,serif">More than a horoscope. Your private birth code.</p>
         </div>
       </div>
     </body></html>`,
