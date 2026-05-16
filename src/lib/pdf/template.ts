@@ -190,6 +190,7 @@ function renderCrossSell(generated: string[]): string {
       </div>
     </section>
     <section class="page page-closing">
+      <img class="closing-symbol" src="${symbolSmall}" alt="" />
       <div class="brand">Darrow Code</div>
       <p class="watermark-note">More than a horoscope. Less than a consultation.</p>
     </section>
