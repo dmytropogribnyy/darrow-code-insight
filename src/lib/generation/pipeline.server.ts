@@ -267,6 +267,7 @@ export async function runFullGenerationPipeline(order_id: string): Promise<void>
       status: "complete",
       updated_at: new Date().toISOString(),
     }).eq("order_id", order_id);
+    logStage({ stage: "status_updated", result: "success", order_id, extra: { status: "complete" } });
 
     // 6) Send "report ready" email.
     if (customerEmail) {
@@ -274,12 +275,15 @@ export async function runFullGenerationPipeline(order_id: string): Promise<void>
       const resultUrl = `${appBaseUrl()}/result/${download_token}`;
       const chapterCount = modules.filter((m) => m !== "CORE").length;
       const { subject, html } = reportReadyEmail({ first_name: firstName, download_url: downloadUrl, result_url: resultUrl, assets_base_url: appBaseUrl(), has_core: modules.includes("CORE" as any), chapter_count: chapterCount });
+      const tMail = Date.now();
       try {
         await sendEmail({ to: customerEmail, subject, html });
         await sb.from("reports").update({ ready_email_sent_at: new Date().toISOString() }).eq("id", report_id);
         console.log("[pipeline] email sent", { order_id, report_id, to: customerEmail });
-      } catch (mailErr) {
+        logStage({ stage: "email_sent", result: "success", order_id, duration_ms: Date.now() - tMail });
+      } catch (mailErr: any) {
         console.error("[pipeline] report-ready email failed", mailErr);
+        logStage({ stage: "email_sent", result: "failed", order_id, duration_ms: Date.now() - tMail, error: mailErr?.message });
       }
     }
     console.log("[pipeline] job completed", { order_id, report_id, download_token });
