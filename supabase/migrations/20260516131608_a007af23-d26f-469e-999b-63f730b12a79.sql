@@ -1,0 +1,1 @@
+ALTER TYPE module_code ADD VALUE IF NOT EXISTS 'CORE';
