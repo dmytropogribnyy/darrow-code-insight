@@ -1,11 +1,16 @@
 import { useState } from "react";
 import { toast } from "sonner";
 import { useNavigate } from "@tanstack/react-router";
-import { createCoreCheckout } from "@/utils/checkout.functions";
+import { createCheckout } from "@/utils/checkout.functions";
 import { getStripeEnvironment } from "@/lib/stripe";
 import { StripeEmbeddedCheckoutBox } from "@/components/StripeEmbeddedCheckout";
 import { PlaceAutocomplete } from "@/components/PlaceAutocomplete";
 import type { PlaceSuggestion } from "@/utils/places.functions";
+import {
+  priceForModules,
+  type ModuleCode,
+} from "@/lib/modules";
+import { ctaLabelFor } from "@/components/ProductSelector";
 
 type FormState = {
   first_name: string;
