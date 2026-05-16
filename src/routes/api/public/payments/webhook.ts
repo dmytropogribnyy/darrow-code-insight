@@ -1,7 +1,7 @@
 // Stripe webhook — THIN.
 // Verifies signature, dedupes via stripe_events, marks order paid,
 // records purchased modules, enqueues a generation_jobs row, then
-// best-effort fires the async dispatcher and returns 200 immediately.
+// best-effort nudges the dispatcher. pg_cron is the durable worker.
 // pg_cron sweeps queued/stuck jobs as a safety net.
 
 import { createFileRoute } from "@tanstack/react-router";
@@ -50,7 +50,7 @@ function waitUntilFrom(context?: HandlerContext): ((promise: Promise<unknown>) =
   return ctx?.waitUntil?.bind(ctx);
 }
 
-function fireDispatch(order_id: string, _context?: HandlerContext) {
+async function fireDispatch(order_id: string, _context?: HandlerContext) {
   const url = dispatcherUrl();
   const secret = process.env.JOB_DISPATCH_SECRET;
   if (!url || !secret) return;
@@ -60,7 +60,11 @@ function fireDispatch(order_id: string, _context?: HandlerContext) {
     body: JSON.stringify({ order_id }),
   }).catch((e) => console.error("[webhook] dispatch fire-and-forget failed", e));
   const waitUntil = waitUntilFrom(_context);
-  waitUntil?.(dispatch);
+  if (waitUntil) {
+    waitUntil(dispatch);
+    return;
+  }
+  await dispatch;
 }
 
 async function handleCheckoutCompleted(session: any, context?: HandlerContext) {
@@ -126,7 +130,7 @@ async function handleCheckoutCompleted(session: any, context?: HandlerContext) {
       { onConflict: "order_id" },
     );
 
-  fireDispatch(order_id, context);
+  await fireDispatch(order_id, context);
 }
 
 async function handleEvent(
