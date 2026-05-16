@@ -13,6 +13,40 @@ const escape = (s: string) =>
 const para = (s: string) =>
   s.split(/\n{2,}/).map((p) => `<p>${escape(p).replace(/\n/g, "<br/>")}</p>`).join("\n");
 
+// Defensive normalization of common AI typos of the PROTOCOL label.
+// Catches: PROTECOL, PROTOCAL, PROTOKOL, PROTCOL, PROTOCO (followed by a
+// colon or punctuation), case-insensitive. Does NOT touch surrounding copy.
+const PROTOCOL_TYPO_RE = /\b(PROTECOL|PROTOCAL|PROTOKOL|PROTCOL|PROTOCO)(?=\s*[:\d\s])/gi;
+function normalizeProtocolLabels(input: string): string {
+  if (!input) return input;
+  let fired = false;
+  const out = input.replace(PROTOCOL_TYPO_RE, (m) => {
+    fired = true;
+    return m === m.toLowerCase() ? "protocol" : "PROTOCOL";
+  });
+  if (fired) {
+    console.warn("[pdf-template] normalized PROTOCOL typo variant", {
+      sample: input.match(PROTOCOL_TYPO_RE)?.slice(0, 3),
+    });
+  }
+  return out;
+}
+
+function normalizeReport<T>(report: T): T {
+  // Walk strings, normalize PROTOCOL typos. Returns a deep-cloned report.
+  const walk = (v: any): any => {
+    if (typeof v === "string") return normalizeProtocolLabels(v);
+    if (Array.isArray(v)) return v.map(walk);
+    if (v && typeof v === "object") {
+      const o: any = {};
+      for (const k of Object.keys(v)) o[k] = walk(v[k]);
+      return o;
+    }
+    return v;
+  };
+  return walk(report);
+}
+
 // Render protocols block — split on "PROTOCOL:" markers if present.
 function renderProtocols(text: string): string {
   const parts = text.split(/(?=PROTOCOL:)/g).map((s) => s.trim()).filter(Boolean);
@@ -208,6 +242,9 @@ function renderCrossSell(generated: string[], symbolSmall: string): string {
 }
 
 export function renderReportHtml(report: DarrowReport, opts: { assetsBaseUrl?: string } = {}): string {
+  // Defensive: normalize known AI typos of "PROTOCOL" across all string fields
+  // before any rendering. Does not modify AI prompts or generation logic.
+  report = normalizeReport(report);
   const core = report.modules.CORE;
   const generated = report.generated_modules ?? Object.keys(report.modules);
   const addonCodes = generated.filter((c) => c !== "CORE");
@@ -250,10 +287,10 @@ export function renderReportHtml(report: DarrowReport, opts: { assetsBaseUrl?: s
     margin: 22mm 20mm;
     @bottom-right {
       content: counter(page);
-      font-family: 'Inter', sans-serif;
-      font-size: 8pt;
-      color: #9CA3AF;
-      letter-spacing: 1pt;
+      font-family: 'Cormorant Garamond', 'Times New Roman', serif;
+      font-size: 10pt;
+      color: #D4AF37;
+      letter-spacing: 1.5pt;
     }
     @bottom-left {
       content: "";
