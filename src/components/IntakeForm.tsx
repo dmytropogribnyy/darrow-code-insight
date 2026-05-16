@@ -171,7 +171,7 @@ export function IntakeForm() {
             {placeError}
           </p>
         ) : (
-          <p className="mt-1.5 text-[11px]" style={{ color: "#9CA3AF" }}>
+          <p className="mt-1.5 text-[11.5px] sm:text-[12px]" style={{ color: "#4A402D" }}>
             Used only to calculate your birth chart timezone and coordinates.
           </p>
         )}
