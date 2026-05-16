@@ -30,7 +30,21 @@ export async function renderHtmlToPdf(html: string): Promise<Uint8Array> {
       "Content-Type": "application/json",
       "X-API-KEY": apiKey,
     },
-    body: JSON.stringify({ body: html, settings: { paper_size: "A4", orientation: "1" } }),
+    body: JSON.stringify({
+      body: html,
+      settings: {
+        paper_size: "A4",
+        orientation: "1",
+        margin_top: "22mm",
+        margin_bottom: "22mm",
+        margin_left: "20mm",
+        margin_right: "20mm",
+        displayHeaderFooter: "true",
+        header: "<span></span>",
+        footer:
+          "<div style=\"font-family:'Cormorant Garamond',Georgia,serif;font-size:9pt;color:#D4AF37;width:100%;padding:0 20mm;letter-spacing:1.5pt;text-align:right;\"><span class=\"pageNumber\"></span></div>",
+      },
+    }),
   });
   if (!res.ok) {
     const t = await res.text();

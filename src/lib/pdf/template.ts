@@ -274,7 +274,7 @@ export function renderReportHtml(report: DarrowReport, opts: { assetsBaseUrl?: s
       <p><strong>What this is.</strong> A structural reading drawing on Western natal astrology, Pythagorean numerology and Chinese Bazi, blended into one interpretive layer. The aim is orientation, not prediction.</p>
       <p><strong>What this is not.</strong> Not medical, legal, financial or psychiatric advice. Not destiny. Not a personality test. No outcomes are promised.</p>
       <p><strong>How to read it.</strong> Each section names a structural pattern, then offers protocols — concrete behavioural anchors — connected to your specific configuration. Read once for orientation, return when something the report described actually shows up.</p>
-      <p class="muted">Voice: editorial-premium. Tone: grounded, precise, calm. Original Darrow Code interpretation; methodologically grounded in psychological astrology and transit traditions, not quoting any source text.</p>
+      
     </section>
   `;
 
