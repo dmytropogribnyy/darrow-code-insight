@@ -4,17 +4,16 @@ export function SiteHeader({ onDark = false }: { onDark?: boolean }) {
   return (
     <header
       className={
-        "border-b " +
-        (onDark
-          ? "border-white/10 bg-navy text-light-grey"
-          : "border-border bg-paper text-charcoal")
+        onDark
+          ? "bg-navy text-light-grey border-b border-gold/15"
+          : "bg-paper text-charcoal border-b border-border"
       }
     >
-      <div className="max-w-6xl mx-auto px-6 h-12 flex items-center justify-between">
+      <div className="max-w-6xl mx-auto px-6 h-14 flex items-center justify-between">
         <Link
           to="/"
           className="text-gold font-sans font-medium"
-          style={{ fontSize: 11, letterSpacing: "0.35em" }}
+          style={{ fontSize: 12, letterSpacing: "0.28em" }}
         >
           DARROW CODE
         </Link>
@@ -28,7 +27,7 @@ export function SiteHeader({ onDark = false }: { onDark?: boolean }) {
           }
           style={{ fontSize: "clamp(13px, 1.1vw, 14px)" }}
         >
-          See a sample →
+          See a sample <span className="text-gold">→</span>
         </Link>
       </div>
     </header>
