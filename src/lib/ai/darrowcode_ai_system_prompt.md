@@ -760,7 +760,7 @@ Page 3 must render `unique_signature` as a highlighted editorial block and `prac
 | 7 | Next + Cross-sell | modules.{X}.next + cross-sell |
 | 8 | Closing watermark page | static |
 
-### FULL CODE Layout (~50 pages)
+### CORE Complete Layout (~50 pages)
 
 Combines master cover + methodology + CORE (10 pp) + 6 add-ons (5-6 pp each)
 + grand synthesis (2 pp) + closing (1 pp).
