@@ -104,7 +104,11 @@ function promptForModules(userPrompt: string, modules: string[]): string {
     /Modules to include \(in order\):\s*.+/,
     `Modules to include (in order): ${modules.join(", ")}`,
   );
-  return `${replaced}\n\nGeneration scope for this call: return generated_modules exactly ${modules.join(", ")}. Do not include paid modules outside this scope.`;
+  const isCoreComplete = modules.length === 7;
+  const focusLine = isCoreComplete
+    ? `Generation scope for this call: CORE Complete — return generated_modules exactly ${modules.join(", ")}. Apply the CORE COMPLETE assembly rules AND every PER-MODULE EXECUTION CHECKLIST entry for all 7 modules. Include closing.grand_synthesis (300-400 words).`
+    : `Generation scope for this call: return generated_modules exactly ${modules.join(", ")}. Do not include paid modules outside this scope. Apply the PER-MODULE EXECUTION CHECKLIST entries for ${modules.join(" and ")} strictly — required data references, tradition anchor, synthesis requirement, mandatory output extras (module_snapshot, color_palette/color_names for STYLE), name-usage limits, forbidden phrases, and module-specific disclaimers (especially BODY soft disclaimer).`;
+  return `${replaced}\n\n${focusLine}`;
 }
 
 const MAX_DEFAULT_ATTEMPTS = 3; // exp backoff 1s / 3s / 9s on retryable errors
