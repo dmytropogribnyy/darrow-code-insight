@@ -10,10 +10,25 @@ export const Route = createFileRoute("/generating")({
   component: GeneratingPage,
 });
 
+const ATMOSPHERIC_MESSAGES = [
+  "Creating your personal birth-code report…",
+  "Mapping your astrological foundation…",
+  "Reading the core pattern in your chart…",
+  "Translating birth data into personal insight…",
+  "Checking the timing layer…",
+  "Following the golden thread through the pattern…",
+  "Shaping your private Darrow Code report…",
+  "Preparing your final PDF…",
+  "Almost ready — your report is being assembled…",
+];
+
 function GeneratingPage() {
   const { session_id } = Route.useSearch();
   const navigate = useNavigate();
   const [status, setStatus] = useState<string>("Reading the full pattern…");
+  const [atmosphericIdx, setAtmosphericIdx] = useState(0);
+  const [atmosphericVisible, setAtmosphericVisible] = useState(true);
+  const [showReassurance, setShowReassurance] = useState(false);
   const stop = useRef(false);
 
   useEffect(() => {
@@ -28,11 +43,11 @@ function GeneratingPage() {
           navigate({ to: "/result/$reportToken", params: { reportToken: res.report_token } });
           return;
         }
-        if (res.order_status === "paid") setStatus("Payment received — building your report…");
+        if (res.order_status === "paid") setStatus("Payment received — creating your report…");
         if (res.generation_status === "processing")
           setStatus("Synthesising your patterns…");
         if (res.generation_status === "failed_generation")
-          setStatus("A small delay — we'll email you when it's ready.");
+          setStatus("A small delay — we'll email your report when it's ready. You do not need to pay again.");
       } catch {
         // ignore — keep polling
       }
@@ -45,6 +60,24 @@ function GeneratingPage() {
     };
   }, [session_id, navigate]);
 
+  // Rotate atmospheric messages every 7s with subtle fade
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setAtmosphericVisible(false);
+      setTimeout(() => {
+        setAtmosphericIdx((i) => (i + 1) % ATMOSPHERIC_MESSAGES.length);
+        setAtmosphericVisible(true);
+      }, 400);
+    }, 7000);
+    return () => clearInterval(interval);
+  }, []);
+
+  // Show reassurance after ~45s
+  useEffect(() => {
+    const t = setTimeout(() => setShowReassurance(true), 45000);
+    return () => clearTimeout(t);
+  }, []);
+
   return (
     <div className="min-h-screen bg-navy text-light-grey flex items-center justify-center px-6">
       <div className="text-center max-w-md">
@@ -52,13 +85,33 @@ function GeneratingPage() {
           src={BRAND_ASSETS.symbolGold}
           alt=""
           aria-hidden="true"
-          className="mx-auto mb-10 w-24 h-24 sm:w-28 sm:h-28 darrow-symbol-pulse"
+          className="mx-auto mb-10 w-24 h-24 sm:w-28 sm:h-28 darrow-symbol-ritual"
         />
         <h1 className="font-serif text-paper" style={{ fontSize: 28, color: "var(--paper)" }}>
           {status}
         </h1>
-        <p className="mt-3 text-[12px] text-muted-grey">Building your private report</p>
-        <p className="mt-2 text-[11px] text-muted-grey/70">Usually 60–90 seconds</p>
+        <p className="mt-3 text-[13px] sm:text-[14px] text-light-grey/85">
+          Building your private Darrow Code report
+        </p>
+        <p className="mt-2 text-[12px] sm:text-[13px] text-muted-grey">
+          Usually 60–90 seconds
+        </p>
+        <p
+          className="mt-6 text-[12px] sm:text-[13px] text-muted-grey/80 italic"
+          style={{
+            opacity: atmosphericVisible ? 1 : 0,
+            transition: "opacity 400ms ease",
+            minHeight: "1.25em",
+          }}
+          aria-live="polite"
+        >
+          {ATMOSPHERIC_MESSAGES[atmosphericIdx]}
+        </p>
+        {showReassurance && (
+          <p className="mt-8 text-[12px] text-muted-grey/75 leading-relaxed max-w-sm mx-auto">
+            This can take up to a couple of minutes. You can keep this page open — we'll also email your report when it's ready.
+          </p>
+        )}
       </div>
     </div>
   );
