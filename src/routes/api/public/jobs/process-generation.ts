@@ -144,16 +144,26 @@ async function sendOneMissingReadyEmail(): Promise<boolean> {
   return true;
 }
 
+async function runSweeperHousekeeping(): Promise<void> {
+  await repairPaidOrdersWithoutJobs();
+  try {
+    await checkAlertConditions();
+  } catch (e: any) {
+    logStage({ stage: "alert_sent", result: "failed", error: e?.message });
+  }
+}
+
 export const Route = createFileRoute("/api/public/jobs/process-generation")({
   server: {
     handlers: {
       POST: async ({ request }) => {
         if (!process.env.JOB_DISPATCH_SECRET) return new Response("not configured", { status: 500 });
-        if (!isAuthorized(request)) return new Response("Unauthorized", { status: 401 });
+        const auth = checkWorkerAuth(request.headers);
+        if (!auth.ok) return unauthorizedResponse(auth);
 
         let body: any = {};
         try { body = await request.json(); } catch {}
-        await repairPaidOrdersWithoutJobs();
+        await runSweeperHousekeeping();
 
         const order_id = await pickOrderId(body);
         if (!order_id) return Response.json({ ok: true, picked: null, email_recovery: await sendOneMissingReadyEmail() });
@@ -161,9 +171,10 @@ export const Route = createFileRoute("/api/public/jobs/process-generation")({
       },
       GET: async ({ request }) => {
         if (!process.env.JOB_DISPATCH_SECRET) return new Response("not configured", { status: 500 });
-        if (!isAuthorized(request)) return new Response("Unauthorized", { status: 401 });
+        const auth = checkWorkerAuth(request.headers);
+        if (!auth.ok) return unauthorizedResponse(auth);
 
-        await repairPaidOrdersWithoutJobs();
+        await runSweeperHousekeeping();
         const order_id = await pickOrderId({});
         if (!order_id) return Response.json({ ok: true, picked: null, email_recovery: await sendOneMissingReadyEmail() });
         return dispatchGeneration(order_id);
@@ -171,3 +182,4 @@ export const Route = createFileRoute("/api/public/jobs/process-generation")({
     },
   },
 });
+
