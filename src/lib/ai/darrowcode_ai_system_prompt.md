@@ -814,7 +814,7 @@ NOT in the app or PDF).
    - System prompt: ~2500 tokens (cached after first call)
    - User prompt + data: ~1500-2000 tokens
    - Output (CORE): ~1500-2000 tokens
-   - Output (FULL CODE all 7): ~8000-10000 tokens
+   - Output (CORE Complete all 7): ~8000-10000 tokens
 7. **For STYLE module** — derive color_palette from element/sign correspondences
    (e.g., Cancer Moon → pearl, silver, deep navy).
 8. **For BODY module** — wrap with "your system may respond to..." pattern.
