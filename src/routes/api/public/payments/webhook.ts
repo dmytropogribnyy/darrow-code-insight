@@ -40,6 +40,12 @@ type HandlerContext = {
   };
 };
 
+function waitUntilFrom(context?: HandlerContext): ((promise: Promise<unknown>) => void) | undefined {
+  if (context?.executionCtx?.waitUntil) return context.executionCtx.waitUntil.bind(context.executionCtx);
+  const ctx = (globalThis as { __executionCtx?: { waitUntil?: (p: Promise<unknown>) => void } }).__executionCtx;
+  return ctx?.waitUntil?.bind(ctx);
+}
+
 function fireDispatch(order_id: string, _context?: HandlerContext) {
   const url = dispatcherUrl();
   const secret = process.env.JOB_DISPATCH_SECRET;
@@ -49,8 +55,7 @@ function fireDispatch(order_id: string, _context?: HandlerContext) {
     headers: { "Content-Type": "application/json", Authorization: `Bearer ${secret}` },
     body: JSON.stringify({ order_id }),
   }).catch((e) => console.error("[webhook] dispatch fire-and-forget failed", e));
-  const ctx = (globalThis as { __executionCtx?: { waitUntil?: (p: Promise<unknown>) => void } }).__executionCtx;
-  const waitUntil = _context?.executionCtx?.waitUntil ?? ctx?.waitUntil;
+  const waitUntil = waitUntilFrom(_context);
   waitUntil?.(dispatch);
 }
 
