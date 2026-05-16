@@ -46,8 +46,14 @@ function GeneratingPage() {
         if (res.order_status === "paid") setStatus("Payment received — creating your report…");
         if (res.generation_status === "processing")
           setStatus("Synthesising your patterns…");
-        if (res.generation_status === "failed_generation")
-          setStatus("A small delay — we'll email your report when it's ready. You do not need to pay again.");
+        if (res.generation_status === "failed_generation") {
+          const willRetry = res.generation_error?.includes("timed out") || res.generation_error?.includes("timeout");
+          setStatus(
+            willRetry
+              ? "A small delay — your report is safely queued and will continue automatically."
+              : "A small delay — we'll email your report when it's ready. You do not need to pay again.",
+          );
+        }
       } catch {
         // ignore — keep polling
       }
