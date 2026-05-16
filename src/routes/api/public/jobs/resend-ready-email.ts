@@ -64,7 +64,8 @@ export const Route = createFileRoute("/api/public/jobs/resend-ready-email")({
         if (!customer?.email) return new Response(JSON.stringify({ ok: false, error: "no customer email" }), { status: 422, headers: { "content-type": "application/json" } });
 
         const downloadUrl = `${appBaseUrl()}/download/${rep.download_token}`;
-        const { subject, html } = reportReadyEmail({ first_name: customer.first_name ?? null, download_url: downloadUrl, assets_base_url: appBaseUrl() });
+        const resultUrl = `${appBaseUrl()}/result/${rep.download_token}`;
+        const { subject, html } = reportReadyEmail({ first_name: customer.first_name ?? null, download_url: downloadUrl, result_url: resultUrl, assets_base_url: appBaseUrl() });
         try {
           const result = await sendEmail({ to: customer.email, subject, html });
           await s.from("reports").update({ ready_email_sent_at: new Date().toISOString() }).eq("id", rep.id);
