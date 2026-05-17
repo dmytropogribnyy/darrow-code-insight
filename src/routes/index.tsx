@@ -7,6 +7,9 @@ import { ProductSelector } from "@/components/ProductSelector";
 import { FaqBlock } from "@/components/FaqBlock";
 import { MODULE_CODES, type ModuleCode } from "@/lib/modules";
 
+type Selectable = "CORE" | ModuleCode;
+
+
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
