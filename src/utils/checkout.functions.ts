@@ -221,7 +221,7 @@ export const createCoreCheckout = createServerFn({ method: "POST" })
     }).parse,
   )
   .handler(async ({ data }) => {
-    return createCheckout({ data: { ...data, modules: [] } });
+    return createCheckout({ data: { ...data, modules: [], includes_core: true } });
   });
 
 // ============================================================
