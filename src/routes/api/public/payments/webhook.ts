@@ -92,7 +92,13 @@ async function handleCheckoutCompleted(session: any) {
   } else if (type === "core_complete") {
     // First-purchase CORE Complete: CORE + all 6 chapters.
     modules = ["CORE", ...MODULE_CODES];
-  } else if (type === "addons" || type === "addon" || type === "core_plus_modules") {
+  } else if (
+    type === "addons" ||
+    type === "addon" ||
+    type === "focused" ||
+    type === "core_plus_modules" ||
+    type === "core_plus_addons"
+  ) {
     modules = parseModules(modules_raw);
   } else if (type === "core") {
     // Explicit CORE row for new flows; legacy CORE orders left implicit.
