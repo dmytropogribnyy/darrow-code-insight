@@ -41,6 +41,28 @@ function safetyRules(chart: DarrowChartData): string {
   return rules.join("\n");
 }
 
+function moduleRouting(): string {
+  // Compact routing so Claude knows which data layer belongs to which module.
+  // Enrichment layers (name numerology, Moon Phase, BaZi Flow) are SUPPORTING
+  // only — never standalone sections. Anchor every claim in proof_tags.
+  return [
+    "MODULE DATA ROUTING — which data belongs to which module:",
+    "- CORE: Natal + BaZi pillars + Day Master + Life Path + Birth Day Number. Expression/Soul Urge/Personality only when name_numerology.available=true AND they converge with the main pattern. Never a standalone 'Name Numerology' section.",
+    "- LOVE: Venus, Mars, Moon, 5H, 7H, Descendant. Name numerology only if it reinforces the relationship pattern. No synastry in MVP. No compatibility claims from name numerology alone.",
+    "- MONEY: 2H, 6H, 8H, 10H, Jupiter, Saturn, Venus, Pluto. Life Path / Expression / Maturity can support income mechanism + value structure. BaZi favorable/unfavorable elements + structure can support money mechanism. Keep language practical: pricing, value, boundaries, pressure, income rhythm.",
+    "- BODY: Moon, Mars, Saturn, 6H. BaZi element imbalance can support stress/recovery rhythm. Moon Phase may add a soft rhythm note. No medical claims. Use 'your system may respond to…' language.",
+    "- YEAR: Slow transits + Solar Return are primary. Personal Year supports the annual theme. BaZi Flow may support annual/monthly timing. Moon Phase may add small emotional/timing texture. Daily moon must NOT overpower slow transits or Solar Return.",
+    "- STYLE: Venus, Ascendant, Moon. BaZi element balance supports color/material direction. Expression/Soul Urge may add aesthetic nuance when relevant. Moon Phase may add symbolic visual tone. Visual-resonance / material-signature language only. No healing/luck/protection/attraction claims.",
+    "- PLACE: Moon, IC, 4H, angular planets. BaZi favorable elements can support environmental qualities. Astrocartography is NOT implemented now — never name specific cities without real ACG line data.",
+    "",
+    "ENRICHMENT GUARDRAILS:",
+    "- Name numerology, Moon Phase and BaZi Flow are supporting synthesis layers. Use them only when they converge with Western astrology, BaZi, transits, Solar Return, or the module theme.",
+    "- Do not create standalone generic sections: no 'Your Name Numerology', no 'Your Moon Phase Meaning', no 'Your BaZi Flow Reading', no 'Lucky Numbers'.",
+    "- Every enrichment-based claim must cite the exact data point and usually appear in proof_tags rather than as a long explanatory block.",
+    "- The final report must remain human-readable, premium editorial, practical, and emotionally intelligent — not a technical dump.",
+  ].join("\n");
+}
+
 export function buildUserPrompt(args: BuildUserPromptArgs): string {
   return [
     `Customer first name: ${args.first_name ?? "(not provided)"}`,
@@ -49,6 +71,8 @@ export function buildUserPrompt(args: BuildUserPromptArgs): string {
     `Modules to include (in order): ${args.modules.join(", ")}`,
     "",
     safetyRules(args.chart),
+    "",
+    moduleRouting(),
     "",
     "DarrowChartData (canonical inputs — do not invent placements outside this):",
     "```json",

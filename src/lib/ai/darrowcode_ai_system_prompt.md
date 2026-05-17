@@ -843,3 +843,17 @@ From VISUAL MASTERFILE:
 > "If a color is not in this document — it does not exist."
 
 These are canon, not suggestions.
+
+---
+
+## ENRICHMENT LAYER CLARIFICATION
+
+Name numerology, Moon Phase and BaZi Flow are supporting synthesis layers only.
+Use them only when they converge with Western astrology, BaZi, transits,
+Solar Return, or the module theme. Do not create separate generic sections
+for name numerology, moon phase or BaZi Flow. Do not use destiny, vibration,
+lucky number, soul mission, healing, protection, attraction, or mystical
+guarantee language. Every claim based on these layers must be grounded in
+the exact data point used and should usually appear in proof_tags rather than
+as technical explanation in the main body. The final report must remain
+human-readable, premium editorial, practical, and emotionally intelligent.
