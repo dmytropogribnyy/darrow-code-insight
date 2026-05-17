@@ -29,6 +29,10 @@ export const Route = createFileRoute("/")({
 
 function LandingPage() {
   const [selected, setSelected] = useState<Set<ModuleCode>>(new Set());
+  const [checkoutOpen, setCheckoutOpen] = useState(false);
+  const [resetSignal, setResetSignal] = useState(0);
+  const selectorRef = useRef<HTMLDivElement>(null);
+
   const toggle = (code: ModuleCode) =>
     setSelected((s) => {
       const n = new Set(s);
@@ -38,6 +42,14 @@ function LandingPage() {
     });
   const selectAll = () => setSelected(new Set(MODULE_CODES));
   const clear = () => setSelected(new Set());
+
+  const handleChangeSelection = () => {
+    setCheckoutOpen(false);
+    setResetSignal((n) => n + 1);
+    requestAnimationFrame(() => {
+      selectorRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+  };
 
   const jumpToChapter = (key: string) => {
     const el = document.getElementById(`chapter-${key}`);
