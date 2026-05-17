@@ -97,7 +97,7 @@ function requestedModules(userPrompt: string): string[] {
     .split(",")
     .map((m) => m.trim().toUpperCase())
     .filter((m) => KNOWN_MODULES.includes(m));
-  return modules.includes("CORE") ? modules : ["CORE", ...modules];
+  return modules.length > 0 ? modules : ["CORE"];
 }
 
 function promptForModules(userPrompt: string, modules: string[]): string {
