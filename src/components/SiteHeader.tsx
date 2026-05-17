@@ -17,18 +17,40 @@ export function SiteHeader({ onDark = false }: { onDark?: boolean }) {
         >
           DARROW CODE
         </Link>
-        <Link
-          to="/sample"
-          className={
-            "font-sans font-medium transition-colors duration-200 " +
-            (onDark
-              ? "text-light-grey hover:text-gold hover:underline underline-offset-4 decoration-gold/50"
-              : "text-neutral-grey hover:text-charcoal hover:underline underline-offset-4 decoration-charcoal/40")
-          }
-          style={{ fontSize: "clamp(13px, 1.1vw, 14px)" }}
-        >
-          See a sample <span className="text-gold">→</span>
-        </Link>
+        <div className="flex items-center gap-5">
+          <a
+            href="#about"
+            onClick={(e) => {
+              if (window.location.pathname === "/") {
+                e.preventDefault();
+                document
+                  .getElementById("about")
+                  ?.scrollIntoView({ behavior: "smooth", block: "start" });
+              }
+            }}
+            className={
+              "font-sans font-medium transition-colors duration-200 " +
+              (onDark
+                ? "text-light-grey hover:text-gold hover:underline underline-offset-4 decoration-gold/50"
+                : "text-neutral-grey hover:text-charcoal hover:underline underline-offset-4 decoration-charcoal/40")
+            }
+            style={{ fontSize: "clamp(13px, 1.1vw, 14px)" }}
+          >
+            About
+          </a>
+          <Link
+            to="/sample"
+            className={
+              "font-sans font-medium transition-colors duration-200 " +
+              (onDark
+                ? "text-light-grey hover:text-gold hover:underline underline-offset-4 decoration-gold/50"
+                : "text-neutral-grey hover:text-charcoal hover:underline underline-offset-4 decoration-charcoal/40")
+            }
+            style={{ fontSize: "clamp(13px, 1.1vw, 14px)" }}
+          >
+            See a sample <span className="text-gold">→</span>
+          </Link>
+        </div>
       </div>
     </header>
   );
