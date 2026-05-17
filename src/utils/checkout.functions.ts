@@ -195,6 +195,8 @@ export const createCoreCheckout = createServerFn({ method: "POST" })
       birth_time: z.string().regex(/^\d{2}:\d{2}(:\d{2})?$/).optional().or(z.literal("")),
       birth_city: z.string().trim().min(1).max(255),
       full_name_for_numerology: z.string().trim().max(255).optional().or(z.literal("")),
+      // REQUIRED — must be provided explicitly. Never default to "M".
+      bazi_sex: z.enum(["M", "F"]),
       origin: z.string().url(),
       environment: StripeEnvSchema,
       resolved_place: z
@@ -209,8 +211,7 @@ export const createCoreCheckout = createServerFn({ method: "POST" })
     }).parse,
   )
   .handler(async ({ data }) => {
-    // Reuse the path above with no chapters selected. Legacy callers default to "M" for bazi sex.
-    return createCheckout({ data: { ...data, modules: [], bazi_sex: "M" } });
+    return createCheckout({ data: { ...data, modules: [] } });
   });
 
 // ============================================================
