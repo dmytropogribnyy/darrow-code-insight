@@ -83,8 +83,9 @@ async function loadOrderContext(order_id: string) {
     .select("module_code")
     .eq("intake_id", order.intake_id);
   const owned = new Set<string>((ownedRows ?? []).map((r: any) => r.module_code));
+  const hasCore = owned.has("CORE");
   const addons = MODULE_CODES.filter((m) => owned.has(m)) as ModuleCode[];
-  const modules = ["CORE" as const, ...addons];
+  const modules: Array<"CORE" | ModuleCode> = hasCore ? ["CORE", ...addons] : [...addons];
 
   return { order, intake, customer, modules };
 }
