@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Download, Loader2, AlertCircle, Sparkles, RefreshCw } from "lucide-react";
+import { Download, Loader2, AlertCircle, Sparkles, RefreshCw, ExternalLink } from "lucide-react";
 import { useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useQuery } from "@tanstack/react-query";
