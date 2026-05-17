@@ -691,44 +691,98 @@ export class FreeAstroAPIProvider implements AstroProvider {
   async computeNatal(input: NatalInput): Promise<DarrowChartData> {
     const hasHouses = !!input.birth_time_known;
 
-    // Sequential calls with a fixed inter-call gap. Avoids the parallel-stagger
-    // race where a Natal 429 retry collides with the next staggered call.
-    // Natal is critical (throws); the other three are graceful (catch → __error).
-    let natalRaw: any;
-    try {
-      natalRaw = await fetchNatal(this.apiKey, input);
-    } catch (e: any) {
-      throw new Error(`FreeAstroAPI natal failed: ${String(e?.message ?? e)}`);
+    // Hybrid strategy: Natal first (critical, sequential), then Transits/BaZi/Solar
+    // concurrently with a small stagger via Promise.allSettled. Each graceful endpoint
+    // has its own wall-time budget so the worker can never hang on a slow upstream.
+    const mkDiag = (): EndpointDiag => ({
+      elapsed_ms: 0,
+      status: null,
+      hit_429: false,
+      available: false,
+    });
+    const diagNatal = mkDiag();
+    const diagTransits = mkDiag();
+    const diagBazi = mkDiag();
+    const diagSolar = mkDiag();
+
+    const run = async <T>(
+      label: string,
+      diag: EndpointDiag,
+      fn: () => Promise<T>,
+      budgetMs?: number,
+    ): Promise<{ ok: true; value: T } | { ok: false; error: string }> => {
+      const t0 = Date.now();
+      console.log(`[freeastroapi] ${label} start`);
+      try {
+        const p = fn();
+        const value = budgetMs ? await withTimeout(p, budgetMs, label) : await p;
+        diag.elapsed_ms = Date.now() - t0;
+        diag.available = true;
+        console.log(
+          `[freeastroapi] ${label} end elapsed=${diag.elapsed_ms}ms status=${diag.status} 429=${diag.hit_429} available=true`,
+        );
+        return { ok: true, value };
+      } catch (e: any) {
+        diag.elapsed_ms = Date.now() - t0;
+        diag.available = false;
+        diag.error = String(e?.message ?? e);
+        console.warn(
+          `[freeastroapi] ${label} end elapsed=${diag.elapsed_ms}ms status=${diag.status} 429=${diag.hit_429} available=false error=${diag.error}`,
+        );
+        return { ok: false, error: diag.error };
+      }
+    };
+
+    // 1) Natal — critical. Abort if it fails.
+    const natalRes = await run("natal", diagNatal, () =>
+      fetchNatal(this.apiKey, input, diagNatal),
+    );
+    if (!natalRes.ok) {
+      throw new Error(`FreeAstroAPI natal failed: ${natalRes.error}`);
     }
+    const natalRaw = natalRes.value;
 
-    await sleep(SEQUENTIAL_GAP_MS);
-    const transitsResult: any = await fetchTransits(this.apiKey, input).catch((e) => ({
-      __error: String(e?.message ?? e),
-    }));
+    // 2) Graceful endpoints — concurrent with stagger.
+    const staggered = async <T>(delayMs: number, fn: () => Promise<T>): Promise<T> => {
+      if (delayMs > 0) await sleep(delayMs);
+      return fn();
+    };
 
-    await sleep(SEQUENTIAL_GAP_MS);
-    const baziResult: any = await fetchBazi(this.apiKey, input).catch((e) => ({
-      __error: String(e?.message ?? e),
-    }));
+    const [transitsSettled, baziSettled, solarSettled] = await Promise.allSettled([
+      staggered(GRACEFUL_STAGGER.transits, () =>
+        run("transits", diagTransits, () => fetchTransits(this.apiKey, input, diagTransits), GRACEFUL_ENDPOINT_BUDGET_MS),
+      ),
+      staggered(GRACEFUL_STAGGER.bazi, () =>
+        run("bazi", diagBazi, () => fetchBazi(this.apiKey, input, diagBazi), GRACEFUL_ENDPOINT_BUDGET_MS),
+      ),
+      staggered(GRACEFUL_STAGGER.solar, () =>
+        run("solar_return", diagSolar, () => fetchSolarReturn(this.apiKey, input, diagSolar), GRACEFUL_ENDPOINT_BUDGET_MS),
+      ),
+    ]);
 
-    await sleep(SEQUENTIAL_GAP_MS);
-    const solarResult: any = await fetchSolarReturn(this.apiKey, input).catch((e) => ({
-      __error: String(e?.message ?? e),
-    }));
+    const extract = <T,>(
+      s: PromiseSettledResult<{ ok: true; value: T } | { ok: false; error: string }>,
+    ): T | { __error: string } => {
+      if (s.status === "rejected") return { __error: String(s.reason?.message ?? s.reason) };
+      return s.value.ok ? s.value.value : { __error: s.value.error };
+    };
+    const transitsResult = extract(transitsSettled) as any;
+    const baziResult = extract(baziSettled) as any;
+    const solarResult = extract(solarSettled) as any;
 
     const natal = buildNatalBlock(natalRaw, hasHouses);
 
-    const transits: TransitsBlock = (transitsResult as any)?.__error
-      ? { available: false, reason: (transitsResult as any).__error }
+    const transits: TransitsBlock = transitsResult?.__error
+      ? { available: false, reason: transitsResult.__error }
       : buildTransitsBlock(transitsResult);
 
-    const bazi: BaziBlock = (baziResult as any)?.__error
-      ? { available: false, reason: (baziResult as any).__error }
+    const bazi: BaziBlock = baziResult?.__error
+      ? { available: false, reason: baziResult.__error }
       : buildBaziBlock(baziResult, !!input.birth_time_known);
 
     const srYear = computeSrYear(input.date_of_birth);
-    const solar_return: SolarReturnBlock = (solarResult as any)?.__error
-      ? { available: false, reason: (solarResult as any).__error }
+    const solar_return: SolarReturnBlock = solarResult?.__error
+      ? { available: false, reason: solarResult.__error }
       : buildSolarReturnBlock(solarResult, srYear);
 
     // Numerology — local computation (unchanged).
@@ -747,6 +801,17 @@ export class FreeAstroAPIProvider implements AstroProvider {
       ? "exact"
       : "unknown";
 
+    const endpoint_timing_ms: Record<string, number> = {
+      natal: diagNatal.elapsed_ms,
+      transits: diagTransits.elapsed_ms,
+      bazi: diagBazi.elapsed_ms,
+      solar_return: diagSolar.elapsed_ms,
+    };
+    const endpoint_errors: Record<string, string> = {};
+    if (diagTransits.error) endpoint_errors.transits = diagTransits.error;
+    if (diagBazi.error) endpoint_errors.bazi = diagBazi.error;
+    if (diagSolar.error) endpoint_errors.solar_return = diagSolar.error;
+
     return {
       schema_version: "1.0",
       meta: {
@@ -755,6 +820,8 @@ export class FreeAstroAPIProvider implements AstroProvider {
         generated_at: new Date().toISOString(),
         timezone_used: input.timezone || "UTC",
         birth_time_source,
+        endpoint_timing_ms,
+        endpoint_errors,
       },
       natal,
       numerology,
