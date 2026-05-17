@@ -143,20 +143,37 @@ function normalizeHouse(h: any): HouseCusp {
   };
 }
 
-function normalizeAspect(a: any): AspectRow & { high_priority?: boolean } {
+// Strip "(T)" / "(N)" suffix that FreeAstroAPI transits API appends.
+function stripSideSuffix(s: string): { name: string; side: "T" | "N" | null } {
+  const m = s.match(/^(.*?)\s*\((T|N)\)\s*$/);
+  if (m) return { name: m[1].trim(), side: m[2] as "T" | "N" };
+  return { name: s.trim(), side: null };
+}
+
+function normalizeAspect(a: any): AspectRow & { high_priority?: boolean; _transit_name?: string } {
   // FreeAstroAPI uses different field names per endpoint (a/b, from/to,
   // planet1/planet2, transit_planet/natal_planet, p1/p2). Try them all.
-  const aName =
-    a?.a ?? a?.from ?? a?.planet1 ?? a?.transit_planet ?? a?.p1 ?? a?.first ?? "";
-  const bName =
-    a?.b ?? a?.to ?? a?.planet2 ?? a?.natal_planet ?? a?.p2 ?? a?.second ?? "";
+  const aRaw = String(
+    a?.a ?? a?.from ?? a?.planet1 ?? a?.transit_planet ?? a?.p1 ?? a?.first ?? "",
+  );
+  const bRaw = String(
+    a?.b ?? a?.to ?? a?.planet2 ?? a?.natal_planet ?? a?.p2 ?? a?.second ?? "",
+  );
+  const aP = stripSideSuffix(aRaw);
+  const bP = stripSideSuffix(bRaw);
+  // Detect transit body: explicit (T) marker, then explicit field, then default to b.
+  let transitName = "";
+  if (aP.side === "T") transitName = aP.name;
+  else if (bP.side === "T") transitName = bP.name;
+  else if (a?.transit_planet) transitName = String(a.transit_planet);
   return {
-    a: String(aName),
-    b: String(bName),
+    a: aP.name,
+    b: bP.name,
     type: String(a?.type ?? a?.aspect ?? "").toLowerCase(),
     orb: typeof a?.orb === "number" ? a.orb : Number(a?.orb ?? 0),
     is_major: a?.is_major === undefined ? undefined : !!a.is_major,
     is_applying: a?.is_applying === undefined ? undefined : !!a.is_applying,
+    _transit_name: transitName || undefined,
   };
 }
 
@@ -393,10 +410,11 @@ function buildTransitsBlock(raw: any): TransitsBlock {
     .map(normalizeAspect)
     .filter((a) => a.is_major !== false && a.orb <= 6.0)
     .map((a) => {
-      // High priority if transit body (a) is outer/Jupiter+.
-      const transitName = a.a.toLowerCase();
+      const transitName = (a._transit_name ?? a.b ?? "").toLowerCase();
       const high = HIGH_PRIORITY_TRANSITERS.has(transitName);
-      return { ...a, high_priority: high };
+      // Drop internal helper before persistence.
+      const { _transit_name, ...rest } = a;
+      return { ...rest, high_priority: high };
     });
   return {
     available: true,
@@ -408,20 +426,121 @@ function buildTransitsBlock(raw: any): TransitsBlock {
   };
 }
 
+// Strip prose / advice / predictions but keep deterministic structured fields.
+// Keeps day_master, pillars (with gan/zhi info + ten_gods), elements, current/luck_cycle,
+// compact stars (name/pillar/zhi), compact interactions (id/type/scope/pillars/branches/transform_*),
+// and a compact professional block (dm_strength/structure/favorable/unfavorable + numeric scores).
+function compactPillar(p: any): any {
+  if (!p || typeof p !== "object") return p;
+  const { interpretation: _i, interpretations: _i2, ...rest } = p;
+  return rest;
+}
+
+function compactStar(s: any): any {
+  if (!s || typeof s !== "object") return null;
+  return {
+    name: s.name ?? null,
+    pillar: s.pillar ?? null,
+    zhi: s.zhi ?? null,
+  };
+}
+
+function compactInteraction(it: any): any {
+  if (!it || typeof it !== "object") return null;
+  return {
+    id: it.id ?? null,
+    type: it.type ?? null,
+    scope: it.scope ?? null,
+    pillars: it.pillars ?? null,
+    branches: it.branches ?? null,
+    is_formed: it.is_formed ?? null,
+    transform_level: it.transform_level ?? null,
+    transform_to: it.transform_to ?? null,
+  };
+}
+
+function compactProfessional(p: any): any {
+  if (!p || typeof p !== "object") return null;
+  const dbg = p.professional_debug ?? {};
+  return {
+    dm_strength: p.dm_strength ?? null,
+    structure: p.structure ?? null,
+    yong_shen_candidates: p.yong_shen_candidates ?? null,
+    favorable_elements: p.favorable_elements ?? null,
+    unfavorable_elements: p.unfavorable_elements ?? null,
+    scores: {
+      dm_strength_score: dbg.dm_strength_score ?? null,
+      seasonal_factor: dbg.seasonal_factor ?? null,
+      balance_ratio: dbg.balance_ratio ?? null,
+    },
+  };
+}
+
+function buildLuckCyclePillar(c: any): BaziLuckCycle {
+  const gan = c?.gan ?? c?.stem?.chinese ?? c?.stem ?? "";
+  const zhi = c?.zhi ?? c?.branch?.chinese ?? c?.branch ?? "";
+  const ganInfo = c?.gan_info ?? (typeof c?.stem === "object" ? c.stem : null);
+  const zhiInfo = c?.zhi_info ?? (typeof c?.branch === "object" ? c.branch : null);
+  const startYear = Number(c?.start_year);
+  const endYear = Number(
+    c?.end_year ?? (Number.isFinite(startYear) ? startYear + 9 : NaN),
+  );
+  const startAge = c?.start_age != null ? Number(c.start_age) : null;
+  const endAge =
+    c?.end_age != null
+      ? Number(c.end_age)
+      : startAge != null
+        ? startAge + 9
+        : null;
+  return {
+    start_year: startYear,
+    end_year: endYear,
+    start_age: startAge,
+    end_age: endAge,
+    stem: {
+      chinese: String(gan ?? ""),
+      pinyin: c?.gan_pinyin ?? ganInfo?.pinyin ?? null,
+      element: ganInfo?.element ?? null,
+      polarity: ganInfo?.polarity ?? null,
+      name: ganInfo?.name ?? null,
+    },
+    branch: {
+      chinese: String(zhi ?? ""),
+      pinyin: c?.zhi_pinyin ?? zhiInfo?.pinyin ?? null,
+      element: zhiInfo?.element ?? null,
+      polarity: zhiInfo?.polarity ?? null,
+      zodiac: zhiInfo?.zodiac ?? null,
+      name: zhiInfo?.name ?? null,
+    },
+    pillar_label: c?.gan_zhi ?? c?.pillar_label ?? null,
+  };
+}
+
 function buildBaziBlock(raw: any, birthTimeKnown: boolean): BaziBlock {
   const cleaned = stripInterpretation(raw ?? {});
-  const pillars = cleaned.pillars ?? {};
+  const pillarsRaw = Array.isArray(cleaned.pillars) ? cleaned.pillars : [];
+  // API returns pillars as array of { label, ... }; map to {year,month,day,hour}.
+  const pillarsByLabel: Record<string, any> = {};
+  for (const p of pillarsRaw) {
+    if (p?.label) pillarsByLabel[String(p.label)] = compactPillar(p);
+  }
+  // Fallback if API uses object form.
+  const pillarsObj =
+    pillarsRaw.length === 0 && cleaned.pillars && typeof cleaned.pillars === "object"
+      ? cleaned.pillars
+      : pillarsByLabel;
+
   const luckCyclePillars: BaziLuckCycle[] = Array.isArray(cleaned?.luck_cycle?.pillars)
-    ? cleaned.luck_cycle.pillars.map((c: any) => ({
-        start_year: Number(c.start_year),
-        end_year: Number(c.end_year),
-        stem: String(c.stem ?? ""),
-        branch: String(c.branch ?? ""),
-        pinyin: c.pinyin ?? null,
-      }))
+    ? cleaned.luck_cycle.pillars.map(buildLuckCyclePillar)
     : [];
   const now = new Date().getFullYear();
-  const current = luckCyclePillars.find((c) => c.start_year <= now && now <= c.end_year) ?? null;
+  const current =
+    luckCyclePillars.find((c) => c.start_year <= now && now <= c.end_year) ?? null;
+
+  const starsRaw: any[] = Array.isArray(cleaned.stars) ? cleaned.stars : [];
+  const interactionsRaw: any[] = Array.isArray(cleaned.interactions)
+    ? cleaned.interactions
+    : [];
 
   return {
     available: true,
@@ -430,10 +549,10 @@ function buildBaziBlock(raw: any, birthTimeKnown: boolean): BaziBlock {
     hour_pillar_used_for_interpretation: birthTimeKnown,
     day_master: cleaned.day_master ?? null,
     pillars: {
-      year: pillars.year,
-      month: pillars.month,
-      day: pillars.day,
-      hour: pillars.hour,
+      year: pillarsObj.year,
+      month: pillarsObj.month,
+      day: pillarsObj.day,
+      hour: pillarsObj.hour,
     },
     elements: cleaned.elements
       ? {
@@ -444,9 +563,9 @@ function buildBaziBlock(raw: any, birthTimeKnown: boolean): BaziBlock {
       : undefined,
     luck_cycle: { pillars: luckCyclePillars },
     current_luck_cycle: current,
-    stars: cleaned.stars ?? null,
-    interactions: cleaned.interactions ?? null,
-    professional: cleaned.professional ?? null,
+    stars: starsRaw.map(compactStar).filter(Boolean),
+    interactions: interactionsRaw.map(compactInteraction).filter(Boolean),
+    professional: compactProfessional(cleaned.professional),
   };
 }
 
