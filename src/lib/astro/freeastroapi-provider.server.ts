@@ -398,8 +398,106 @@ async function fetchSolarReturn(
 }
 
 // ============================================================
-// Normalizers per block
+// MOON PHASE — graceful enrichment
 // ============================================================
+async function fetchMoonPhase(
+  apiKey: string,
+  input: NatalInput,
+  diag: EndpointDiag,
+): Promise<any> {
+  const now = new Date();
+  const params = new URLSearchParams({
+    date: now.toISOString().slice(0, 10),
+    lat: String(input.latitude),
+    lon: String(input.longitude),
+    tz_str: input.timezone || "UTC",
+    include_zodiac: "true",
+    include_special: "true",
+    include_eclipse: "true",
+    include_forecast: "true",
+    include_traditional_moon: "true",
+    include_visuals: "false",
+    include_interpretation: "false",
+  });
+  const url = `/api/v1/moon/phase?${params.toString()}`;
+  let attempt = 0;
+  let lastErr: any = null;
+  while (attempt < GRACEFUL_MAX_ATTEMPTS) {
+    attempt++;
+    try {
+      const res = await withTimeout(
+        fetch(`${BASE_URL}${url}`, {
+          method: "GET",
+          headers: { "x-api-key": apiKey },
+        }),
+        STEP_TIMEOUT_MS,
+        `GET /api/v1/moon/phase`,
+      );
+      diag.status = res.status;
+      if (res.status === 429) {
+        diag.hit_429 = true;
+        if (attempt < GRACEFUL_MAX_ATTEMPTS) {
+          const ra = Number(res.headers.get("retry-after"));
+          const backoff =
+            Number.isFinite(ra) && ra > 0 && ra * 1000 <= MAX_RETRY_AFTER_MS
+              ? ra * 1000
+              : DEFAULT_429_BACKOFF_MS;
+          await sleep(backoff);
+          continue;
+        }
+      }
+      if (!res.ok) {
+        const text = await res.text().catch(() => "");
+        throw new Error(`moon/phase HTTP ${res.status}: ${text.slice(0, 200)}`);
+      }
+      return await res.json();
+    } catch (e: any) {
+      lastErr = e;
+      if (attempt >= GRACEFUL_MAX_ATTEMPTS) throw e;
+      await sleep(400);
+    }
+  }
+  throw lastErr ?? new Error("moon/phase failed");
+}
+
+// ============================================================
+// BAZI FLOW — graceful enrichment (single year, summary mode)
+// ============================================================
+async function fetchBaziFlow(
+  apiKey: string,
+  input: NatalInput,
+  diag: EndpointDiag,
+): Promise<any> {
+  if (input.bazi_sex !== "M" && input.bazi_sex !== "F") {
+    throw new Error("missing_bazi_sex");
+  }
+  const { y, m, d } = parseDate(input.date_of_birth);
+  const tm = parseTime(input.birth_time ?? null);
+  const hour = input.birth_time_known && tm ? tm.h : 12;
+  const minute = input.birth_time_known && tm ? tm.min : 0;
+  const currentYear = new Date().getFullYear();
+  const body = {
+    year: y,
+    month: m,
+    day: d,
+    hour,
+    minute,
+    city: input.birth_city ?? "",
+    lat: input.latitude,
+    lng: input.longitude,
+    sex: input.bazi_sex,
+    target_year: currentYear,
+    target_year_end: currentYear,
+    mode: "summary",
+    include: ["interactions", "stars"],
+    dictionary_response: false,
+    interpretation: { enable: false },
+  };
+  return postJson(apiKey, "/api/v1/chinese/bazi/flow", body, {
+    maxAttempts: GRACEFUL_MAX_ATTEMPTS,
+    label: "bazi_flow",
+  }, diag);
+}
 function buildNatalBlock(raw: any, hasHouses: boolean): DarrowChartData["natal"] {
   const cleaned = stripInterpretation(raw ?? {});
   const planetsRaw: any[] = Array.isArray(cleaned.planets) ? cleaned.planets : [];
