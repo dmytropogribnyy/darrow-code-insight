@@ -351,7 +351,11 @@ function computeSrYear(dob: string): number {
   return today >= birthdayThisYear ? today.getFullYear() : today.getFullYear() - 1;
 }
 
-async function fetchSolarReturn(apiKey: string, input: NatalInput): Promise<any> {
+async function fetchSolarReturn(
+  apiKey: string,
+  input: NatalInput,
+  diag: EndpointDiag,
+): Promise<any> {
   const { y, m, d } = parseDate(input.date_of_birth);
   const tm = parseTime(input.birth_time ?? null);
   const srYear = computeSrYear(input.date_of_birth);
@@ -391,7 +395,10 @@ async function fetchSolarReturn(apiKey: string, input: NatalInput): Promise<any>
     },
     interpretation: { enable: false },
   };
-  return postJson(apiKey, "/api/v1/western/solar/calculate", body);
+  return postJson(apiKey, "/api/v1/western/solar/calculate", body, {
+    maxAttempts: GRACEFUL_MAX_ATTEMPTS,
+    label: "solar_return",
+  }, diag);
 }
 
 // ============================================================
