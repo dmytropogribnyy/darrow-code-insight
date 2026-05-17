@@ -61,6 +61,7 @@ export const createCheckout = createServerFn({ method: "POST" })
       birth_city: z.string().trim().min(1).max(255),
       full_name_for_numerology: z.string().trim().max(255).optional().or(z.literal("")),
       modules: z.array(ModuleCodeSchema).max(6).default([]),
+      includes_core: z.boolean().default(true),
       bazi_sex: z.enum(["M", "F"]),
       origin: z.string().url(),
       environment: StripeEnvSchema,
