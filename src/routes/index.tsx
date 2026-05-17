@@ -127,7 +127,7 @@ function LandingPage() {
 
           {/* Explainer */}
           <p className="mt-6 sm:mt-7 text-[16px] sm:text-[17px] md:text-[18px] text-muted-grey max-w-[640px] mx-auto leading-[1.6] font-sans">
-            Get a private AI-powered astrology report built from your birth data — revealing your personal pattern: how you think, react, choose and move through change.
+            Get a premium private astrology report built from your birth data — revealing your personal pattern: how you think, react, choose and move through change.
           </p>
 
           {/* Quote box */}
