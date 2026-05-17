@@ -161,9 +161,15 @@ export const createCheckout = createServerFn({ method: "POST" })
 
     // Determine canonical order_type for the webhook
     let order_type: string;
-    if (data.modules.length === 0) order_type = "core";
-    else if (data.modules.length === 6) order_type = "core_complete";
-    else order_type = "core_plus_modules";
+    if (!data.includes_core) {
+      order_type = "focused";
+    } else if (data.modules.length === 0) {
+      order_type = "core";
+    } else if (data.modules.length === 6) {
+      order_type = "core_complete";
+    } else {
+      order_type = "core_plus_addons";
+    }
 
     const session = await stripe.checkout.sessions.create({
       line_items,
