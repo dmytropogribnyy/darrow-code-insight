@@ -196,56 +196,77 @@ export async function runFullGenerationPipeline(order_id: string): Promise<void>
     report_id = r.id;
     download_token = r.download_token;
 
-    // 1) Astro data (mock provider) — persist normalized JSON.
-    const provider = await getAstroProvider();
-    const natal: NatalInput = {
-      date_of_birth: intake.date_of_birth,
-      birth_time: intake.birth_time,
-      birth_time_known: !!intake.birth_time_known,
-      latitude: intake.latitude ?? 0,
-      longitude: intake.longitude ?? 0,
-      timezone: intake.timezone ?? "UTC",
-      full_name_for_numerology: intake.full_name_for_numerology ?? customer?.first_name ?? null,
-      first_name: customer?.first_name ?? null,
-      birth_city: intake.birth_city ?? null,
-      bazi_sex: (intake.bazi_sex as "M" | "F" | null) ?? null,
-    };
-    const chart = await withTimeout("Astro calculation", provider.computeNatal(natal), 30 * 1000, () => heartbeat(order_id));
-    await heartbeat(order_id);
+    // If a previous attempt already produced AI content, skip astro + AI
+    // and go straight to PDF rendering. This makes PDF-only retries cheap
+    // and avoids re-billing Claude when only the renderer failed.
+    let report: any = r.ai_content_json ?? null;
+    let model_used: string = r.model_used ?? "reused";
 
-    const tAstro = Date.now();
-    await sb.from("astro_data").insert({
-      intake_id: intake.id,
-      provider_name: chart.meta.provider_name,
-      provider_version: chart.meta.provider_version,
-      birth_time_source: chart.meta.birth_time_source,
-      timezone_used: chart.meta.timezone_used,
-      calculation_date: new Date().toISOString().slice(0, 10),
-      generated_at: chart.meta.generated_at,
-      normalized_json: chart,
-      raw_json: null,
-    });
-    logStage({ stage: "astro_data_generated", result: "success", order_id, duration_ms: Date.now() - tAstro });
+    if (report) {
+      console.log("[pipeline] reusing existing ai_content_json", { order_id, report_id, model_used });
+      logStage({ stage: "ai_generation_completed", result: "success", order_id, extra: { model_used, reused: true } });
+      await heartbeat(order_id);
+    } else {
+      // 1) Astro data — persist normalized JSON.
+      const provider = await getAstroProvider();
+      const natal: NatalInput = {
+        date_of_birth: intake.date_of_birth,
+        birth_time: intake.birth_time,
+        birth_time_known: !!intake.birth_time_known,
+        latitude: intake.latitude ?? 0,
+        longitude: intake.longitude ?? 0,
+        timezone: intake.timezone ?? "UTC",
+        full_name_for_numerology: intake.full_name_for_numerology ?? customer?.first_name ?? null,
+        first_name: customer?.first_name ?? null,
+        birth_city: intake.birth_city ?? null,
+        bazi_sex: (intake.bazi_sex as "M" | "F" | null) ?? null,
+      };
+      const chart = await withTimeout("Astro calculation", provider.computeNatal(natal), 30 * 1000, () => heartbeat(order_id));
+      await heartbeat(order_id);
 
-    // 2) AI generation via Anthropic.
-    const userPrompt = buildUserPrompt({
-      first_name: firstName,
-      date_of_birth: intake.date_of_birth,
-      birth_city: intake.birth_city,
-      modules,
-      chart,
-    });
-    logStage({ stage: "ai_generation_started", result: "success", order_id, extra: { modules } });
-    const tAi = Date.now();
-    const { report, model_used } = await withTimeout("AI report generation", generateDarrowReport(userPrompt), STEP_TIMEOUT_MS, () => heartbeat(order_id));
-    await heartbeat(order_id);
-    console.log("[pipeline] AI done", { order_id, report_id, model_used });
-    logStage({ stage: "ai_generation_completed", result: "success", order_id, duration_ms: Date.now() - tAi, extra: { model_used } });
+      const tAstro = Date.now();
+      await sb.from("astro_data").insert({
+        intake_id: intake.id,
+        provider_name: chart.meta.provider_name,
+        provider_version: chart.meta.provider_version,
+        birth_time_source: chart.meta.birth_time_source,
+        timezone_used: chart.meta.timezone_used,
+        calculation_date: new Date().toISOString().slice(0, 10),
+        generated_at: chart.meta.generated_at,
+        normalized_json: chart,
+        raw_json: null,
+      });
+      logStage({ stage: "astro_data_generated", result: "success", order_id, duration_ms: Date.now() - tAstro });
+
+      // 2) AI generation via Anthropic.
+      const userPrompt = buildUserPrompt({
+        first_name: firstName,
+        date_of_birth: intake.date_of_birth,
+        birth_city: intake.birth_city,
+        modules,
+        chart,
+      });
+      logStage({ stage: "ai_generation_started", result: "success", order_id, extra: { modules } });
+      const tAi = Date.now();
+      const ai = await withTimeout("AI report generation", generateDarrowReport(userPrompt), STEP_TIMEOUT_MS, () => heartbeat(order_id));
+      report = ai.report;
+      model_used = ai.model_used;
+      await heartbeat(order_id);
+      // Persist immediately so PDF-only retries can skip this step on the next attempt.
+      await sb.from("reports").update({ ai_content_json: report, model_used }).eq("id", report_id);
+      console.log("[pipeline] AI done", { order_id, report_id, model_used });
+      logStage({ stage: "ai_generation_completed", result: "success", order_id, duration_ms: Date.now() - tAi, extra: { model_used } });
+    }
 
     // 3) HTML → PDF.
     const html = renderReportHtml(report, { assetsBaseUrl: appBaseUrl() });
     const tPdf = Date.now();
-    const pdfBytes = await withTimeout("PDF rendering", renderHtmlToPdf(html), 3 * 60 * 1000, () => heartbeat(order_id));
+    const pdfBytes = await withTimeout(
+      "PDF rendering",
+      renderHtmlToPdf(html, { order_id, report_id, modules: modules as string[] }),
+      3 * 60 * 1000,
+      () => heartbeat(order_id),
+    );
     await heartbeat(order_id);
     console.log("[pipeline] PDF done", { order_id, report_id, bytes: pdfBytes.byteLength });
     logStage({ stage: "pdf_generated", result: "success", order_id, duration_ms: Date.now() - tPdf, extra: { bytes: pdfBytes.byteLength } });
