@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Download, Loader2, AlertCircle, Sparkles, RefreshCw } from "lucide-react";
+import { Download, Loader2, AlertCircle, Sparkles, RefreshCw, ExternalLink } from "lucide-react";
 import { useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useQuery } from "@tanstack/react-query";
@@ -84,13 +84,15 @@ function describeReport(modules: string[]): { kind: "complete" | "addons" | "cor
 
 function ReportCard({
   row,
+  onOpen,
   onDownload,
-  isDownloading,
+  busyAction,
   onRefresh,
 }: {
   row: ReportRow;
+  onOpen: () => void;
   onDownload: () => void;
-  isDownloading: boolean;
+  busyAction: "open" | "download" | null;
   onRefresh: () => void;
 }) {
   const info = describeReport(row.modules);
@@ -150,20 +152,31 @@ function ReportCard({
 
       <div className="mt-4">
         {complete && (
-          <button
-            type="button"
-            onClick={onDownload}
-            disabled={isDownloading}
-            className={
-              "w-full inline-flex items-center justify-center gap-2 rounded-[6px] py-3 text-[13.5px] font-semibold transition disabled:opacity-60 " +
-              (isPremium
-                ? "bg-gold text-navy hover:brightness-105"
-                : "border border-gold text-warm-brown hover:bg-gold hover:text-navy")
-            }
-          >
-            <Download className="w-4 h-4" />
-            {isDownloading ? "Preparing…" : "Download PDF"}
-          </button>
+          <div className="grid grid-cols-2 gap-2">
+            <button
+              type="button"
+              onClick={onOpen}
+              disabled={busyAction !== null}
+              className={
+                "inline-flex items-center justify-center gap-1.5 rounded-[6px] py-3 text-[13px] font-semibold transition disabled:opacity-60 " +
+                (isPremium
+                  ? "bg-gold text-navy hover:brightness-105"
+                  : "border border-gold text-warm-brown hover:bg-gold hover:text-navy")
+              }
+            >
+              <ExternalLink className="w-4 h-4" />
+              {busyAction === "open" ? "Opening…" : "Open PDF"}
+            </button>
+            <button
+              type="button"
+              onClick={onDownload}
+              disabled={busyAction !== null}
+              className="inline-flex items-center justify-center gap-1.5 rounded-[6px] py-3 text-[13px] font-semibold transition disabled:opacity-60 border border-gold text-warm-brown hover:bg-gold hover:text-navy"
+            >
+              <Download className="w-4 h-4" />
+              {busyAction === "download" ? "Preparing…" : "Download"}
+            </button>
+          </div>
         )}
         {pending && (
           <div className="space-y-2">
@@ -217,7 +230,7 @@ function ResultPage() {
   const [selected, setSelected] = useState<Set<ModuleCode>>(new Set());
   const [clientSecret, setClientSecret] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
-  const [downloadingToken, setDownloadingToken] = useState<string | null>(null);
+  const [busyAction, setBusyAction] = useState<{ token: string; action: "open" | "download" } | null>(null);
   const queryClient = useQueryClient();
   const refreshReports = () =>
     queryClient.invalidateQueries({ queryKey: ["report-context", reportToken] });
@@ -249,31 +262,49 @@ function ResultPage() {
   const selectedArr = Array.from(selected) as ModuleCode[];
   const quote = selectedArr.length > 0 ? priceForModules(selectedArr, false) : null;
 
-  async function handleDownload(token: string) {
-    setDownloadingToken(token);
-    // Open a blank tab synchronously so iOS Safari doesn't block the popup
-    // after the awaited server call resolves.
-    const isIOS =
-      typeof navigator !== "undefined" &&
-      (/iPad|iPhone|iPod/.test(navigator.userAgent) ||
-        (navigator.platform === "MacIntel" && (navigator as any).maxTouchPoints > 1));
-    const win = !isIOS ? window.open("about:blank", "_blank") : null;
+  const isIOS =
+    typeof navigator !== "undefined" &&
+    (/iPad|iPhone|iPod/.test(navigator.userAgent) ||
+      (navigator.platform === "MacIntel" && (navigator as any).maxTouchPoints > 1));
+
+  async function handleOpen(token: string) {
+    // Open blank tab SYNCHRONOUSLY in the click handler so Safari (incl. iOS)
+    // doesn't block the popup after the awaited server call resolves.
+    const win = window.open("about:blank", "_blank");
+    setBusyAction({ token, action: "open" });
     try {
-      const { url } = await getReportDownloadUrl({ data: { report_token: token } });
-      if (isIOS) {
-        // Safari on iOS refuses to render cross-origin PDFs in a programmatically
-        // opened tab; navigate the current tab instead.
-        window.location.href = url;
-      } else if (win) {
-        win.location.href = url;
-      } else {
-        window.open(url, "_blank", "noopener");
-      }
+      const { inlineUrl } = await getReportDownloadUrl({ data: { report_token: token } });
+      if (win) win.location.href = inlineUrl;
+      else window.location.href = inlineUrl;
     } catch (e: any) {
       if (win) win.close();
+      toast.error(e?.message ?? "Could not open report.");
+    } finally {
+      setBusyAction(null);
+    }
+  }
+
+  async function handleDownload(token: string) {
+    setBusyAction({ token, action: "download" });
+    try {
+      const { downloadUrl } = await getReportDownloadUrl({ data: { report_token: token } });
+      if (isIOS) {
+        // iOS Safari shows the native Download sheet when the current tab
+        // navigates to a URL with Content-Disposition: attachment.
+        window.location.href = downloadUrl;
+      } else {
+        const a = document.createElement("a");
+        a.href = downloadUrl;
+        a.download = "darrow-code-report.pdf";
+        a.rel = "noopener";
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+      }
+    } catch (e: any) {
       toast.error(e?.message ?? "Could not download report.");
     } finally {
-      setDownloadingToken(null);
+      setBusyAction(null);
     }
   }
 
@@ -371,8 +402,9 @@ function ResultPage() {
                   <ReportCard
                     key={r.report_token}
                     row={r}
+                    onOpen={() => handleOpen(r.report_token)}
                     onDownload={() => handleDownload(r.report_token)}
-                    isDownloading={downloadingToken === r.report_token}
+                    busyAction={busyAction?.token === r.report_token ? busyAction.action : null}
                     onRefresh={refreshReports}
                   />
                 ))}
