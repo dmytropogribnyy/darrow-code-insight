@@ -150,7 +150,7 @@ export function ProductSelector({ selected, onToggle, onSelectAll, onClear, lock
         className="text-center font-sans font-normal text-[12px] mb-3"
         style={{ color: "#9CA3AF", marginTop: "4px" }}
       >
-        Pick 2 or more to unlock bundle savings
+        Pick 2 or more chapters to unlock bundle savings
       </p>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 mb-5">
