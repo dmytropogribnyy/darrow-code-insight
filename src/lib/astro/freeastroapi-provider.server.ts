@@ -134,9 +134,15 @@ function normalizeHouse(h: any): HouseCusp {
 }
 
 function normalizeAspect(a: any): AspectRow & { high_priority?: boolean } {
+  // FreeAstroAPI uses different field names per endpoint (a/b, from/to,
+  // planet1/planet2, transit_planet/natal_planet, p1/p2). Try them all.
+  const aName =
+    a?.a ?? a?.from ?? a?.planet1 ?? a?.transit_planet ?? a?.p1 ?? a?.first ?? "";
+  const bName =
+    a?.b ?? a?.to ?? a?.planet2 ?? a?.natal_planet ?? a?.p2 ?? a?.second ?? "";
   return {
-    a: String(a?.a ?? a?.from ?? a?.planet1 ?? ""),
-    b: String(a?.b ?? a?.to ?? a?.planet2 ?? ""),
+    a: String(aName),
+    b: String(bName),
     type: String(a?.type ?? a?.aspect ?? "").toLowerCase(),
     orb: typeof a?.orb === "number" ? a.orb : Number(a?.orb ?? 0),
     is_major: a?.is_major === undefined ? undefined : !!a.is_major,
