@@ -394,8 +394,35 @@ export function renderReportHtml(report: DarrowReport, opts: { assetsBaseUrl?: s
 </style></head>
 <body>
   ${cover}
-  ${renderCoreChapter(core, report.client_snapshot, report.closing)}
+  ${hasCore && core
+    ? renderCoreChapter(core, report.client_snapshot, report.closing)
+    : renderSnapshotOnly(report.client_snapshot)}
   ${addonCodes.map((c) => report.modules[c] ? renderAddon(c, report.modules[c]!, clientName) : "").join("")}
   ${renderCrossSell(generated, symbolSmall)}
 </body></html>`;
+}
+
+function renderSnapshotOnly(snapshot: DarrowReport["client_snapshot"]): string {
+  return `
+    <section class="page page-snapshot">
+      <div class="brand">Darrow Code</div>
+      <h2 class="snapshot-title">Client Snapshot</h2>
+      <div class="pattern-name">${escape(snapshot.pattern_name)}</div>
+      <p class="core-pattern">${escape(snapshot.core_pattern)}</p>
+      <div class="signature-block">
+        <div class="block-label">Unique Signature</div>
+        <p>${escape(snapshot.unique_signature)}</p>
+      </div>
+      <div class="snapshot-grid">
+        <div><div class="cell-label">Primary Strength</div><p>${escape(snapshot.primary_strength)}</p></div>
+        <div><div class="cell-label">Pressure Point</div><p>${escape(snapshot.pressure_point)}</p></div>
+        <div><div class="cell-label">Best Operating Rhythm</div><p>${escape(snapshot.best_operating_rhythm)}</p></div>
+        <div><div class="cell-label">Current Timing Theme</div><p>${escape(snapshot.current_timing_theme)}</p></div>
+      </div>
+      <div class="practical-card">
+        <div class="block-label">Practical Focus</div>
+        <p>${escape(snapshot.practical_focus)}</p>
+      </div>
+    </section>
+  `;
 }
