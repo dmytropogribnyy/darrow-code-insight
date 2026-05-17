@@ -30,14 +30,20 @@ import {
 } from "./numerology";
 
 const BASE_URL = "https://api.freeastroapi.com";
+// Hard ceiling per HTTP request.
 const STEP_TIMEOUT_MS = 45_000;
-// Max attempts per endpoint = 1 initial + (MAX_RETRIES - 1) retries.
-// 3 = 1 initial + 2 retries.
-const MAX_RETRIES = 3;
-// Minimum wait after a 429 when Retry-After header is missing.
-const MIN_429_BACKOFF_MS = 2500;
-// Gap between sequential endpoint calls to stay under the 1 req/sec free-tier cap.
-const SEQUENTIAL_GAP_MS = 1500;
+// Per-endpoint wall-time budget for graceful endpoints (incl. retry).
+const GRACEFUL_ENDPOINT_BUDGET_MS = 10_000;
+// Natal is critical: 1 initial + 1 retry.
+const NATAL_MAX_ATTEMPTS = 2;
+// Graceful endpoints: 1 initial + 1 retry.
+const GRACEFUL_MAX_ATTEMPTS = 2;
+// 429 fallback wait if Retry-After header absent.
+const DEFAULT_429_BACKOFF_MS = 1500;
+// Reject Retry-After values larger than this (would blow the worker budget).
+const MAX_RETRY_AFTER_MS = 6_000;
+// Stagger between concurrent graceful calls (paid plan still benefits from a tiny gap).
+const GRACEFUL_STAGGER = { transits: 0, bazi: 250, solar: 500 } as const;
 
 function parseDate(dob: string): { y: number; m: number; d: number } {
   const [y, m, d] = dob.split("-").map((x) => parseInt(x, 10));
@@ -69,10 +75,30 @@ async function withTimeout<T>(p: Promise<T>, ms: number, label: string): Promise
   }
 }
 
-async function postJson(apiKey: string, path: string, body: any): Promise<any> {
+export interface EndpointDiag {
+  elapsed_ms: number;
+  status: number | null;
+  hit_429: boolean;
+  available: boolean;
+  error?: string;
+}
+
+interface PostOpts {
+  maxAttempts: number;
+  label: string;
+}
+
+async function postJson(
+  apiKey: string,
+  path: string,
+  body: any,
+  opts: PostOpts,
+  diag: EndpointDiag,
+): Promise<any> {
+  const { maxAttempts, label } = opts;
   let attempt = 0;
   let lastErr: any = null;
-  while (attempt < MAX_RETRIES) {
+  while (attempt < maxAttempts) {
     attempt++;
     try {
       const res = await withTimeout(
@@ -87,44 +113,37 @@ async function postJson(apiKey: string, path: string, body: any): Promise<any> {
         STEP_TIMEOUT_MS,
         `POST ${path}`,
       );
+      diag.status = res.status;
       if (res.status === 429) {
-        // Respect Retry-After if present (seconds, per HTTP spec).
-        // Some providers also send retry_after_ms in the JSON body.
-        const retryAfterHeader = Number(res.headers.get("retry-after"));
-        let backoff = 0;
-        if (Number.isFinite(retryAfterHeader) && retryAfterHeader > 0) {
-          backoff = retryAfterHeader * 1000;
-        } else {
-          // Try to read retry_after_ms from JSON body (clone to avoid consuming the stream).
-          try {
-            const j = await res.clone().json();
-            const ms = Number(j?.retry_after_ms);
-            if (Number.isFinite(ms) && ms > 0) backoff = ms;
-          } catch {
-            /* ignore */
+        diag.hit_429 = true;
+        if (attempt < maxAttempts) {
+          const retryAfterHeader = Number(res.headers.get("retry-after"));
+          let backoff = DEFAULT_429_BACKOFF_MS;
+          if (Number.isFinite(retryAfterHeader) && retryAfterHeader > 0) {
+            const ms = retryAfterHeader * 1000;
+            // Only respect if within budget; otherwise fall back to default.
+            backoff = ms <= MAX_RETRY_AFTER_MS ? ms : DEFAULT_429_BACKOFF_MS;
           }
-        }
-        // Floor at MIN_429_BACKOFF_MS even if the server says shorter — the free
-        // tier is 1 req/sec and bursts trigger longer abuse penalties.
-        backoff = Math.max(backoff, MIN_429_BACKOFF_MS) + Math.floor(Math.random() * 400);
-        if (attempt < MAX_RETRIES) {
+          console.warn(`[freeastroapi] ${label} 429 → wait ${backoff}ms (attempt ${attempt}/${maxAttempts})`);
           await sleep(backoff);
           continue;
         }
       }
       if (!res.ok) {
         const text = await res.text().catch(() => "");
-        throw new Error(`${path} HTTP ${res.status}: ${text.slice(0, 300)}`);
+        throw new Error(`${path} HTTP ${res.status}: ${text.slice(0, 200)}`);
       }
       return await res.json();
     } catch (e: any) {
       lastErr = e;
-      if (attempt >= MAX_RETRIES) throw e;
-      await sleep(Math.min(4000, 400 * 2 ** attempt));
+      if (attempt >= maxAttempts) throw e;
+      // Short backoff before retry for non-429 errors.
+      await sleep(500);
     }
   }
   throw lastErr ?? new Error(`${path} failed`);
 }
+
 
 function stripInterpretation<T>(obj: T): T {
   // Recursively delete `interpretation` / `interpretations` keys anywhere in
