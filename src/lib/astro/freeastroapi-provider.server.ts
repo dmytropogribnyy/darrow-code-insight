@@ -883,6 +883,8 @@ function stripBaziFlowProse<T>(obj: T): T {
       "explanation",
       "narrative",
       "ai_summary",
+      "note",
+      "notes",
     ]);
     const out: Record<string, unknown> = {};
     for (const [k, v] of Object.entries(obj as Record<string, unknown>)) {

@@ -45,6 +45,8 @@ function deepHasProse(obj: unknown): boolean {
     "explanation",
     "narrative",
     "ai_summary",
+    "note",
+    "notes",
   ];
   for (const k of proseKeys) if (k in o) return true;
   return Object.values(o).some(deepHasProse);
