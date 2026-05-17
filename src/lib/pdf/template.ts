@@ -263,8 +263,16 @@ export function renderReportHtmlSafe(report: DarrowReport, opts: { assetsBaseUrl
   void opts.assetsBaseUrl;
   const core = report.modules.CORE;
   const clientName = report.client_name || "you";
+  // Full-bleed dark cover: a wrapping div absorbs the page padding (the body
+  // applies 22mm/20mm padding via inline styles) so the navy background
+  // reaches every edge of the printed page. -webkit-print-color-adjust:exact
+  // is required for Chromium/APITemplate to actually print the dark fill
+  // instead of dropping it for white. The "symbol" is a CSS-drawn gold
+  // diamond — no base64, no external image, no font icon dependency.
+  const darkBleed = "margin:-22mm -20mm;padding:40mm 30mm;min-height:297mm;-webkit-print-color-adjust:exact;print-color-adjust:exact;page-break-after:always;box-sizing:border-box;text-align:center;";
+  const goldMark = `<div style="width:36pt;height:36pt;margin:0 auto 28pt;transform:rotate(45deg);background:#D4AF37;-webkit-print-color-adjust:exact;print-color-adjust:exact;"></div>`;
   const sections = [
-    `<section style="${safePageStyle}background:#0A0F1E;color:#F6F4EF;text-align:center;padding-top:72mm;min-height:297mm;"><div style="${safeBrandStyle};color:#D4AF37;margin-bottom:32pt;">Darrow Code</div><h1 style="font-family:Georgia,'Times New Roman',serif;color:#D4AF37;font-size:34pt;font-weight:400;line-height:1.2;margin:0 0 24pt;">The Personal Architecture Report</h1><div style="font-family:Arial,Helvetica,sans-serif;color:#9CA3AF;font-size:10pt;letter-spacing:2pt;text-transform:uppercase;margin-bottom:8pt;">Prepared for</div><div style="font-family:Georgia,'Times New Roman',serif;color:#F6F4EF;font-size:22pt;">${escape(clientName)}</div></section>`,
+    `<section style="${darkBleed}background:#0A0F1E;color:#F6F4EF;padding-top:60mm;">${goldMark}<div style="font-family:Arial,Helvetica,sans-serif;color:#D4AF37;font-size:11pt;letter-spacing:6pt;text-transform:uppercase;margin-bottom:36pt;-webkit-print-color-adjust:exact;print-color-adjust:exact;">Darrow Code</div><h1 style="font-family:Georgia,'Times New Roman',serif;color:#D4AF37;font-size:34pt;font-weight:400;line-height:1.2;margin:0 0 18pt;-webkit-print-color-adjust:exact;print-color-adjust:exact;">The Personal Architecture Report</h1><div style="width:60pt;height:1pt;background:#D4AF37;margin:24pt auto;-webkit-print-color-adjust:exact;print-color-adjust:exact;"></div><div style="font-family:Arial,Helvetica,sans-serif;color:#9CA3AF;font-size:10pt;letter-spacing:3pt;text-transform:uppercase;margin-bottom:10pt;">Prepared for</div><div style="font-family:Georgia,'Times New Roman',serif;color:#F6F4EF;font-size:22pt;">${escape(clientName)}</div></section>`,
     safeSection("Method & Disclaimer", `<p style="${safePStyle}"><strong>What this is.</strong> A structural reading drawing on Western natal astrology, Pythagorean numerology and Chinese Bazi, blended into one interpretive layer. The aim is orientation, not prediction.</p><p style="${safePStyle}"><strong>What this is not.</strong> Not medical, legal, financial or psychiatric advice. Not destiny. Not a personality test. No outcomes are promised.</p><p style="${safePStyle}"><strong>How to read it.</strong> Each section names a structural pattern, then offers protocols — concrete behavioural anchors — connected to your specific configuration.</p>`),
     safeSection("Client Snapshot", `<h3 style="font-family:Georgia,'Times New Roman',serif;color:#D4AF37;font-size:24pt;font-weight:400;margin:0 0 10pt;">${escape(report.client_snapshot.pattern_name)}</h3>${safePara(report.client_snapshot.core_pattern)}${safePara(report.client_snapshot.unique_signature)}${safePara(report.client_snapshot.practical_focus)}`),
   ];
@@ -277,7 +285,7 @@ export function renderReportHtmlSafe(report: DarrowReport, opts: { assetsBaseUrl
     safeSection("Before / After", safePara(core.before_after)),
     safeSection("Next Step", safePara(core.next) + safePara(report.closing.executive_summary)),
   );
-  sections.push(`<section style="${safePageStyle}background:#0A0F1E;color:#E5E7EB;text-align:center;padding-top:88mm;min-height:297mm;"><div style="${safeBrandStyle};color:#D4AF37;">Darrow Code</div><p style="font-family:Georgia,'Times New Roman',serif;font-style:italic;font-size:15pt;color:#9CA3AF;margin:0;">More than a horoscope. Your private birth code.</p></section>`);
+  sections.push(`<section style="${darkBleed}background:#0A0F1E;color:#E5E7EB;padding-top:80mm;">${goldMark}<div style="font-family:Arial,Helvetica,sans-serif;color:#D4AF37;font-size:11pt;letter-spacing:6pt;text-transform:uppercase;margin-bottom:28pt;-webkit-print-color-adjust:exact;print-color-adjust:exact;">Darrow Code</div><p style="font-family:Georgia,'Times New Roman',serif;font-style:italic;font-size:15pt;color:#E5E7EB;margin:0;">More than a horoscope. Your private birth code.</p></section>`);
   return `<!doctype html><html lang="en"><head><meta charset="utf-8"/><title>Darrow Code — Prepared for ${escape(clientName)}</title></head><body style="margin:0;background:#F6F4EF;padding:22mm 20mm;font-family:Arial,Helvetica,sans-serif;">${sections.join("\n")}</body></html>`;
 }
 
