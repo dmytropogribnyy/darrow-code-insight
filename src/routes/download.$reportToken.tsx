@@ -21,7 +21,14 @@ function DownloadPage() {
     setBusy(true);
     try {
       const { url } = await getReportDownloadUrl({ data: { report_token: reportToken } });
-      window.location.href = url;
+      const a = document.createElement("a");
+      a.href = url;
+      a.target = "_blank";
+      a.rel = "noopener";
+      a.download = "darrow-code-report.pdf";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
     } catch (e: any) {
       toast.error(e?.message ?? "Could not download report.");
     } finally {
