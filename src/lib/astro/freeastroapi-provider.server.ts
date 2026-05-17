@@ -18,16 +18,12 @@ import type {
   BaziBlock,
   SolarReturnBlock,
   BaziLuckCycle,
+  MoonPhaseBlock,
+  BaziFlowBlock,
+  BaziFlowMonthlyPillar,
 } from "./types";
 import { normalizeSign } from "./sign-normalizer";
-import {
-  lifePath,
-  birthDay,
-  personalYear,
-  expressionNumber,
-  soulUrgeNumber,
-  personalityNumber,
-} from "./numerology";
+import { computeNumerology } from "@/lib/numerology/numerology";
 
 const BASE_URL = "https://api.freeastroapi.com";
 // Hard ceiling per HTTP request.
@@ -43,7 +39,7 @@ const DEFAULT_429_BACKOFF_MS = 1500;
 // Reject Retry-After values larger than this (would blow the worker budget).
 const MAX_RETRY_AFTER_MS = 6_000;
 // Stagger between concurrent graceful calls (paid plan still benefits from a tiny gap).
-const GRACEFUL_STAGGER = { transits: 0, bazi: 250, solar: 500 } as const;
+const GRACEFUL_STAGGER = { transits: 0, bazi: 250, solar: 500, moon: 750, baziflow: 1000 } as const;
 
 function parseDate(dob: string): { y: number; m: number; d: number } {
   const [y, m, d] = dob.split("-").map((x) => parseInt(x, 10));
