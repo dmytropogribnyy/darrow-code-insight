@@ -1,5 +1,7 @@
 import { MODULE_CODES, type ModuleCode, priceForModules } from "@/lib/modules";
 
+export type Selectable = "CORE" | ModuleCode;
+
 const CHAPTER_META: Record<ModuleCode, { title: string; desc: string }> = {
   LOVE: { title: "LOVE", desc: "Who you attract — and why it keeps happening" },
   MONEY: { title: "MONEY", desc: "Your real wealth pattern & income mechanism" },
@@ -10,8 +12,8 @@ const CHAPTER_META: Record<ModuleCode, { title: string; desc: string }> = {
 };
 
 interface Props {
-  selected: Set<ModuleCode>;
-  onToggle: (m: ModuleCode) => void;
+  selected: Set<Selectable>;
+  onToggle: (m: Selectable) => void;
   onSelectAll: () => void;
   onClear: () => void;
   locked?: boolean;
@@ -22,9 +24,11 @@ function formatPrice(cents: number): string {
 }
 
 export function ProductSelector({ selected, onToggle, onSelectAll, onClear, locked = false }: Props) {
-  const chapters = Array.from(selected) as ModuleCode[];
-  const quote = priceForModules(chapters, true);
-  const allSelected = selected.size === 6;
+  const coreSelected = selected.has("CORE");
+  const chapters = Array.from(selected).filter((c): c is ModuleCode => c !== "CORE");
+  const hasAnySelection = coreSelected || chapters.length > 0;
+  const quote = hasAnySelection ? priceForModules(chapters, coreSelected) : null;
+  const allSelected = coreSelected && chapters.length === 6;
 
   return (
     <div className="w-full">
@@ -45,33 +49,51 @@ export function ProductSelector({ selected, onToggle, onSelectAll, onClear, lock
         >
           CORE Report is your foundation.
           <br />
-          Add chapters or get CORE Complete.
+          Or choose only the area you want.
         </h2>
       </div>
 
-      {/* CORE card — locked on (foundation) */}
-      <div
+      {/* CORE card — toggleable; recommended foundation */}
+      <button
         id="chapter-CORE"
-        className="rounded-[10px] border-2 px-4 py-4 mb-3 flex items-start gap-3"
+        type="button"
+        disabled={locked}
+        onClick={() => onToggle("CORE")}
+        aria-pressed={coreSelected}
+        className="w-full text-left rounded-[10px] border-2 px-4 py-4 mb-3 flex items-start gap-3 transition disabled:cursor-default"
         style={{
-          borderColor: "#D4AF37",
-          background: "rgba(212,175,55,0.12)",
-          boxShadow: "0 1px 0 rgba(255,255,255,0.6) inset, 0 6px 18px -10px rgba(160,123,31,0.45)",
+          borderColor: coreSelected ? "#D4AF37" : "rgba(212,175,55,0.6)",
+          background: coreSelected ? "rgba(212,175,55,0.12)" : "rgba(212,175,55,0.04)",
+          boxShadow: coreSelected
+            ? "0 1px 0 rgba(255,255,255,0.6) inset, 0 6px 18px -10px rgba(160,123,31,0.45)"
+            : "0 1px 0 rgba(255,255,255,0.5) inset",
         }}
       >
         <div
-          className="mt-0.5 w-4 h-4 rounded-sm flex items-center justify-center text-[10px] font-bold"
-          style={{ backgroundColor: "#B8860B", color: "#FFF7E0" }}
+          className="mt-0.5 w-4 h-4 rounded-sm flex items-center justify-center text-[10px] font-bold border"
+          style={{
+            backgroundColor: coreSelected ? "#B8860B" : "transparent",
+            color: "#FFF7E0",
+            borderColor: "#B8860B",
+          }}
         >
-          ✓
+          {coreSelected ? "✓" : ""}
         </div>
         <div className="flex-1">
-          <p
-            className="text-[12px] tracking-[0.18em] uppercase font-bold"
-            style={{ color: "#8B6914" }}
-          >
-            CORE Report — foundation
-          </p>
+          <div className="flex items-baseline gap-2 flex-wrap">
+            <p
+              className="text-[12px] tracking-[0.18em] uppercase font-bold"
+              style={{ color: "#8B6914" }}
+            >
+              CORE Report
+            </p>
+            <span
+              className="text-[10px] tracking-[0.14em] uppercase font-semibold"
+              style={{ color: "#A07B1F" }}
+            >
+              · Recommended foundation
+            </span>
+          </div>
           <p className="text-[13px] leading-relaxed mt-1" style={{ color: "#2A2418" }}>
             Your private birth code: how you think, react, choose and move through change.
           </p>
@@ -82,7 +104,7 @@ export function ProductSelector({ selected, onToggle, onSelectAll, onClear, lock
         >
           $4.99
         </span>
-      </div>
+      </button>
 
       {/* CORE Complete bundle card */}
       <button
@@ -150,7 +172,7 @@ export function ProductSelector({ selected, onToggle, onSelectAll, onClear, lock
         className="text-center font-sans font-normal text-[12px] mb-3"
         style={{ color: "#9CA3AF", marginTop: "4px" }}
       >
-        Pick 2 or more chapters to unlock bundle savings
+        Pick any chapter on its own, or combine several
       </p>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 mb-5">
@@ -195,7 +217,7 @@ export function ProductSelector({ selected, onToggle, onSelectAll, onClear, lock
                     className="font-mono text-[12px] whitespace-nowrap font-semibold"
                     style={{ color: "#1F1A10" }}
                   >
-                    +$2.99
+                    $2.99
                   </span>
                 </div>
                 <p className="text-[12px] leading-snug mt-0.5" style={{ color: "#3A3225" }}>
@@ -218,12 +240,14 @@ export function ProductSelector({ selected, onToggle, onSelectAll, onClear, lock
         }}
       >
         <div className="flex items-center justify-between text-[13px]">
-          <span className="font-semibold" style={{ color: "#1F1A10" }}>{quote.label}</span>
+          <span className="font-semibold" style={{ color: "#1F1A10" }}>
+            {quote ? quote.label : "Nothing selected"}
+          </span>
           <span className="font-mono font-bold text-[15px]" style={{ color: "#0A0F1E" }}>
-            {formatPrice(quote.cents)}
+            {quote ? formatPrice(quote.cents) : "—"}
           </span>
         </div>
-        {quote.saved_cents > 0 && (
+        {quote && quote.saved_cents > 0 && (
           <div className="flex items-center justify-between text-[11.5px] mt-1">
             <span style={{ color: "#5C5340" }}>
               if bought separately:{" "}
@@ -239,10 +263,14 @@ export function ProductSelector({ selected, onToggle, onSelectAll, onClear, lock
   );
 }
 
-export function ctaLabelFor(chapters: ModuleCode[]): string {
-  if (chapters.length === 6) return "Unlock CORE Complete";
-  if (chapters.length === 0) return "Unlock My CORE Report";
-  return chapters.length === 1
-    ? "Unlock My CORE Report + 1 chapter"
-    : `Unlock My CORE Report + ${chapters.length} chapters`;
+export function ctaLabelFor(includesCore: boolean, chapters: ModuleCode[]): string {
+  if (includesCore && chapters.length === 6) return "Unlock CORE Complete";
+  if (includesCore && chapters.length === 0) return "Unlock My CORE Report";
+  if (includesCore) {
+    return chapters.length === 1
+      ? "Unlock My CORE Report + 1 chapter"
+      : `Unlock My CORE Report + ${chapters.length} chapters`;
+  }
+  if (chapters.length === 1) return `Unlock My ${chapters[0]} Chapter`;
+  return `Unlock ${chapters.length} Focused Chapters`;
 }

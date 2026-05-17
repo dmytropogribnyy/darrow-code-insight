@@ -97,7 +97,7 @@ function requestedModules(userPrompt: string): string[] {
     .split(",")
     .map((m) => m.trim().toUpperCase())
     .filter((m) => KNOWN_MODULES.includes(m));
-  return modules.includes("CORE") ? modules : ["CORE", ...modules];
+  return modules.length > 0 ? modules : ["CORE"];
 }
 
 function promptForModules(userPrompt: string, modules: string[]): string {
@@ -169,28 +169,37 @@ async function mapWithConcurrency<T, R>(items: T[], limit: number, fn: (item: T)
 
 async function generateChunkedReport(userPrompt: string, modules: string[], model: string, fallbackModel?: string): Promise<GenerateResult> {
   console.log("[anthropic] using chunked generation", { modules });
-  const core = await callWithFallback(promptForModules(userPrompt, ["CORE"]), model, fallbackModel);
-  const addons = modules.filter((m) => m !== "CORE");
-  const addonResults = await mapWithConcurrency(addons, 2, async (moduleCode) => {
-    const result = await callWithFallback(promptForModules(userPrompt, ["CORE", moduleCode]), model, fallbackModel);
+  const hasCore = modules.includes("CORE");
+  // First call: CORE if present, otherwise the first chapter — it carries
+  // client_snapshot + closing for the merged report.
+  const firstModule = hasCore ? "CORE" : modules[0];
+  const first = await callWithFallback(promptForModules(userPrompt, [firstModule]), model, fallbackModel);
+  const rest = modules.filter((m) => m !== firstModule);
+  const restResults = await mapWithConcurrency(rest, 2, async (moduleCode) => {
+    // Include the first module as context so Claude keeps voice + pattern coherent.
+    const result = await callWithFallback(promptForModules(userPrompt, [firstModule, moduleCode]), model, fallbackModel);
     const moduleBody = result.report.modules?.[moduleCode];
     if (!moduleBody) throw new Error(`Anthropic chunk returned no ${moduleCode} module`);
     return { moduleCode, moduleBody, model_used: result.model_used };
   });
 
+  const firstBody = first.report.modules?.[firstModule];
+  if (!firstBody) throw new Error(`Anthropic first chunk returned no ${firstModule} module`);
+  const mergedModules: Record<string, any> = { [firstModule]: firstBody };
+  for (const chunk of restResults) mergedModules[chunk.moduleCode] = chunk.moduleBody;
+
   const merged: DarrowReport = {
-    ...core.report,
+    ...first.report,
     generated_modules: modules,
-    modules: { CORE: core.report.modules.CORE },
+    modules: mergedModules,
     closing: {
-      ...core.report.closing,
-      grand_synthesis: core.report.closing.grand_synthesis ?? core.report.closing.executive_summary,
+      ...first.report.closing,
+      grand_synthesis: first.report.closing.grand_synthesis ?? first.report.closing.executive_summary,
     },
   };
-  for (const chunk of addonResults) merged.modules[chunk.moduleCode] = chunk.moduleBody;
   const parsed = DarrowReportSchema.safeParse(merged);
   if (!parsed.success) throw new Error(`Merged Anthropic chunks failed schema: ${parsed.error.message.slice(0, 400)}`);
-  return { report: parsed.data, model_used: Array.from(new Set([core.model_used, ...addonResults.map((r) => r.model_used)])).join("+") };
+  return { report: parsed.data, model_used: Array.from(new Set([first.model_used, ...restResults.map((r) => r.model_used)])).join("+") };
 }
 
 export async function generateDarrowReport(userPrompt: string): Promise<GenerateResult> {

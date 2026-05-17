@@ -34,10 +34,12 @@ const initial: FormState = {
 
 export function IntakeForm({
   chapters = [],
+  includesCore = true,
   onCheckoutOpen,
   resetSignal = 0,
 }: {
   chapters?: ModuleCode[];
+  includesCore?: boolean;
   onCheckoutOpen?: () => void;
   resetSignal?: number;
 } = {}) {
@@ -59,15 +61,20 @@ export function IntakeForm({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [resetSignal]);
 
-  const quote = priceForModules(chapters, true);
-  const ctaText = ctaLabelFor(chapters);
-  const ctaPrice = `$${(quote.cents / 100).toFixed(2)}`;
+  const hasSelection = includesCore || chapters.length > 0;
+  const quote = hasSelection ? priceForModules(chapters, includesCore) : null;
+  const ctaText = ctaLabelFor(includesCore, chapters);
+  const ctaPrice = quote ? `$${(quote.cents / 100).toFixed(2)}` : "—";
 
   const update = (k: keyof FormState) => (e: React.ChangeEvent<HTMLInputElement>) =>
     setForm((f) => ({ ...f, [k]: e.target.value }));
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!hasSelection) {
+      toast.error("Please choose CORE or at least one focused chapter.");
+      return;
+    }
     if (!form.first_name || !form.email || !form.date_of_birth || !form.birth_city) {
       toast.error("Please complete the required fields.");
       return;
@@ -86,6 +93,7 @@ export function IntakeForm({
       const res = await createCheckout({
         data: {
           modules: chapters,
+          includes_core: includesCore,
           first_name: form.first_name.trim(),
           email: form.email.trim(),
           date_of_birth: form.date_of_birth,
@@ -111,7 +119,6 @@ export function IntakeForm({
       onCheckoutOpen?.();
     } catch (err: any) {
       const msg = err?.message ?? "Could not start checkout.";
-      // If geocoding failed, surface as inline field error too.
       if (/select your birth city/i.test(msg)) setPlaceError(msg);
       toast.error(msg);
       setSubmitting(false);
@@ -263,7 +270,7 @@ export function IntakeForm({
         </div>
         <button
           type="submit"
-          disabled={submitting}
+          disabled={submitting || !hasSelection}
           style={{
             backgroundColor: "#D4AF37",
             color: "#0A0F1E",
@@ -271,13 +278,15 @@ export function IntakeForm({
           }}
           className="cta-premium w-full font-sans font-semibold rounded-[10px] py-3.5 px-4 text-[15px] sm:text-[16px] flex items-center justify-center gap-2.5 disabled:opacity-60"
         >
-          <span>{submitting ? "Preparing…" : ctaText}</span>
-          <span
-            className="font-mono text-[13px] px-2 py-[3px] rounded"
-            style={{ backgroundColor: "#0A0F1E", color: "#D4AF37" }}
-          >
-            {ctaPrice}
-          </span>
+          <span>{submitting ? "Preparing…" : hasSelection ? ctaText : "Choose your report above"}</span>
+          {hasSelection && (
+            <span
+              className="font-mono text-[13px] px-2 py-[3px] rounded"
+              style={{ backgroundColor: "#0A0F1E", color: "#D4AF37" }}
+            >
+              {ctaPrice}
+            </span>
+          )}
         </button>
         <p className="mt-4 text-[12.5px] sm:text-[13px] font-medium leading-relaxed" style={{ color: "#4A402D" }}>
           Start instantly · Ready in a few minutes · Multi-page PDF ·{" "}

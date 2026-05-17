@@ -7,6 +7,9 @@ import { ProductSelector } from "@/components/ProductSelector";
 import { FaqBlock } from "@/components/FaqBlock";
 import { MODULE_CODES, type ModuleCode } from "@/lib/modules";
 
+type Selectable = "CORE" | ModuleCode;
+
+
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
@@ -28,19 +31,20 @@ export const Route = createFileRoute("/")({
 });
 
 function LandingPage() {
-  const [selected, setSelected] = useState<Set<ModuleCode>>(new Set());
+  // CORE pre-selected by default but the user can unselect it.
+  const [selected, setSelected] = useState<Set<Selectable>>(new Set(["CORE"]));
   const [checkoutOpen, setCheckoutOpen] = useState(false);
   const [resetSignal, setResetSignal] = useState(0);
   const selectorRef = useRef<HTMLDivElement>(null);
 
-  const toggle = (code: ModuleCode) =>
+  const toggle = (code: Selectable) =>
     setSelected((s) => {
       const n = new Set(s);
       if (n.has(code)) n.delete(code);
       else n.add(code);
       return n;
     });
-  const selectAll = () => setSelected(new Set(MODULE_CODES));
+  const selectAll = () => setSelected(new Set<Selectable>(["CORE", ...MODULE_CODES]));
   const clear = () => setSelected(new Set());
 
   const handleChangeSelection = () => {
@@ -84,7 +88,7 @@ function LandingPage() {
               className="font-sans font-semibold text-gold uppercase"
               style={{ fontSize: "clamp(11.5px, 1.2vw, 12px)", letterSpacing: "0.12em" }}
             >
-              AI-POWERED PERSONAL ASTROLOGY REPORT · DARROW CODE METHOD · PDF
+              PREMIUM AI-POWERED ASTROLOGY REPORT · DARROW CODE METHOD · PDF
             </span>
           </div>
 
@@ -127,7 +131,7 @@ function LandingPage() {
 
           {/* Explainer */}
           <p className="mt-6 sm:mt-7 text-[16px] sm:text-[17px] md:text-[18px] text-muted-grey max-w-[640px] mx-auto leading-[1.6] font-sans">
-            Get a private AI-powered astrology report built from your birth data — revealing your personal pattern: how you think, react, choose and move through change.
+            Get a premium private astrology report built from your birth data — revealing your personal pattern: how you think, react, choose and move through change.
           </p>
 
           {/* Quote box */}
@@ -244,7 +248,8 @@ function LandingPage() {
             />
             <div className="intake-card">
               <IntakeForm
-                chapters={Array.from(selected)}
+                includesCore={selected.has("CORE")}
+                chapters={Array.from(selected).filter((c): c is ModuleCode => c !== "CORE")}
                 onCheckoutOpen={() => setCheckoutOpen(true)}
                 resetSignal={resetSignal}
               />

@@ -101,8 +101,7 @@ export const darrowReportJsonSchema = {
     },
     modules: {
       type: "object",
-      description: "Keys are module codes (CORE, LOVE, MONEY, BODY, YEAR, STYLE, PLACE). CORE always present.",
-      required: ["CORE"],
+      description: "Keys are module codes (CORE, LOVE, MONEY, BODY, YEAR, STYLE, PLACE). Only purchased modules are included.",
       properties: {
         CORE: moduleProps,
         LOVE: moduleProps,

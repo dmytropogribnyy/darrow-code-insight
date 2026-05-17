@@ -92,7 +92,13 @@ async function handleCheckoutCompleted(session: any) {
   } else if (type === "core_complete") {
     // First-purchase CORE Complete: CORE + all 6 chapters.
     modules = ["CORE", ...MODULE_CODES];
-  } else if (type === "addons" || type === "addon" || type === "core_plus_modules") {
+  } else if (
+    type === "addons" ||
+    type === "addon" ||
+    type === "focused" ||
+    type === "core_plus_modules" ||
+    type === "core_plus_addons"
+  ) {
     modules = parseModules(modules_raw);
   } else if (type === "core") {
     // Explicit CORE row for new flows; legacy CORE orders left implicit.
@@ -145,7 +151,7 @@ async function ensureGenerationJob(order_id: string, intake_id: string) {
       .from("modules_purchased")
       .select("module_code")
       .eq("intake_id", intake_id);
-    const owned = new Set<string>(["CORE", ...((ownedRows ?? []).map((r: any) => r.module_code))]);
+    const owned = new Set<string>((ownedRows ?? []).map((r: any) => r.module_code));
     const reportModules = new Set<string>(Array.isArray(completeReport.modules_array) ? completeReport.modules_array : []);
     const reportAlreadyCoversOwnedModules = Array.from(owned).every((m) => reportModules.has(m));
 

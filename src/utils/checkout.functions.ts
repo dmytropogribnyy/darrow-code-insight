@@ -61,6 +61,7 @@ export const createCheckout = createServerFn({ method: "POST" })
       birth_city: z.string().trim().min(1).max(255),
       full_name_for_numerology: z.string().trim().max(255).optional().or(z.literal("")),
       modules: z.array(ModuleCodeSchema).max(6).default([]),
+      includes_core: z.boolean().default(true),
       bazi_sex: z.enum(["M", "F"]),
       origin: z.string().url(),
       environment: StripeEnvSchema,
@@ -78,8 +79,11 @@ export const createCheckout = createServerFn({ method: "POST" })
   .handler(async ({ data }) => {
     const sb = admin();
 
-    // Phase A: CORE is always included for first-purchase flows.
-    const quote = priceForModules(data.modules, true);
+    if (!data.includes_core && data.modules.length === 0) {
+      throw new Error("Please choose CORE or at least one focused chapter.");
+    }
+
+    const quote = priceForModules(data.modules, data.includes_core);
 
     const geo = data.resolved_place
       ? {
@@ -157,9 +161,15 @@ export const createCheckout = createServerFn({ method: "POST" })
 
     // Determine canonical order_type for the webhook
     let order_type: string;
-    if (data.modules.length === 0) order_type = "core";
-    else if (data.modules.length === 6) order_type = "core_complete";
-    else order_type = "core_plus_modules";
+    if (!data.includes_core) {
+      order_type = "focused";
+    } else if (data.modules.length === 0) {
+      order_type = "core";
+    } else if (data.modules.length === 6) {
+      order_type = "core_complete";
+    } else {
+      order_type = "core_plus_addons";
+    }
 
     const session = await stripe.checkout.sessions.create({
       line_items,
@@ -211,7 +221,7 @@ export const createCoreCheckout = createServerFn({ method: "POST" })
     }).parse,
   )
   .handler(async ({ data }) => {
-    return createCheckout({ data: { ...data, modules: [] } });
+    return createCheckout({ data: { ...data, modules: [], includes_core: true } });
   });
 
 // ============================================================
