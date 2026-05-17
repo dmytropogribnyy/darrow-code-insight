@@ -14,19 +14,24 @@ interface Props {
   onToggle: (m: ModuleCode) => void;
   onSelectAll: () => void;
   onClear: () => void;
+  locked?: boolean;
 }
 
 function formatPrice(cents: number): string {
   return `$${(cents / 100).toFixed(2)}`;
 }
 
-export function ProductSelector({ selected, onToggle, onSelectAll, onClear }: Props) {
+export function ProductSelector({ selected, onToggle, onSelectAll, onClear, locked = false }: Props) {
   const chapters = Array.from(selected) as ModuleCode[];
   const quote = priceForModules(chapters, true);
   const allSelected = selected.size === 6;
 
   return (
     <div className="w-full">
+      <div
+        aria-disabled={locked}
+        className={locked ? "pointer-events-none opacity-65 select-none transition-opacity" : "transition-opacity"}
+      >
       <div className="text-center mb-5">
         <p
           className="text-[11px] tracking-[0.22em] uppercase font-bold"
