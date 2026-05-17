@@ -220,6 +220,11 @@ async function fetchTransits(apiKey: string, input: NatalInput): Promise<any> {
 // BAZI — graceful
 // ============================================================
 async function fetchBazi(apiKey: string, input: NatalInput): Promise<any> {
+  // Never default sex. Without explicit M/F, BaZi luck-cycle direction would be wrong.
+  // Throwing here causes the graceful catch to set bazi.available=false with this reason.
+  if (input.bazi_sex !== "M" && input.bazi_sex !== "F") {
+    throw new Error("missing_bazi_sex");
+  }
   const { y, m, d } = parseDate(input.date_of_birth);
   const tm = parseTime(input.birth_time ?? null);
   // API requires hour/minute. If unknown, send 12:00 as placeholder and downgrade hour pillar.
@@ -234,12 +239,13 @@ async function fetchBazi(apiKey: string, input: NatalInput): Promise<any> {
     city: input.birth_city ?? "",
     lat: input.latitude,
     lng: input.longitude,
-    sex: input.bazi_sex ?? "M",
+    sex: input.bazi_sex,
     time_standard: "true_solar",
     include_pinyin: true,
     include_stars: true,
     include_interactions: true,
     include_professional: true,
+    interpretation: { enable: false },
   };
   return postJson(apiKey, "/api/v1/chinese/bazi", body);
 }
