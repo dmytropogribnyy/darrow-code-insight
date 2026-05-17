@@ -9,14 +9,7 @@ import type {
   PlanetPosition,
   AspectRow,
 } from "./types";
-import {
-  lifePath,
-  birthDay,
-  personalYear,
-  expressionNumber,
-  soulUrgeNumber,
-  personalityNumber,
-} from "./numerology";
+import { computeNumerology } from "@/lib/numerology/numerology";
 
 const SIGNS = [
   "Aries", "Taurus", "Gemini", "Cancer", "Leo", "Virgo",
@@ -112,16 +105,10 @@ export class MockAstroProvider implements AstroProvider {
         }))
       : null;
 
-    const fullName = input.full_name_for_numerology ?? "";
-    const numerology = {
-      life_path: lifePath(input.date_of_birth),
-      expression: fullName ? expressionNumber(fullName) : null,
-      soul_urge: fullName ? soulUrgeNumber(fullName) : null,
-      personality: fullName ? personalityNumber(fullName) : null,
-      birth_day: birthDay(input.date_of_birth),
-      personal_year: personalYear(input.date_of_birth),
-      source: "computed" as const,
-    };
+    const numerology = computeNumerology({
+      date_of_birth: input.date_of_birth,
+      full_name_for_numerology: input.full_name_for_numerology ?? null,
+    });
 
     return {
       schema_version: "1.0",
