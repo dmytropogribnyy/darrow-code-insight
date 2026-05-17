@@ -216,12 +216,10 @@ function LandingPage() {
               <button
                 type="button"
                 onClick={handleChangeSelection}
-                className="font-sans text-[13px] min-h-[44px] px-3 inline-flex items-center gap-1 transition-colors"
-                style={{ color: "#5C5340" }}
-                onMouseEnter={(e) => (e.currentTarget.style.color = "#8B6914")}
-                onMouseLeave={(e) => (e.currentTarget.style.color = "#5C5340")}
+                className="font-sans font-medium text-[14px] min-h-[44px] px-3 inline-flex items-center transition-colors border-b border-transparent hover:border-current"
+                style={{ color: "#D4AF37" }}
               >
-                Change selection <span aria-hidden="true">→</span>
+                + Add more to your order
               </button>
             </div>
           )}
