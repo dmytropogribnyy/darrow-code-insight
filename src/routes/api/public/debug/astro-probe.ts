@@ -192,7 +192,9 @@ export const Route = createFileRoute("/api/public/debug/astro-probe")({
             interpretation_leak: interpretationLeak,
             bazi_size_bytes: baziSize,
           };
-          return Response.json({ ok: true, summary, data });
+          const body = { ok: true, summary, data };
+          cachedProbe = { at: Date.now(), body };
+          return Response.json(body);
         } catch (e: any) {
           return Response.json(
             { ok: false, error: String(e?.message ?? e) },
