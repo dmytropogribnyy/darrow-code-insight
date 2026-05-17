@@ -31,7 +31,13 @@ import {
 
 const BASE_URL = "https://api.freeastroapi.com";
 const STEP_TIMEOUT_MS = 45_000;
+// Max attempts per endpoint = 1 initial + (MAX_RETRIES - 1) retries.
+// 3 = 1 initial + 2 retries.
 const MAX_RETRIES = 3;
+// Minimum wait after a 429 when Retry-After header is missing.
+const MIN_429_BACKOFF_MS = 2500;
+// Gap between sequential endpoint calls to stay under the 1 req/sec free-tier cap.
+const SEQUENTIAL_GAP_MS = 1500;
 
 function parseDate(dob: string): { y: number; m: number; d: number } {
   const [y, m, d] = dob.split("-").map((x) => parseInt(x, 10));
