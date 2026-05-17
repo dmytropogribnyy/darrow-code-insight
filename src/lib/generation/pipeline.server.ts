@@ -94,7 +94,7 @@ async function upsertReportProcessing(intake_id: string, customer_id: string, mo
   const sb = admin();
   const { data: existing } = await sb
     .from("reports")
-    .select("id, download_token")
+    .select("id, download_token, ai_content_json, model_used")
     .eq("intake_id", intake_id)
     .order("created_at", { ascending: false })
     .limit(1).maybeSingle();
@@ -105,16 +105,16 @@ async function upsertReportProcessing(intake_id: string, customer_id: string, mo
       generation_status: "processing",
       generation_error: null,
     }).eq("id", existing.id);
-    return existing as { id: string; download_token: string };
+    return existing as { id: string; download_token: string; ai_content_json: any; model_used: string | null };
   }
 
   const { data: created, error } = await sb.from("reports").insert({
     customer_id, intake_id,
     modules_array: modules,
     generation_status: "processing",
-  }).select("id, download_token").single();
+  }).select("id, download_token, ai_content_json, model_used").single();
   if (error || !created) throw new Error(`could not create report: ${error?.message}`);
-  return created as { id: string; download_token: string };
+  return created as { id: string; download_token: string; ai_content_json: any; model_used: string | null };
 }
 
 async function claimGenerationJob(sb: any, order_id: string): Promise<boolean> {
