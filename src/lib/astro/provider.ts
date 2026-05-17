@@ -10,8 +10,15 @@ let _instance: AstroProvider | null = null;
 
 export async function getAstroProvider(): Promise<AstroProvider> {
   if (_instance) return _instance;
-  // Resolve provider: explicit env → fall back to freeastroapi if key present, else mock.
   const explicit = (process.env.ASTRO_PROVIDER ?? "").toLowerCase().trim();
+  const isProd = process.env.NODE_ENV === "production";
+
+  // In production, ASTRO_PROVIDER MUST be set explicitly. Do not auto-select
+  // based on the presence of FREEASTROAPI_KEY — that hides misconfiguration.
+  if (isProd && !explicit) {
+    throw new Error("ASTRO_PROVIDER must be set explicitly in production (e.g. 'freeastroapi').");
+  }
+
   const hasFreeAstro = !!process.env.FREEASTROAPI_KEY;
   const kind = explicit || (hasFreeAstro ? "freeastroapi" : "mock");
 
