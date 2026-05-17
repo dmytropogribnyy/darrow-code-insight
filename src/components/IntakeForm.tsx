@@ -101,6 +101,7 @@ export function IntakeForm({
       });
       setClientSecret(res.client_secret);
       setSessionId(res.session_id);
+      onCheckoutOpen?.();
     } catch (err: any) {
       const msg = err?.message ?? "Could not start checkout.";
       // If geocoding failed, surface as inline field error too.
