@@ -88,10 +88,25 @@ async function postJson(apiKey: string, path: string, body: any): Promise<any> {
         `POST ${path}`,
       );
       if (res.status === 429) {
-        const retryAfter = Number(res.headers.get("retry-after")) || 0;
-        const backoff = retryAfter > 0
-          ? retryAfter * 1000
-          : Math.min(8000, 500 * 2 ** attempt) + Math.floor(Math.random() * 400);
+        // Respect Retry-After if present (seconds, per HTTP spec).
+        // Some providers also send retry_after_ms in the JSON body.
+        const retryAfterHeader = Number(res.headers.get("retry-after"));
+        let backoff = 0;
+        if (Number.isFinite(retryAfterHeader) && retryAfterHeader > 0) {
+          backoff = retryAfterHeader * 1000;
+        } else {
+          // Try to read retry_after_ms from JSON body (clone to avoid consuming the stream).
+          try {
+            const j = await res.clone().json();
+            const ms = Number(j?.retry_after_ms);
+            if (Number.isFinite(ms) && ms > 0) backoff = ms;
+          } catch {
+            /* ignore */
+          }
+        }
+        // Floor at MIN_429_BACKOFF_MS even if the server says shorter — the free
+        // tier is 1 req/sec and bursts trigger longer abuse penalties.
+        backoff = Math.max(backoff, MIN_429_BACKOFF_MS) + Math.floor(Math.random() * 400);
         if (attempt < MAX_RETRIES) {
           await sleep(backoff);
           continue;
