@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { useNavigate } from "@tanstack/react-router";
 import { createCheckout } from "@/utils/checkout.functions";
@@ -30,7 +30,15 @@ const initial: FormState = {
   full_name_for_numerology: "",
 };
 
-export function IntakeForm({ chapters = [] }: { chapters?: ModuleCode[] } = {}) {
+export function IntakeForm({
+  chapters = [],
+  onCheckoutOpen,
+  resetSignal = 0,
+}: {
+  chapters?: ModuleCode[];
+  onCheckoutOpen?: () => void;
+  resetSignal?: number;
+} = {}) {
   const [form, setForm] = useState<FormState>(initial);
   const [resolvedPlace, setResolvedPlace] = useState<PlaceSuggestion | null>(null);
   const [placeError, setPlaceError] = useState<string | null>(null);
@@ -38,6 +46,16 @@ export function IntakeForm({ chapters = [] }: { chapters?: ModuleCode[] } = {}) 
   const [clientSecret, setClientSecret] = useState<string | null>(null);
   const [sessionId, setSessionId] = useState<string | null>(null);
   const navigate = useNavigate();
+
+  // Reset checkout when parent requests it (e.g. "Change selection")
+  useEffect(() => {
+    if (resetSignal > 0) {
+      setClientSecret(null);
+      setSessionId(null);
+      setSubmitting(false);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [resetSignal]);
 
   const quote = priceForModules(chapters, true);
   const ctaText = ctaLabelFor(chapters);
@@ -83,6 +101,7 @@ export function IntakeForm({ chapters = [] }: { chapters?: ModuleCode[] } = {}) 
       });
       setClientSecret(res.client_secret);
       setSessionId(res.session_id);
+      onCheckoutOpen?.();
     } catch (err: any) {
       const msg = err?.message ?? "Could not start checkout.";
       // If geocoding failed, surface as inline field error too.

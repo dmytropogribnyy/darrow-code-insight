@@ -14,19 +14,24 @@ interface Props {
   onToggle: (m: ModuleCode) => void;
   onSelectAll: () => void;
   onClear: () => void;
+  locked?: boolean;
 }
 
 function formatPrice(cents: number): string {
   return `$${(cents / 100).toFixed(2)}`;
 }
 
-export function ProductSelector({ selected, onToggle, onSelectAll, onClear }: Props) {
+export function ProductSelector({ selected, onToggle, onSelectAll, onClear, locked = false }: Props) {
   const chapters = Array.from(selected) as ModuleCode[];
   const quote = priceForModules(chapters, true);
   const allSelected = selected.size === 6;
 
   return (
     <div className="w-full">
+      <div
+        aria-disabled={locked}
+        className={locked ? "pointer-events-none opacity-65 select-none transition-opacity" : "transition-opacity"}
+      >
       <div className="text-center mb-5">
         <p
           className="text-[11px] tracking-[0.22em] uppercase font-bold"
@@ -83,8 +88,9 @@ export function ProductSelector({ selected, onToggle, onSelectAll, onClear }: Pr
       <button
         id="chapter-COMPLETE"
         type="button"
+        disabled={locked}
         onClick={allSelected ? onClear : onSelectAll}
-        className="w-full text-left rounded-[10px] border-2 px-4 py-4 mb-5 transition flex items-start gap-3"
+        className="w-full text-left rounded-[10px] border-2 px-4 py-4 mb-5 transition flex items-start gap-3 disabled:cursor-default"
         style={{
           borderColor: allSelected ? "#B8860B" : "#D4AF37",
           background: allSelected ? "rgba(212,175,55,0.16)" : "rgba(212,175,55,0.06)",
@@ -150,8 +156,9 @@ export function ProductSelector({ selected, onToggle, onSelectAll, onClear }: Pr
               key={code}
               id={`chapter-${code}`}
               type="button"
+              disabled={locked}
               onClick={() => onToggle(code)}
-              className="text-left rounded-[8px] border px-3.5 py-3 transition flex items-start gap-2.5"
+              className="text-left rounded-[8px] border px-3.5 py-3 transition flex items-start gap-2.5 disabled:cursor-default"
               style={{
                 borderColor: active ? "#B8860B" : "rgba(74,64,45,0.28)",
                 background: active ? "rgba(212,175,55,0.14)" : "rgba(255,255,255,0.65)",
@@ -193,8 +200,9 @@ export function ProductSelector({ selected, onToggle, onSelectAll, onClear }: Pr
           );
         })}
       </div>
+      </div>
 
-      {/* Order summary */}
+      {/* Order summary — always full opacity, even when locked */}
       <div
         className="rounded-[8px] px-4 py-3.5 mb-1 border-2"
         style={{
