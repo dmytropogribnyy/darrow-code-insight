@@ -84,7 +84,7 @@ function LandingPage() {
               className="font-sans font-semibold text-gold uppercase"
               style={{ fontSize: "clamp(11.5px, 1.2vw, 12px)", letterSpacing: "0.12em" }}
             >
-              AI-POWERED PERSONAL ASTROLOGY REPORT · DARROW CODE METHOD · PDF
+              PREMIUM AI-POWERED ASTROLOGY REPORT · DARROW CODE METHOD · PDF
             </span>
           </div>
 
