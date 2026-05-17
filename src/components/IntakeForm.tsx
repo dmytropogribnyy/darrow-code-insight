@@ -226,7 +226,7 @@ export function IntakeForm({
       </div>
 
       <div>
-        <label className={labelCls}>Birth sex (for BaZi)</label>
+        <label className={labelCls}>FOUR PILLARS CALCULATION DETAIL</label>
         <div className="flex gap-2 mt-1">
           {(["M", "F"] as const).map((opt) => {
             const selected = form.bazi_sex === opt;
@@ -249,7 +249,7 @@ export function IntakeForm({
           })}
         </div>
         <p className="mt-1.5 text-[11.5px] sm:text-[12px]" style={{ color: "#4A402D" }}>
-          Used only for traditional BaZi (Four Pillars) calculation. Not used in your report copy.
+          Used only for the traditional BaZi calculation. Not shown in your report.
         </p>
       </div>
 
