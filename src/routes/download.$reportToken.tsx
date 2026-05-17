@@ -19,17 +19,22 @@ function DownloadPage() {
 
   const onDownload = async () => {
     setBusy(true);
+    const isIOS =
+      typeof navigator !== "undefined" &&
+      (/iPad|iPhone|iPod/.test(navigator.userAgent) ||
+        (navigator.platform === "MacIntel" && (navigator as any).maxTouchPoints > 1));
+    const win = !isIOS ? window.open("about:blank", "_blank") : null;
     try {
       const { url } = await getReportDownloadUrl({ data: { report_token: reportToken } });
-      const a = document.createElement("a");
-      a.href = url;
-      a.target = "_blank";
-      a.rel = "noopener";
-      a.download = "darrow-code-report.pdf";
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
+      if (isIOS) {
+        window.location.href = url;
+      } else if (win) {
+        win.location.href = url;
+      } else {
+        window.open(url, "_blank", "noopener");
+      }
     } catch (e: any) {
+      if (win) win.close();
       toast.error(e?.message ?? "Could not download report.");
     } finally {
       setBusy(false);
