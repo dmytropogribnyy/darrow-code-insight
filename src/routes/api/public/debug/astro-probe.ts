@@ -53,7 +53,8 @@ function deepHasProse(obj: unknown): boolean {
 // In-memory cooldown cache. 60s TTL. Survives within a single worker
 // instance; cold starts reset it, which is acceptable for a debug route.
 const PROBE_CACHE_TTL_MS = 60_000;
-let cachedProbe: { at: number; body: unknown } | null = null;
+type ProbeCache = { at: number; body: Record<string, unknown> };
+let cachedProbe: ProbeCache | null = null;
 
 export const Route = createFileRoute("/api/public/debug/astro-probe")({
   server: {
