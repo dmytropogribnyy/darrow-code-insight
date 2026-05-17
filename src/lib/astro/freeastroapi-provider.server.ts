@@ -18,16 +18,12 @@ import type {
   BaziBlock,
   SolarReturnBlock,
   BaziLuckCycle,
+  MoonPhaseBlock,
+  BaziFlowBlock,
+  BaziFlowMonthlyPillar,
 } from "./types";
 import { normalizeSign } from "./sign-normalizer";
-import {
-  lifePath,
-  birthDay,
-  personalYear,
-  expressionNumber,
-  soulUrgeNumber,
-  personalityNumber,
-} from "./numerology";
+import { computeNumerology } from "@/lib/numerology/numerology";
 
 const BASE_URL = "https://api.freeastroapi.com";
 // Hard ceiling per HTTP request.
@@ -43,7 +39,7 @@ const DEFAULT_429_BACKOFF_MS = 1500;
 // Reject Retry-After values larger than this (would blow the worker budget).
 const MAX_RETRY_AFTER_MS = 6_000;
 // Stagger between concurrent graceful calls (paid plan still benefits from a tiny gap).
-const GRACEFUL_STAGGER = { transits: 0, bazi: 250, solar: 500 } as const;
+const GRACEFUL_STAGGER = { transits: 0, bazi: 250, solar: 500, moon: 750, baziflow: 1000 } as const;
 
 function parseDate(dob: string): { y: number; m: number; d: number } {
   const [y, m, d] = dob.split("-").map((x) => parseInt(x, 10));
@@ -402,8 +398,106 @@ async function fetchSolarReturn(
 }
 
 // ============================================================
-// Normalizers per block
+// MOON PHASE — graceful enrichment
 // ============================================================
+async function fetchMoonPhase(
+  apiKey: string,
+  input: NatalInput,
+  diag: EndpointDiag,
+): Promise<any> {
+  const now = new Date();
+  const params = new URLSearchParams({
+    date: now.toISOString().slice(0, 10),
+    lat: String(input.latitude),
+    lon: String(input.longitude),
+    tz_str: input.timezone || "UTC",
+    include_zodiac: "true",
+    include_special: "true",
+    include_eclipse: "true",
+    include_forecast: "true",
+    include_traditional_moon: "true",
+    include_visuals: "false",
+    include_interpretation: "false",
+  });
+  const url = `/api/v1/moon/phase?${params.toString()}`;
+  let attempt = 0;
+  let lastErr: any = null;
+  while (attempt < GRACEFUL_MAX_ATTEMPTS) {
+    attempt++;
+    try {
+      const res = await withTimeout(
+        fetch(`${BASE_URL}${url}`, {
+          method: "GET",
+          headers: { "x-api-key": apiKey },
+        }),
+        STEP_TIMEOUT_MS,
+        `GET /api/v1/moon/phase`,
+      );
+      diag.status = res.status;
+      if (res.status === 429) {
+        diag.hit_429 = true;
+        if (attempt < GRACEFUL_MAX_ATTEMPTS) {
+          const ra = Number(res.headers.get("retry-after"));
+          const backoff =
+            Number.isFinite(ra) && ra > 0 && ra * 1000 <= MAX_RETRY_AFTER_MS
+              ? ra * 1000
+              : DEFAULT_429_BACKOFF_MS;
+          await sleep(backoff);
+          continue;
+        }
+      }
+      if (!res.ok) {
+        const text = await res.text().catch(() => "");
+        throw new Error(`moon/phase HTTP ${res.status}: ${text.slice(0, 200)}`);
+      }
+      return await res.json();
+    } catch (e: any) {
+      lastErr = e;
+      if (attempt >= GRACEFUL_MAX_ATTEMPTS) throw e;
+      await sleep(400);
+    }
+  }
+  throw lastErr ?? new Error("moon/phase failed");
+}
+
+// ============================================================
+// BAZI FLOW — graceful enrichment (single year, summary mode)
+// ============================================================
+async function fetchBaziFlow(
+  apiKey: string,
+  input: NatalInput,
+  diag: EndpointDiag,
+): Promise<any> {
+  if (input.bazi_sex !== "M" && input.bazi_sex !== "F") {
+    throw new Error("missing_bazi_sex");
+  }
+  const { y, m, d } = parseDate(input.date_of_birth);
+  const tm = parseTime(input.birth_time ?? null);
+  const hour = input.birth_time_known && tm ? tm.h : 12;
+  const minute = input.birth_time_known && tm ? tm.min : 0;
+  const currentYear = new Date().getFullYear();
+  const body = {
+    year: y,
+    month: m,
+    day: d,
+    hour,
+    minute,
+    city: input.birth_city ?? "",
+    lat: input.latitude,
+    lng: input.longitude,
+    sex: input.bazi_sex,
+    target_year: currentYear,
+    target_year_end: currentYear,
+    mode: "summary",
+    include: ["interactions", "stars"],
+    dictionary_response: false,
+    interpretation: { enable: false },
+  };
+  return postJson(apiKey, "/api/v1/chinese/bazi/flow", body, {
+    maxAttempts: GRACEFUL_MAX_ATTEMPTS,
+    label: "bazi_flow",
+  }, diag);
+}
 function buildNatalBlock(raw: any, hasHouses: boolean): DarrowChartData["natal"] {
   const cleaned = stripInterpretation(raw ?? {});
   const planetsRaw: any[] = Array.isArray(cleaned.planets) ? cleaned.planets : [];
@@ -675,9 +769,184 @@ function buildSolarReturnBlock(raw: any, year: number): SolarReturnBlock {
   };
 }
 
-// ============================================================
-// Provider class
-// ============================================================
+function buildMoonPhaseBlock(raw: any): MoonPhaseBlock {
+  const cleaned = stripInterpretation(raw ?? {}) as any;
+  const phase = cleaned.phase ?? cleaned.moon_phase ?? null;
+  const zodiac = cleaned.zodiac ?? null;
+  const special = cleaned.special_moon ?? cleaned.special ?? null;
+  const eclipse = cleaned.eclipse ?? null;
+  const tradMoon = cleaned.traditional_moon ?? cleaned.traditional ?? null;
+  const forecast = cleaned.forecast ?? null;
+  return {
+    available: true,
+    timestamp: cleaned.timestamp ?? cleaned.date ?? undefined,
+    phase: phase
+      ? {
+          name: phase.name ?? phase.phase_name ?? undefined,
+          illumination:
+            typeof phase.illumination === "number"
+              ? phase.illumination
+              : typeof phase.illumination_percent === "number"
+                ? phase.illumination_percent
+                : undefined,
+          age_days:
+            typeof phase.age_days === "number"
+              ? phase.age_days
+              : typeof phase.age === "number"
+                ? phase.age
+                : undefined,
+          phase_angle_deg:
+            typeof phase.phase_angle_deg === "number"
+              ? phase.phase_angle_deg
+              : typeof phase.phase_angle === "number"
+                ? phase.phase_angle
+                : undefined,
+          is_waxing:
+            typeof phase.is_waxing === "boolean" ? phase.is_waxing : undefined,
+        }
+      : undefined,
+    zodiac: zodiac
+      ? {
+          sign: zodiac.sign ? normalizeSign(zodiac.sign) : undefined,
+          degree:
+            typeof zodiac.degree === "number" ? zodiac.degree : undefined,
+          zodiac_type: zodiac.zodiac_type ?? zodiac.type ?? undefined,
+        }
+      : undefined,
+    next_phases: cleaned.next_phases ?? undefined,
+    special_moon: special
+      ? {
+          labels: Array.isArray(special.labels) ? special.labels : undefined,
+          is_supermoon:
+            typeof special.is_supermoon === "boolean" ? special.is_supermoon : undefined,
+          is_blue_moon:
+            typeof special.is_blue_moon === "boolean" ? special.is_blue_moon : undefined,
+          is_harvest_moon:
+            typeof special.is_harvest_moon === "boolean" ? special.is_harvest_moon : undefined,
+          is_hunter_moon:
+            typeof special.is_hunter_moon === "boolean" ? special.is_hunter_moon : undefined,
+        }
+      : undefined,
+    eclipse: eclipse
+      ? {
+          is_eclipse:
+            typeof eclipse.is_eclipse === "boolean" ? eclipse.is_eclipse : undefined,
+          is_blood_moon:
+            typeof eclipse.is_blood_moon === "boolean" ? eclipse.is_blood_moon : undefined,
+          type: eclipse.type ?? undefined,
+          days_from_query:
+            typeof eclipse.days_from_query === "number"
+              ? eclipse.days_from_query
+              : undefined,
+        }
+      : undefined,
+    traditional_moon: tradMoon
+      ? {
+          name: tradMoon.name ?? undefined,
+          month: tradMoon.month ?? undefined,
+          is_current_full_moon:
+            typeof tradMoon.is_current_full_moon === "boolean"
+              ? tradMoon.is_current_full_moon
+              : undefined,
+        }
+      : undefined,
+    forecast: forecast
+      ? {
+          days_until_full_moon:
+            typeof forecast.days_until_full_moon === "number"
+              ? forecast.days_until_full_moon
+              : undefined,
+          days_until_new_moon:
+            typeof forecast.days_until_new_moon === "number"
+              ? forecast.days_until_new_moon
+              : undefined,
+          next_special_moon: forecast.next_special_moon ?? undefined,
+          next_eclipse: forecast.next_eclipse ?? undefined,
+        }
+      : undefined,
+  };
+}
+
+// Strip provider prose recursively; keep only compact structured fields.
+function stripBaziFlowProse<T>(obj: T): T {
+  if (obj === null || obj === undefined) return obj;
+  if (Array.isArray(obj)) return obj.map((v) => stripBaziFlowProse(v)) as unknown as T;
+  if (typeof obj === "object") {
+    const drop = new Set([
+      "interpretation",
+      "interpretations",
+      "rationale",
+      "advice",
+      "summary_text",
+      "description",
+      "long_description",
+      "explanation",
+      "narrative",
+      "ai_summary",
+    ]);
+    const out: Record<string, unknown> = {};
+    for (const [k, v] of Object.entries(obj as Record<string, unknown>)) {
+      if (drop.has(k)) continue;
+      out[k] = stripBaziFlowProse(v);
+    }
+    return out as T;
+  }
+  return obj;
+}
+
+function buildBaziFlowBlock(raw: any, birthTimeKnown: boolean): BaziFlowBlock {
+  const cleaned = stripBaziFlowProse(raw ?? {}) as any;
+  const annualRaw =
+    cleaned.annual_pillar ?? cleaned.year_pillar ?? cleaned.annual ?? null;
+  const annual_pillar = annualRaw
+    ? {
+        year:
+          typeof annualRaw.year === "number"
+            ? annualRaw.year
+            : Number(annualRaw.year ?? cleaned.target_year),
+        gan_zhi: annualRaw.gan_zhi ?? annualRaw.pillar ?? undefined,
+        gan: annualRaw.gan ?? annualRaw.stem ?? undefined,
+        zhi: annualRaw.zhi ?? annualRaw.branch ?? undefined,
+        gan_pinyin: annualRaw.gan_pinyin ?? undefined,
+        zhi_pinyin: annualRaw.zhi_pinyin ?? undefined,
+        ten_god: annualRaw.ten_god ?? undefined,
+      }
+    : undefined;
+
+  const monthlyRaw: any[] = Array.isArray(cleaned.monthly_pillars)
+    ? cleaned.monthly_pillars
+    : Array.isArray(cleaned.months)
+      ? cleaned.months
+      : [];
+  const monthly_pillars: BaziFlowMonthlyPillar[] = monthlyRaw.map((m: any, i: number) => ({
+    index: typeof m.index === "number" ? m.index : i + 1,
+    name: m.name ?? m.label ?? undefined,
+    gan_zhi: m.gan_zhi ?? m.pillar ?? undefined,
+    gan: m.gan ?? m.stem ?? undefined,
+    zhi: m.zhi ?? m.branch ?? undefined,
+    ten_god: m.ten_god ?? undefined,
+    interactions: Array.isArray(m.interactions) ? m.interactions : undefined,
+    stars: Array.isArray(m.stars) ? m.stars : undefined,
+  }));
+
+  return {
+    available: true,
+    target_year:
+      typeof cleaned.target_year === "number"
+        ? cleaned.target_year
+        : undefined,
+    target_year_end:
+      typeof cleaned.target_year_end === "number"
+        ? cleaned.target_year_end
+        : undefined,
+    annual_pillar,
+    monthly_pillars,
+    interactions: Array.isArray(cleaned.interactions) ? cleaned.interactions : undefined,
+    stars: Array.isArray(cleaned.stars) ? cleaned.stars : undefined,
+    time_confidence: birthTimeKnown ? "exact" : "reduced",
+  };
+}
+
 export class FreeAstroAPIProvider implements AstroProvider {
   name = "freeastroapi";
   version = "freeastroapi-docs-2026-05-17";
@@ -704,6 +973,8 @@ export class FreeAstroAPIProvider implements AstroProvider {
     const diagTransits = mkDiag();
     const diagBazi = mkDiag();
     const diagSolar = mkDiag();
+    const diagMoon = mkDiag();
+    const diagBaziFlow = mkDiag();
 
     const run = async <T>(
       label: string,
@@ -748,17 +1019,24 @@ export class FreeAstroAPIProvider implements AstroProvider {
       return fn();
     };
 
-    const [transitsSettled, baziSettled, solarSettled] = await Promise.allSettled([
-      staggered(GRACEFUL_STAGGER.transits, () =>
-        run("transits", diagTransits, () => fetchTransits(this.apiKey, input, diagTransits), GRACEFUL_ENDPOINT_BUDGET_MS),
-      ),
-      staggered(GRACEFUL_STAGGER.bazi, () =>
-        run("bazi", diagBazi, () => fetchBazi(this.apiKey, input, diagBazi), GRACEFUL_ENDPOINT_BUDGET_MS),
-      ),
-      staggered(GRACEFUL_STAGGER.solar, () =>
-        run("solar_return", diagSolar, () => fetchSolarReturn(this.apiKey, input, diagSolar), GRACEFUL_ENDPOINT_BUDGET_MS),
-      ),
-    ]);
+    const [transitsSettled, baziSettled, solarSettled, moonSettled, baziFlowSettled] =
+      await Promise.allSettled([
+        staggered(GRACEFUL_STAGGER.transits, () =>
+          run("transits", diagTransits, () => fetchTransits(this.apiKey, input, diagTransits), GRACEFUL_ENDPOINT_BUDGET_MS),
+        ),
+        staggered(GRACEFUL_STAGGER.bazi, () =>
+          run("bazi", diagBazi, () => fetchBazi(this.apiKey, input, diagBazi), GRACEFUL_ENDPOINT_BUDGET_MS),
+        ),
+        staggered(GRACEFUL_STAGGER.solar, () =>
+          run("solar_return", diagSolar, () => fetchSolarReturn(this.apiKey, input, diagSolar), GRACEFUL_ENDPOINT_BUDGET_MS),
+        ),
+        staggered(GRACEFUL_STAGGER.moon, () =>
+          run("moon_phase", diagMoon, () => fetchMoonPhase(this.apiKey, input, diagMoon), GRACEFUL_ENDPOINT_BUDGET_MS),
+        ),
+        staggered(GRACEFUL_STAGGER.baziflow, () =>
+          run("bazi_flow", diagBaziFlow, () => fetchBaziFlow(this.apiKey, input, diagBaziFlow), GRACEFUL_ENDPOINT_BUDGET_MS),
+        ),
+      ]);
 
     const extract = <T,>(
       s: PromiseSettledResult<{ ok: true; value: T } | { ok: false; error: string }>,
@@ -769,6 +1047,8 @@ export class FreeAstroAPIProvider implements AstroProvider {
     const transitsResult = extract(transitsSettled) as any;
     const baziResult = extract(baziSettled) as any;
     const solarResult = extract(solarSettled) as any;
+    const moonResult = extract(moonSettled) as any;
+    const baziFlowResult = extract(baziFlowSettled) as any;
 
     const natal = buildNatalBlock(natalRaw, hasHouses);
 
@@ -785,17 +1065,19 @@ export class FreeAstroAPIProvider implements AstroProvider {
       ? { available: false, reason: solarResult.__error }
       : buildSolarReturnBlock(solarResult, srYear);
 
-    // Numerology — local computation (unchanged).
-    const fullName = input.full_name_for_numerology ?? "";
-    const numerology = {
-      life_path: lifePath(input.date_of_birth),
-      expression: fullName ? expressionNumber(fullName) : null,
-      soul_urge: fullName ? soulUrgeNumber(fullName) : null,
-      personality: fullName ? personalityNumber(fullName) : null,
-      birth_day: birthDay(input.date_of_birth),
-      personal_year: personalYear(input.date_of_birth),
-      source: "computed" as const,
-    };
+    const moon_phase: MoonPhaseBlock = moonResult?.__error
+      ? { available: false, reason: moonResult.__error }
+      : buildMoonPhaseBlock(moonResult);
+
+    const bazi_flow: BaziFlowBlock = baziFlowResult?.__error
+      ? { available: false, reason: baziFlowResult.__error }
+      : buildBaziFlowBlock(baziFlowResult, !!input.birth_time_known);
+
+    // Numerology — internal Pythagorean, full Darrow Code shape.
+    const numerology = computeNumerology({
+      date_of_birth: input.date_of_birth,
+      full_name_for_numerology: input.full_name_for_numerology ?? null,
+    });
 
     const birth_time_source: DarrowChartData["meta"]["birth_time_source"] = input.birth_time_known
       ? "exact"
@@ -806,11 +1088,15 @@ export class FreeAstroAPIProvider implements AstroProvider {
       transits: diagTransits.elapsed_ms,
       bazi: diagBazi.elapsed_ms,
       solar_return: diagSolar.elapsed_ms,
+      moon_phase: diagMoon.elapsed_ms,
+      bazi_flow: diagBaziFlow.elapsed_ms,
     };
     const endpoint_errors: Record<string, string> = {};
     if (diagTransits.error) endpoint_errors.transits = diagTransits.error;
     if (diagBazi.error) endpoint_errors.bazi = diagBazi.error;
     if (diagSolar.error) endpoint_errors.solar_return = diagSolar.error;
+    if (diagMoon.error) endpoint_errors.moon_phase = diagMoon.error;
+    if (diagBaziFlow.error) endpoint_errors.bazi_flow = diagBaziFlow.error;
 
     return {
       schema_version: "1.0",
@@ -828,6 +1114,8 @@ export class FreeAstroAPIProvider implements AstroProvider {
       bazi,
       transits,
       solar_return,
+      moon_phase,
+      bazi_flow,
     };
   }
 }

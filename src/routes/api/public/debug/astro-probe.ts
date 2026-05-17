@@ -29,6 +29,27 @@ function deepHasInterpretation(obj: unknown): boolean {
   return Object.values(o).some(deepHasInterpretation);
 }
 
+// Detect provider prose anywhere in enrichment blocks (Moon Phase, BaZi Flow).
+function deepHasProse(obj: unknown): boolean {
+  if (!obj || typeof obj !== "object") return false;
+  if (Array.isArray(obj)) return obj.some(deepHasProse);
+  const o = obj as Record<string, unknown>;
+  const proseKeys = [
+    "interpretation",
+    "interpretations",
+    "rationale",
+    "advice",
+    "summary_text",
+    "description",
+    "long_description",
+    "explanation",
+    "narrative",
+    "ai_summary",
+  ];
+  for (const k of proseKeys) if (k in o) return true;
+  return Object.values(o).some(deepHasProse);
+}
+
 export const Route = createFileRoute("/api/public/debug/astro-probe")({
   server: {
     handlers: {
@@ -73,6 +94,10 @@ export const Route = createFileRoute("/api/public/debug/astro-probe")({
             .slice(0, 5);
           const baziAvail = (data.bazi as any)?.available === true;
           const solarAvail = (data.solar_return as any)?.available === true;
+          const moonAvail = (data.moon_phase as any)?.available === true;
+          const baziFlowAvail = (data.bazi_flow as any)?.available === true;
+          const numerology = (data as any).numerology ?? null;
+          const nameNum = numerology?.name_numerology ?? null;
           const summary = {
             provider_name: data.meta.provider_name,
             endpoint_timing_ms: data.meta.endpoint_timing_ms ?? {},
@@ -95,6 +120,60 @@ export const Route = createFileRoute("/api/public/debug/astro-probe")({
             solar_return_sr_asc: solarAvail
               ? (data.solar_return as any).angles_details?.asc ?? null
               : null,
+            numerology: numerology
+              ? {
+                  life_path: numerology.life_path,
+                  birth_day_number: numerology.birth_day_number,
+                  personal_year: numerology.personal_year,
+                  personal_year_master_marker: numerology.personal_year_master_marker,
+                  name_numerology_available: !!nameNum?.available,
+                  name_numerology_reason: nameNum?.reason ?? null,
+                  expression: nameNum?.expression ?? null,
+                  soul_urge: nameNum?.soul_urge ?? null,
+                  personality: nameNum?.personality ?? null,
+                  maturity: nameNum?.maturity ?? null,
+                  hidden_passion_numbers: nameNum?.hidden_passion_numbers ?? null,
+                  karmic_lessons: nameNum?.karmic_lessons ?? null,
+                  normalized_name: nameNum?.normalized_name ?? null,
+                  name_letters_used: nameNum?.name_letters_used ?? null,
+                }
+              : null,
+            moon_phase_available: moonAvail,
+            moon_phase: moonAvail
+              ? {
+                  phase_name: (data.moon_phase as any).phase?.name ?? null,
+                  illumination: (data.moon_phase as any).phase?.illumination ?? null,
+                  is_waxing: (data.moon_phase as any).phase?.is_waxing ?? null,
+                  zodiac_sign: (data.moon_phase as any).zodiac?.sign ?? null,
+                  is_supermoon:
+                    (data.moon_phase as any).special_moon?.is_supermoon ?? null,
+                  is_eclipse: (data.moon_phase as any).eclipse?.is_eclipse ?? null,
+                  days_until_full_moon:
+                    (data.moon_phase as any).forecast?.days_until_full_moon ?? null,
+                  days_until_new_moon:
+                    (data.moon_phase as any).forecast?.days_until_new_moon ?? null,
+                }
+              : null,
+            moon_phase_has_prose: moonAvail
+              ? deepHasProse((data as any).moon_phase)
+              : false,
+            bazi_flow_available: baziFlowAvail,
+            bazi_flow: baziFlowAvail
+              ? {
+                  target_year: (data.bazi_flow as any).target_year ?? null,
+                  annual_pillar: (data.bazi_flow as any).annual_pillar ?? null,
+                  monthly_pillars_count:
+                    (data.bazi_flow as any).monthly_pillars?.length ?? 0,
+                  interactions_count:
+                    (data.bazi_flow as any).interactions?.length ?? 0,
+                  stars_count: (data.bazi_flow as any).stars?.length ?? 0,
+                  time_confidence: (data.bazi_flow as any).time_confidence ?? null,
+                }
+              : null,
+            bazi_flow_has_prose: baziFlowAvail
+              ? deepHasProse((data as any).bazi_flow)
+              : false,
+            any_hit_429: Object.values(data.meta.endpoint_timing_ms ?? {}).some(() => false), // placeholder
             interpretation_leak: interpretationLeak,
             bazi_size_bytes: baziSize,
           };
