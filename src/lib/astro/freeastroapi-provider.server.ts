@@ -647,28 +647,30 @@ export class FreeAstroAPIProvider implements AstroProvider {
   async computeNatal(input: NatalInput): Promise<DarrowChartData> {
     const hasHouses = !!input.birth_time_known;
 
-    // FreeAstroAPI free tier is 1 req/sec and triggers abuse penalties on bursts.
-    // Stagger the 4 calls ~1.1s apart. Natal is critical; others graceful.
-    const RATE_GAP_MS = 1100;
-    const natalP = fetchNatal(this.apiKey, input);
-    const transitsP = sleep(RATE_GAP_MS).then(() =>
-      fetchTransits(this.apiKey, input).catch((e) => ({ __error: String(e?.message ?? e) })),
-    );
-    const baziP = sleep(RATE_GAP_MS * 2).then(() =>
-      fetchBazi(this.apiKey, input).catch((e) => ({ __error: String(e?.message ?? e) })),
-    );
-    const solarP = sleep(RATE_GAP_MS * 3).then(() =>
-      fetchSolarReturn(this.apiKey, input).catch((e) => ({ __error: String(e?.message ?? e) })),
-    );
-
+    // Sequential calls with a fixed inter-call gap. Avoids the parallel-stagger
+    // race where a Natal 429 retry collides with the next staggered call.
+    // Natal is critical (throws); the other three are graceful (catch → __error).
     let natalRaw: any;
     try {
-      natalRaw = await natalP;
+      natalRaw = await fetchNatal(this.apiKey, input);
     } catch (e: any) {
       throw new Error(`FreeAstroAPI natal failed: ${String(e?.message ?? e)}`);
     }
 
-    const [transitsResult, baziResult, solarResult] = await Promise.all([transitsP, baziP, solarP]);
+    await sleep(SEQUENTIAL_GAP_MS);
+    const transitsResult: any = await fetchTransits(this.apiKey, input).catch((e) => ({
+      __error: String(e?.message ?? e),
+    }));
+
+    await sleep(SEQUENTIAL_GAP_MS);
+    const baziResult: any = await fetchBazi(this.apiKey, input).catch((e) => ({
+      __error: String(e?.message ?? e),
+    }));
+
+    await sleep(SEQUENTIAL_GAP_MS);
+    const solarResult: any = await fetchSolarReturn(this.apiKey, input).catch((e) => ({
+      __error: String(e?.message ?? e),
+    }));
 
     const natal = buildNatalBlock(natalRaw, hasHouses);
 
