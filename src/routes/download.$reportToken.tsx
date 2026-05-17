@@ -1,53 +1,63 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import { toast } from "sonner";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
-import { Download } from "lucide-react";
+import { Download, ExternalLink } from "lucide-react";
 import { getReportDownloadUrl } from "@/utils/generation.functions";
 import { BRAND_ASSETS } from "@/lib/brand/assets";
 
 export const Route = createFileRoute("/download/$reportToken")({
-  head: () => ({ meta: [{ title: "Download your report — Darrow Code" }] }),
+  head: () => ({ meta: [{ title: "Your report — Darrow Code" }] }),
   component: DownloadPage,
 });
 
 function DownloadPage() {
   const { reportToken } = Route.useParams();
-  const [busy, setBusy] = useState(false);
-  const triggered = useRef(false);
+  const [busy, setBusy] = useState<"open" | "download" | null>(null);
 
-  const onDownload = async () => {
-    setBusy(true);
-    const isIOS =
-      typeof navigator !== "undefined" &&
-      (/iPad|iPhone|iPod/.test(navigator.userAgent) ||
-        (navigator.platform === "MacIntel" && (navigator as any).maxTouchPoints > 1));
-    const win = !isIOS ? window.open("about:blank", "_blank") : null;
+  const isIOS =
+    typeof navigator !== "undefined" &&
+    (/iPad|iPhone|iPod/.test(navigator.userAgent) ||
+      (navigator.platform === "MacIntel" && (navigator as any).maxTouchPoints > 1));
+
+  const onOpen = async () => {
+    // Open blank tab synchronously so Safari (incl. iOS) doesn't block it.
+    const win = window.open("about:blank", "_blank");
+    setBusy("open");
     try {
-      const { url } = await getReportDownloadUrl({ data: { report_token: reportToken } });
-      if (isIOS) {
-        window.location.href = url;
-      } else if (win) {
-        win.location.href = url;
-      } else {
-        window.open(url, "_blank", "noopener");
-      }
+      const { inlineUrl } = await getReportDownloadUrl({ data: { report_token: reportToken } });
+      if (win) win.location.href = inlineUrl;
+      else window.location.href = inlineUrl;
     } catch (e: any) {
       if (win) win.close();
-      toast.error(e?.message ?? "Could not download report.");
+      toast.error(e?.message ?? "Could not open report.");
     } finally {
-      setBusy(false);
+      setBusy(null);
     }
   };
 
-  // Auto-trigger download once on mount — one-click email link experience.
-  useEffect(() => {
-    if (triggered.current) return;
-    triggered.current = true;
-    onDownload();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  const onDownload = async () => {
+    setBusy("download");
+    try {
+      const { downloadUrl } = await getReportDownloadUrl({ data: { report_token: reportToken } });
+      if (isIOS) {
+        window.location.href = downloadUrl;
+      } else {
+        const a = document.createElement("a");
+        a.href = downloadUrl;
+        a.download = "darrow-code-report.pdf";
+        a.rel = "noopener";
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+      }
+    } catch (e: any) {
+      toast.error(e?.message ?? "Could not download report.");
+    } finally {
+      setBusy(null);
+    }
+  };
 
   return (
     <div className="min-h-screen flex flex-col bg-navy">
@@ -85,20 +95,31 @@ function DownloadPage() {
             Your Darrow Code Report
           </h1>
           <p className="mt-4 text-[14px] text-light-grey/85">
-            This link is yours forever. Bookmark it for future access.
+            Bookmark this page — your link is permanent.
           </p>
 
-          <button
-            type="button"
-            onClick={onDownload}
-            disabled={busy}
-            className="mt-8 inline-flex items-center gap-2 border border-gold text-gold px-7 py-3.5 rounded-[6px] text-[14px] font-medium hover:bg-gold hover:text-navy transition disabled:opacity-60"
-          >
-            <Download className="w-4 h-4" />
-            {busy ? "Preparing…" : "Download PDF"}
-          </button>
+          <div className="mt-8 grid grid-cols-2 gap-3">
+            <button
+              type="button"
+              onClick={onOpen}
+              disabled={busy !== null}
+              className="inline-flex items-center justify-center gap-2 bg-gold text-navy px-5 py-3.5 rounded-[6px] text-[14px] font-semibold hover:brightness-105 transition disabled:opacity-60"
+            >
+              <ExternalLink className="w-4 h-4" />
+              {busy === "open" ? "Opening…" : "Open PDF"}
+            </button>
+            <button
+              type="button"
+              onClick={onDownload}
+              disabled={busy !== null}
+              className="inline-flex items-center justify-center gap-2 border border-gold text-gold px-5 py-3.5 rounded-[6px] text-[14px] font-medium hover:bg-gold hover:text-navy transition disabled:opacity-60"
+            >
+              <Download className="w-4 h-4" />
+              {busy === "download" ? "Preparing…" : "Download"}
+            </button>
+          </div>
           <p className="mt-3 text-[12px] text-muted-grey">
-            Your download should start automatically.
+            Open reads in your browser. Download saves a copy.
           </p>
         </div>
       </main>
