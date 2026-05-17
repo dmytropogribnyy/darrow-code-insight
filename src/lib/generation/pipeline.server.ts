@@ -7,7 +7,7 @@ import { getAstroProvider } from "@/lib/astro/provider";
 import type { NatalInput } from "@/lib/astro/types";
 import { generateDarrowReport } from "@/lib/ai/anthropic.server";
 import { buildUserPrompt } from "@/lib/ai/user-prompt";
-import { renderReportHtml, renderReportHtmlSafe } from "@/lib/pdf/template";
+import { renderReportHtmlSafe } from "@/lib/pdf/template";
 import { renderHtmlToPdf } from "@/lib/pdf/apitemplate.server";
 import { sendEmail, reportReadyEmail, reportDelayEmail } from "@/lib/email/resend.server";
 import { logStage } from "@/lib/observability/pipeline-log";
