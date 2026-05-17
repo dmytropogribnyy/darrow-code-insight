@@ -245,6 +245,19 @@ function renderCrossSell(generated: string[], symbolSmall: string): string {
   `;
 }
 
+const safePageStyle = "page-break-after:always;min-height:245mm;padding:0 0 12mm 0;box-sizing:border-box;";
+const safeH2Style = "font-family:Georgia,'Times New Roman',serif;color:#4A402D;font-size:24pt;font-weight:400;margin:0 0 14pt;line-height:1.2;";
+const safePStyle = "font-family:Arial,Helvetica,sans-serif;color:#151922;font-size:11pt;line-height:1.62;margin:0 0 9pt;";
+const safeBrandStyle = "font-family:Arial,Helvetica,sans-serif;color:#D4AF37;font-size:9pt;letter-spacing:3pt;text-transform:uppercase;margin:0 0 18pt;";
+
+function safePara(s: string): string {
+  return s.split(/\n{2,}/).map((p) => `<p style="${safePStyle}">${escape(p).replace(/\n/g, "<br/>")}</p>`).join("\n");
+}
+
+function safeSection(title: string, body: string): string {
+  return `<section style="${safePageStyle}"><div style="${safeBrandStyle}">Darrow Code</div><h2 style="${safeH2Style}">${escape(title)}</h2>${body}</section>`;
+}
+
 export function renderReportHtml(report: DarrowReport, opts: { assetsBaseUrl?: string } = {}): string {
   // Defensive: normalize known AI typos of "PROTOCOL" across all string fields
   // before any rendering. Does not modify AI prompts or generation logic.
