@@ -31,19 +31,20 @@ export const Route = createFileRoute("/")({
 });
 
 function LandingPage() {
-  const [selected, setSelected] = useState<Set<ModuleCode>>(new Set());
+  // CORE pre-selected by default but the user can unselect it.
+  const [selected, setSelected] = useState<Set<Selectable>>(new Set(["CORE"]));
   const [checkoutOpen, setCheckoutOpen] = useState(false);
   const [resetSignal, setResetSignal] = useState(0);
   const selectorRef = useRef<HTMLDivElement>(null);
 
-  const toggle = (code: ModuleCode) =>
+  const toggle = (code: Selectable) =>
     setSelected((s) => {
       const n = new Set(s);
       if (n.has(code)) n.delete(code);
       else n.add(code);
       return n;
     });
-  const selectAll = () => setSelected(new Set(MODULE_CODES));
+  const selectAll = () => setSelected(new Set<Selectable>(["CORE", ...MODULE_CODES]));
   const clear = () => setSelected(new Set());
 
   const handleChangeSelection = () => {
