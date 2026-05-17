@@ -203,13 +203,28 @@ function LandingPage() {
 
       {/* PRODUCT SELECTOR — paper section */}
       <section>
-        <div className="max-w-[560px] mx-auto px-4 sm:px-6 pt-10 sm:pt-12">
+        <div ref={selectorRef} className="max-w-[560px] mx-auto px-4 sm:px-6 pt-10 sm:pt-12">
           <ProductSelector
             selected={selected}
             onToggle={toggle}
             onSelectAll={selectAll}
             onClear={clear}
+            locked={checkoutOpen}
           />
+          {checkoutOpen && (
+            <div className="mt-3 flex justify-center">
+              <button
+                type="button"
+                onClick={handleChangeSelection}
+                className="font-sans text-[13px] min-h-[44px] px-3 inline-flex items-center gap-1 transition-colors"
+                style={{ color: "#5C5340" }}
+                onMouseEnter={(e) => (e.currentTarget.style.color = "#8B6914")}
+                onMouseLeave={(e) => (e.currentTarget.style.color = "#5C5340")}
+              >
+                Change selection <span aria-hidden="true">→</span>
+              </button>
+            </div>
+          )}
         </div>
       </section>
 
@@ -230,7 +245,11 @@ function LandingPage() {
               }}
             />
             <div className="intake-card">
-              <IntakeForm chapters={Array.from(selected)} />
+              <IntakeForm
+                chapters={Array.from(selected)}
+                onCheckoutOpen={() => setCheckoutOpen(true)}
+                resetSignal={resetSignal}
+              />
             </div>
           </div>
         </div>
