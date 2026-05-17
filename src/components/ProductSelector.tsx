@@ -156,8 +156,9 @@ export function ProductSelector({ selected, onToggle, onSelectAll, onClear, lock
               key={code}
               id={`chapter-${code}`}
               type="button"
+              disabled={locked}
               onClick={() => onToggle(code)}
-              className="text-left rounded-[8px] border px-3.5 py-3 transition flex items-start gap-2.5"
+              className="text-left rounded-[8px] border px-3.5 py-3 transition flex items-start gap-2.5 disabled:cursor-default"
               style={{
                 borderColor: active ? "#B8860B" : "rgba(74,64,45,0.28)",
                 background: active ? "rgba(212,175,55,0.14)" : "rgba(255,255,255,0.65)",
