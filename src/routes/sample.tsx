@@ -77,12 +77,11 @@ function SamplePage() {
         <div className="text-center">
           <p className="text-[10px] tracking-meta uppercase text-gold">Preview</p>
           <h1 className="font-serif text-warm-brown mt-3" style={{ fontSize: 36 }}>
-            A glimpse of your report
+            What you actually receive
           </h1>
           <p className="mt-4 text-[14px] text-neutral-grey leading-relaxed max-w-xl mx-auto">
-            A multi-page PDF drawn from your birth chart and decoded through the
-            Darrow Code Method — your love pattern, money code, body rhythm,
-            timing cycle, and direction signal.
+            A premium downloadable PDF, generated privately from your birth data
+            and delivered to your email — yours to keep, with no subscription.
           </p>
         </div>
 
@@ -92,7 +91,39 @@ function SamplePage() {
           ))}
         </div>
 
-        <div className="mt-12 text-center">
+        {/* What's inside */}
+        <section className="mt-14">
+          <p className="text-center text-[10px] tracking-meta uppercase text-gold mb-3">
+            What's inside
+          </p>
+          <h2 className="text-center font-serif text-warm-brown text-2xl mb-6">
+            Every report includes
+          </h2>
+          <ul className="grid sm:grid-cols-2 gap-3 text-[13.5px] text-neutral-grey">
+            {[
+              ["Premium downloadable PDF", "Print-ready, lifetime access."],
+              ["CORE Report or focused chapters", "Buy CORE, a single chapter, or CORE Complete."],
+              ["Client Snapshot", "Your personal pattern name and one-line read."],
+              ["Architecture section", "How you actually think, react and decide."],
+              ["Practical protocols", "Specific moves for love, money, body or timing."],
+              ["Warning Signal / Before–After", "Where you slip, and what changes when you don't."],
+              ["Proof tags", "Real astrology, BaZi and numerology anchors behind each insight."],
+              ["Email delivery + secure download link", "Token-protected — no account needed."],
+            ].map(([title, desc]) => (
+              <li
+                key={title}
+                className="border border-border rounded-md p-4 bg-white/60"
+              >
+                <p className="font-semibold text-warm-brown text-[13px] mb-1">
+                  {title}
+                </p>
+                <p className="text-[12.5px] leading-relaxed">{desc}</p>
+              </li>
+            ))}
+          </ul>
+        </section>
+
+        <div className="mt-14 text-center">
           <Link
             to="/"
             className="inline-block border border-gold text-gold px-6 py-3 rounded-[6px] text-[13px] hover:bg-gold hover:text-navy transition"
