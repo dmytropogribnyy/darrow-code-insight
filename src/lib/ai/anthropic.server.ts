@@ -38,6 +38,7 @@ async function callAnthropic({ userPrompt, model }: CallArgs): Promise<DarrowRep
       body: JSON.stringify({
         model,
         max_tokens: MAX_TOKENS,
+        temperature: 0.75,
         system: [
           {
             type: "text",
