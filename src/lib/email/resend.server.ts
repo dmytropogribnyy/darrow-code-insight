@@ -55,93 +55,48 @@ export function reportReadyEmail(args: {
   download_url: string;
   result_url?: string;
   assets_base_url?: string;
-  /** Whether the report includes CORE. Defaults to true (CORE-first MVP). */
   has_core?: boolean;
-  /** Number of focused chapters (excluding CORE) in the report. */
   chapter_count?: number;
-  /** Full module codes in this report (preferred over has_core/chapter_count for labeling). */
   modules?: string[];
 }): { subject: string; html: string } {
   const name = args.first_name ?? "";
   const resultUrl = args.result_url ?? args.download_url;
-  const hasCore = args.has_core ?? true;
-  const chapters = args.chapter_count ?? 0;
 
-  // Module codes (for subject + body label only — no chip image row)
-  const order = ["CORE", "LOVE", "MONEY", "BODY", "YEAR", "STYLE", "PLACE"];
-  const moduleCodes = (args.modules && args.modules.length > 0)
-    ? args.modules.filter((m) => MODULE_LABELS[m])
-    : (hasCore ? ["CORE"] : []);
-  const orderedModules = order.filter((m) => moduleCodes.includes(m));
-
-  // Subject — explicit about what's inside
-  let subject: string;
-  if (hasCore && chapters === 0) subject = "Your Darrow Code CORE Report is ready";
-  else if (hasCore && chapters === 6) subject = "Your Darrow Code Complete reading is ready";
-  else if (hasCore) subject = `Your Darrow Code Report is ready (CORE + ${chapters} chapter${chapters === 1 ? "" : "s"})`;
-  else if (chapters === 1) subject = `Your Darrow Code ${orderedModules[0] ?? "Focused"} Chapter is ready`;
-  else subject = `Your Darrow Code Focused Chapters are ready (${orderedModules.join(" · ")})`;
-
-  const insideLabel = hasCore && chapters === 0
-    ? "CORE Report"
-    : hasCore && chapters === 6
-      ? "CORE Complete · all chapters"
-      : hasCore
-        ? `CORE + ${orderedModules.filter((m) => m !== "CORE").join(" · ")}`
-        : orderedModules.join(" · ");
-
-  const greeting = name ? `Your report is ready, ${name}.` : "Your report is ready.";
+  const subject = "Your premium Darrow Code report is ready";
+  const greeting = name ? `Hi ${escape(name)},` : "Hi,";
 
   return {
     subject,
     html: `<!doctype html><html><body style="font-family:Georgia,'Times New Roman',serif;color:#151922;background:#EFEAE0;margin:0;padding:0;-webkit-font-smoothing:antialiased">
-      <!-- preheader (hidden) -->
-      <div style="display:none;max-height:0;overflow:hidden;opacity:0;color:#EFEAE0">Your private Darrow Code reading — ${insideLabel}.</div>
+      <div style="display:none;max-height:0;overflow:hidden;opacity:0;color:#EFEAE0">Your premium Darrow Code report is ready.</div>
       <div style="max-width:600px;margin:0 auto;background:#F6F4EF">
 
-        <!-- HEADER — pure CSS, inline base64 symbol -->
         <div style="background:#0A0F1E;padding:28px 0;text-align:center">
           <img src="${symbolDataUrl}" alt="" width="40" height="40" style="display:inline-block;border:0;margin:0 auto 10px" />
           <div style="font-family:'Inter',Helvetica,Arial,sans-serif;font-size:13px;letter-spacing:5px;color:#D4AF37;text-transform:uppercase;font-weight:600">Darrow Code</div>
         </div>
 
-        <!-- BODY -->
         <div style="padding:44px 36px 36px">
+          <p style="font-size:15px;line-height:1.65;color:#3A3528;margin:0 0 18px">${greeting}</p>
+          <p style="font-size:15px;line-height:1.65;color:#3A3528;margin:0 0 24px">Your premium Darrow Code report is ready.</p>
 
-          <!-- Headline -->
-          <h1 style="font-family:Georgia,'Times New Roman',serif;font-weight:400;font-size:28px;line-height:1.25;color:#0A0F1E;margin:0 0 18px">${greeting}</h1>
+          <p style="font-size:14px;line-height:1.65;color:#3A3528;margin:0 0 8px">Download your PDF:</p>
+          <p style="font-size:14px;line-height:1.65;margin:0 0 28px">
+            <a href="${args.download_url}" style="color:#D4AF37;text-decoration:none;font-family:'Inter',Helvetica,Arial,sans-serif;word-break:break-all">${args.download_url}</a>
+          </p>
 
-          <!-- Intro -->
-          <p style="font-size:15px;line-height:1.65;color:#3A3528;margin:0 0 30px">Quietly written, individually produced. Open it when you have a few minutes to read carefully.</p>
+          <p style="font-size:14px;line-height:1.65;color:#3A3528;margin:0 0 28px">You can return to this link anytime. No account required.</p>
 
-          <!-- Primary CTA -->
-          <table role="presentation" cellspacing="0" cellpadding="0" border="0" style="margin:0 0 36px">
-            <tr><td style="background:#0A0F1E;border-radius:2px">
-              <a href="${args.download_url}" style="display:inline-block;color:#D4AF37;text-decoration:none;padding:16px 32px;letter-spacing:3px;font-size:12px;text-transform:uppercase;font-family:'Inter',Helvetica,Arial,sans-serif;font-weight:600">Open your report</a>
-            </td></tr>
-          </table>
+          <p style="font-size:14px;line-height:1.65;color:#3A3528;margin:0 0 8px">Want to go deeper?<br/>You can add more chapters here:</p>
+          <p style="font-size:14px;line-height:1.65;margin:0 0 32px">
+            <a href="${resultUrl}" style="color:#D4AF37;text-decoration:none;font-family:'Inter',Helvetica,Arial,sans-serif;word-break:break-all">${resultUrl}</a>
+          </p>
 
-          <!-- LINKS SECTION -->
-          <div style="border-top:1px solid #E0D9C9;padding-top:22px;margin:0 0 26px">
-            <div style="font-family:'Inter',Helvetica,Arial,sans-serif;font-size:11px;letter-spacing:2.5px;color:#7A6F58;text-transform:uppercase;margin:0 0 12px">Your private links</div>
-            <p style="font-size:14px;line-height:1.8;margin:0 0 4px">
-              <a href="${args.download_url}" style="color:#D4AF37;text-decoration:none;font-family:'Inter',Helvetica,Arial,sans-serif">Download PDF &rarr;</a>
-            </p>
-            <p style="font-size:14px;line-height:1.8;margin:0 0 12px">
-              <a href="${resultUrl}" style="color:#D4AF37;text-decoration:none;font-family:'Inter',Helvetica,Arial,sans-serif">View your result page &rarr;</a>
-            </p>
-            <p style="font-size:12px;line-height:1.6;color:#7A6F58;margin:0">No account required. These links are yours forever.</p>
+          <div style="border-top:1px solid #E0D9C9;padding-top:22px">
+            <p style="font-family:'Inter',Helvetica,Arial,sans-serif;font-size:11px;letter-spacing:4px;color:#9CA3AF;text-transform:uppercase;font-weight:600;margin:0 0 8px">Darrow Code</p>
+            <p style="color:#7A6F58;font-size:12px;margin:0 0 4px;font-style:italic;font-family:Georgia,serif">For self-reflection and personal insight.</p>
+            <p style="color:#9CA3AF;font-size:11px;margin:0;font-family:Georgia,serif">Not medical, legal or financial advice.</p>
           </div>
-
-          <!-- Reply signature -->
-          <p style="font-size:12px;line-height:1.6;color:#7A6F58;margin:0 0 28px">If anything looks off — just reply to this email.</p>
-
-          <!-- FOOTER — text only, no images -->
-          <div style="text-align:center;border-top:1px solid #E0D9C9;padding-top:24px">
-            <div style="font-family:'Inter',Helvetica,Arial,sans-serif;font-size:11px;letter-spacing:5px;color:#9CA3AF;text-transform:uppercase;font-weight:600;margin:0 0 8px">Darrow Code</div>
-            <p style="color:#9CA3AF;font-size:11px;margin:0;font-style:italic;font-family:Georgia,'Times New Roman',serif">More than a horoscope. Your private birth code.</p>
-          </div>
-
         </div>
       </div>
     </body></html>`,
