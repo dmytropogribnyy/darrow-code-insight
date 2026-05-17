@@ -79,16 +79,21 @@ const aboutFaqs: Faq[] = [
     question: "What makes Darrow Code different?",
     answer: (
       <div className="space-y-2.5">
-        <p>Darrow Code is not a generic horoscope.</p>
         <p>
-          It is a premium AI-powered synthesis built from your birth data and,
-          if you provide it, your full name for deeper numerology.
+          Darrow Code is not a generic horoscope.
         </p>
         <p>
-          The Darrow Code Method blends Western astrology, Chinese BaZi / Four
-          Pillars, numerology, timing cycles and pattern psychology into one
-          clear personal reading — so you receive an interpretation of your
-          full pattern, not a list of isolated placements.
+          It is a premium AI-powered astrology report built from your real birth
+          data — and, if you add it, your full name for deeper numerology.
+        </p>
+        <p>
+          Instead of giving you vague zodiac lines, Darrow Code combines Western
+          astrology, Chinese BaZi / Four Pillars, numerology and timing patterns
+          into one clear reading about you.
+        </p>
+        <p>
+          The goal is simple: to help you understand yourself faster — how you
+          think, feel, react, choose, love, work and move through change.
         </p>
       </div>
     ),
@@ -98,12 +103,18 @@ const aboutFaqs: Faq[] = [
     answer: (
       <div className="space-y-2.5">
         <p>
-          The CORE Report is your main personal reading. It is built from your
-          birth data and gives you a clear overview of your personal pattern —
-          how you think, react, choose and move through change.
+          CORE is the main personal report about you.
         </p>
         <p>
-          Think of it as the foundation that everything else builds on.
+          It gives you a clear astrological summary of your personality,
+          emotional pattern, strengths, repeating life themes and current timing.
+        </p>
+        <p>
+          Think of it as your private “this is how I work” report — written in
+          clear language, not astrology jargon.
+        </p>
+        <p>
+          CORE is the best place to start if you want the full picture first.
         </p>
       </div>
     ),
@@ -113,13 +124,41 @@ const aboutFaqs: Faq[] = [
     answer: (
       <div className="space-y-2.5">
         <p>
-          Focused chapters go deeper into specific areas of life. You can
-          choose from LOVE, MONEY, BODY, YEAR, STYLE or PLACE.
+          Focused chapters go deeper into one part of your life.
         </p>
         <p>
-          Each chapter is its own focused reading that explores that area
-          through your birth pattern.
+          You can add them to CORE, buy only the area you want, or get CORE
+          Complete with all chapters.
         </p>
+        <p className="font-semibold" style={{ color: "#1F1A10" }}>
+          Available chapters:
+        </p>
+        <ul className="space-y-1 list-disc pl-5">
+          <li>
+            <strong>LOVE</strong> — your attraction patterns, intimacy style
+            and relationship loops
+          </li>
+          <li>
+            <strong>MONEY</strong> — how you handle value, work, income pressure
+            and financial decisions
+          </li>
+          <li>
+            <strong>BODY</strong> — your stress pattern, recovery rhythm and
+            overload signals
+          </li>
+          <li>
+            <strong>YEAR</strong> — what this current year is highlighting for
+            you
+          </li>
+          <li>
+            <strong>STYLE</strong> — your colors, materials, aesthetic and
+            personal visual signature
+          </li>
+          <li>
+            <strong>PLACE</strong> — what kinds of places, environments and
+            rhythms support or drain you
+          </li>
+        </ul>
       </div>
     ),
   },
@@ -128,13 +167,19 @@ const aboutFaqs: Faq[] = [
     answer: (
       <div className="space-y-2.5">
         <p>
-          You receive a polished private PDF report delivered by email. It
-          contains your personal pattern reading — a clear interpretation of
-          your birth data written in plain language.
+          You receive a polished private PDF report delivered by email.
         </p>
         <p>
-          You can start with the CORE Report, add one or more focused
-          chapters, or get CORE Complete with everything in one reading.
+          It reads like a personal astrology briefing about you — clear,
+          interesting and easy to understand.
+        </p>
+        <p>
+          Depending on what you choose, your report can include your main
+          personality reading, timing theme, love patterns, money patterns,
+          stress rhythm, style direction and place/environment insights.
+        </p>
+        <p>
+          You also get a secure download link. No account is required.
         </p>
         <p>
           Tap <strong>“See a sample”</strong> at the top of the page to preview
