@@ -50,6 +50,12 @@ function deepHasProse(obj: unknown): boolean {
   return Object.values(o).some(deepHasProse);
 }
 
+// In-memory cooldown cache. 60s TTL. Survives within a single worker
+// instance; cold starts reset it, which is acceptable for a debug route.
+const PROBE_CACHE_TTL_MS = 60_000;
+type ProbeCache = { at: number; body: Record<string, unknown> };
+let cachedProbe: ProbeCache | null = null;
+
 export const Route = createFileRoute("/api/public/debug/astro-probe")({
   server: {
     handlers: {
@@ -62,6 +68,15 @@ export const Route = createFileRoute("/api/public/debug/astro-probe")({
           request.headers.get("x-debug-secret") || url.searchParams.get("secret");
         if (!checkSecret(provided)) {
           return new Response("unauthorized", { status: 401 });
+        }
+
+        const force = url.searchParams.get("force") === "1";
+        if (!force && cachedProbe && Date.now() - cachedProbe.at < PROBE_CACHE_TTL_MS) {
+          return Response.json({
+            cached: true,
+            cached_age_ms: Date.now() - cachedProbe.at,
+            ...(cachedProbe.body as object),
+          });
         }
 
         const input: NatalInput = {
@@ -177,7 +192,9 @@ export const Route = createFileRoute("/api/public/debug/astro-probe")({
             interpretation_leak: interpretationLeak,
             bazi_size_bytes: baziSize,
           };
-          return Response.json({ ok: true, summary, data });
+          const body = { ok: true, summary, data };
+          cachedProbe = { at: Date.now(), body };
+          return Response.json(body);
         } catch (e: any) {
           return Response.json(
             { ok: false, error: String(e?.message ?? e) },
