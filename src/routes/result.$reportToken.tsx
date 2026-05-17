@@ -251,17 +251,26 @@ function ResultPage() {
 
   async function handleDownload(token: string) {
     setDownloadingToken(token);
+    // Open a blank tab synchronously so iOS Safari doesn't block the popup
+    // after the awaited server call resolves.
+    const isIOS =
+      typeof navigator !== "undefined" &&
+      (/iPad|iPhone|iPod/.test(navigator.userAgent) ||
+        (navigator.platform === "MacIntel" && (navigator as any).maxTouchPoints > 1));
+    const win = !isIOS ? window.open("about:blank", "_blank") : null;
     try {
       const { url } = await getReportDownloadUrl({ data: { report_token: token } });
-      const a = document.createElement("a");
-      a.href = url;
-      a.target = "_blank";
-      a.rel = "noopener";
-      a.download = "darrow-code-report.pdf";
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
+      if (isIOS) {
+        // Safari on iOS refuses to render cross-origin PDFs in a programmatically
+        // opened tab; navigate the current tab instead.
+        window.location.href = url;
+      } else if (win) {
+        win.location.href = url;
+      } else {
+        window.open(url, "_blank", "noopener");
+      }
     } catch (e: any) {
+      if (win) win.close();
       toast.error(e?.message ?? "Could not download report.");
     } finally {
       setDownloadingToken(null);
