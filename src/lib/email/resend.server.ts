@@ -102,19 +102,22 @@ export function reportDelayEmail(args: {
   assets_base_url?: string;
 }): { subject: string; html: string } {
   const name = args.first_name ?? "";
-  const base = (args.assets_base_url ?? "").replace(/\/$/, "");
-  const header = `${base}/brand/email-header.png`;
+  const greeting = name ? `Hi ${escape(name)},` : "Hi,";
   return {
-    subject: "A small delay on your Darrow Code report",
+    subject: "Your premium Darrow Code report is being prepared",
     html: `<!doctype html><html><body style="font-family:Georgia,serif;color:#151922;background:#F6F4EF;margin:0;padding:0">
       <div style="max-width:600px;margin:0 auto;background:#F6F4EF">
-        <img src="${header}" alt="Darrow Code" width="600" style="display:block;width:100%;height:auto;border:0" />
-        <div style="padding:32px 28px">
-          <h1 style="font-family:'Cormorant Garamond',Georgia,serif;font-weight:500;font-size:22px;color:#4A402D;margin:0 0 14px">A short delay${name ? `, ${name}` : ""}.</h1>
-          <p style="font-size:14px;line-height:1.6;color:#151922;margin:0 0 14px">Your report didn't render on the first pass. We've been notified and will send it as soon as it's ready — usually within a few hours. No action needed from you.</p>
-          <p style="font-size:14px;line-height:1.6;color:#151922;margin:0 0 14px"><strong>Your payment is safe.</strong> You have <strong>not</strong> been charged a second time and you will not be. The original charge already covers the report we are about to deliver.</p>
-          <p style="font-size:13px;line-height:1.6;color:#6B6B6B;margin:0 0 14px">If you'd like to reach us directly, just reply to this email.</p>
-          <p style="color:#9CA3AF;font-size:11px;margin-top:32px;font-style:italic;font-family:'Cormorant Garamond',Georgia,serif">More than a horoscope. Your private birth code.</p>
+        <div style="background:#0A0F1E;padding:28px 0;text-align:center">
+          <img src="${symbolDataUrl}" alt="" width="40" height="40" style="display:inline-block;border:0;margin:0 auto 10px" />
+          <div style="font-family:'Inter',Helvetica,Arial,sans-serif;font-size:13px;letter-spacing:5px;color:#D4AF37;text-transform:uppercase;font-weight:600">Darrow Code</div>
+        </div>
+        <div style="padding:36px 32px">
+          <p style="font-size:15px;line-height:1.65;color:#3A3528;margin:0 0 18px">${greeting}</p>
+          <p style="font-size:15px;line-height:1.65;color:#3A3528;margin:0 0 18px">Your payment was successful. Your premium Darrow Code report is being prepared, and we'll send it to you as soon as it's ready.</p>
+          <p style="font-size:14px;line-height:1.65;color:#3A3528;margin:0 0 28px">You do not need to pay again.</p>
+          <div style="border-top:1px solid #E0D9C9;padding-top:18px">
+            <p style="font-family:'Inter',Helvetica,Arial,sans-serif;font-size:11px;letter-spacing:4px;color:#9CA3AF;text-transform:uppercase;font-weight:600;margin:0">Darrow Code</p>
+          </div>
         </div>
       </div>
     </body></html>`,
