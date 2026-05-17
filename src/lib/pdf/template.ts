@@ -245,6 +245,42 @@ function renderCrossSell(generated: string[], symbolSmall: string): string {
   `;
 }
 
+const safePageStyle = "page-break-after:always;min-height:245mm;padding:0 0 12mm 0;box-sizing:border-box;";
+const safeH2Style = "font-family:Georgia,'Times New Roman',serif;color:#4A402D;font-size:24pt;font-weight:400;margin:0 0 14pt;line-height:1.2;";
+const safePStyle = "font-family:Arial,Helvetica,sans-serif;color:#151922;font-size:11pt;line-height:1.62;margin:0 0 9pt;";
+const safeBrandStyle = "font-family:Arial,Helvetica,sans-serif;color:#D4AF37;font-size:9pt;letter-spacing:3pt;text-transform:uppercase;margin:0 0 18pt;";
+
+function safePara(s: string): string {
+  return s.split(/\n{2,}/).map((p) => `<p style="${safePStyle}">${escape(p).replace(/\n/g, "<br/>")}</p>`).join("\n");
+}
+
+function safeSection(title: string, body: string): string {
+  return `<section style="${safePageStyle}"><div style="${safeBrandStyle}">Darrow Code</div><h2 style="${safeH2Style}">${escape(title)}</h2>${body}</section>`;
+}
+
+export function renderReportHtmlSafe(report: DarrowReport, opts: { assetsBaseUrl?: string } = {}): string {
+  report = normalizeReport(report);
+  void opts.assetsBaseUrl;
+  const core = report.modules.CORE;
+  const clientName = report.client_name || "you";
+  const sections = [
+    `<section style="${safePageStyle}background:#0A0F1E;color:#F6F4EF;text-align:center;padding-top:72mm;min-height:297mm;"><div style="${safeBrandStyle};color:#D4AF37;margin-bottom:32pt;">Darrow Code</div><h1 style="font-family:Georgia,'Times New Roman',serif;color:#D4AF37;font-size:34pt;font-weight:400;line-height:1.2;margin:0 0 24pt;">The Personal Architecture Report</h1><div style="font-family:Arial,Helvetica,sans-serif;color:#9CA3AF;font-size:10pt;letter-spacing:2pt;text-transform:uppercase;margin-bottom:8pt;">Prepared for</div><div style="font-family:Georgia,'Times New Roman',serif;color:#F6F4EF;font-size:22pt;">${escape(clientName)}</div></section>`,
+    safeSection("Method & Disclaimer", `<p style="${safePStyle}"><strong>What this is.</strong> A structural reading drawing on Western natal astrology, Pythagorean numerology and Chinese Bazi, blended into one interpretive layer. The aim is orientation, not prediction.</p><p style="${safePStyle}"><strong>What this is not.</strong> Not medical, legal, financial or psychiatric advice. Not destiny. Not a personality test. No outcomes are promised.</p><p style="${safePStyle}"><strong>How to read it.</strong> Each section names a structural pattern, then offers protocols — concrete behavioural anchors — connected to your specific configuration.</p>`),
+    safeSection("Client Snapshot", `<h3 style="font-family:Georgia,'Times New Roman',serif;color:#D4AF37;font-size:24pt;font-weight:400;margin:0 0 10pt;">${escape(report.client_snapshot.pattern_name)}</h3>${safePara(report.client_snapshot.core_pattern)}${safePara(report.client_snapshot.unique_signature)}${safePara(report.client_snapshot.practical_focus)}`),
+  ];
+  if (core) sections.push(
+    safeSection("Opening", safePara(core.opening) + safePara(core.architecture)),
+    safeSection("Mechanic", safePara(core.mechanic)),
+    safeSection("Timing", safePara(core.timing)),
+    safeSection("Protocols", safePara(core.protocols)),
+    safeSection("Warning Signal", safePara(core.shadow)),
+    safeSection("Before / After", safePara(core.before_after)),
+    safeSection("Next Step", safePara(core.next) + safePara(report.closing.executive_summary)),
+  );
+  sections.push(`<section style="${safePageStyle}background:#0A0F1E;color:#E5E7EB;text-align:center;padding-top:88mm;min-height:297mm;"><div style="${safeBrandStyle};color:#D4AF37;">Darrow Code</div><p style="font-family:Georgia,'Times New Roman',serif;font-style:italic;font-size:15pt;color:#9CA3AF;margin:0;">More than a horoscope. Your private birth code.</p></section>`);
+  return `<!doctype html><html lang="en"><head><meta charset="utf-8"/><title>Darrow Code — Prepared for ${escape(clientName)}</title></head><body style="margin:0;background:#F6F4EF;padding:22mm 20mm;font-family:Arial,Helvetica,sans-serif;">${sections.join("\n")}</body></html>`;
+}
+
 export function renderReportHtml(report: DarrowReport, opts: { assetsBaseUrl?: string } = {}): string {
   // Defensive: normalize known AI typos of "PROTOCOL" across all string fields
   // before any rendering. Does not modify AI prompts or generation logic.

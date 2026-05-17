@@ -7,7 +7,7 @@ import { getAstroProvider } from "@/lib/astro/provider";
 import type { NatalInput } from "@/lib/astro/types";
 import { generateDarrowReport } from "@/lib/ai/anthropic.server";
 import { buildUserPrompt } from "@/lib/ai/user-prompt";
-import { renderReportHtml } from "@/lib/pdf/template";
+import { renderReportHtmlSafe } from "@/lib/pdf/template";
 import { renderHtmlToPdf } from "@/lib/pdf/apitemplate.server";
 import { sendEmail, reportReadyEmail, reportDelayEmail } from "@/lib/email/resend.server";
 import { logStage } from "@/lib/observability/pipeline-log";
@@ -259,7 +259,7 @@ export async function runFullGenerationPipeline(order_id: string): Promise<void>
     }
 
     // 3) HTML → PDF.
-    const html = renderReportHtml(report, { assetsBaseUrl: appBaseUrl() });
+    const html = renderReportHtmlSafe(report, { assetsBaseUrl: appBaseUrl() });
     const tPdf = Date.now();
     const pdfBytes = await withTimeout(
       "PDF rendering",
