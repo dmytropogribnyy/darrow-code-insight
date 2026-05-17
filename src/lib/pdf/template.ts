@@ -247,6 +247,7 @@ export function renderReportHtml(report: DarrowReport, opts: { assetsBaseUrl?: s
   report = normalizeReport(report);
   const core = report.modules.CORE;
   const generated = report.generated_modules ?? Object.keys(report.modules);
+  const hasCore = !!core && generated.includes("CORE");
   const addonCodes = generated.filter((c) => c !== "CORE");
   const clientName = report.client_name || "you";
   // Note: `assetsBaseUrl` is intentionally unused for brand imagery — the
@@ -256,12 +257,24 @@ export function renderReportHtml(report: DarrowReport, opts: { assetsBaseUrl?: s
   const symbolGold = symbolDataUrl;
   const symbolSmall = symbolDataUrl;
 
+  // Dynamic cover title based on purchased modules
+  let coverTitle: string;
+  if (hasCore && addonCodes.length === 6) {
+    coverTitle = "The Personal Architecture Report";
+  } else if (hasCore) {
+    coverTitle = "The Personal Architecture Report";
+  } else if (addonCodes.length === 1) {
+    coverTitle = `${addonCodes[0]} Report`;
+  } else {
+    coverTitle = "Darrow Code Selected Chapters";
+  }
+
   const cover = `
     <section class="page page-cover">
       <div class="cover-inner">
         <img class="cover-symbol" src="${symbolGold}" alt="" />
         <div class="brand-cover">Darrow Code</div>
-        <h1 class="cover-title">The Personal Architecture Report</h1>
+        <h1 class="cover-title">${escape(coverTitle)}</h1>
         <div class="cover-divider"></div>
         <div class="cover-prepared">Prepared for</div>
         <div class="cover-name">${escape(clientName)}</div>
