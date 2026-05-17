@@ -63,8 +63,8 @@ function FaqAccordion({
             {faq.question}
           </AccordionTrigger>
           <AccordionContent
-            className="font-sans text-[13.5px] sm:text-[14.5px] leading-[1.65] pb-4"
-            style={{ color: "#2E2820", fontFamily: "var(--font-sans)" }}
+            className="font-sans text-[14px] sm:text-[15px] leading-[1.7] pb-5"
+            style={{ color: "#241F18", fontFamily: "var(--font-sans)" }}
           >
             <div className="[&_p]:font-sans [&_li]:font-sans [&_strong]:font-semibold">
               {faq.answer}
