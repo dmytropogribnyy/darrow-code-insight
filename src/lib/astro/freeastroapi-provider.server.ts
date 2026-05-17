@@ -973,6 +973,8 @@ export class FreeAstroAPIProvider implements AstroProvider {
     const diagTransits = mkDiag();
     const diagBazi = mkDiag();
     const diagSolar = mkDiag();
+    const diagMoon = mkDiag();
+    const diagBaziFlow = mkDiag();
 
     const run = async <T>(
       label: string,
@@ -1017,17 +1019,24 @@ export class FreeAstroAPIProvider implements AstroProvider {
       return fn();
     };
 
-    const [transitsSettled, baziSettled, solarSettled] = await Promise.allSettled([
-      staggered(GRACEFUL_STAGGER.transits, () =>
-        run("transits", diagTransits, () => fetchTransits(this.apiKey, input, diagTransits), GRACEFUL_ENDPOINT_BUDGET_MS),
-      ),
-      staggered(GRACEFUL_STAGGER.bazi, () =>
-        run("bazi", diagBazi, () => fetchBazi(this.apiKey, input, diagBazi), GRACEFUL_ENDPOINT_BUDGET_MS),
-      ),
-      staggered(GRACEFUL_STAGGER.solar, () =>
-        run("solar_return", diagSolar, () => fetchSolarReturn(this.apiKey, input, diagSolar), GRACEFUL_ENDPOINT_BUDGET_MS),
-      ),
-    ]);
+    const [transitsSettled, baziSettled, solarSettled, moonSettled, baziFlowSettled] =
+      await Promise.allSettled([
+        staggered(GRACEFUL_STAGGER.transits, () =>
+          run("transits", diagTransits, () => fetchTransits(this.apiKey, input, diagTransits), GRACEFUL_ENDPOINT_BUDGET_MS),
+        ),
+        staggered(GRACEFUL_STAGGER.bazi, () =>
+          run("bazi", diagBazi, () => fetchBazi(this.apiKey, input, diagBazi), GRACEFUL_ENDPOINT_BUDGET_MS),
+        ),
+        staggered(GRACEFUL_STAGGER.solar, () =>
+          run("solar_return", diagSolar, () => fetchSolarReturn(this.apiKey, input, diagSolar), GRACEFUL_ENDPOINT_BUDGET_MS),
+        ),
+        staggered(GRACEFUL_STAGGER.moon, () =>
+          run("moon_phase", diagMoon, () => fetchMoonPhase(this.apiKey, input, diagMoon), GRACEFUL_ENDPOINT_BUDGET_MS),
+        ),
+        staggered(GRACEFUL_STAGGER.baziflow, () =>
+          run("bazi_flow", diagBaziFlow, () => fetchBaziFlow(this.apiKey, input, diagBaziFlow), GRACEFUL_ENDPOINT_BUDGET_MS),
+        ),
+      ]);
 
     const extract = <T,>(
       s: PromiseSettledResult<{ ok: true; value: T } | { ok: false; error: string }>,
@@ -1038,6 +1047,8 @@ export class FreeAstroAPIProvider implements AstroProvider {
     const transitsResult = extract(transitsSettled) as any;
     const baziResult = extract(baziSettled) as any;
     const solarResult = extract(solarSettled) as any;
+    const moonResult = extract(moonSettled) as any;
+    const baziFlowResult = extract(baziFlowSettled) as any;
 
     const natal = buildNatalBlock(natalRaw, hasHouses);
 
@@ -1054,17 +1065,19 @@ export class FreeAstroAPIProvider implements AstroProvider {
       ? { available: false, reason: solarResult.__error }
       : buildSolarReturnBlock(solarResult, srYear);
 
-    // Numerology — local computation (unchanged).
-    const fullName = input.full_name_for_numerology ?? "";
-    const numerology = {
-      life_path: lifePath(input.date_of_birth),
-      expression: fullName ? expressionNumber(fullName) : null,
-      soul_urge: fullName ? soulUrgeNumber(fullName) : null,
-      personality: fullName ? personalityNumber(fullName) : null,
-      birth_day: birthDay(input.date_of_birth),
-      personal_year: personalYear(input.date_of_birth),
-      source: "computed" as const,
-    };
+    const moon_phase: MoonPhaseBlock = moonResult?.__error
+      ? { available: false, reason: moonResult.__error }
+      : buildMoonPhaseBlock(moonResult);
+
+    const bazi_flow: BaziFlowBlock = baziFlowResult?.__error
+      ? { available: false, reason: baziFlowResult.__error }
+      : buildBaziFlowBlock(baziFlowResult, !!input.birth_time_known);
+
+    // Numerology — internal Pythagorean, full Darrow Code shape.
+    const numerology = computeNumerology({
+      date_of_birth: input.date_of_birth,
+      full_name_for_numerology: input.full_name_for_numerology ?? null,
+    });
 
     const birth_time_source: DarrowChartData["meta"]["birth_time_source"] = input.birth_time_known
       ? "exact"
@@ -1075,11 +1088,15 @@ export class FreeAstroAPIProvider implements AstroProvider {
       transits: diagTransits.elapsed_ms,
       bazi: diagBazi.elapsed_ms,
       solar_return: diagSolar.elapsed_ms,
+      moon_phase: diagMoon.elapsed_ms,
+      bazi_flow: diagBaziFlow.elapsed_ms,
     };
     const endpoint_errors: Record<string, string> = {};
     if (diagTransits.error) endpoint_errors.transits = diagTransits.error;
     if (diagBazi.error) endpoint_errors.bazi = diagBazi.error;
     if (diagSolar.error) endpoint_errors.solar_return = diagSolar.error;
+    if (diagMoon.error) endpoint_errors.moon_phase = diagMoon.error;
+    if (diagBaziFlow.error) endpoint_errors.bazi_flow = diagBaziFlow.error;
 
     return {
       schema_version: "1.0",
@@ -1097,6 +1114,8 @@ export class FreeAstroAPIProvider implements AstroProvider {
       bazi,
       transits,
       solar_return,
+      moon_phase,
+      bazi_flow,
     };
   }
 }
