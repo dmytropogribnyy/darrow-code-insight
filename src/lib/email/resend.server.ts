@@ -40,15 +40,9 @@ export async function sendEmail(args: SendEmailArgs): Promise<{ id?: string }> {
   return (await res.json()) as { id?: string };
 }
 
-const MODULE_LABELS: Record<string, string> = {
-  CORE: "CORE",
-  LOVE: "LOVE",
-  MONEY: "MONEY",
-  BODY: "BODY",
-  YEAR: "YEAR",
-  STYLE: "STYLE",
-  PLACE: "PLACE",
-};
+function escape(s: string): string {
+  return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+}
 
 export function reportReadyEmail(args: {
   first_name: string | null;
