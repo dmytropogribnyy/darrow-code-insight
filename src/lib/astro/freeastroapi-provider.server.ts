@@ -298,6 +298,7 @@ async function fetchSolarReturn(apiKey: string, input: NatalInput): Promise<any>
         node_type: "true",
       },
     },
+    interpretation: { enable: false },
   };
   return postJson(apiKey, "/api/v1/western/solar/calculate", body);
 }
