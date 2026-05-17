@@ -46,15 +46,112 @@ export interface AspectRow {
   is_applying?: boolean;
 }
 
+export interface NameNumerologyBlock {
+  available: boolean;
+  reason?: string;
+  source_name_present: boolean;
+  normalized_name?: string;
+  name_letters_used?: number;
+  y_policy?: "consonant_by_default";
+  name_normalization_warning?: string | null;
+  expression?: number;
+  soul_urge?: number;
+  personality?: number;
+  maturity?: number;
+  hidden_passion_numbers?: number[];
+  karmic_lessons?: number[];
+  meanings?: {
+    expression?: { core: string; shadow: string; protocol_hint: string };
+    soul_urge?: { core: string; shadow: string; protocol_hint: string };
+    personality?: { core: string; shadow: string; protocol_hint: string };
+    maturity?: { core: string; shadow: string; protocol_hint: string };
+  };
+}
+
 export interface NumerologyBlock {
-  life_path: number | null;
-  expression: number | null;
-  soul_urge: number | null;
-  personality: number | null;
-  birth_day: number;
+  available: true;
+  life_path: number;
+  birth_day_number: number;
   personal_year: number;
-  source: "computed" | "unavailable";
+  personal_year_master_marker: number | null;
+  name_numerology: NameNumerologyBlock;
+  // Legacy fields kept for any downstream consumer that still reads them.
+  source?: "computed" | "unavailable";
   notes?: string;
+}
+
+export interface MoonPhaseBlock {
+  available: boolean;
+  reason?: string;
+  timestamp?: string;
+  phase?: {
+    name?: string;
+    illumination?: number;
+    age_days?: number;
+    phase_angle_deg?: number;
+    is_waxing?: boolean;
+  };
+  zodiac?: {
+    sign?: string;
+    degree?: number;
+    zodiac_type?: string;
+  };
+  next_phases?: Record<string, string>;
+  special_moon?: {
+    labels?: string[];
+    is_supermoon?: boolean;
+    is_blue_moon?: boolean;
+    is_harvest_moon?: boolean;
+    is_hunter_moon?: boolean;
+  };
+  eclipse?: {
+    is_eclipse?: boolean;
+    is_blood_moon?: boolean;
+    type?: string;
+    days_from_query?: number;
+  };
+  traditional_moon?: {
+    name?: string;
+    month?: string;
+    is_current_full_moon?: boolean;
+  };
+  forecast?: {
+    days_until_full_moon?: number;
+    days_until_new_moon?: number;
+    next_special_moon?: any;
+    next_eclipse?: any;
+  };
+}
+
+export interface BaziFlowMonthlyPillar {
+  index?: number;
+  name?: string;
+  gan_zhi?: string;
+  gan?: string;
+  zhi?: string;
+  ten_god?: string;
+  interactions?: any[];
+  stars?: any[];
+}
+
+export interface BaziFlowBlock {
+  available: boolean;
+  reason?: string;
+  target_year?: number;
+  target_year_end?: number;
+  annual_pillar?: {
+    year?: number;
+    gan_zhi?: string;
+    gan?: string;
+    zhi?: string;
+    gan_pinyin?: string;
+    zhi_pinyin?: string;
+    ten_god?: string;
+  };
+  monthly_pillars?: BaziFlowMonthlyPillar[];
+  interactions?: any[];
+  stars?: any[];
+  time_confidence?: "exact" | "reduced";
 }
 
 export interface BaziPillar {
@@ -186,4 +283,6 @@ export interface DarrowChartData {
   bazi: BaziBlock;
   transits?: TransitsBlock | null;
   solar_return?: SolarReturnBlock | null;
+  moon_phase?: MoonPhaseBlock | null;
+  bazi_flow?: BaziFlowBlock | null;
 }
