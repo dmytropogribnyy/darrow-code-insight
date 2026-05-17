@@ -21,6 +21,7 @@ import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/publi
 import { Route as ApiPublicJobsResendReadyEmailRouteImport } from './routes/api/public/jobs/resend-ready-email'
 import { Route as ApiPublicJobsProcessGenerationRouteImport } from './routes/api/public/jobs/process-generation'
 import { Route as ApiPublicHealthGenerationPipelineRouteImport } from './routes/api/public/health/generation-pipeline'
+import { Route as ApiPublicDebugAstroProbeRouteImport } from './routes/api/public/debug/astro-probe'
 
 const TermsRoute = TermsRouteImport.update({
   id: '/terms',
@@ -86,6 +87,12 @@ const ApiPublicHealthGenerationPipelineRoute =
     path: '/api/public/health/generation-pipeline',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicDebugAstroProbeRoute =
+  ApiPublicDebugAstroProbeRouteImport.update({
+    id: '/api/public/debug/astro-probe',
+    path: '/api/public/debug/astro-probe',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -96,6 +103,7 @@ export interface FileRoutesByFullPath {
   '/terms': typeof TermsRoute
   '/download/$reportToken': typeof DownloadReportTokenRoute
   '/result/$reportToken': typeof ResultReportTokenRoute
+  '/api/public/debug/astro-probe': typeof ApiPublicDebugAstroProbeRoute
   '/api/public/health/generation-pipeline': typeof ApiPublicHealthGenerationPipelineRoute
   '/api/public/jobs/process-generation': typeof ApiPublicJobsProcessGenerationRoute
   '/api/public/jobs/resend-ready-email': typeof ApiPublicJobsResendReadyEmailRoute
@@ -110,6 +118,7 @@ export interface FileRoutesByTo {
   '/terms': typeof TermsRoute
   '/download/$reportToken': typeof DownloadReportTokenRoute
   '/result/$reportToken': typeof ResultReportTokenRoute
+  '/api/public/debug/astro-probe': typeof ApiPublicDebugAstroProbeRoute
   '/api/public/health/generation-pipeline': typeof ApiPublicHealthGenerationPipelineRoute
   '/api/public/jobs/process-generation': typeof ApiPublicJobsProcessGenerationRoute
   '/api/public/jobs/resend-ready-email': typeof ApiPublicJobsResendReadyEmailRoute
@@ -125,6 +134,7 @@ export interface FileRoutesById {
   '/terms': typeof TermsRoute
   '/download/$reportToken': typeof DownloadReportTokenRoute
   '/result/$reportToken': typeof ResultReportTokenRoute
+  '/api/public/debug/astro-probe': typeof ApiPublicDebugAstroProbeRoute
   '/api/public/health/generation-pipeline': typeof ApiPublicHealthGenerationPipelineRoute
   '/api/public/jobs/process-generation': typeof ApiPublicJobsProcessGenerationRoute
   '/api/public/jobs/resend-ready-email': typeof ApiPublicJobsResendReadyEmailRoute
@@ -141,6 +151,7 @@ export interface FileRouteTypes {
     | '/terms'
     | '/download/$reportToken'
     | '/result/$reportToken'
+    | '/api/public/debug/astro-probe'
     | '/api/public/health/generation-pipeline'
     | '/api/public/jobs/process-generation'
     | '/api/public/jobs/resend-ready-email'
@@ -155,6 +166,7 @@ export interface FileRouteTypes {
     | '/terms'
     | '/download/$reportToken'
     | '/result/$reportToken'
+    | '/api/public/debug/astro-probe'
     | '/api/public/health/generation-pipeline'
     | '/api/public/jobs/process-generation'
     | '/api/public/jobs/resend-ready-email'
@@ -169,6 +181,7 @@ export interface FileRouteTypes {
     | '/terms'
     | '/download/$reportToken'
     | '/result/$reportToken'
+    | '/api/public/debug/astro-probe'
     | '/api/public/health/generation-pipeline'
     | '/api/public/jobs/process-generation'
     | '/api/public/jobs/resend-ready-email'
@@ -184,6 +197,7 @@ export interface RootRouteChildren {
   TermsRoute: typeof TermsRoute
   DownloadReportTokenRoute: typeof DownloadReportTokenRoute
   ResultReportTokenRoute: typeof ResultReportTokenRoute
+  ApiPublicDebugAstroProbeRoute: typeof ApiPublicDebugAstroProbeRoute
   ApiPublicHealthGenerationPipelineRoute: typeof ApiPublicHealthGenerationPipelineRoute
   ApiPublicJobsProcessGenerationRoute: typeof ApiPublicJobsProcessGenerationRoute
   ApiPublicJobsResendReadyEmailRoute: typeof ApiPublicJobsResendReadyEmailRoute
@@ -276,6 +290,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicHealthGenerationPipelineRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/debug/astro-probe': {
+      id: '/api/public/debug/astro-probe'
+      path: '/api/public/debug/astro-probe'
+      fullPath: '/api/public/debug/astro-probe'
+      preLoaderRoute: typeof ApiPublicDebugAstroProbeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -288,6 +309,7 @@ const rootRouteChildren: RootRouteChildren = {
   TermsRoute: TermsRoute,
   DownloadReportTokenRoute: DownloadReportTokenRoute,
   ResultReportTokenRoute: ResultReportTokenRoute,
+  ApiPublicDebugAstroProbeRoute: ApiPublicDebugAstroProbeRoute,
   ApiPublicHealthGenerationPipelineRoute:
     ApiPublicHealthGenerationPipelineRoute,
   ApiPublicJobsProcessGenerationRoute: ApiPublicJobsProcessGenerationRoute,
@@ -297,3 +319,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
