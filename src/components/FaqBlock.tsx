@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import {
   Accordion,
   AccordionContent,
@@ -5,7 +6,9 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 
-const faqs = [
+type Faq = { question: string; answer: ReactNode };
+
+const faqs: Faq[] = [
   {
     question: "How long does report generation take?",
     answer:
@@ -13,8 +16,51 @@ const faqs = [
   },
   {
     question: "Do I save if I add multiple chapters?",
-    answer:
-      "Yes — bundle pricing applies automatically when you select 2 or more Focused Chapters. The more you add, the more you save. Adding all 6 chapters costs $10.00 instead of $17.94 separately. CORE Complete — CORE Report plus all 6 chapters — is $14.99, saving $7.94 compared with buying everything individually.",
+    answer: (
+      <div className="space-y-3">
+        <p>
+          Yes — bundle pricing is applied automatically as soon as you select 2
+          or more Focused Chapters. The more chapters you add, the more you
+          save. Single prices: <strong>CORE Report $4.99</strong>, each Focused
+          Chapter <strong>$2.99</strong>.
+        </p>
+
+        <div>
+          <p className="font-semibold mb-1.5" style={{ color: "#1F1A10" }}>
+            Focused Chapters only (no CORE)
+          </p>
+          <ul className="text-[12.5px] sm:text-[13px] space-y-0.5 font-mono">
+            <li>2 chapters — <strong>$4.99</strong> <span style={{ color: "#8B6914" }}>(save $0.99)</span></li>
+            <li>3 chapters — <strong>$6.99</strong> <span style={{ color: "#8B6914" }}>(save $1.98)</span></li>
+            <li>4 chapters — <strong>$8.99</strong> <span style={{ color: "#8B6914" }}>(save $2.97)</span></li>
+            <li>5 chapters — <strong>$9.99</strong> <span style={{ color: "#8B6914" }}>(save $4.96)</span></li>
+            <li>All 6 chapters — <strong>$10.00</strong> <span style={{ color: "#8B6914" }}>(save $7.94 vs $17.94)</span></li>
+          </ul>
+        </div>
+
+        <div>
+          <p className="font-semibold mb-1.5" style={{ color: "#1F1A10" }}>
+            CORE Report + Focused Chapters
+          </p>
+          <ul className="text-[12.5px] sm:text-[13px] space-y-0.5 font-mono">
+            <li>CORE + 1 chapter — <strong>$7.98</strong></li>
+            <li>CORE + 2 chapters — <strong>$9.98</strong> <span style={{ color: "#8B6914" }}>(save $0.99)</span></li>
+            <li>CORE + 3 chapters — <strong>$11.98</strong> <span style={{ color: "#8B6914" }}>(save $1.98)</span></li>
+            <li>CORE + 4 chapters — <strong>$13.98</strong> <span style={{ color: "#8B6914" }}>(save $2.97)</span></li>
+            <li>CORE + 5 chapters — <strong>$14.98</strong> <span style={{ color: "#8B6914" }}>(save $4.96)</span></li>
+            <li>
+              <strong>CORE Complete</strong> (CORE + all 6) — <strong>$14.99</strong>{" "}
+              <span style={{ color: "#8B6914" }}>(save $7.94 vs $22.93)</span>
+            </li>
+          </ul>
+        </div>
+
+        <p className="text-[12.5px]" style={{ color: "#5C5340" }}>
+          The order summary on the form always shows the exact total and the
+          amount you save before checkout.
+        </p>
+      </div>
+    ),
   },
   {
     question: "What affects generation speed?",
