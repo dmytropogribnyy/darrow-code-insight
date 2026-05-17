@@ -230,7 +230,7 @@ function ResultPage() {
   const [selected, setSelected] = useState<Set<ModuleCode>>(new Set());
   const [clientSecret, setClientSecret] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
-  const [downloadingToken, setDownloadingToken] = useState<string | null>(null);
+  const [busyAction, setBusyAction] = useState<{ token: string; action: "open" | "download" } | null>(null);
   const queryClient = useQueryClient();
   const refreshReports = () =>
     queryClient.invalidateQueries({ queryKey: ["report-context", reportToken] });
