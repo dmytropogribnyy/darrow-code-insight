@@ -259,7 +259,11 @@ async function fetchNatal(
 // ============================================================
 // TRANSITS — graceful
 // ============================================================
-async function fetchTransits(apiKey: string, input: NatalInput): Promise<any> {
+async function fetchTransits(
+  apiKey: string,
+  input: NatalInput,
+  diag: EndpointDiag,
+): Promise<any> {
   const { y, m, d } = parseDate(input.date_of_birth);
   const tm = parseTime(input.birth_time ?? null);
   const natalBody: Record<string, any> = {
@@ -293,7 +297,10 @@ async function fetchTransits(apiKey: string, input: NatalInput): Promise<any> {
     },
     interpretation: { enable: false },
   };
-  return postJson(apiKey, "/api/v1/transits/calculate", body);
+  return postJson(apiKey, "/api/v1/transits/calculate", body, {
+    maxAttempts: GRACEFUL_MAX_ATTEMPTS,
+    label: "transits",
+  }, diag);
 }
 
 // ============================================================
