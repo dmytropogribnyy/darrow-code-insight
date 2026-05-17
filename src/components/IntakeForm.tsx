@@ -73,7 +73,7 @@ export function IntakeForm({
       return;
     }
     if (!form.bazi_sex) {
-      toast.error("Please select birth sex (used only for BaZi calculation).");
+      toast.error("Please select Male or Female for the Four Pillars calculation.");
       return;
     }
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) {
