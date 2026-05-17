@@ -84,13 +84,15 @@ function describeReport(modules: string[]): { kind: "complete" | "addons" | "cor
 
 function ReportCard({
   row,
+  onOpen,
   onDownload,
-  isDownloading,
+  busyAction,
   onRefresh,
 }: {
   row: ReportRow;
+  onOpen: () => void;
   onDownload: () => void;
-  isDownloading: boolean;
+  busyAction: "open" | "download" | null;
   onRefresh: () => void;
 }) {
   const info = describeReport(row.modules);
