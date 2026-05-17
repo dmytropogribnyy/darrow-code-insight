@@ -88,8 +88,9 @@ export function ProductSelector({ selected, onToggle, onSelectAll, onClear, lock
       <button
         id="chapter-COMPLETE"
         type="button"
+        disabled={locked}
         onClick={allSelected ? onClear : onSelectAll}
-        className="w-full text-left rounded-[10px] border-2 px-4 py-4 mb-5 transition flex items-start gap-3"
+        className="w-full text-left rounded-[10px] border-2 px-4 py-4 mb-5 transition flex items-start gap-3 disabled:cursor-default"
         style={{
           borderColor: allSelected ? "#B8860B" : "#D4AF37",
           background: allSelected ? "rgba(212,175,55,0.16)" : "rgba(212,175,55,0.06)",
