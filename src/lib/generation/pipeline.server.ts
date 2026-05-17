@@ -294,8 +294,16 @@ export async function runFullGenerationPipeline(order_id: string): Promise<void>
     }).eq("order_id", order_id);
     logStage({ stage: "status_updated", result: "success", order_id, extra: { status: "complete" } });
 
-    // 6) Send "report ready" email.
-    if (customerEmail) {
+    // 6) Send "report ready" email — only if not already sent for this
+    // report+token. This makes PDF-only retries idempotent and prevents
+    // duplicate ready-emails on cosmetic re-renders.
+    const { data: existingMail } = await sb
+      .from("reports")
+      .select("ready_email_sent_at")
+      .eq("id", report_id)
+      .maybeSingle();
+    const alreadyEmailed = !!existingMail?.ready_email_sent_at;
+    if (customerEmail && !alreadyEmailed) {
       const downloadUrl = `${appBaseUrl()}/download/${download_token}`;
       const resultUrl = `${appBaseUrl()}/result/${download_token}`;
       const chapterCount = modules.filter((m) => m !== "CORE").length;
