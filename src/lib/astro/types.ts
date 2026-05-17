@@ -136,6 +136,7 @@ export interface BaziFlowMonthlyPillar {
 
 export interface BaziFlowBlock {
   available: boolean;
+  usable?: boolean;
   reason?: string;
   target_year?: number;
   target_year_end?: number;

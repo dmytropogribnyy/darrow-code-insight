@@ -175,6 +175,8 @@ export const Route = createFileRoute("/api/public/debug/astro-probe")({
             bazi_flow_available: baziFlowAvail,
             bazi_flow: baziFlowAvail
               ? {
+                  usable: (data.bazi_flow as any).usable ?? null,
+                  reason: (data.bazi_flow as any).reason ?? null,
                   target_year: (data.bazi_flow as any).target_year ?? null,
                   annual_pillar: (data.bazi_flow as any).annual_pillar ?? null,
                   monthly_pillars_count:
