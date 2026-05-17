@@ -69,7 +69,7 @@ async function loadOrderContext(order_id: string) {
 
   const { data: intake } = await sb
     .from("intakes")
-    .select("id, date_of_birth, birth_time, birth_time_known, birth_city, latitude, longitude, timezone, full_name_for_numerology")
+    .select("id, date_of_birth, birth_time, birth_time_known, birth_city, latitude, longitude, timezone, full_name_for_numerology, bazi_sex")
     .eq("id", order.intake_id).single();
   if (!intake) throw new Error(`intake ${order.intake_id} not found`);
 
@@ -205,6 +205,9 @@ export async function runFullGenerationPipeline(order_id: string): Promise<void>
       longitude: intake.longitude ?? 0,
       timezone: intake.timezone ?? "UTC",
       full_name_for_numerology: intake.full_name_for_numerology ?? customer?.first_name ?? null,
+      first_name: customer?.first_name ?? null,
+      birth_city: intake.birth_city ?? null,
+      bazi_sex: (intake.bazi_sex as "M" | "F" | null) ?? null,
     };
     const chart = await withTimeout("Astro calculation", provider.computeNatal(natal), 30 * 1000, () => heartbeat(order_id));
     await heartbeat(order_id);

@@ -19,6 +19,7 @@ type FormState = {
   birth_time: string;
   birth_city: string;
   full_name_for_numerology: string;
+  bazi_sex: "" | "M" | "F";
 };
 
 const initial: FormState = {
@@ -28,6 +29,7 @@ const initial: FormState = {
   birth_time: "",
   birth_city: "",
   full_name_for_numerology: "",
+  bazi_sex: "",
 };
 
 export function IntakeForm({
@@ -70,6 +72,10 @@ export function IntakeForm({
       toast.error("Please complete the required fields.");
       return;
     }
+    if (!form.bazi_sex) {
+      toast.error("Please select birth sex (used only for BaZi calculation).");
+      return;
+    }
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) {
       toast.error("Please enter a valid email.");
       return;
@@ -86,6 +92,7 @@ export function IntakeForm({
           birth_time: form.birth_time || "",
           birth_city: form.birth_city.trim(),
           full_name_for_numerology: form.full_name_for_numerology || "",
+          bazi_sex: form.bazi_sex as "M" | "F",
           origin: window.location.origin,
           environment: getStripeEnvironment(),
           resolved_place: resolvedPlace
@@ -216,6 +223,34 @@ export function IntakeForm({
           onChange={update("full_name_for_numerology")}
           placeholder="Full name for deeper numerology"
         />
+      </div>
+
+      <div>
+        <label className={labelCls}>Birth sex (for BaZi)</label>
+        <div className="flex gap-2 mt-1">
+          {(["M", "F"] as const).map((opt) => {
+            const selected = form.bazi_sex === opt;
+            return (
+              <button
+                key={opt}
+                type="button"
+                onClick={() => setForm((f) => ({ ...f, bazi_sex: opt }))}
+                aria-pressed={selected}
+                className="flex-1 rounded-[10px] px-3 py-2.5 text-[14px] font-medium border transition-colors"
+                style={{
+                  borderColor: selected ? "#D4AF37" : "rgba(74,64,45,0.25)",
+                  backgroundColor: selected ? "rgba(212,175,55,0.10)" : "transparent",
+                  color: "#0A0F1E",
+                }}
+              >
+                {opt === "M" ? "Male" : "Female"}
+              </button>
+            );
+          })}
+        </div>
+        <p className="mt-1.5 text-[11.5px] sm:text-[12px]" style={{ color: "#4A402D" }}>
+          Used only for traditional BaZi (Four Pillars) calculation. Not used in your report copy.
+        </p>
       </div>
 
       <div className="pt-3 text-center">

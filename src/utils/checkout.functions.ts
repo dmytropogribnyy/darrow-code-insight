@@ -61,6 +61,7 @@ export const createCheckout = createServerFn({ method: "POST" })
       birth_city: z.string().trim().min(1).max(255),
       full_name_for_numerology: z.string().trim().max(255).optional().or(z.literal("")),
       modules: z.array(ModuleCodeSchema).max(6).default([]),
+      bazi_sex: z.enum(["M", "F"]),
       origin: z.string().url(),
       environment: StripeEnvSchema,
       resolved_place: z
@@ -131,6 +132,7 @@ export const createCheckout = createServerFn({ method: "POST" })
         timezone_source: "geoapify",
         geocoding_provider: "geoapify",
         full_name_for_numerology: data.full_name_for_numerology || null,
+        bazi_sex: data.bazi_sex,
       })
       .select("id")
       .single();
@@ -207,8 +209,8 @@ export const createCoreCheckout = createServerFn({ method: "POST" })
     }).parse,
   )
   .handler(async ({ data }) => {
-    // Reuse the path above with no chapters selected.
-    return createCheckout({ data: { ...data, modules: [] } });
+    // Reuse the path above with no chapters selected. Legacy callers default to "M" for bazi sex.
+    return createCheckout({ data: { ...data, modules: [], bazi_sex: "M" } });
   });
 
 // ============================================================
