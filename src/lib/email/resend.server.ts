@@ -63,13 +63,11 @@ export function reportReadyEmail(args: {
   modules?: string[];
 }): { subject: string; html: string } {
   const name = args.first_name ?? "";
-  const base = (args.assets_base_url ?? "").replace(/\/$/, "");
-  const symbol = `${base}/brand/darrow-symbol-small.png`;
   const resultUrl = args.result_url ?? args.download_url;
   const hasCore = args.has_core ?? true;
   const chapters = args.chapter_count ?? 0;
 
-  // Module codes for the chip row (CORE first, then add-ons in canonical order)
+  // Module codes (for subject + body label only — no chip image row)
   const order = ["CORE", "LOVE", "MONEY", "BODY", "YEAR", "STYLE", "PLACE"];
   const moduleCodes = (args.modules && args.modules.length > 0)
     ? args.modules.filter((m) => MODULE_LABELS[m])
@@ -84,7 +82,6 @@ export function reportReadyEmail(args: {
   else if (chapters === 1) subject = `Your Darrow Code ${orderedModules[0] ?? "Focused"} Chapter is ready`;
   else subject = `Your Darrow Code Focused Chapters are ready (${orderedModules.join(" · ")})`;
 
-  // In-body "what's inside" label
   const insideLabel = hasCore && chapters === 0
     ? "CORE Report"
     : hasCore && chapters === 6
@@ -93,9 +90,7 @@ export function reportReadyEmail(args: {
         ? `CORE + ${orderedModules.filter((m) => m !== "CORE").join(" · ")}`
         : orderedModules.join(" · ");
 
-  const chipRow = orderedModules.map((m) => `
-    <span style="display:inline-block;border:1px solid #D4AF37;color:#D4AF37;font-family:'Inter',Helvetica,Arial,sans-serif;font-size:10px;letter-spacing:2.5px;text-transform:uppercase;padding:5px 10px;margin:0 4px 6px 0;border-radius:2px">${m}</span>
-  `).join("");
+  const greeting = name ? `Your report is ready, ${name}.` : "Your report is ready.";
 
   return {
     subject,
@@ -104,59 +99,47 @@ export function reportReadyEmail(args: {
       <div style="display:none;max-height:0;overflow:hidden;opacity:0;color:#EFEAE0">Your private Darrow Code reading — ${insideLabel}.</div>
       <div style="max-width:600px;margin:0 auto;background:#F6F4EF">
 
-        <!-- Gold wordmark bar (always visible, no image dependency) -->
-        <div style="background:#0A0F1E;padding:22px 0;text-align:center">
-          <a href="${base}" style="text-decoration:none">
-            <img src="${symbol}" alt="" width="22" height="22" style="display:inline-block;border:0;vertical-align:middle;margin-right:10px;opacity:0.95" />
-            <span style="font-family:Georgia,'Times New Roman',serif;font-size:12px;letter-spacing:6px;color:#D4AF37;text-transform:uppercase;vertical-align:middle">Darrow Code</span>
-          </a>
+        <!-- HEADER — pure CSS, inline base64 symbol -->
+        <div style="background:#0A0F1E;padding:28px 0;text-align:center">
+          <img src="${symbolDataUrl}" alt="" width="40" height="40" style="display:inline-block;border:0;margin:0 auto 10px" />
+          <div style="font-family:'Inter',Helvetica,Arial,sans-serif;font-size:13px;letter-spacing:5px;color:#D4AF37;text-transform:uppercase;font-weight:600">Darrow Code</div>
         </div>
 
-        <!-- Body -->
+        <!-- BODY -->
         <div style="padding:44px 36px 36px">
 
-          <!-- Eyebrow -->
-          <div style="font-family:'Inter',Helvetica,Arial,sans-serif;font-size:11px;letter-spacing:3px;color:#D4AF37;text-transform:uppercase;font-weight:600;margin:0 0 14px">Your report is ready</div>
-
           <!-- Headline -->
-          <h1 style="font-family:Georgia,'Times New Roman',serif;font-weight:400;font-size:28px;line-height:1.25;color:#0A0F1E;margin:0 0 14px">${name ? `${name},&nbsp;your` : "Your"} Darrow Code reading is prepared.</h1>
-
-          <!-- Gold divider -->
-          <div style="width:48px;height:1px;background:#D4AF37;margin:0 0 22px"></div>
+          <h1 style="font-family:Georgia,'Times New Roman',serif;font-weight:400;font-size:28px;line-height:1.25;color:#0A0F1E;margin:0 0 18px">${greeting}</h1>
 
           <!-- Intro -->
-          <p style="font-size:15px;line-height:1.65;color:#3A3528;margin:0 0 24px">Quietly written, individually produced. Open it when you have a few minutes to read carefully.</p>
-
-          <!-- What's inside -->
-          <div style="margin:0 0 28px">
-            <div style="font-family:'Inter',Helvetica,Arial,sans-serif;font-size:10px;letter-spacing:2.5px;color:#7A6F58;text-transform:uppercase;margin:0 0 10px">Included in this report</div>
-            <div>${chipRow}</div>
-          </div>
+          <p style="font-size:15px;line-height:1.65;color:#3A3528;margin:0 0 30px">Quietly written, individually produced. Open it when you have a few minutes to read carefully.</p>
 
           <!-- Primary CTA -->
-          <table role="presentation" cellspacing="0" cellpadding="0" border="0" style="margin:0 0 14px">
+          <table role="presentation" cellspacing="0" cellpadding="0" border="0" style="margin:0 0 36px">
             <tr><td style="background:#0A0F1E;border-radius:2px">
-              <a href="${args.download_url}" style="display:inline-block;color:#D4AF37;text-decoration:none;padding:16px 32px;letter-spacing:3px;font-size:12px;text-transform:uppercase;font-family:'Inter',Helvetica,Arial,sans-serif;font-weight:600">Open your report &rarr;</a>
+              <a href="${args.download_url}" style="display:inline-block;color:#D4AF37;text-decoration:none;padding:16px 32px;letter-spacing:3px;font-size:12px;text-transform:uppercase;font-family:'Inter',Helvetica,Arial,sans-serif;font-weight:600">Open your report</a>
             </td></tr>
           </table>
-          <p style="font-size:12px;color:#7A6F58;margin:0 0 36px">Opens your private PDF · no account required</p>
 
-          <!-- Save for later (muted, secondary) -->
+          <!-- LINKS SECTION -->
           <div style="border-top:1px solid #E0D9C9;padding-top:22px;margin:0 0 26px">
-            <div style="font-family:'Inter',Helvetica,Arial,sans-serif;font-size:10px;letter-spacing:2.5px;color:#7A6F58;text-transform:uppercase;margin:0 0 10px">Save these private links</div>
-            <p style="font-size:12px;line-height:1.6;color:#7A6F58;margin:0 0 8px">Bookmark them — they grant permanent access to this report.</p>
-            <p style="font-size:11px;line-height:1.6;margin:6px 0 4px;color:#7A6F58"><strong style="color:#4A402D">PDF:</strong> <a href="${args.download_url}" style="color:#4A402D;word-break:break-all;text-decoration:underline">${args.download_url}</a></p>
-            <p style="font-size:11px;line-height:1.6;margin:0;color:#7A6F58"><strong style="color:#4A402D">Web:</strong> <a href="${resultUrl}" style="color:#4A402D;word-break:break-all;text-decoration:underline">${resultUrl}</a></p>
+            <div style="font-family:'Inter',Helvetica,Arial,sans-serif;font-size:11px;letter-spacing:2.5px;color:#7A6F58;text-transform:uppercase;margin:0 0 12px">Your private links</div>
+            <p style="font-size:14px;line-height:1.8;margin:0 0 4px">
+              <a href="${args.download_url}" style="color:#D4AF37;text-decoration:none;font-family:'Inter',Helvetica,Arial,sans-serif">Download PDF &rarr;</a>
+            </p>
+            <p style="font-size:14px;line-height:1.8;margin:0 0 12px">
+              <a href="${resultUrl}" style="color:#D4AF37;text-decoration:none;font-family:'Inter',Helvetica,Arial,sans-serif">View your result page &rarr;</a>
+            </p>
+            <p style="font-size:12px;line-height:1.6;color:#7A6F58;margin:0">No account required. These links are yours forever.</p>
           </div>
 
           <!-- Reply signature -->
           <p style="font-size:12px;line-height:1.6;color:#7A6F58;margin:0 0 28px">If anything looks off — just reply to this email.</p>
 
-          <!-- Footer mark -->
+          <!-- FOOTER — text only, no images -->
           <div style="text-align:center;border-top:1px solid #E0D9C9;padding-top:24px">
-            <img src="${symbol}" alt="" width="26" height="26" style="display:inline-block;border:0;opacity:0.85" />
-            <div style="font-family:Georgia,'Times New Roman',serif;font-size:12px;letter-spacing:5px;color:#4A402D;text-transform:uppercase;margin:8px 0 6px">Darrow Code</div>
-            <p style="color:#9A8F76;font-size:11px;margin:6px 0 0;font-style:italic">More than a horoscope. Your private birth code.</p>
+            <div style="font-family:'Inter',Helvetica,Arial,sans-serif;font-size:11px;letter-spacing:5px;color:#9CA3AF;text-transform:uppercase;font-weight:600;margin:0 0 8px">Darrow Code</div>
+            <p style="color:#9CA3AF;font-size:11px;margin:0;font-style:italic;font-family:Georgia,'Times New Roman',serif">More than a horoscope. Your private birth code.</p>
           </div>
 
         </div>
