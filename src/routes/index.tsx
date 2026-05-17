@@ -259,7 +259,7 @@ function LandingPage() {
       </section>
 
       {/* FAQ — paper section */}
-      <section className="flex-1">
+      <section className="flex-1" id="about">
         <div className="max-w-[480px] mx-auto px-4 sm:px-6 pt-4 sm:pt-6 pb-6 sm:pb-8">
           <FaqBlock />
         </div>
