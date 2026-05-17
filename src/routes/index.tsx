@@ -4,6 +4,7 @@ import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { IntakeForm } from "@/components/IntakeForm";
 import { ProductSelector } from "@/components/ProductSelector";
+import { FaqBlock } from "@/components/FaqBlock";
 import { MODULE_CODES, type ModuleCode } from "@/lib/modules";
 
 export const Route = createFileRoute("/")({
@@ -220,6 +221,13 @@ function LandingPage() {
               <IntakeForm chapters={Array.from(selected)} />
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* FAQ — paper section */}
+      <section className="flex-1">
+        <div className="max-w-[480px] mx-auto px-4 sm:px-6 pt-4 sm:pt-6 pb-6 sm:pb-8">
+          <FaqBlock />
         </div>
       </section>
 
