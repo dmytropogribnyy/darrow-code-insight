@@ -63,12 +63,31 @@ export interface BaziPillar {
   pinyin?: string | null;
 }
 
+export interface BaziStemRef {
+  chinese: string;
+  pinyin?: string | null;
+  element?: string | null;
+  polarity?: string | null;
+  name?: string | null;
+}
+
+export interface BaziBranchRef {
+  chinese: string;
+  pinyin?: string | null;
+  element?: string | null;
+  polarity?: string | null;
+  zodiac?: string | null;
+  name?: string | null;
+}
+
 export interface BaziLuckCycle {
   start_year: number;
   end_year: number;
-  stem: string;
-  branch: string;
-  pinyin?: string | null;
+  start_age?: number | null;
+  end_age?: number | null;
+  stem: BaziStemRef;
+  branch: BaziBranchRef;
+  pillar_label?: string | null;
 }
 
 export interface BaziBlock {

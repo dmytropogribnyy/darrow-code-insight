@@ -60,9 +60,11 @@ export const Route = createFileRoute("/api/public/debug/astro-probe")({
           const provider = await getAstroProvider();
           const data = await provider.computeNatal(input);
           const interpretationLeak = deepHasInterpretation(data);
+          const baziSize = JSON.stringify(data.bazi ?? {}).length;
           return Response.json({
             ok: true,
             interpretation_leak: interpretationLeak,
+            bazi_size_bytes: baziSize,
             data,
           });
         } catch (e: any) {
