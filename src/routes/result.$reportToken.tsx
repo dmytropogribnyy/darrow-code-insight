@@ -402,8 +402,9 @@ function ResultPage() {
                   <ReportCard
                     key={r.report_token}
                     row={r}
+                    onOpen={() => handleOpen(r.report_token)}
                     onDownload={() => handleDownload(r.report_token)}
-                    isDownloading={downloadingToken === r.report_token}
+                    busyAction={busyAction?.token === r.report_token ? busyAction.action : null}
                     onRefresh={refreshReports}
                   />
                 ))}
