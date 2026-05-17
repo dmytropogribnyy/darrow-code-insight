@@ -10,6 +10,45 @@ type Faq = { question: string; answer: ReactNode };
 
 const faqs: Faq[] = [
   {
+    question: "What makes Darrow Code different?",
+    answer: (
+      <div className="space-y-2.5">
+        <p>Darrow Code is not a generic horoscope.</p>
+        <p>
+          It is a premium AI-powered synthesis built from your birth data and,
+          if you provide it, your full name for deeper numerology.
+        </p>
+        <p>
+          The Darrow Code Method blends Western astrology, Chinese BaZi / Four
+          Pillars, numerology, timing cycles and pattern psychology into one
+          clear personal reading — so you receive an interpretation of your
+          full pattern, not a list of isolated placements.
+        </p>
+      </div>
+    ),
+  },
+  {
+    question: "What will I find inside my report?",
+    answer: (
+      <div className="space-y-2.5">
+        <p>
+          You receive a polished private PDF report with your personal pattern
+          briefing: your core architecture, timing theme, practical protocols,
+          warning signals, before/after perspective and proof tags showing the
+          real astrology, BaZi and numerology data behind the interpretation.
+        </p>
+        <p>
+          You can start with CORE, choose a focused chapter like LOVE or MONEY,
+          or get CORE Complete with all chapters in one reading.
+        </p>
+        <p>
+          Tap <strong>“See a sample”</strong> at the top of the page to preview
+          the format before buying.
+        </p>
+      </div>
+    ),
+  },
+  {
     question: "How long does report generation take?",
     answer:
       "Most reports are ready within 2–4 minutes. Larger bundles (like CORE Complete with all 6 focused chapters) may take up to 6–8 minutes since each chapter is generated individually and then compiled into a single PDF.",
