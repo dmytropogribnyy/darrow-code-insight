@@ -1,6 +1,10 @@
 import type { DarrowReport, DarrowModule } from "@/lib/ai/schema";
 // Inline the brand symbol as a base64 data URL so PDF renderers (APITemplate.io)
-// never have to fetch it from an external host. Previously we relied on
+// never have to fetch it from an external host. The PNG asset itself is kept
+// small (256x256, ~6KB) to keep total HTML well under APITemplate's payload
+// tolerance; oversized base64 data URLs in the body+CSS reliably trigger the
+// generic 400 "Internal error unable to generate PDF" from their renderer.
+// Previously we relied on
 // `${APP_BASE_URL}/brand/darrow-symbol-*.png`, which broke whenever the
 // configured base URL did not actually serve `/public` assets (e.g. preview
 // builds, unpublished domains), producing broken-image placeholders on the
