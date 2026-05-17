@@ -19,6 +19,7 @@ type FormState = {
   birth_time: string;
   birth_city: string;
   full_name_for_numerology: string;
+  bazi_sex: "" | "M" | "F";
 };
 
 const initial: FormState = {
@@ -28,6 +29,7 @@ const initial: FormState = {
   birth_time: "",
   birth_city: "",
   full_name_for_numerology: "",
+  bazi_sex: "",
 };
 
 export function IntakeForm({
@@ -70,6 +72,10 @@ export function IntakeForm({
       toast.error("Please complete the required fields.");
       return;
     }
+    if (!form.bazi_sex) {
+      toast.error("Please select birth sex (used only for BaZi calculation).");
+      return;
+    }
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) {
       toast.error("Please enter a valid email.");
       return;
@@ -86,6 +92,7 @@ export function IntakeForm({
           birth_time: form.birth_time || "",
           birth_city: form.birth_city.trim(),
           full_name_for_numerology: form.full_name_for_numerology || "",
+          bazi_sex: form.bazi_sex as "M" | "F",
           origin: window.location.origin,
           environment: getStripeEnvironment(),
           resolved_place: resolvedPlace

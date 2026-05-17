@@ -209,8 +209,8 @@ export const createCoreCheckout = createServerFn({ method: "POST" })
     }).parse,
   )
   .handler(async ({ data }) => {
-    // Reuse the path above with no chapters selected.
-    return createCheckout({ data: { ...data, modules: [] } });
+    // Reuse the path above with no chapters selected. Legacy callers default to "M" for bazi sex.
+    return createCheckout({ data: { ...data, modules: [], bazi_sex: "M" } });
   });
 
 // ============================================================
