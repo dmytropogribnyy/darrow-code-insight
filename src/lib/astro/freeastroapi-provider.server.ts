@@ -497,11 +497,19 @@ export class FreeAstroAPIProvider implements AstroProvider {
   async computeNatal(input: NatalInput): Promise<DarrowChartData> {
     const hasHouses = !!input.birth_time_known;
 
-    // Natal is critical; others graceful.
+    // FreeAstroAPI free tier is 1 req/sec and triggers abuse penalties on bursts.
+    // Stagger the 4 calls ~1.1s apart. Natal is critical; others graceful.
+    const RATE_GAP_MS = 1100;
     const natalP = fetchNatal(this.apiKey, input);
-    const transitsP = fetchTransits(this.apiKey, input).catch((e) => ({ __error: String(e?.message ?? e) }));
-    const baziP = fetchBazi(this.apiKey, input).catch((e) => ({ __error: String(e?.message ?? e) }));
-    const solarP = fetchSolarReturn(this.apiKey, input).catch((e) => ({ __error: String(e?.message ?? e) }));
+    const transitsP = sleep(RATE_GAP_MS).then(() =>
+      fetchTransits(this.apiKey, input).catch((e) => ({ __error: String(e?.message ?? e) })),
+    );
+    const baziP = sleep(RATE_GAP_MS * 2).then(() =>
+      fetchBazi(this.apiKey, input).catch((e) => ({ __error: String(e?.message ?? e) })),
+    );
+    const solarP = sleep(RATE_GAP_MS * 3).then(() =>
+      fetchSolarReturn(this.apiKey, input).catch((e) => ({ __error: String(e?.message ?? e) })),
+    );
 
     let natalRaw: any;
     try {
