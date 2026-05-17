@@ -1,4 +1,5 @@
 // Resend email gateway client (via Lovable connector gateway).
+import symbolDataUrl from "@/assets/darrow-symbol-small.png?inline";
 
 const GATEWAY_URL = "https://connector-gateway.lovable.dev/resend";
 
