@@ -200,8 +200,9 @@ export function ProductSelector({ selected, onToggle, onSelectAll, onClear, lock
           );
         })}
       </div>
+      </div>
 
-      {/* Order summary */}
+      {/* Order summary — always full opacity, even when locked */}
       <div
         className="rounded-[8px] px-4 py-3.5 mb-1 border-2"
         style={{
