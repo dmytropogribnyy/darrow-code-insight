@@ -262,31 +262,49 @@ function ResultPage() {
   const selectedArr = Array.from(selected) as ModuleCode[];
   const quote = selectedArr.length > 0 ? priceForModules(selectedArr, false) : null;
 
-  async function handleDownload(token: string) {
-    setDownloadingToken(token);
-    // Open a blank tab synchronously so iOS Safari doesn't block the popup
-    // after the awaited server call resolves.
-    const isIOS =
-      typeof navigator !== "undefined" &&
-      (/iPad|iPhone|iPod/.test(navigator.userAgent) ||
-        (navigator.platform === "MacIntel" && (navigator as any).maxTouchPoints > 1));
-    const win = !isIOS ? window.open("about:blank", "_blank") : null;
+  const isIOS =
+    typeof navigator !== "undefined" &&
+    (/iPad|iPhone|iPod/.test(navigator.userAgent) ||
+      (navigator.platform === "MacIntel" && (navigator as any).maxTouchPoints > 1));
+
+  async function handleOpen(token: string) {
+    // Open blank tab SYNCHRONOUSLY in the click handler so Safari (incl. iOS)
+    // doesn't block the popup after the awaited server call resolves.
+    const win = window.open("about:blank", "_blank");
+    setBusyAction({ token, action: "open" });
     try {
-      const { url } = await getReportDownloadUrl({ data: { report_token: token } });
-      if (isIOS) {
-        // Safari on iOS refuses to render cross-origin PDFs in a programmatically
-        // opened tab; navigate the current tab instead.
-        window.location.href = url;
-      } else if (win) {
-        win.location.href = url;
-      } else {
-        window.open(url, "_blank", "noopener");
-      }
+      const { inlineUrl } = await getReportDownloadUrl({ data: { report_token: token } });
+      if (win) win.location.href = inlineUrl;
+      else window.location.href = inlineUrl;
     } catch (e: any) {
       if (win) win.close();
+      toast.error(e?.message ?? "Could not open report.");
+    } finally {
+      setBusyAction(null);
+    }
+  }
+
+  async function handleDownload(token: string) {
+    setBusyAction({ token, action: "download" });
+    try {
+      const { downloadUrl } = await getReportDownloadUrl({ data: { report_token: token } });
+      if (isIOS) {
+        // iOS Safari shows the native Download sheet when the current tab
+        // navigates to a URL with Content-Disposition: attachment.
+        window.location.href = downloadUrl;
+      } else {
+        const a = document.createElement("a");
+        a.href = downloadUrl;
+        a.download = "darrow-code-report.pdf";
+        a.rel = "noopener";
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+      }
+    } catch (e: any) {
       toast.error(e?.message ?? "Could not download report.");
     } finally {
-      setDownloadingToken(null);
+      setBusyAction(null);
     }
   }
 
