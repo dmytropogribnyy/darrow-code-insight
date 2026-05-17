@@ -52,10 +52,6 @@ async function attemptRender(html: string, apiKey: string): Promise<{ pdf?: Uint
           margin_bottom: "22mm",
           margin_left: "20mm",
           margin_right: "20mm",
-          displayHeaderFooter: "true",
-          header: "<span></span>",
-          footer:
-            "<div style=\"font-family:'Cormorant Garamond',Georgia,serif;font-size:9pt;color:#D4AF37;width:100%;padding:0 20mm;letter-spacing:1.5pt;text-align:right;\"><span class=\"pageNumber\"></span></div>",
         },
       }),
     });
