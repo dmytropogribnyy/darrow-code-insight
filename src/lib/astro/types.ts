@@ -162,6 +162,8 @@ export interface DarrowChartData {
     generated_at: string;
     timezone_used: string;
     birth_time_source: "exact" | "noon_fallback" | "unknown";
+    endpoint_timing_ms?: Record<string, number>;
+    endpoint_errors?: Record<string, string>;
   };
   natal: {
     sun: PlanetPosition;
