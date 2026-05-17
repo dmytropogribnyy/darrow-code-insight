@@ -105,12 +105,22 @@ async function postJson(apiKey: string, path: string, body: any): Promise<any> {
   throw lastErr ?? new Error(`${path} failed`);
 }
 
-function stripInterpretation<T extends Record<string, any>>(obj: T): T {
-  if (!obj || typeof obj !== "object") return obj;
-  const clone: any = Array.isArray(obj) ? [...obj] : { ...obj };
-  delete clone.interpretation;
-  delete clone.interpretations;
-  return clone;
+function stripInterpretation<T>(obj: T): T {
+  // Recursively delete `interpretation` / `interpretations` keys anywhere in
+  // the tree. FreeAstroAPI nests them inside bazi.interactions[], bazi.professional, etc.
+  if (obj === null || obj === undefined) return obj;
+  if (Array.isArray(obj)) {
+    return obj.map((v) => stripInterpretation(v)) as unknown as T;
+  }
+  if (typeof obj === "object") {
+    const out: Record<string, unknown> = {};
+    for (const [k, v] of Object.entries(obj as Record<string, unknown>)) {
+      if (k === "interpretation" || k === "interpretations") continue;
+      out[k] = stripInterpretation(v);
+    }
+    return out as T;
+  }
+  return obj;
 }
 
 function normalizePlanet(p: any): PlanetPosition {
@@ -134,9 +144,15 @@ function normalizeHouse(h: any): HouseCusp {
 }
 
 function normalizeAspect(a: any): AspectRow & { high_priority?: boolean } {
+  // FreeAstroAPI uses different field names per endpoint (a/b, from/to,
+  // planet1/planet2, transit_planet/natal_planet, p1/p2). Try them all.
+  const aName =
+    a?.a ?? a?.from ?? a?.planet1 ?? a?.transit_planet ?? a?.p1 ?? a?.first ?? "";
+  const bName =
+    a?.b ?? a?.to ?? a?.planet2 ?? a?.natal_planet ?? a?.p2 ?? a?.second ?? "";
   return {
-    a: String(a?.a ?? a?.from ?? a?.planet1 ?? ""),
-    b: String(a?.b ?? a?.to ?? a?.planet2 ?? ""),
+    a: String(aName),
+    b: String(bName),
     type: String(a?.type ?? a?.aspect ?? "").toLowerCase(),
     orb: typeof a?.orb === "number" ? a.orb : Number(a?.orb ?? 0),
     is_major: a?.is_major === undefined ? undefined : !!a.is_major,
@@ -491,11 +507,19 @@ export class FreeAstroAPIProvider implements AstroProvider {
   async computeNatal(input: NatalInput): Promise<DarrowChartData> {
     const hasHouses = !!input.birth_time_known;
 
-    // Natal is critical; others graceful.
+    // FreeAstroAPI free tier is 1 req/sec and triggers abuse penalties on bursts.
+    // Stagger the 4 calls ~1.1s apart. Natal is critical; others graceful.
+    const RATE_GAP_MS = 1100;
     const natalP = fetchNatal(this.apiKey, input);
-    const transitsP = fetchTransits(this.apiKey, input).catch((e) => ({ __error: String(e?.message ?? e) }));
-    const baziP = fetchBazi(this.apiKey, input).catch((e) => ({ __error: String(e?.message ?? e) }));
-    const solarP = fetchSolarReturn(this.apiKey, input).catch((e) => ({ __error: String(e?.message ?? e) }));
+    const transitsP = sleep(RATE_GAP_MS).then(() =>
+      fetchTransits(this.apiKey, input).catch((e) => ({ __error: String(e?.message ?? e) })),
+    );
+    const baziP = sleep(RATE_GAP_MS * 2).then(() =>
+      fetchBazi(this.apiKey, input).catch((e) => ({ __error: String(e?.message ?? e) })),
+    );
+    const solarP = sleep(RATE_GAP_MS * 3).then(() =>
+      fetchSolarReturn(this.apiKey, input).catch((e) => ({ __error: String(e?.message ?? e) })),
+    );
 
     let natalRaw: any;
     try {
