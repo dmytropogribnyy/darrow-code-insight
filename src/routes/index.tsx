@@ -248,7 +248,8 @@ function LandingPage() {
             />
             <div className="intake-card">
               <IntakeForm
-                chapters={Array.from(selected)}
+                includesCore={selected.has("CORE")}
+                chapters={Array.from(selected).filter((c): c is ModuleCode => c !== "CORE")}
                 onCheckoutOpen={() => setCheckoutOpen(true)}
                 resetSignal={resetSignal}
               />
