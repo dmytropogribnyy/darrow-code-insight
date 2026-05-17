@@ -8,7 +8,73 @@ import {
 
 type Faq = { question: string; answer: ReactNode };
 
-const faqs: Faq[] = [
+function SectionLabel({ text }: { text: string }) {
+  return (
+    <div className="flex items-center justify-center gap-3 mb-5">
+      <span
+        className="h-px w-10 sm:w-12"
+        style={{ backgroundColor: "rgba(212,175,55,0.45)" }}
+      />
+      <p
+        className="text-[11px] sm:text-[12px] tracking-[0.18em] sm:tracking-[0.2em] uppercase font-semibold"
+        style={{ color: "#D4AF37" }}
+      >
+        {text}
+      </p>
+      <span
+        className="h-px w-10 sm:w-12"
+        style={{ backgroundColor: "rgba(212,175,55,0.45)" }}
+      />
+    </div>
+  );
+}
+
+function FaqAccordion({
+  faqs,
+  defaultOpenIndex,
+  valuePrefix,
+}: {
+  faqs: Faq[];
+  defaultOpenIndex?: number;
+  valuePrefix: string;
+}) {
+  return (
+    <Accordion
+      type="single"
+      collapsible
+      className="w-full"
+      defaultValue={
+        defaultOpenIndex !== undefined
+          ? `${valuePrefix}-${defaultOpenIndex}`
+          : undefined
+      }
+    >
+      {faqs.map((faq, i) => (
+        <AccordionItem
+          key={i}
+          value={`${valuePrefix}-${i}`}
+          className="border-b"
+          style={{ borderColor: "rgba(212,175,55,0.18)" }}
+        >
+          <AccordionTrigger
+            className="text-[13.5px] sm:text-[14.5px] font-semibold py-4 hover:no-underline"
+            style={{ color: "#1a1a2e" }}
+          >
+            {faq.question}
+          </AccordionTrigger>
+          <AccordionContent
+            className="text-[13px] sm:text-[14px] leading-[1.6] pb-4"
+            style={{ color: "#4A402D" }}
+          >
+            {faq.answer}
+          </AccordionContent>
+        </AccordionItem>
+      ))}
+    </Accordion>
+  );
+}
+
+const aboutFaqs: Faq[] = [
   {
     question: "What makes Darrow Code different?",
     answer: (
@@ -28,18 +94,47 @@ const faqs: Faq[] = [
     ),
   },
   {
-    question: "What will I find inside my report?",
+    question: "What is the CORE Report?",
     answer: (
       <div className="space-y-2.5">
         <p>
-          You receive a polished private PDF report with your personal pattern
-          briefing: your core architecture, timing theme, practical protocols,
-          warning signals, before/after perspective and proof tags showing the
-          real astrology, BaZi and numerology data behind the interpretation.
+          The CORE Report is your main personal reading. It is built from your
+          birth data and gives you a clear overview of your personal pattern —
+          how you think, react, choose and move through change.
         </p>
         <p>
-          You can start with CORE, choose a focused chapter like LOVE or MONEY,
-          or get CORE Complete with all chapters in one reading.
+          Think of it as the foundation that everything else builds on.
+        </p>
+      </div>
+    ),
+  },
+  {
+    question: "What are the focused chapters?",
+    answer: (
+      <div className="space-y-2.5">
+        <p>
+          Focused chapters go deeper into specific areas of life. You can
+          choose from LOVE, MONEY, BODY, YEAR, STYLE or PLACE.
+        </p>
+        <p>
+          Each chapter is its own focused reading that explores that area
+          through your birth pattern.
+        </p>
+      </div>
+    ),
+  },
+  {
+    question: "What will I receive?",
+    answer: (
+      <div className="space-y-2.5">
+        <p>
+          You receive a polished private PDF report delivered by email. It
+          contains your personal pattern reading — a clear interpretation of
+          your birth data written in plain language.
+        </p>
+        <p>
+          You can start with the CORE Report, add one or more focused
+          chapters, or get CORE Complete with everything in one reading.
         </p>
         <p>
           Tap <strong>“See a sample”</strong> at the top of the page to preview
@@ -48,6 +143,9 @@ const faqs: Faq[] = [
       </div>
     ),
   },
+];
+
+const commonFaqs: Faq[] = [
   {
     question: "How long does report generation take?",
     answer:
@@ -120,47 +218,20 @@ const faqs: Faq[] = [
 
 export function FaqBlock() {
   return (
-    <div className="w-full">
-      <div className="flex items-center justify-center gap-3 mb-5">
-        <span
-          className="h-px w-10 sm:w-12"
-          style={{ backgroundColor: "rgba(212,175,55,0.45)" }}
-        />
-        <p
-          className="text-[11px] sm:text-[12px] tracking-[0.18em] sm:tracking-[0.2em] uppercase font-semibold"
-          style={{ color: "#D4AF37" }}
-        >
-          Common questions
-        </p>
-        <span
-          className="h-px w-10 sm:w-12"
-          style={{ backgroundColor: "rgba(212,175,55,0.45)" }}
+    <div className="w-full space-y-8">
+      <div>
+        <SectionLabel text="About Darrow Code" />
+        <FaqAccordion
+          faqs={aboutFaqs}
+          defaultOpenIndex={0}
+          valuePrefix="about"
         />
       </div>
 
-      <Accordion type="single" collapsible className="w-full">
-        {faqs.map((faq, i) => (
-          <AccordionItem
-            key={i}
-            value={`item-${i}`}
-            className="border-b"
-            style={{ borderColor: "rgba(212,175,55,0.18)" }}
-          >
-            <AccordionTrigger
-              className="text-[13.5px] sm:text-[14.5px] font-semibold py-4 hover:no-underline"
-              style={{ color: "#1a1a2e" }}
-            >
-              {faq.question}
-            </AccordionTrigger>
-            <AccordionContent
-              className="text-[13px] sm:text-[14px] leading-[1.6] pb-4"
-              style={{ color: "#4A402D" }}
-            >
-              {faq.answer}
-            </AccordionContent>
-          </AccordionItem>
-        ))}
-      </Accordion>
+      <div>
+        <SectionLabel text="Common questions" />
+        <FaqAccordion faqs={commonFaqs} valuePrefix="common" />
+      </div>
     </div>
   );
 }
