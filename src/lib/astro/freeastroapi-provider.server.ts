@@ -306,15 +306,16 @@ async function fetchTransits(
 // ============================================================
 // BAZI — graceful
 // ============================================================
-async function fetchBazi(apiKey: string, input: NatalInput): Promise<any> {
-  // Never default sex. Without explicit M/F, BaZi luck-cycle direction would be wrong.
-  // Throwing here causes the graceful catch to set bazi.available=false with this reason.
+async function fetchBazi(
+  apiKey: string,
+  input: NatalInput,
+  diag: EndpointDiag,
+): Promise<any> {
   if (input.bazi_sex !== "M" && input.bazi_sex !== "F") {
     throw new Error("missing_bazi_sex");
   }
   const { y, m, d } = parseDate(input.date_of_birth);
   const tm = parseTime(input.birth_time ?? null);
-  // API requires hour/minute. If unknown, send 12:00 as placeholder and downgrade hour pillar.
   const hour = input.birth_time_known && tm ? tm.h : 12;
   const minute = input.birth_time_known && tm ? tm.min : 0;
   const body = {
@@ -334,7 +335,10 @@ async function fetchBazi(apiKey: string, input: NatalInput): Promise<any> {
     include_professional: true,
     interpretation: { enable: false },
   };
-  return postJson(apiKey, "/api/v1/chinese/bazi", body);
+  return postJson(apiKey, "/api/v1/chinese/bazi", body, {
+    maxAttempts: GRACEFUL_MAX_ATTEMPTS,
+    label: "bazi",
+  }, diag);
 }
 
 // ============================================================
