@@ -1,0 +1,1 @@
+ALTER TABLE public.intakes ADD COLUMN IF NOT EXISTS bazi_sex text CHECK (bazi_sex IN ('M','F'));

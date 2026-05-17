@@ -140,6 +140,7 @@ export type Database = {
       }
       intakes: {
         Row: {
+          bazi_sex: string | null
           birth_city: string
           birth_country: string | null
           birth_time: string | null
@@ -159,6 +160,7 @@ export type Database = {
           timezone_source: string | null
         }
         Insert: {
+          bazi_sex?: string | null
           birth_city: string
           birth_country?: string | null
           birth_time?: string | null
@@ -178,6 +180,7 @@ export type Database = {
           timezone_source?: string | null
         }
         Update: {
+          bazi_sex?: string | null
           birth_city?: string
           birth_country?: string | null
           birth_time?: string | null
