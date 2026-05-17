@@ -105,12 +105,22 @@ async function postJson(apiKey: string, path: string, body: any): Promise<any> {
   throw lastErr ?? new Error(`${path} failed`);
 }
 
-function stripInterpretation<T extends Record<string, any>>(obj: T): T {
-  if (!obj || typeof obj !== "object") return obj;
-  const clone: any = Array.isArray(obj) ? [...obj] : { ...obj };
-  delete clone.interpretation;
-  delete clone.interpretations;
-  return clone;
+function stripInterpretation<T>(obj: T): T {
+  // Recursively delete `interpretation` / `interpretations` keys anywhere in
+  // the tree. FreeAstroAPI nests them inside bazi.interactions[], bazi.professional, etc.
+  if (obj === null || obj === undefined) return obj;
+  if (Array.isArray(obj)) {
+    return obj.map((v) => stripInterpretation(v)) as unknown as T;
+  }
+  if (typeof obj === "object") {
+    const out: Record<string, unknown> = {};
+    for (const [k, v] of Object.entries(obj as Record<string, unknown>)) {
+      if (k === "interpretation" || k === "interpretations") continue;
+      out[k] = stripInterpretation(v);
+    }
+    return out as T;
+  }
+  return obj;
 }
 
 function normalizePlanet(p: any): PlanetPosition {
