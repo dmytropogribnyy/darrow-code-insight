@@ -71,6 +71,10 @@ export function IntakeForm({
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!hasSelection) {
+      toast.error("Please choose CORE or at least one focused chapter.");
+      return;
+    }
     if (!form.first_name || !form.email || !form.date_of_birth || !form.birth_city) {
       toast.error("Please complete the required fields.");
       return;
@@ -89,6 +93,7 @@ export function IntakeForm({
       const res = await createCheckout({
         data: {
           modules: chapters,
+          includes_core: includesCore,
           first_name: form.first_name.trim(),
           email: form.email.trim(),
           date_of_birth: form.date_of_birth,
@@ -114,7 +119,6 @@ export function IntakeForm({
       onCheckoutOpen?.();
     } catch (err: any) {
       const msg = err?.message ?? "Could not start checkout.";
-      // If geocoding failed, surface as inline field error too.
       if (/select your birth city/i.test(msg)) setPlaceError(msg);
       toast.error(msg);
       setSubmitting(false);
