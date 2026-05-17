@@ -57,16 +57,18 @@ function FaqAccordion({
           style={{ borderColor: "rgba(212,175,55,0.18)" }}
         >
           <AccordionTrigger
-            className="text-[13.5px] sm:text-[14.5px] font-semibold py-4 hover:no-underline"
+            className="font-sans text-[14px] sm:text-[15px] font-semibold py-4 hover:no-underline"
             style={{ color: "#1a1a2e" }}
           >
             {faq.question}
           </AccordionTrigger>
           <AccordionContent
-            className="text-[13px] sm:text-[14px] leading-[1.6] pb-4"
-            style={{ color: "#4A402D" }}
+            className="font-sans text-[13.5px] sm:text-[14.5px] leading-[1.65] pb-4"
+            style={{ color: "#2E2820", fontFamily: "var(--font-sans)" }}
           >
-            {faq.answer}
+            <div className="[&_p]:font-sans [&_li]:font-sans [&_strong]:font-semibold">
+              {faq.answer}
+            </div>
           </AccordionContent>
         </AccordionItem>
       ))}
