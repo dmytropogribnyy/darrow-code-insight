@@ -19,9 +19,12 @@ export const getReportDownloadUrl = createServerFn({ method: "POST" })
     if (report.generation_status !== "complete" || !report.pdf_url) {
       throw new Error("Report is still being generated");
     }
+    // Force Content-Disposition: attachment so Safari iOS shows a proper
+    // download/open sheet (otherwise inline-PDF in Safari shows only the
+    // first page as a cover preview with no scroll).
     const { data: signed, error } = await sb.storage
       .from("reports")
-      .createSignedUrl(report.pdf_url, 300);
+      .createSignedUrl(report.pdf_url, 300, { download: "darrow-code-report.pdf" });
     if (error || !signed) throw new Error("Could not create download link");
     return { url: signed.signedUrl as string };
   });
