@@ -769,9 +769,184 @@ function buildSolarReturnBlock(raw: any, year: number): SolarReturnBlock {
   };
 }
 
-// ============================================================
-// Provider class
-// ============================================================
+function buildMoonPhaseBlock(raw: any): MoonPhaseBlock {
+  const cleaned = stripInterpretation(raw ?? {}) as any;
+  const phase = cleaned.phase ?? cleaned.moon_phase ?? null;
+  const zodiac = cleaned.zodiac ?? null;
+  const special = cleaned.special_moon ?? cleaned.special ?? null;
+  const eclipse = cleaned.eclipse ?? null;
+  const tradMoon = cleaned.traditional_moon ?? cleaned.traditional ?? null;
+  const forecast = cleaned.forecast ?? null;
+  return {
+    available: true,
+    timestamp: cleaned.timestamp ?? cleaned.date ?? undefined,
+    phase: phase
+      ? {
+          name: phase.name ?? phase.phase_name ?? undefined,
+          illumination:
+            typeof phase.illumination === "number"
+              ? phase.illumination
+              : typeof phase.illumination_percent === "number"
+                ? phase.illumination_percent
+                : undefined,
+          age_days:
+            typeof phase.age_days === "number"
+              ? phase.age_days
+              : typeof phase.age === "number"
+                ? phase.age
+                : undefined,
+          phase_angle_deg:
+            typeof phase.phase_angle_deg === "number"
+              ? phase.phase_angle_deg
+              : typeof phase.phase_angle === "number"
+                ? phase.phase_angle
+                : undefined,
+          is_waxing:
+            typeof phase.is_waxing === "boolean" ? phase.is_waxing : undefined,
+        }
+      : undefined,
+    zodiac: zodiac
+      ? {
+          sign: zodiac.sign ? normalizeSign(zodiac.sign) : undefined,
+          degree:
+            typeof zodiac.degree === "number" ? zodiac.degree : undefined,
+          zodiac_type: zodiac.zodiac_type ?? zodiac.type ?? undefined,
+        }
+      : undefined,
+    next_phases: cleaned.next_phases ?? undefined,
+    special_moon: special
+      ? {
+          labels: Array.isArray(special.labels) ? special.labels : undefined,
+          is_supermoon:
+            typeof special.is_supermoon === "boolean" ? special.is_supermoon : undefined,
+          is_blue_moon:
+            typeof special.is_blue_moon === "boolean" ? special.is_blue_moon : undefined,
+          is_harvest_moon:
+            typeof special.is_harvest_moon === "boolean" ? special.is_harvest_moon : undefined,
+          is_hunter_moon:
+            typeof special.is_hunter_moon === "boolean" ? special.is_hunter_moon : undefined,
+        }
+      : undefined,
+    eclipse: eclipse
+      ? {
+          is_eclipse:
+            typeof eclipse.is_eclipse === "boolean" ? eclipse.is_eclipse : undefined,
+          is_blood_moon:
+            typeof eclipse.is_blood_moon === "boolean" ? eclipse.is_blood_moon : undefined,
+          type: eclipse.type ?? undefined,
+          days_from_query:
+            typeof eclipse.days_from_query === "number"
+              ? eclipse.days_from_query
+              : undefined,
+        }
+      : undefined,
+    traditional_moon: tradMoon
+      ? {
+          name: tradMoon.name ?? undefined,
+          month: tradMoon.month ?? undefined,
+          is_current_full_moon:
+            typeof tradMoon.is_current_full_moon === "boolean"
+              ? tradMoon.is_current_full_moon
+              : undefined,
+        }
+      : undefined,
+    forecast: forecast
+      ? {
+          days_until_full_moon:
+            typeof forecast.days_until_full_moon === "number"
+              ? forecast.days_until_full_moon
+              : undefined,
+          days_until_new_moon:
+            typeof forecast.days_until_new_moon === "number"
+              ? forecast.days_until_new_moon
+              : undefined,
+          next_special_moon: forecast.next_special_moon ?? undefined,
+          next_eclipse: forecast.next_eclipse ?? undefined,
+        }
+      : undefined,
+  };
+}
+
+// Strip provider prose recursively; keep only compact structured fields.
+function stripBaziFlowProse<T>(obj: T): T {
+  if (obj === null || obj === undefined) return obj;
+  if (Array.isArray(obj)) return obj.map((v) => stripBaziFlowProse(v)) as unknown as T;
+  if (typeof obj === "object") {
+    const drop = new Set([
+      "interpretation",
+      "interpretations",
+      "rationale",
+      "advice",
+      "summary_text",
+      "description",
+      "long_description",
+      "explanation",
+      "narrative",
+      "ai_summary",
+    ]);
+    const out: Record<string, unknown> = {};
+    for (const [k, v] of Object.entries(obj as Record<string, unknown>)) {
+      if (drop.has(k)) continue;
+      out[k] = stripBaziFlowProse(v);
+    }
+    return out as T;
+  }
+  return obj;
+}
+
+function buildBaziFlowBlock(raw: any, birthTimeKnown: boolean): BaziFlowBlock {
+  const cleaned = stripBaziFlowProse(raw ?? {}) as any;
+  const annualRaw =
+    cleaned.annual_pillar ?? cleaned.year_pillar ?? cleaned.annual ?? null;
+  const annual_pillar = annualRaw
+    ? {
+        year:
+          typeof annualRaw.year === "number"
+            ? annualRaw.year
+            : Number(annualRaw.year ?? cleaned.target_year),
+        gan_zhi: annualRaw.gan_zhi ?? annualRaw.pillar ?? undefined,
+        gan: annualRaw.gan ?? annualRaw.stem ?? undefined,
+        zhi: annualRaw.zhi ?? annualRaw.branch ?? undefined,
+        gan_pinyin: annualRaw.gan_pinyin ?? undefined,
+        zhi_pinyin: annualRaw.zhi_pinyin ?? undefined,
+        ten_god: annualRaw.ten_god ?? undefined,
+      }
+    : undefined;
+
+  const monthlyRaw: any[] = Array.isArray(cleaned.monthly_pillars)
+    ? cleaned.monthly_pillars
+    : Array.isArray(cleaned.months)
+      ? cleaned.months
+      : [];
+  const monthly_pillars: BaziFlowMonthlyPillar[] = monthlyRaw.map((m: any, i: number) => ({
+    index: typeof m.index === "number" ? m.index : i + 1,
+    name: m.name ?? m.label ?? undefined,
+    gan_zhi: m.gan_zhi ?? m.pillar ?? undefined,
+    gan: m.gan ?? m.stem ?? undefined,
+    zhi: m.zhi ?? m.branch ?? undefined,
+    ten_god: m.ten_god ?? undefined,
+    interactions: Array.isArray(m.interactions) ? m.interactions : undefined,
+    stars: Array.isArray(m.stars) ? m.stars : undefined,
+  }));
+
+  return {
+    available: true,
+    target_year:
+      typeof cleaned.target_year === "number"
+        ? cleaned.target_year
+        : undefined,
+    target_year_end:
+      typeof cleaned.target_year_end === "number"
+        ? cleaned.target_year_end
+        : undefined,
+    annual_pillar,
+    monthly_pillars,
+    interactions: Array.isArray(cleaned.interactions) ? cleaned.interactions : undefined,
+    stars: Array.isArray(cleaned.stars) ? cleaned.stars : undefined,
+    time_confidence: birthTimeKnown ? "exact" : "reduced",
+  };
+}
+
 export class FreeAstroAPIProvider implements AstroProvider {
   name = "freeastroapi";
   version = "freeastroapi-docs-2026-05-17";
