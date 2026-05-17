@@ -285,7 +285,7 @@ export function renderReportHtmlSafe(report: DarrowReport, opts: { assetsBaseUrl
     safeSection("Before / After", safePara(core.before_after)),
     safeSection("Next Step", safePara(core.next) + safePara(report.closing.executive_summary)),
   );
-  sections.push(`<section style="${safePageStyle}background:#0A0F1E;color:#E5E7EB;text-align:center;padding-top:88mm;min-height:297mm;"><div style="${safeBrandStyle};color:#D4AF37;">Darrow Code</div><p style="font-family:Georgia,'Times New Roman',serif;font-style:italic;font-size:15pt;color:#9CA3AF;margin:0;">More than a horoscope. Your private birth code.</p></section>`);
+  sections.push(`<section style="${darkBleed}background:#0A0F1E;color:#E5E7EB;padding-top:80mm;">${goldMark}<div style="font-family:Arial,Helvetica,sans-serif;color:#D4AF37;font-size:11pt;letter-spacing:6pt;text-transform:uppercase;margin-bottom:28pt;-webkit-print-color-adjust:exact;print-color-adjust:exact;">Darrow Code</div><p style="font-family:Georgia,'Times New Roman',serif;font-style:italic;font-size:15pt;color:#E5E7EB;margin:0;">More than a horoscope. Your private birth code.</p></section>`);
   return `<!doctype html><html lang="en"><head><meta charset="utf-8"/><title>Darrow Code — Prepared for ${escape(clientName)}</title></head><body style="margin:0;background:#F6F4EF;padding:22mm 20mm;font-family:Arial,Helvetica,sans-serif;">${sections.join("\n")}</body></html>`;
 }
 
