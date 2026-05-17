@@ -151,7 +151,7 @@ async function ensureGenerationJob(order_id: string, intake_id: string) {
       .from("modules_purchased")
       .select("module_code")
       .eq("intake_id", intake_id);
-    const owned = new Set<string>(["CORE", ...((ownedRows ?? []).map((r: any) => r.module_code))]);
+    const owned = new Set<string>((ownedRows ?? []).map((r: any) => r.module_code));
     const reportModules = new Set<string>(Array.isArray(completeReport.modules_array) ? completeReport.modules_array : []);
     const reportAlreadyCoversOwnedModules = Array.from(owned).every((m) => reportModules.has(m));
 
