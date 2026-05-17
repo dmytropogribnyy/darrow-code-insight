@@ -61,12 +61,44 @@ export const Route = createFileRoute("/api/public/debug/astro-probe")({
           const data = await provider.computeNatal(input);
           const interpretationLeak = deepHasInterpretation(data);
           const baziSize = JSON.stringify(data.bazi ?? {}).length;
-          return Response.json({
-            ok: true,
+          const natal = data.natal;
+          const ascSign = natal.ascendant?.sign ?? null;
+          const h1Sign = natal.houses?.[0]?.sign ?? null;
+          const mcSign = natal.midheaven?.sign ?? null;
+          const h10Sign = natal.houses?.[9]?.sign ?? null;
+          const transitsAvail = (data.transits as any)?.available === true;
+          const transitsAspects = transitsAvail ? (data.transits as any).aspects ?? [] : [];
+          const highPriority = transitsAspects
+            .filter((a: any) => a.high_priority === true)
+            .slice(0, 5);
+          const baziAvail = (data.bazi as any)?.available === true;
+          const solarAvail = (data.solar_return as any)?.available === true;
+          const summary = {
+            provider_name: data.meta.provider_name,
+            endpoint_timing_ms: data.meta.endpoint_timing_ms ?? {},
+            endpoint_errors: data.meta.endpoint_errors ?? {},
+            natal_planets_count: natal.planets?.length ?? 0,
+            houses_count: natal.houses?.length ?? 0,
+            asc_h1_match: ascSign != null && h1Sign != null && ascSign === h1Sign,
+            asc_sign: ascSign,
+            h1_sign: h1Sign,
+            mc_h10_match: mcSign != null && h10Sign != null && mcSign === h10Sign,
+            mc_sign: mcSign,
+            h10_sign: h10Sign,
+            bazi_available: baziAvail,
+            bazi_day_master: baziAvail ? (data.bazi as any).day_master ?? null : null,
+            current_luck_cycle: baziAvail ? (data.bazi as any).current_luck_cycle ?? null : null,
+            transits_available: transitsAvail,
+            transits_aspects_count: transitsAspects.length,
+            high_priority_examples: highPriority,
+            solar_return_available: solarAvail,
+            solar_return_sr_asc: solarAvail
+              ? (data.solar_return as any).angles_details?.asc ?? null
+              : null,
             interpretation_leak: interpretationLeak,
             bazi_size_bytes: baziSize,
-            data,
-          });
+          };
+          return Response.json({ ok: true, summary, data });
         } catch (e: any) {
           return Response.json(
             { ok: false, error: String(e?.message ?? e) },
