@@ -225,6 +225,34 @@ export function IntakeForm({
         />
       </div>
 
+      <div>
+        <label className={labelCls}>Birth sex (for BaZi)</label>
+        <div className="flex gap-2 mt-1">
+          {(["M", "F"] as const).map((opt) => {
+            const selected = form.bazi_sex === opt;
+            return (
+              <button
+                key={opt}
+                type="button"
+                onClick={() => setForm((f) => ({ ...f, bazi_sex: opt }))}
+                aria-pressed={selected}
+                className="flex-1 rounded-[10px] px-3 py-2.5 text-[14px] font-medium border transition-colors"
+                style={{
+                  borderColor: selected ? "#D4AF37" : "rgba(74,64,45,0.25)",
+                  backgroundColor: selected ? "rgba(212,175,55,0.10)" : "transparent",
+                  color: "#0A0F1E",
+                }}
+              >
+                {opt === "M" ? "Male" : "Female"}
+              </button>
+            );
+          })}
+        </div>
+        <p className="mt-1.5 text-[11.5px] sm:text-[12px]" style={{ color: "#4A402D" }}>
+          Used only for traditional BaZi (Four Pillars) calculation. Not used in your report copy.
+        </p>
+      </div>
+
       <div className="pt-3 text-center">
         <div className="flex items-center justify-center gap-3 mb-2.5" aria-hidden="false">
           <span className="h-px w-8 sm:w-10" style={{ backgroundColor: "rgba(212,175,55,0.45)" }} />
