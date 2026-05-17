@@ -220,7 +220,11 @@ function normalizeAspect(a: any): AspectRow & { high_priority?: boolean; _transi
 // ============================================================
 // NATAL — critical
 // ============================================================
-async function fetchNatal(apiKey: string, input: NatalInput): Promise<any> {
+async function fetchNatal(
+  apiKey: string,
+  input: NatalInput,
+  diag: EndpointDiag,
+): Promise<any> {
   const { y, m, d } = parseDate(input.date_of_birth);
   const tm = parseTime(input.birth_time ?? null);
   const body: Record<string, any> = {
@@ -246,7 +250,10 @@ async function fetchNatal(apiKey: string, input: NatalInput): Promise<any> {
     body.hour = tm.h;
     body.minute = tm.min;
   }
-  return postJson(apiKey, "/api/v1/natal/calculate", body);
+  return postJson(apiKey, "/api/v1/natal/calculate", body, {
+    maxAttempts: NATAL_MAX_ATTEMPTS,
+    label: "natal",
+  }, diag);
 }
 
 // ============================================================
