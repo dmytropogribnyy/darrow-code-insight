@@ -31,7 +31,13 @@ import {
 
 const BASE_URL = "https://api.freeastroapi.com";
 const STEP_TIMEOUT_MS = 45_000;
+// Max attempts per endpoint = 1 initial + (MAX_RETRIES - 1) retries.
+// 3 = 1 initial + 2 retries.
 const MAX_RETRIES = 3;
+// Minimum wait after a 429 when Retry-After header is missing.
+const MIN_429_BACKOFF_MS = 2500;
+// Gap between sequential endpoint calls to stay under the 1 req/sec free-tier cap.
+const SEQUENTIAL_GAP_MS = 1500;
 
 function parseDate(dob: string): { y: number; m: number; d: number } {
   const [y, m, d] = dob.split("-").map((x) => parseInt(x, 10));
@@ -82,10 +88,25 @@ async function postJson(apiKey: string, path: string, body: any): Promise<any> {
         `POST ${path}`,
       );
       if (res.status === 429) {
-        const retryAfter = Number(res.headers.get("retry-after")) || 0;
-        const backoff = retryAfter > 0
-          ? retryAfter * 1000
-          : Math.min(8000, 500 * 2 ** attempt) + Math.floor(Math.random() * 400);
+        // Respect Retry-After if present (seconds, per HTTP spec).
+        // Some providers also send retry_after_ms in the JSON body.
+        const retryAfterHeader = Number(res.headers.get("retry-after"));
+        let backoff = 0;
+        if (Number.isFinite(retryAfterHeader) && retryAfterHeader > 0) {
+          backoff = retryAfterHeader * 1000;
+        } else {
+          // Try to read retry_after_ms from JSON body (clone to avoid consuming the stream).
+          try {
+            const j = await res.clone().json();
+            const ms = Number(j?.retry_after_ms);
+            if (Number.isFinite(ms) && ms > 0) backoff = ms;
+          } catch {
+            /* ignore */
+          }
+        }
+        // Floor at MIN_429_BACKOFF_MS even if the server says shorter — the free
+        // tier is 1 req/sec and bursts trigger longer abuse penalties.
+        backoff = Math.max(backoff, MIN_429_BACKOFF_MS) + Math.floor(Math.random() * 400);
         if (attempt < MAX_RETRIES) {
           await sleep(backoff);
           continue;
@@ -626,28 +647,30 @@ export class FreeAstroAPIProvider implements AstroProvider {
   async computeNatal(input: NatalInput): Promise<DarrowChartData> {
     const hasHouses = !!input.birth_time_known;
 
-    // FreeAstroAPI free tier is 1 req/sec and triggers abuse penalties on bursts.
-    // Stagger the 4 calls ~1.1s apart. Natal is critical; others graceful.
-    const RATE_GAP_MS = 1100;
-    const natalP = fetchNatal(this.apiKey, input);
-    const transitsP = sleep(RATE_GAP_MS).then(() =>
-      fetchTransits(this.apiKey, input).catch((e) => ({ __error: String(e?.message ?? e) })),
-    );
-    const baziP = sleep(RATE_GAP_MS * 2).then(() =>
-      fetchBazi(this.apiKey, input).catch((e) => ({ __error: String(e?.message ?? e) })),
-    );
-    const solarP = sleep(RATE_GAP_MS * 3).then(() =>
-      fetchSolarReturn(this.apiKey, input).catch((e) => ({ __error: String(e?.message ?? e) })),
-    );
-
+    // Sequential calls with a fixed inter-call gap. Avoids the parallel-stagger
+    // race where a Natal 429 retry collides with the next staggered call.
+    // Natal is critical (throws); the other three are graceful (catch → __error).
     let natalRaw: any;
     try {
-      natalRaw = await natalP;
+      natalRaw = await fetchNatal(this.apiKey, input);
     } catch (e: any) {
       throw new Error(`FreeAstroAPI natal failed: ${String(e?.message ?? e)}`);
     }
 
-    const [transitsResult, baziResult, solarResult] = await Promise.all([transitsP, baziP, solarP]);
+    await sleep(SEQUENTIAL_GAP_MS);
+    const transitsResult: any = await fetchTransits(this.apiKey, input).catch((e) => ({
+      __error: String(e?.message ?? e),
+    }));
+
+    await sleep(SEQUENTIAL_GAP_MS);
+    const baziResult: any = await fetchBazi(this.apiKey, input).catch((e) => ({
+      __error: String(e?.message ?? e),
+    }));
+
+    await sleep(SEQUENTIAL_GAP_MS);
+    const solarResult: any = await fetchSolarReturn(this.apiKey, input).catch((e) => ({
+      __error: String(e?.message ?? e),
+    }));
 
     const natal = buildNatalBlock(natalRaw, hasHouses);
 
