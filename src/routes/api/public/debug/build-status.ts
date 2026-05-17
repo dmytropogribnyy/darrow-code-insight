@@ -3,7 +3,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 
 // Bumped manually with each cutover that needs verification.
-const BUILD_MARKER = "1c-numerology-enrichment-2026-05-17";
+const BUILD_MARKER = "1c-numerology-enrichment-baziflow-fix-2026-05-17b";
 
 // Cheap presence-of-new-fields check: a static list of code-level markers that
 // must exist in this build. Updated when new fields ship. Pure-strings only —
