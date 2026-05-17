@@ -34,10 +34,12 @@ const initial: FormState = {
 
 export function IntakeForm({
   chapters = [],
+  includesCore = true,
   onCheckoutOpen,
   resetSignal = 0,
 }: {
   chapters?: ModuleCode[];
+  includesCore?: boolean;
   onCheckoutOpen?: () => void;
   resetSignal?: number;
 } = {}) {
@@ -59,9 +61,10 @@ export function IntakeForm({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [resetSignal]);
 
-  const quote = priceForModules(chapters, true);
-  const ctaText = ctaLabelFor(chapters);
-  const ctaPrice = `$${(quote.cents / 100).toFixed(2)}`;
+  const hasSelection = includesCore || chapters.length > 0;
+  const quote = hasSelection ? priceForModules(chapters, includesCore) : null;
+  const ctaText = ctaLabelFor(includesCore, chapters);
+  const ctaPrice = quote ? `$${(quote.cents / 100).toFixed(2)}` : "—";
 
   const update = (k: keyof FormState) => (e: React.ChangeEvent<HTMLInputElement>) =>
     setForm((f) => ({ ...f, [k]: e.target.value }));
