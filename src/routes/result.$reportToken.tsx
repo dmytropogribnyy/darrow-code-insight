@@ -152,20 +152,31 @@ function ReportCard({
 
       <div className="mt-4">
         {complete && (
-          <button
-            type="button"
-            onClick={onDownload}
-            disabled={isDownloading}
-            className={
-              "w-full inline-flex items-center justify-center gap-2 rounded-[6px] py-3 text-[13.5px] font-semibold transition disabled:opacity-60 " +
-              (isPremium
-                ? "bg-gold text-navy hover:brightness-105"
-                : "border border-gold text-warm-brown hover:bg-gold hover:text-navy")
-            }
-          >
-            <Download className="w-4 h-4" />
-            {isDownloading ? "Preparing…" : "Download PDF"}
-          </button>
+          <div className="grid grid-cols-2 gap-2">
+            <button
+              type="button"
+              onClick={onOpen}
+              disabled={busyAction !== null}
+              className={
+                "inline-flex items-center justify-center gap-1.5 rounded-[6px] py-3 text-[13px] font-semibold transition disabled:opacity-60 " +
+                (isPremium
+                  ? "bg-gold text-navy hover:brightness-105"
+                  : "border border-gold text-warm-brown hover:bg-gold hover:text-navy")
+              }
+            >
+              <ExternalLink className="w-4 h-4" />
+              {busyAction === "open" ? "Opening…" : "Open PDF"}
+            </button>
+            <button
+              type="button"
+              onClick={onDownload}
+              disabled={busyAction !== null}
+              className="inline-flex items-center justify-center gap-1.5 rounded-[6px] py-3 text-[13px] font-semibold transition disabled:opacity-60 border border-gold text-warm-brown hover:bg-gold hover:text-navy"
+            >
+              <Download className="w-4 h-4" />
+              {busyAction === "download" ? "Preparing…" : "Download"}
+            </button>
+          </div>
         )}
         {pending && (
           <div className="space-y-2">
