@@ -896,27 +896,32 @@ function stripBaziFlowProse<T>(obj: T): T {
 
 function buildBaziFlowBlock(raw: any, birthTimeKnown: boolean): BaziFlowBlock {
   const cleaned = stripBaziFlowProse(raw ?? {}) as any;
-  const annualRaw =
-    cleaned.annual_pillar ?? cleaned.year_pillar ?? cleaned.annual ?? null;
-  const annual_pillar = annualRaw
+  // Real response shape: { years: [ { year, gan_zhi, gan, zhi, months[], interactions[], stars[], active_luck, ... } ] }
+  // We requested a single target_year so years[0] is the annual block.
+  const yearsArr: any[] = Array.isArray(cleaned.years) ? cleaned.years : [];
+  const yearBlock: any = yearsArr[0] ?? cleaned; // fall back to top-level for shape compat
+
+  const annualSource =
+    yearBlock.annual_pillar ?? yearBlock.year_pillar ?? yearBlock.annual ?? yearBlock;
+  const annual_pillar = annualSource && (annualSource.gan_zhi || annualSource.gan || annualSource.year)
     ? {
         year:
-          typeof annualRaw.year === "number"
-            ? annualRaw.year
-            : Number(annualRaw.year ?? cleaned.target_year),
-        gan_zhi: annualRaw.gan_zhi ?? annualRaw.pillar ?? undefined,
-        gan: annualRaw.gan ?? annualRaw.stem ?? undefined,
-        zhi: annualRaw.zhi ?? annualRaw.branch ?? undefined,
-        gan_pinyin: annualRaw.gan_pinyin ?? undefined,
-        zhi_pinyin: annualRaw.zhi_pinyin ?? undefined,
-        ten_god: annualRaw.ten_god ?? undefined,
+          typeof annualSource.year === "number"
+            ? annualSource.year
+            : Number(annualSource.year ?? cleaned.target_year),
+        gan_zhi: annualSource.gan_zhi ?? annualSource.pillar ?? undefined,
+        gan: annualSource.gan ?? annualSource.stem ?? undefined,
+        zhi: annualSource.zhi ?? annualSource.branch ?? undefined,
+        gan_pinyin: annualSource.gan_pinyin ?? undefined,
+        zhi_pinyin: annualSource.zhi_pinyin ?? undefined,
+        ten_god: annualSource.ten_god ?? undefined,
       }
     : undefined;
 
-  const monthlyRaw: any[] = Array.isArray(cleaned.monthly_pillars)
-    ? cleaned.monthly_pillars
-    : Array.isArray(cleaned.months)
-      ? cleaned.months
+  const monthlyRaw: any[] = Array.isArray(yearBlock.months)
+    ? yearBlock.months
+    : Array.isArray(yearBlock.monthly_pillars)
+      ? yearBlock.monthly_pillars
       : [];
   const monthly_pillars: BaziFlowMonthlyPillar[] = monthlyRaw.map((m: any, i: number) => ({
     index: typeof m.index === "number" ? m.index : i + 1,
@@ -929,20 +934,47 @@ function buildBaziFlowBlock(raw: any, birthTimeKnown: boolean): BaziFlowBlock {
     stars: Array.isArray(m.stars) ? m.stars : undefined,
   }));
 
+  const interactions = Array.isArray(yearBlock.interactions)
+    ? yearBlock.interactions
+    : Array.isArray(cleaned.interactions)
+      ? cleaned.interactions
+      : undefined;
+  const stars = Array.isArray(yearBlock.stars)
+    ? yearBlock.stars
+    : Array.isArray(cleaned.stars)
+      ? cleaned.stars
+      : undefined;
+
+  const target_year =
+    typeof yearBlock.year === "number"
+      ? yearBlock.year
+      : typeof cleaned.target_year === "number"
+        ? cleaned.target_year
+        : undefined;
+
+  const hasUsableData =
+    !!annual_pillar || monthly_pillars.length > 0 || (interactions?.length ?? 0) > 0;
+
+  if (!hasUsableData) {
+    return {
+      available: true,
+      usable: false,
+      reason: "no_structured_flow_data",
+      target_year,
+      time_confidence: birthTimeKnown ? "exact" : "reduced",
+    };
+  }
+
   return {
     available: true,
-    target_year:
-      typeof cleaned.target_year === "number"
-        ? cleaned.target_year
-        : undefined,
+    usable: true,
+    target_year,
     target_year_end:
-      typeof cleaned.target_year_end === "number"
-        ? cleaned.target_year_end
-        : undefined,
+      typeof cleaned.target_year_end === "number" ? cleaned.target_year_end : undefined,
     annual_pillar,
     monthly_pillars,
-    interactions: Array.isArray(cleaned.interactions) ? cleaned.interactions : undefined,
-    stars: Array.isArray(cleaned.stars) ? cleaned.stars : undefined,
+    interactions,
+    stars,
     time_confidence: birthTimeKnown ? "exact" : "reduced",
   };
 }
