@@ -79,8 +79,11 @@ export const createCheckout = createServerFn({ method: "POST" })
   .handler(async ({ data }) => {
     const sb = admin();
 
-    // Phase A: CORE is always included for first-purchase flows.
-    const quote = priceForModules(data.modules, true);
+    if (!data.includes_core && data.modules.length === 0) {
+      throw new Error("Please choose CORE or at least one focused chapter.");
+    }
+
+    const quote = priceForModules(data.modules, data.includes_core);
 
     const geo = data.resolved_place
       ? {
