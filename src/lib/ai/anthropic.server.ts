@@ -6,6 +6,7 @@
 
 import { DarrowReportSchema, darrowReportJsonSchema, type DarrowReport } from "./schema";
 import { DARROW_SYSTEM_PROMPT } from "./system-prompt";
+import { generateCoreV3Split } from "./core-split.server";
 
 const ANTHROPIC_URL = "https://api.anthropic.com/v1/messages";
 const MAX_TOKENS = 12000;
