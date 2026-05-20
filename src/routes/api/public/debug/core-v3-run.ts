@@ -18,9 +18,9 @@ import {
   CORE_V3_KEYS,
   evaluateCoreV3Lengths,
   evaluateStructure,
-  generateCoreV3Diagnostic,
   wordCount,
 } from "@/lib/ai/diagnostic.server";
+import { generateCoreV3Split } from "@/lib/ai/core-split.server";
 import { BUILD_MARKER } from "./build-marker";
 
 let _sb: any = null;
@@ -80,11 +80,12 @@ async function runDiagnostic(intake_id: string) {
   });
   const model = process.env.ANTHROPIC_MODEL_DEFAULT;
   if (!model) throw new Error("ANTHROPIC_MODEL_DEFAULT is not configured");
-  const ai = await generateCoreV3Diagnostic(userPrompt, model);
+  const fallback = process.env.ANTHROPIC_MODEL_FALLBACK;
+  const ai = await generateCoreV3Split(userPrompt, model, fallback);
 
   // 3) Structural validation (hard) + length evaluation (warn)
-  const structural_issues = evaluateStructure(ai.raw_report);
-  const core = ai.raw_report?.modules?.CORE ?? {};
+  const structural_issues = evaluateStructure(ai.report);
+  const core = ai.report?.modules?.CORE ?? {};
   const length_diagnostics = evaluateCoreV3Lengths(core);
   const warnings_under_target = length_diagnostics.filter((d) => d.status === "WARN_UNDER_TARGET");
 
@@ -125,7 +126,7 @@ async function runDiagnostic(intake_id: string) {
   const canRender = blockingStructural.length === 0;
   if (canRender) {
     try {
-      const html = renderReportHtmlSafe(ai.raw_report as any, {});
+      const html = renderReportHtmlSafe(ai.report as any, {});
       const pdf = await renderHtmlToPdf(html, { order_id: "diagnostic", report_id: "diagnostic", modules: ["CORE"] });
       pdf_bytes_len = pdf.byteLength;
       pdf_status = "ok";
@@ -161,6 +162,7 @@ async function runDiagnostic(intake_id: string) {
       model_used: ai.model_used,
       api_call_count: ai.api_call_count,
       ms: ai.ms_total,
+      split: ai.per_call,
     },
     schema_version: core?.schema_version ?? null,
     structural_issues,
@@ -172,8 +174,8 @@ async function runDiagnostic(intake_id: string) {
     total_word_count: total_words,
     word_target_range: [3000, 3600],
     provider_interpretation_leak,
-    client_snapshot: ai.raw_report?.client_snapshot ?? null,
-    generated_modules: ai.raw_report?.generated_modules ?? null,
+    client_snapshot: ai.report?.client_snapshot ?? null,
+    generated_modules: ai.report?.generated_modules ?? null,
     proof_tags_top_level: Array.isArray(core?.proof_tags) ? core.proof_tags.slice(0, 8) : [],
     pdf: {
       status: pdf_status,
