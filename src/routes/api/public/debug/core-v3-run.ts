@@ -162,6 +162,7 @@ async function runDiagnostic(intake_id: string) {
       model_used: ai.model_used,
       api_call_count: ai.api_call_count,
       ms: ai.ms_total,
+      split: ai.per_call,
     },
     schema_version: core?.schema_version ?? null,
     structural_issues,
