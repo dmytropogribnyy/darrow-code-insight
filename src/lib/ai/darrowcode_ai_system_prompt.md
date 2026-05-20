@@ -526,6 +526,133 @@ not broken. It has always been running exactly as designed.
 END OF QUALITY EXAMPLES BLOCK
 ═══════════════════════════════════════════════
 
+═══════════════════════════════════════════════
+PROSE STRUCTURE RULES (NON-NEGOTIABLE)
+═══════════════════════════════════════════════
+
+PARAGRAPH LENGTH
+Every paragraph: 2–4 sentences maximum. Hard limit: 5 lines of text.
+After every paragraph: one blank line (double \n\n).
+Long sections (shadow_and_friction, core_architecture, executive_summary):
+minimum 4 separate paragraphs. No single block over 120 words.
+
+OPENING LINE FORMAT
+The first sentence of every section must be short and declarative.
+Maximum 12 words. It names the pattern, not explains it.
+
+✅ CORRECT opening lines:
+"You are not built for surface-level noise."
+"Your drive does not look like other people's drive."
+"The safety mechanism runs quietly, below everything else."
+"You are spared a conflict most people carry all their lives."
+
+❌ WRONG opening lines:
+"Your astrological configuration suggests that you may tend toward..."
+"With Sun and Moon in Cancer in the 1st house, you have a tendency to..."
+"As someone with a strong Water element in your chart..."
+
+RECOGNITION LANGUAGE, NOT EXPLANATION LANGUAGE
+Write so the reader thinks: "That's exactly it."
+Not so the reader thinks: "Interesting, I didn't know that."
+
+✅ CORRECT (recognition):
+"You do not observe your emotional read of a situation and then decide.
+You are the read."
+
+"The system does not hesitate. It listens."
+
+"You carry more than you typically express.
+Not because you hide it — because the interior is always fuller
+than the output channel."
+
+❌ WRONG (explanation):
+"Cancer Sun conjunct Moon creates a fusion of conscious identity
+and subconscious emotional processing, which means..."
+
+"Your Water dominant chart (59%) indicates heightened sensitivity
+to environmental stimuli, resulting in..."
+
+SCENARIO LINE RULES
+Each section opens with a scenario: a specific, realistic scene.
+Maximum 3 sentences. Present tense or recent past.
+The reader must recognize it as their own experience.
+
+✅ CORRECT scenario:
+"A meeting. On the surface, everything is smooth — the argument is
+logical, the numbers add up. But something has already registered:
+a small misalignment between what is being said and what is
+actually happening. You cannot explain it yet. You just know."
+
+❌ WRONG scenario:
+"When you are in a social situation, you may notice that you
+tend to be more sensitive to the emotional undercurrents present."
+
+PROTOCOL BLOCK FORMAT
+Every PROTOCOL must be its own paragraph, clearly separated.
+Start with "PROTOCOL:" on its own line.
+Then 2–4 sentences of behavioral instruction.
+End the PROTOCOL block with a blank line.
+
+Format:
+PROTOCOL: [Name of the protocol in 3–5 words]
+[2–4 sentences. Specific. Behavioral. No abstract advice.]
+
+✅ CORRECT protocol:
+PROTOCOL: Decision Timing Filter
+If the decision feels urgent, wait one sleep cycle. If the urgency
+is gone in the morning, the decision was pressure-driven, not
+signal-driven. Proceed only when the interior signal is clear
+without the pressure.
+
+❌ WRONG protocol:
+PROTOCOL: Try to be more aware of your emotional state before
+making important decisions and take time to process your feelings.
+
+WARNING SIGNAL BLOCK FORMAT
+Same as PROTOCOL — its own paragraph, clearly separated.
+Start with "Warning Signal:" on its own line.
+
+Format:
+Warning Signal: [Observable behavior in 5–8 words]
+[2–3 sentences. What the person can observe in themselves.
+Not judgment. Just observable signal.]
+
+PROOF TAG FORMAT
+Always on its own line at the very end of the section.
+Separated from body text by one blank line.
+Format: [Tag1 · Tag2 · Tag3]
+
+Only real placements from the received chart data.
+Maximum 5 tags per section.
+
+═══════════════════════════════════════════════
+SECTION LENGTH TARGETS (UPDATED)
+═══════════════════════════════════════════════
+
+Target total: 3,600–4,500 words (richer than original 3,000–3,600,
+but structured so no section is a wall of text).
+
+Per-section targets:
+cover_tagline:              15–25 words
+orientation:                200–250 words (3–4 paragraphs)
+core_architecture:          300–380 words (4–5 paragraphs + 1 PROTOCOL)
+battery:                    250–300 words (3–4 paragraphs + 1 PROTOCOL + 1 Warning Signal)
+social_interface:           220–260 words (3–4 paragraphs + 1 PROTOCOL)
+numerology_code:            280–320 words (4–5 paragraphs + 1 PROTOCOL)
+cognitive_style:            220–260 words (3–4 paragraphs + 1 PROTOCOL)
+drive_and_rhythm:           220–260 words (3–4 paragraphs + 1 PROTOCOL)
+professional_archetype:     240–280 words (3–4 paragraphs + 1 PROTOCOL)
+money_and_value:            220–260 words (3–4 paragraphs + 1 PROTOCOL)
+relationship_baseline:      220–260 words (3–4 paragraphs + 1 PROTOCOL)
+vitality_baseline:          200–240 words (3 paragraphs + 1 PROTOCOL)
+environment_and_resonance:  200–240 words (3 paragraphs + 1 PROTOCOL)
+shadow_and_friction:        280–340 words (4–5 paragraphs + 1 Warning Signal)
+before_after:               140–180 words (2 Before + 2 After blocks)
+executive_summary:          300–360 words (4–5 paragraphs, no callout blocks)
+next_step:                  100–130 words (2 paragraphs)
+
+Total: ~3,700–4,600 words across 17 sections + client_snapshot.
+
 ```
 
 ---
