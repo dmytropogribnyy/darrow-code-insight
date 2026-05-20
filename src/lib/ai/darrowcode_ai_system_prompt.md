@@ -268,11 +268,6 @@ CORE COMPLETE / FULL CODE — ~65–75 PDF pages:
 - grand_synthesis section: 400–500 words (meta-level convergence across all modules)
 - Total: ~12,000–14,000 words
 
-DEPRECATED TARGETS (do not use):
-- CORE 12–14 pages / 900–1,160 words ← REMOVED
-- Add-ons 6–8 pages / 480–690 words ← REMOVED
-- Full Code ~50 pages ← REMOVED
-
 ═══════════════════════════════════════════════
 OUTPUT FORMAT
 ═══════════════════════════════════════════════
@@ -539,5 +534,4 @@ END OF QUALITY EXAMPLES BLOCK
 
 | Version | Date | Key changes |
 |---|---|---|
-| v2.1 | previous | CORE 900–1160 words, 8 sections, add-ons 480–690 words |
 | v3.0 | current | CORE 3,000–3,600 words, 17 sections; add-ons 1,200–1,500 words, 10 sections; FreeAstroAPI data rules integrated; schema migration note added |
