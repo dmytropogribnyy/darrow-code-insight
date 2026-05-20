@@ -16,11 +16,14 @@ import { renderReportHtmlSafe } from "@/lib/pdf/template";
 import { renderHtmlToPdf } from "@/lib/pdf/apitemplate.server";
 import {
   CORE_V3_KEYS,
+  CORE_V3_WORD_TARGET_RANGE,
+  CORE_V3_WORD_HARD_CAP,
   evaluateCoreV3Lengths,
   evaluateStructure,
   wordCount,
 } from "@/lib/ai/diagnostic.server";
 import { generateCoreV3Split } from "@/lib/ai/core-split.server";
+import { getCoreSectionProse } from "@/lib/ai/schema";
 import { BUILD_MARKER } from "./build-marker";
 
 let _sb: any = null;
@@ -89,10 +92,10 @@ async function runDiagnostic(intake_id: string, mode: "sequential" | "parallel" 
   const length_diagnostics = evaluateCoreV3Lengths(core);
   const warnings_under_target = length_diagnostics.filter((d) => d.status === "WARN_UNDER_TARGET");
 
-  // Per-section word + char map
+  // Per-section word + char map (prose-only)
   const per_section: Record<string, { chars: number; words: number; status: string }> = {};
   for (const k of CORE_V3_KEYS) {
-    const v = typeof core?.[k] === "string" ? (core[k] as string) : "";
+    const v = getCoreSectionProse(core?.[k]);
     per_section[k] = {
       chars: v.length,
       words: v ? wordCount(v) : 0,
@@ -100,6 +103,14 @@ async function runDiagnostic(intake_id: string, mode: "sequential" | "parallel" 
     };
   }
   const total_words = Object.values(per_section).reduce((sum, s) => sum + s.words, 0);
+  const word_total_status =
+    total_words > CORE_V3_WORD_HARD_CAP
+      ? "OVER_HARD_CAP"
+      : total_words < CORE_V3_WORD_TARGET_RANGE[0]
+        ? "UNDER_TARGET"
+        : total_words > CORE_V3_WORD_TARGET_RANGE[1]
+          ? "OVER_TARGET"
+          : "OK";
 
   // Provider-interpretation leak check (basic substring scan in CORE body)
   const leakProbes = [
@@ -108,7 +119,10 @@ async function runDiagnostic(intake_id: string, mode: "sequential" | "parallel" 
     "astro-seek",
     "provider says",
   ];
-  const coreText = Object.values(core).filter((v) => typeof v === "string").join("\n").toLowerCase();
+  const coreText = Object.values(core)
+    .map((v) => getCoreSectionProse(v) || (typeof v === "string" ? v : ""))
+    .join("\n")
+    .toLowerCase();
   const provider_interpretation_leak = leakProbes.filter((p) => coreText.includes(p));
 
   // 4) PDF render (only if structurally valid enough to render)
@@ -168,12 +182,14 @@ async function runDiagnostic(intake_id: string, mode: "sequential" | "parallel" 
     schema_version: core?.schema_version ?? null,
     structural_issues,
     structural_ok: structural_issues.length === 0,
-    sections_present_count: CORE_V3_KEYS.filter((k) => typeof core?.[k] === "string" && core[k].length > 0).length,
+    sections_present_count: CORE_V3_KEYS.filter((k) => getCoreSectionProse(core?.[k]).length > 0).length,
     expected_section_count: CORE_V3_KEYS.length,
     sections_per_target: per_section,
     warnings_under_target,
     total_word_count: total_words,
-    word_target_range: [3000, 3600],
+    word_target_range: CORE_V3_WORD_TARGET_RANGE,
+    word_hard_cap: CORE_V3_WORD_HARD_CAP,
+    word_total_status,
     provider_interpretation_leak,
     client_snapshot: ai.report?.client_snapshot ?? null,
     generated_modules: ai.report?.generated_modules ?? null,
@@ -186,11 +202,11 @@ async function runDiagnostic(intake_id: string, mode: "sequential" | "parallel" 
       error: pdf_error,
     },
     excerpts: {
-      orientation: snippet(core?.orientation, 5),
-      core_architecture: snippet(core?.core_architecture, 5),
-      battery: snippet(core?.battery, 5),
-      shadow_and_friction: snippet(core?.shadow_and_friction, 5),
-      executive_summary: snippet(core?.executive_summary, 5),
+      orientation: snippet(getCoreSectionProse(core?.orientation), 5),
+      core_architecture: snippet(getCoreSectionProse(core?.core_architecture), 5),
+      battery: snippet(getCoreSectionProse(core?.battery), 5),
+      shadow_and_friction: snippet(getCoreSectionProse(core?.shadow_and_friction), 5),
+      executive_summary: snippet(getCoreSectionProse(core?.executive_summary), 5),
     },
   };
 }

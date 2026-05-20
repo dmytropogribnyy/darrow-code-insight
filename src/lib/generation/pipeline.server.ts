@@ -212,7 +212,7 @@ export async function runFullGenerationPipeline(order_id: string): Promise<void>
     const storedCore = stored?.modules?.CORE ?? null;
     const isV3 =
       !!storedCore &&
-      (storedCore.schema_version === "core_v3" || typeof storedCore.core_architecture === "string");
+      (storedCore.schema_version === "core_v3" || storedCore.core_architecture != null);
     let report: any = stored && (!includesCore || isV3) ? stored : null;
     let model_used: string = report ? (r.model_used ?? "reused") : "reused";
 

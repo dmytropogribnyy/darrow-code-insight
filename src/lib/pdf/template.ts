@@ -1,4 +1,9 @@
 import type { DarrowReport, DarrowModule } from "@/lib/ai/schema";
+import {
+  getCoreSectionProse,
+  getCoreSectionProtocols,
+  getCoreSectionWarnings,
+} from "@/lib/ai/schema";
 // Inline the brand symbol as a base64 data URL so PDF renderers (APITemplate.io)
 // never have to fetch it from an external host. The PNG asset itself is kept
 // small (256x256, ~6KB) to keep total HTML well under APITemplate's payload
@@ -245,13 +250,20 @@ function renderCrossSell(generated: string[], symbolSmall: string): string {
   `;
 }
 
-const safePageStyle = "page-break-after:always;min-height:245mm;padding:0 0 12mm 0;box-sizing:border-box;";
-const safeH2Style = "font-family:Georgia,'Times New Roman',serif;color:#4A402D;font-size:24pt;font-weight:400;margin:0 0 14pt;line-height:1.2;";
-const safePStyle = "font-family:Arial,Helvetica,sans-serif;color:#151922;font-size:11pt;line-height:1.62;margin:0 0 9pt;";
-const safeBrandStyle = "font-family:Arial,Helvetica,sans-serif;color:#D4AF37;font-size:9pt;letter-spacing:3pt;text-transform:uppercase;margin:0 0 18pt;";
+const safePageStyle =
+  "page-break-after:always;page-break-inside:avoid;orphans:3;widows:3;padding:0 0 12mm 0;box-sizing:border-box;";
+const safeH2Style =
+  "font-family:Georgia,'Times New Roman',serif;color:#4A402D;font-size:24pt;font-weight:400;margin:0 0 14pt;line-height:1.2;";
+const safePStyle =
+  "font-family:Arial,Helvetica,sans-serif;color:#151922;font-size:11pt;line-height:1.62;margin:0 0 9pt;";
+const safeBrandStyle =
+  "font-family:Arial,Helvetica,sans-serif;color:#D4AF37;font-size:9pt;letter-spacing:3pt;text-transform:uppercase;margin:0 0 18pt;";
 
 function safePara(s: string): string {
-  return s.split(/\n{2,}/).map((p) => `<p style="${safePStyle}">${escape(p).replace(/\n/g, "<br/>")}</p>`).join("\n");
+  return s
+    .split(/\n{2,}/)
+    .map((p) => `<p style="${safePStyle}">${escape(p).replace(/\n/g, "<br/>")}</p>`)
+    .join("\n");
 }
 
 function safeSection(title: string, body: string): string {
@@ -259,21 +271,25 @@ function safeSection(title: string, body: string): string {
 }
 
 // ─────────────────────────────────────────────────────────────
-// v3 CORE-aware renderer (APITemplate-safe).
+// v3.1 CORE-aware renderer (APITemplate-safe).
 // Inline CSS only, no @page rules, no base64 in CSS, no external fonts,
-// no header/footer.
+// no header/footer. Structured callouts render from schema fields, not
+// from parsed prose markers.
 // ─────────────────────────────────────────────────────────────
 
-const PROTOCOL_BORDER =
-  "border-left:2pt solid #D4AF37;padding:6pt 0 6pt 12pt;margin:8pt 0 12pt;-webkit-print-color-adjust:exact;print-color-adjust:exact;";
+const PROTOCOL_BOX =
+  "border-left:3pt solid #D4AF37;padding:10pt 14pt;margin:12pt 0;background:#FBF6E5;-webkit-print-color-adjust:exact;print-color-adjust:exact;page-break-inside:avoid;";
+const PROTOCOL_LABEL =
+  "font-family:Georgia,'Times New Roman',serif;font-size:9pt;letter-spacing:2pt;color:#A8841F;text-transform:uppercase;margin-bottom:6pt;";
+const WARNING_BOX =
+  "border-left:3pt solid #9CA3AF;padding:10pt 14pt;margin:12pt 0;background:#F2F2F0;-webkit-print-color-adjust:exact;print-color-adjust:exact;page-break-inside:avoid;";
+const WARNING_LABEL =
+  "font-family:Georgia,'Times New Roman',serif;font-size:9pt;letter-spacing:2pt;color:#6B6B6B;text-transform:uppercase;margin-bottom:6pt;";
 const PROOF_STYLE =
-  "font-family:Arial,Helvetica,sans-serif;color:#9CA3AF;font-size:9pt;font-style:italic;margin-top:10pt;";
+  "font-family:Arial,Helvetica,sans-serif;color:#9CA3AF;font-size:9pt;font-style:italic;margin-top:12pt;padding-top:6pt;border-top:0.5pt solid #E5E7EB;";
 
-// Render a section body: split paragraphs on \n\n, give PROTOCOL: /
-// Warning Signal: lines a left-border treatment, and split out a trailing
-// proof-tag bracket if present.
-function v3Body(text: string): string {
-  if (!text) return "";
+function renderProseBlocks(text: string): { html: string; proof: string } {
+  if (!text) return { html: "", proof: "" };
   const trimmed = text.trim();
   // Pull out trailing proof tag: a final line wrapped in [ ... ].
   let proof = "";
@@ -283,24 +299,47 @@ function v3Body(text: string): string {
     proof = proofMatch[1].trim();
     body = trimmed.slice(0, proofMatch.index ?? trimmed.length).trim();
   }
-  const blocks = body.split(/\n{2,}/);
+  // Strip any inline PROTOCOL: / Warning Signal: blocks that the model still
+  // emitted in prose (defensive — the v3.1 schema says these belong in
+  // structured fields, but tolerate stragglers without rendering them as
+  // wall-of-text paragraphs).
+  const blocks = body
+    .split(/\n{2,}/)
+    .map((b) => b.trim())
+    .filter((b) => b && !/^(PROTOCOL|Warning Signal)\s*:/i.test(b));
   const html = blocks
-    .map((blk) => {
-      const trimmedBlk = blk.trim();
-      if (/^(PROTOCOL|Warning Signal)\s*:/i.test(trimmedBlk)) {
-        return `<div style="${PROTOCOL_BORDER}"><p style="${safePStyle}">${escape(trimmedBlk).replace(/\n/g, "<br/>")}</p></div>`;
-      }
-      return `<p style="${safePStyle}">${escape(trimmedBlk).replace(/\n/g, "<br/>")}</p>`;
-    })
+    .map((blk) => `<p style="${safePStyle}">${escape(blk).replace(/\n/g, "<br/>")}</p>`)
     .join("\n");
-  const proofHtml = proof
-    ? `<div style="${PROOF_STYLE}">${escape(proof)}</div>`
-    : "";
-  return html + proofHtml;
+  return { html, proof };
 }
 
-function v3Section(title: string, body: string): string {
-  return `<section style="${safePageStyle}"><div style="${safeBrandStyle}">Darrow Code</div><h2 style="${safeH2Style}">${escape(title)}</h2>${v3Body(body)}</section>`;
+function renderProtocolBlocks(protocols: Array<{ title: string; body: string }>): string {
+  if (!protocols.length) return "";
+  return protocols
+    .map(
+      (p) =>
+        `<div style="${PROTOCOL_BOX}"><div style="${PROTOCOL_LABEL}">PROTOCOL · ${escape(p.title)}</div><div style="${safePStyle}">${escape(p.body).replace(/\n/g, "<br/>")}</div></div>`,
+    )
+    .join("\n");
+}
+
+function renderWarningBlocks(warnings: string[]): string {
+  if (!warnings.length) return "";
+  return warnings
+    .map(
+      (w) =>
+        `<div style="${WARNING_BOX}"><div style="${WARNING_LABEL}">Warning Signal</div><div style="${safePStyle}">${escape(w).replace(/\n/g, "<br/>")}</div></div>`,
+    )
+    .join("\n");
+}
+
+function v3Section(title: string, field: unknown): string {
+  const prose = getCoreSectionProse(field);
+  const { html, proof } = renderProseBlocks(prose);
+  const protocols = renderProtocolBlocks(getCoreSectionProtocols(field));
+  const warnings = renderWarningBlocks(getCoreSectionWarnings(field));
+  const proofHtml = proof ? `<div style="${PROOF_STYLE}">${escape(proof)}</div>` : "";
+  return `<section style="${safePageStyle}"><div style="${safeBrandStyle}">Darrow Code</div><h2 style="${safeH2Style}">${escape(title)}</h2>${html}${protocols}${warnings}${proofHtml}</section>`;
 }
 
 export function renderReportHtmlSafe(report: DarrowReport, opts: { assetsBaseUrl?: string } = {}): string {
@@ -308,25 +347,27 @@ export function renderReportHtmlSafe(report: DarrowReport, opts: { assetsBaseUrl
   void opts.assetsBaseUrl;
   const core = report.modules.CORE as any;
   const clientName = report.client_name || "you";
-  const darkBleed =
-    "margin:-22mm -20mm;padding:40mm 30mm;min-height:297mm;-webkit-print-color-adjust:exact;print-color-adjust:exact;page-break-after:always;box-sizing:border-box;text-align:center;";
+  // Cover and closing: fixed full-page dark cards (no overflow → no orphan p2).
+  const fullDark =
+    "margin:-22mm -20mm;padding:0 30mm;height:297mm;width:auto;-webkit-print-color-adjust:exact;print-color-adjust:exact;page-break-after:always;page-break-inside:avoid;box-sizing:border-box;text-align:center;display:block;overflow:hidden;";
   const goldMark = `<div style="width:36pt;height:36pt;margin:0 auto 28pt;transform:rotate(45deg);background:#D4AF37;-webkit-print-color-adjust:exact;print-color-adjust:exact;"></div>`;
 
   const snap = report.client_snapshot;
   const sections: string[] = [];
 
-  // Page 1 — Cover
-  const tagline = core?.cover_tagline ? escape(String(core.cover_tagline)) : "";
+  // Page 1 — Cover (fixed 297mm, no overflow)
+  const tagline = core?.cover_tagline ? escape(getCoreSectionProse(core.cover_tagline)) : "";
   sections.push(
-    `<section style="${darkBleed}background:#0A0F1E;color:#F6F4EF;padding-top:60mm;">${goldMark}<div style="font-family:Arial,Helvetica,sans-serif;color:#D4AF37;font-size:11pt;letter-spacing:6pt;text-transform:uppercase;margin-bottom:36pt;-webkit-print-color-adjust:exact;print-color-adjust:exact;">Darrow Code</div><h1 style="font-family:Georgia,'Times New Roman',serif;color:#D4AF37;font-size:34pt;font-weight:400;line-height:1.2;margin:0 0 18pt;-webkit-print-color-adjust:exact;print-color-adjust:exact;">The Personal Architecture Report</h1><div style="width:60pt;height:1pt;background:#D4AF37;margin:24pt auto;-webkit-print-color-adjust:exact;print-color-adjust:exact;"></div><div style="font-family:Arial,Helvetica,sans-serif;color:#9CA3AF;font-size:10pt;letter-spacing:3pt;text-transform:uppercase;margin-bottom:10pt;">Prepared for</div><div style="font-family:Georgia,'Times New Roman',serif;color:#F6F4EF;font-size:22pt;">${escape(clientName)}</div>${tagline ? `<p style="font-family:Georgia,'Times New Roman',serif;font-style:italic;color:#E5E7EB;font-size:13pt;margin:36pt auto 0;max-width:120mm;line-height:1.5;">${tagline}</p>` : ""}</section>`,
+    `<section style="${fullDark}background:#0A0F1E;color:#F6F4EF;padding-top:80mm;">${goldMark}<div style="font-family:Arial,Helvetica,sans-serif;color:#D4AF37;font-size:11pt;letter-spacing:6pt;text-transform:uppercase;margin-bottom:36pt;-webkit-print-color-adjust:exact;print-color-adjust:exact;">Darrow Code</div><h1 style="font-family:Georgia,'Times New Roman',serif;color:#D4AF37;font-size:34pt;font-weight:400;line-height:1.2;margin:0 0 18pt;-webkit-print-color-adjust:exact;print-color-adjust:exact;">The Personal Architecture Report</h1><div style="width:60pt;height:1pt;background:#D4AF37;margin:24pt auto;-webkit-print-color-adjust:exact;print-color-adjust:exact;"></div><div style="font-family:Arial,Helvetica,sans-serif;color:#9CA3AF;font-size:10pt;letter-spacing:3pt;text-transform:uppercase;margin-bottom:10pt;">Prepared for</div><div style="font-family:Georgia,'Times New Roman',serif;color:#F6F4EF;font-size:22pt;">${escape(clientName)}</div>${tagline ? `<p style="font-family:Georgia,'Times New Roman',serif;font-style:italic;color:#E5E7EB;font-size:13pt;margin:36pt auto 0;max-width:120mm;line-height:1.5;">${tagline}</p>` : ""}</section>`,
   );
 
-  // Page 2 — Method / Disclaimer
+  // Page 2 — Method / Disclaimer (forced start, kills near-blank page 2)
   sections.push(
-    safeSection(
-      "Method & Disclaimer",
-      `<p style="${safePStyle}"><strong>What this is.</strong> A structural reading drawing on Western natal astrology, Pythagorean numerology and Chinese Bazi, blended into one interpretive layer. The aim is orientation, not prediction.</p><p style="${safePStyle}"><strong>What this is not.</strong> Not medical, legal, financial or psychiatric advice. Not destiny. Not a personality test. No outcomes are promised.</p><p style="${safePStyle}"><strong>How to read it.</strong> Each section names a structural pattern, then offers protocols — concrete behavioural anchors — connected to your specific configuration.</p>`,
-    ),
+    `<section style="${safePageStyle};page-break-before:always;"><div style="${safeBrandStyle}">Darrow Code</div><h2 style="${safeH2Style}">Method &amp; Disclaimer</h2>` +
+      `<p style="${safePStyle}"><strong>What this is.</strong> A structural reading drawing on Western natal astrology, Pythagorean numerology and Chinese Bazi, blended into one interpretive layer. The aim is orientation, not prediction.</p>` +
+      `<p style="${safePStyle}"><strong>What this is not.</strong> Not medical, legal, financial or psychiatric advice. Not destiny. Not a personality test. No outcomes are promised.</p>` +
+      `<p style="${safePStyle}"><strong>How to read it.</strong> Each section names a structural pattern, then offers protocols — concrete behavioural anchors — connected to your specific configuration.</p>` +
+      `</section>`,
   );
 
   // Page 3 — Client Snapshot + Orientation
@@ -341,49 +382,32 @@ export function renderReportHtmlSafe(report: DarrowReport, opts: { assetsBaseUrl
     `<p style="${safePStyle}"><strong>Current Timing Theme.</strong> ${escape(snap.current_timing_theme)}</p>` +
     `<p style="${safePStyle}"><strong>Practical Focus.</strong> ${escape(snap.practical_focus)}</p>` +
     `</div>`;
-  const orientationBody = core?.orientation
-    ? `<h2 style="${safeH2Style};margin-top:18pt;">Orientation</h2>${v3Body(String(core.orientation))}`
+  const orientationProse = core?.orientation ? getCoreSectionProse(core.orientation) : "";
+  const orientationBody = orientationProse
+    ? `<h2 style="${safeH2Style};margin-top:18pt;">Orientation</h2>${renderProseBlocks(orientationProse).html}`
     : "";
   sections.push(
     `<section style="${safePageStyle}"><div style="${safeBrandStyle}">Darrow Code</div><h2 style="${safeH2Style}">Client Snapshot</h2>${snapshotBlock}${orientationBody}</section>`,
   );
 
   if (core && core.schema_version === "core_v3") {
-    // Page 4–5 — Core Architecture (2 pages: split on paragraph midpoint)
-    const ca = String(core.core_architecture ?? "");
-    const caParas = ca.split(/\n{2,}/);
-    const mid = Math.ceil(caParas.length / 2);
-    const caA = caParas.slice(0, mid).join("\n\n");
-    const caB = caParas.slice(mid).join("\n\n");
-    sections.push(v3Section("Core Architecture", caA));
-    if (caB.trim()) sections.push(v3Section("Core Architecture (continued)", caB));
-
-    sections.push(v3Section("The Battery — Emotional Needs & Internal Fuel", String(core.battery ?? "")));
-    sections.push(v3Section("Social Interface", String(core.social_interface ?? "")));
-    sections.push(v3Section("Numerology Code", String(core.numerology_code ?? "")));
-    sections.push(v3Section("Cognitive Style", String(core.cognitive_style ?? "")));
-    sections.push(v3Section("Drive & Rhythm", String(core.drive_and_rhythm ?? "")));
-    sections.push(v3Section("Professional Archetype", String(core.professional_archetype ?? "")));
-    sections.push(v3Section("Money & Value Mechanics", String(core.money_and_value ?? "")));
-    sections.push(v3Section("Relationship Baseline", String(core.relationship_baseline ?? "")));
-    sections.push(v3Section("Vitality Baseline", String(core.vitality_baseline ?? "")));
-    sections.push(v3Section("Environment & Resonance", String(core.environment_and_resonance ?? "")));
-
-    // Page 16–17 — Shadow & Friction (2 pages)
-    const sh = String(core.shadow_and_friction ?? "");
-    const shParas = sh.split(/\n{2,}/);
-    const shMid = Math.ceil(shParas.length / 2);
-    const shA = shParas.slice(0, shMid).join("\n\n");
-    const shB = shParas.slice(shMid).join("\n\n");
-    sections.push(v3Section("Shadow & Friction", shA));
-    if (shB.trim()) sections.push(v3Section("Shadow & Friction (continued)", shB));
-
-    sections.push(v3Section("Before / After", String(core.before_after ?? "")));
-    sections.push(v3Section("Executive Summary", String(core.executive_summary ?? "")));
-    sections.push(v3Section("Next Step", String(core.next_step ?? "")));
+    sections.push(v3Section("Core Architecture", core.core_architecture));
+    sections.push(v3Section("The Battery — Emotional Needs & Internal Fuel", core.battery));
+    sections.push(v3Section("Social Interface", core.social_interface));
+    sections.push(v3Section("Numerology Code", core.numerology_code));
+    sections.push(v3Section("Cognitive Style", core.cognitive_style));
+    sections.push(v3Section("Drive & Rhythm", core.drive_and_rhythm));
+    sections.push(v3Section("Professional Archetype", core.professional_archetype));
+    sections.push(v3Section("Money & Value Mechanics", core.money_and_value));
+    sections.push(v3Section("Relationship Baseline", core.relationship_baseline));
+    sections.push(v3Section("Vitality Baseline", core.vitality_baseline));
+    sections.push(v3Section("Environment & Resonance", core.environment_and_resonance));
+    sections.push(v3Section("Shadow & Friction", core.shadow_and_friction));
+    sections.push(v3Section("Before / After", core.before_after));
+    sections.push(v3Section("Executive Summary", core.executive_summary));
+    sections.push(v3Section("Next Step", core.next_step));
   } else if (core) {
-    // Legacy fallback (kept temporarily so a stale legacy CORE renders rather
-    // than crashing — pipeline should regenerate stale content via PART 8).
+    // Legacy fallback
     sections.push(
       safeSection("Opening", safePara(String(core.opening ?? "")) + safePara(String(core.architecture ?? ""))),
       safeSection("Mechanic", safePara(String(core.mechanic ?? ""))),
@@ -395,14 +419,13 @@ export function renderReportHtmlSafe(report: DarrowReport, opts: { assetsBaseUrl
     );
   }
 
-  // Closing dark page
-  const darkBleedClosing =
-    "margin:-22mm -20mm;padding:80mm 30mm 60mm;-webkit-print-color-adjust:exact;print-color-adjust:exact;page-break-after:auto;box-sizing:border-box;text-align:center;";
+  // Closing dark page — full A4, forced page break before, no split
   sections.push(
-    `<section style="${darkBleedClosing}background:#0A0F1E;color:#E5E7EB;">${goldMark}<div style="font-family:Arial,Helvetica,sans-serif;color:#D4AF37;font-size:11pt;letter-spacing:6pt;text-transform:uppercase;margin-bottom:28pt;-webkit-print-color-adjust:exact;print-color-adjust:exact;">Darrow Code</div><p style="font-family:Georgia,'Times New Roman',serif;font-style:italic;font-size:15pt;color:#E5E7EB;margin:0;">More than a horoscope. Your private birth code.</p></section>`,
+    `<section style="${fullDark}background:#0A0F1E;color:#E5E7EB;padding-top:110mm;page-break-before:always;">${goldMark}<div style="font-family:Arial,Helvetica,sans-serif;color:#D4AF37;font-size:11pt;letter-spacing:6pt;text-transform:uppercase;margin-bottom:28pt;-webkit-print-color-adjust:exact;print-color-adjust:exact;">Darrow Code</div><p style="font-family:Georgia,'Times New Roman',serif;font-style:italic;font-size:15pt;color:#E5E7EB;margin:0 auto;max-width:120mm;line-height:1.5;">More than a horoscope. Your private birth code.</p></section>`,
   );
 
-  return `<!doctype html><html lang="en"><head><meta charset="utf-8"/><title>Darrow Code — Prepared for ${escape(clientName)}</title></head><body style="margin:0;background:#F6F4EF;padding:22mm 20mm;font-family:Arial,Helvetica,sans-serif;">${sections.join("\n")}</body></html>`;
+  // Warm cream paper background.
+  return `<!doctype html><html lang="en"><head><meta charset="utf-8"/><title>Darrow Code — Prepared for ${escape(clientName)}</title></head><body style="margin:0;background:#FAF7F2;padding:22mm 20mm;font-family:Arial,Helvetica,sans-serif;">${sections.join("\n")}</body></html>`;
 }
 
 // DEPRECATED — NOT USED BY PIPELINE. Do not modify or reactivate.

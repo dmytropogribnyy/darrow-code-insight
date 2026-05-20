@@ -12,6 +12,7 @@
 //   - generateCoreV3SplitDiagnostic() — diagnostic route (warn-only lengths)
 
 import { DARROW_SYSTEM_PROMPT } from "./system-prompt";
+import { coreSectionJsonSchemaFor } from "./schema";
 
 const ANTHROPIC_URL = "https://api.anthropic.com/v1/messages";
 const TOOL_NAME_A = "emit_darrow_core_a";
@@ -46,9 +47,9 @@ export const CORE_V3_SECTIONS_B = [
 // ─── Tool input JSON schemas ─────────────────────────────────────────
 const stringProp = { type: "string" } as const;
 
-function sectionProps(keys: readonly string[]): Record<string, { type: "string" }> {
-  const out: Record<string, { type: "string" }> = {};
-  for (const k of keys) out[k] = stringProp;
+function sectionProps(keys: readonly string[]): Record<string, any> {
+  const out: Record<string, any> = {};
+  for (const k of keys) out[k] = coreSectionJsonSchemaFor(k);
   return out;
 }
 
@@ -212,14 +213,26 @@ async function callSubWithFallback(
 function suffixA(): string {
   return [
     "",
-    "SPLIT GENERATION — CALL A (sections 1–9 of CORE v3).",
+    "SPLIT GENERATION — CALL A (sections 1–9 of CORE v3.1).",
     "Return the tool payload `emit_darrow_core_a` with:",
     "  - client_name",
     "  - core_sections_a containing schema_version='core_v3' and EXACTLY these 9 sections:",
     `      ${CORE_V3_SECTIONS_A.join(", ")}`,
     "Do NOT return any other CORE sections — they will be generated in Call B.",
-    "Treat each section's word-count target from the system prompt as REQUIRED.",
-    "Keep voice, tradition anchors, and proof_tags consistent — call B will continue the same client.",
+    "",
+    "STRUCTURED CALLOUTS — read carefully:",
+    "  cover_tagline + orientation → emit as a plain string (prose only).",
+    "  core_architecture, battery, social_interface, numerology_code,",
+    "  cognitive_style, drive_and_rhythm, professional_archetype →",
+    "  emit as an OBJECT: { prose: string, protocols: [{title, body}], warning_signals?: [string] }.",
+    "  battery and professional_archetype MUST include 1 warning_signals[] entry.",
+    "  Other sections in this list MUST include 1 PROTOCOL.",
+    "  Do NOT embed PROTOCOL: or Warning Signal: lines inside the prose anymore.",
+    "  Each protocol.title is 3–5 words. Each protocol.body is 2–4 sentences.",
+    "  Each warning_signal string is 2–3 sentences of observable behaviour.",
+    "",
+    "Per-section word target applies to the PROSE field only.",
+    "Keep voice, tradition anchors, and proof_tags consistent — Call B will continue the same client.",
   ].join("\n");
 }
 
@@ -227,13 +240,18 @@ function suffixA(): string {
 // mode so Call B can synthesise client_snapshot, executive_summary,
 // shadow_and_friction continuity, etc. from the ACTUAL CORE v1–9 text
 // rather than guessing from the chart alone.
+function proseOf(v: any): string {
+  if (typeof v === "string") return v;
+  if (v && typeof v === "object" && typeof v.prose === "string") return v.prose;
+  return "";
+}
+
 function buildCallASummary(client_name: string, sectionsA: any): string {
   function head(s: string | undefined, chars: number): string {
     if (!s) return "";
     const t = String(s).replace(/\s+/g, " ").trim();
     return t.length > chars ? t.slice(0, chars).trimEnd() + "…" : t;
   }
-  // Per-section budget tuned so the whole digest stays well under ~1.5k tokens.
   const budgets: Record<string, number> = {
     cover_tagline: 200,
     orientation: 700,
@@ -246,14 +264,14 @@ function buildCallASummary(client_name: string, sectionsA: any): string {
     professional_archetype: 700,
   };
   const lines: string[] = [
-    "CALL-A SUMMARY (verbatim excerpts from CORE v3 sections 1–9 just produced for this client).",
+    "CALL-A SUMMARY (verbatim excerpts from CORE v3.1 sections 1–9 just produced for this client).",
     "Use this as ground truth when writing sections 10–17, client_snapshot, and closing.",
     "Do NOT contradict the language, pattern names, or tradition anchors established below.",
     `client_name: ${client_name}`,
   ];
   for (const key of CORE_V3_SECTIONS_A) {
-    lines.push(`--- ${key} (excerpt) ---`);
-    lines.push(head(sectionsA[key], budgets[key] ?? 500));
+    lines.push(`--- ${key} (prose excerpt) ---`);
+    lines.push(head(proseOf(sectionsA[key]), budgets[key] ?? 500));
   }
   if (Array.isArray(sectionsA.proof_tags) && sectionsA.proof_tags.length > 0) {
     lines.push("--- proof_tags (Call A) ---");
@@ -265,14 +283,22 @@ function buildCallASummary(client_name: string, sectionsA: any): string {
 function suffixB(callASummary?: string): string {
   const base = [
     "",
-    "SPLIT GENERATION — CALL B (sections 10–17 of CORE v3 + snapshot + closing).",
+    "SPLIT GENERATION — CALL B (sections 10–17 of CORE v3.1 + snapshot + closing).",
     "Return the tool payload `emit_darrow_core_b` with:",
     "  - core_sections_b containing EXACTLY these 8 sections:",
     `      ${CORE_V3_SECTIONS_B.join(", ")}`,
-    "  - client_snapshot (full 9-field structure, synthesized from ALL 17 CORE v3 sections — sections 1–9 are provided below)",
+    "  - client_snapshot (full 9-field structure, synthesized from ALL 17 CORE v3.1 sections — sections 1–9 are provided below)",
     "  - closing.executive_summary (must integrate insights from BOTH halves; ≥ 40 chars)",
     "  - closing.recommended_next_module",
-    "Treat each section's word-count target from the system prompt as REQUIRED.",
+    "",
+    "STRUCTURED CALLOUTS:",
+    "  money_and_value, relationship_baseline, vitality_baseline,",
+    "  environment_and_resonance → emit OBJECT { prose, protocols:[{title,body}] } with 1 PROTOCOL each.",
+    "  shadow_and_friction → emit OBJECT { prose, warning_signals:[string] } with 1 Warning Signal, NO protocols.",
+    "  before_after, executive_summary, next_step → plain string (prose only).",
+    "  Do NOT embed PROTOCOL: or Warning Signal: lines inside the prose.",
+    "",
+    "Per-section word target applies to the PROSE field only.",
     "Keep voice, pattern naming, and tradition anchors consistent with Call A.",
     "shadow_and_friction MUST reference the architectural patterns from core_architecture / battery / drive_and_rhythm in Call A.",
     "next_step MUST be coherent with professional_archetype, drive_and_rhythm, and core_architecture in Call A.",
@@ -290,7 +316,6 @@ function suffixB(callASummary?: string): string {
 export type SplitMode = "sequential" | "parallel";
 
 export interface CoreSplitResult {
-  // Production-compatible DarrowReport-shaped object (modules.CORE = full 17 sections).
   report: any;
   model_used: string;
   api_call_count: number;
@@ -303,17 +328,13 @@ export interface CoreSplitResult {
 }
 
 export interface GenerateCoreV3SplitOptions {
-  /**
-   * "sequential" (default, production-quality): Call A runs first, its
-   * output is summarised and passed into Call B's prompt so Call B can
-   * synthesise client_snapshot + closing + sections 10–17 with full
-   * knowledge of Call A. Slower (~2× single-call wall time) but coherent.
-   *
-   * "parallel" (diagnostic-only): both calls fire simultaneously. Call B
-   * works without Call A context. Faster but less coherent — use ONLY to
-   * isolate whether timeouts are caused by single-call size.
-   */
   mode?: SplitMode;
+}
+
+function sectionPresent(v: any): boolean {
+  if (typeof v === "string") return v.trim().length > 0;
+  if (v && typeof v === "object" && typeof v.prose === "string") return v.prose.trim().length > 0;
+  return false;
 }
 
 function validateCallA(aInput: any) {
@@ -323,7 +344,7 @@ function validateCallA(aInput: any) {
   if (sectionsA.schema_version !== "core_v3")
     throw new Error(`[core-split] Call A wrong schema_version: ${sectionsA.schema_version}`);
   for (const k of CORE_V3_SECTIONS_A) {
-    if (typeof sectionsA[k] !== "string" || sectionsA[k].trim().length === 0)
+    if (!sectionPresent(sectionsA[k]))
       throw new Error(`[core-split] Call A missing or empty section: ${k}`);
   }
   return sectionsA;
@@ -332,7 +353,7 @@ function validateCallA(aInput: any) {
 function validateCallB(bInput: any) {
   const sectionsB = bInput?.core_sections_b ?? {};
   for (const k of CORE_V3_SECTIONS_B) {
-    if (typeof sectionsB[k] !== "string" || sectionsB[k].trim().length === 0)
+    if (!sectionPresent(sectionsB[k]))
       throw new Error(`[core-split] Call B missing or empty section: ${k}`);
   }
   if (!bInput?.client_snapshot) throw new Error("[core-split] Call B missing client_snapshot");

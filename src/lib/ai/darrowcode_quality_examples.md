@@ -33,6 +33,14 @@ PROTOCOL: Trust your intuition and take care of your emotional needs.
 ✅ STRONG VERSION (produce this)
 ───────────────────────────────────────────────
 
+⚠️ STYLE EXAMPLE ONLY — the placements in this example
+(Triple Water Lock: Sun/Moon/Ascendant in Cancer, Gui Water 癸 Day Master,
+Hai branch, Water Dominant 59%) are illustrative.
+Do NOT apply these specific placements to clients unless their normalized
+chart data actually contains them. Use this example only for rhythm,
+paragraph structure, recognition language, scenario style, protocol
+clarity, and human-readable tone — never as reusable chart facts.
+
 SECTION: core_architecture
 
 In most people, there is an inner conflict: the mind wants one thing,
