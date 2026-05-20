@@ -35,7 +35,7 @@ function snippet(s: string | undefined | null, sentences = 4): string {
   return parts.join(" ").slice(0, 1200);
 }
 
-async function runDiagnostic(intake_id: string) {
+async function runDiagnostic(intake_id: string, mode: "sequential" | "parallel" = "sequential") {
   const sb = admin();
   const t0 = Date.now();
 
