@@ -119,7 +119,10 @@ async function runDiagnostic(intake_id: string, mode: "sequential" | "parallel" 
     "astro-seek",
     "provider says",
   ];
-  const coreText = Object.values(core).filter((v) => typeof v === "string").join("\n").toLowerCase();
+  const coreText = Object.values(core)
+    .map((v) => getCoreSectionProse(v) || (typeof v === "string" ? v : ""))
+    .join("\n")
+    .toLowerCase();
   const provider_interpretation_leak = leakProbes.filter((p) => coreText.includes(p));
 
   // 4) PDF render (only if structurally valid enough to render)
