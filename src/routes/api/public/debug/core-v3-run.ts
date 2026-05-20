@@ -18,9 +18,9 @@ import {
   CORE_V3_KEYS,
   evaluateCoreV3Lengths,
   evaluateStructure,
-  generateCoreV3Diagnostic,
   wordCount,
 } from "@/lib/ai/diagnostic.server";
+import { generateCoreV3Split } from "@/lib/ai/core-split.server";
 import { BUILD_MARKER } from "./build-marker";
 
 let _sb: any = null;
