@@ -414,8 +414,6 @@ export function renderReportHtml(report: DarrowReport, opts: { assetsBaseUrl?: s
   const core = report.modules.CORE as any;
   const generated = report.generated_modules ?? Object.keys(report.modules);
   const hasCore = !!core && generated.includes("CORE");
-  const generated = report.generated_modules ?? Object.keys(report.modules);
-  const hasCore = !!core && generated.includes("CORE");
   const addonCodes = generated.filter((c) => c !== "CORE");
   const clientName = report.client_name || "you";
   // Note: `assetsBaseUrl` is intentionally unused for brand imagery — the
