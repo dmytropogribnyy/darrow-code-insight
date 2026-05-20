@@ -108,8 +108,11 @@ export function evaluateStructure(report: any): StructuralIssue[] {
     issues.push({ code: "WRONG_SCHEMA_VERSION", detail: String(core.schema_version) });
   for (const k of CORE_V3_KEYS) {
     if (!(k in core)) issues.push({ code: "MISSING_SECTION_KEY", detail: k });
-    else if (typeof core[k] !== "string" || core[k].trim().length === 0)
-      issues.push({ code: "EMPTY_SECTION", detail: k });
+    else {
+      const prose = getCoreSectionProse(core[k]);
+      if (!prose || prose.trim().length === 0)
+        issues.push({ code: "EMPTY_SECTION", detail: k });
+    }
   }
   return issues;
 }
