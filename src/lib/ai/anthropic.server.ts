@@ -171,10 +171,16 @@ async function mapWithConcurrency<T, R>(items: T[], limit: number, fn: (item: T)
 async function generateChunkedReport(userPrompt: string, modules: string[], model: string, fallbackModel?: string): Promise<GenerateResult> {
   console.log("[anthropic] using chunked generation", { modules });
   const hasCore = modules.includes("CORE");
-  // First call: CORE if present, otherwise the first chapter — it carries
-  // client_snapshot + closing for the merged report.
+  // First call: CORE if present (via split generator), otherwise the first
+  // chapter — it carries client_snapshot + closing for the merged report.
   const firstModule = hasCore ? "CORE" : modules[0];
-  const first = await callWithFallback(promptForModules(userPrompt, [firstModule]), model, fallbackModel);
+  const first = hasCore
+    ? await (async () => {
+        const split = await generateCoreV3Split(promptForModules(userPrompt, ["CORE"]), model, fallbackModel);
+        const report = DarrowReportSchema.parse(split.report);
+        return { report, model_used: split.model_used };
+      })()
+    : await callWithFallback(promptForModules(userPrompt, [firstModule]), model, fallbackModel);
   const rest = modules.filter((m) => m !== firstModule);
   const restResults = await mapWithConcurrency(rest, 2, async (moduleCode) => {
     // Include the first module as context so Claude keeps voice + pattern coherent.
@@ -209,6 +215,15 @@ export async function generateDarrowReport(userPrompt: string): Promise<Generate
   const premium = process.env.ANTHROPIC_MODEL_PREMIUM;
   if (!def) throw new Error("ANTHROPIC_MODEL_DEFAULT is not configured");
   const modules = requestedModules(userPrompt);
+
+  // CORE-only requests always use the split generator to avoid Anthropic 524
+  // on the single large 17-section call.
+  if (modules.length === 1 && modules[0] === "CORE") {
+    const split = await generateCoreV3Split(promptForModules(userPrompt, ["CORE"]), def, fb);
+    const report = DarrowReportSchema.parse(split.report);
+    return { report, model_used: split.model_used };
+  }
+
   if (modules.length >= 4) return generateChunkedReport(userPrompt, modules, def, fb);
 
   const firstModel = modules.length >= 3 && premium ? premium : def;
