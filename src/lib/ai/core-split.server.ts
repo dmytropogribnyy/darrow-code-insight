@@ -12,6 +12,7 @@
 //   - generateCoreV3SplitDiagnostic() — diagnostic route (warn-only lengths)
 
 import { DARROW_SYSTEM_PROMPT } from "./system-prompt";
+import { coreSectionJsonSchemaFor } from "./schema";
 
 const ANTHROPIC_URL = "https://api.anthropic.com/v1/messages";
 const TOOL_NAME_A = "emit_darrow_core_a";
@@ -46,9 +47,9 @@ export const CORE_V3_SECTIONS_B = [
 // ─── Tool input JSON schemas ─────────────────────────────────────────
 const stringProp = { type: "string" } as const;
 
-function sectionProps(keys: readonly string[]): Record<string, { type: "string" }> {
-  const out: Record<string, { type: "string" }> = {};
-  for (const k of keys) out[k] = stringProp;
+function sectionProps(keys: readonly string[]): Record<string, any> {
+  const out: Record<string, any> = {};
+  for (const k of keys) out[k] = coreSectionJsonSchemaFor(k);
   return out;
 }
 
