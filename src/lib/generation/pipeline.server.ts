@@ -199,13 +199,28 @@ export async function runFullGenerationPipeline(order_id: string): Promise<void>
     // If a previous attempt already produced AI content, skip astro + AI
     // and go straight to PDF rendering. This makes PDF-only retries cheap
     // and avoids re-billing Claude when only the renderer failed.
-    let report: any = r.ai_content_json ?? null;
-    let model_used: string = r.model_used ?? "reused";
+    // Stale-content guard (PART 8 of v3 migration).
+    // Only reuse stored ai_content_json when it matches the active renderer.
+    // Authoritative check: modules.CORE.schema_version === "core_v3".
+    // Fallback: presence of "core_architecture" key on modules.CORE.
+    // Anything else (legacy/stale) is discarded so we never feed a legacy
+    // payload into the v3 renderer.
+    const includesCore = (modules as string[]).includes("CORE");
+    const stored = r.ai_content_json ?? null;
+    const storedCore = stored?.modules?.CORE ?? null;
+    const isV3 =
+      !!storedCore &&
+      (storedCore.schema_version === "core_v3" || typeof storedCore.core_architecture === "string");
+    let report: any = stored && (!includesCore || isV3) ? stored : null;
+    let model_used: string = report ? (r.model_used ?? "reused") : "reused";
 
     if (report) {
-      console.log("[pipeline] reusing existing ai_content_json", { order_id, report_id, model_used });
+      console.log("[pipeline] reusing existing ai_content_json", { order_id, report_id, model_used, schema: storedCore?.schema_version ?? "(unset)" });
       logStage({ stage: "ai_generation_completed", result: "success", order_id, extra: { model_used, reused: true } });
       await heartbeat(order_id);
+    } else if (stored && includesCore) {
+      console.warn("[pipeline] discarding stale legacy ai_content_json — will regenerate", { order_id, report_id });
+      await sb.from("reports").update({ ai_content_json: null }).eq("id", report_id);
     } else {
       // 1) Astro data — persist normalized JSON.
       const provider = await getAstroProvider();
