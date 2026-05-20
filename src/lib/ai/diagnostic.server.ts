@@ -5,7 +5,7 @@
 // Used ONLY by /api/public/debug/core-v3-run. Production paid pipeline
 // still uses generateDarrowReport() with strict validation.
 
-import { darrowReportJsonSchema } from "./schema";
+import { darrowReportJsonSchema, getCoreSectionProse } from "./schema";
 import { DARROW_SYSTEM_PROMPT } from "./system-prompt";
 
 const ANTHROPIC_URL = "https://api.anthropic.com/v1/messages";
@@ -13,28 +13,31 @@ const TOOL_NAME = "emit_darrow_report";
 const MAX_TOKENS = 12000;
 const MODEL_TIMEOUT_MS = 10 * 60 * 1000;
 
-// 17 CORE v3 keys with character minimum + word target (lo, hi).
+// CORE v3.1 targets — richer reads, structured callouts.
+// min_chars applies to prose only (callouts are extra).
 export const CORE_V3_TARGETS: Record<string, { min_chars: number; word_lo: number; word_hi: number }> = {
-  cover_tagline: { min_chars: 50, word_lo: 10, word_hi: 20 },
-  orientation: { min_chars: 700, word_lo: 180, word_hi: 220 },
-  core_architecture: { min_chars: 1000, word_lo: 280, word_hi: 340 },
-  battery: { min_chars: 800, word_lo: 220, word_hi: 260 },
-  social_interface: { min_chars: 750, word_lo: 200, word_hi: 240 },
-  numerology_code: { min_chars: 900, word_lo: 260, word_hi: 300 },
-  cognitive_style: { min_chars: 750, word_lo: 200, word_hi: 240 },
-  drive_and_rhythm: { min_chars: 750, word_lo: 200, word_hi: 240 },
-  professional_archetype: { min_chars: 800, word_lo: 220, word_hi: 260 },
-  money_and_value: { min_chars: 750, word_lo: 200, word_hi: 240 },
-  relationship_baseline: { min_chars: 750, word_lo: 200, word_hi: 240 },
-  vitality_baseline: { min_chars: 650, word_lo: 180, word_hi: 220 },
-  environment_and_resonance: { min_chars: 650, word_lo: 180, word_hi: 220 },
-  shadow_and_friction: { min_chars: 900, word_lo: 240, word_hi: 280 },
-  before_after: { min_chars: 450, word_lo: 120, word_hi: 160 },
-  executive_summary: { min_chars: 1000, word_lo: 280, word_hi: 320 },
-  next_step: { min_chars: 300, word_lo: 80, word_hi: 120 },
+  cover_tagline: { min_chars: 50, word_lo: 15, word_hi: 25 },
+  orientation: { min_chars: 800, word_lo: 200, word_hi: 250 },
+  core_architecture: { min_chars: 1100, word_lo: 300, word_hi: 380 },
+  battery: { min_chars: 900, word_lo: 250, word_hi: 300 },
+  social_interface: { min_chars: 800, word_lo: 220, word_hi: 260 },
+  numerology_code: { min_chars: 1000, word_lo: 280, word_hi: 320 },
+  cognitive_style: { min_chars: 800, word_lo: 220, word_hi: 260 },
+  drive_and_rhythm: { min_chars: 800, word_lo: 220, word_hi: 260 },
+  professional_archetype: { min_chars: 900, word_lo: 240, word_hi: 280 },
+  money_and_value: { min_chars: 800, word_lo: 220, word_hi: 260 },
+  relationship_baseline: { min_chars: 800, word_lo: 220, word_hi: 260 },
+  vitality_baseline: { min_chars: 750, word_lo: 200, word_hi: 240 },
+  environment_and_resonance: { min_chars: 750, word_lo: 200, word_hi: 240 },
+  shadow_and_friction: { min_chars: 1000, word_lo: 280, word_hi: 340 },
+  before_after: { min_chars: 500, word_lo: 140, word_hi: 180 },
+  executive_summary: { min_chars: 1100, word_lo: 300, word_hi: 360 },
+  next_step: { min_chars: 350, word_lo: 100, word_hi: 130 },
 };
 
 export const CORE_V3_KEYS = Object.keys(CORE_V3_TARGETS);
+export const CORE_V3_WORD_TARGET_RANGE: [number, number] = [3800, 4600];
+export const CORE_V3_WORD_HARD_CAP = 5000;
 
 export interface LengthDiag {
   section: string;
@@ -53,7 +56,7 @@ export function wordCount(s: string): number {
 export function evaluateCoreV3Lengths(coreMod: any): LengthDiag[] {
   const diags: LengthDiag[] = [];
   for (const [key, t] of Object.entries(CORE_V3_TARGETS)) {
-    const v = typeof coreMod?.[key] === "string" ? (coreMod[key] as string) : "";
+    const v = getCoreSectionProse(coreMod?.[key]);
     const actual_chars = v.length;
     const actual_words = v ? wordCount(v) : 0;
     const under = actual_chars < t.min_chars || actual_words < t.word_lo;
