@@ -80,7 +80,8 @@ async function runDiagnostic(intake_id: string) {
   });
   const model = process.env.ANTHROPIC_MODEL_DEFAULT;
   if (!model) throw new Error("ANTHROPIC_MODEL_DEFAULT is not configured");
-  const ai = await generateCoreV3Diagnostic(userPrompt, model);
+  const fallback = process.env.ANTHROPIC_MODEL_FALLBACK;
+  const ai = await generateCoreV3Split(userPrompt, model, fallback);
 
   // 3) Structural validation (hard) + length evaluation (warn)
   const structural_issues = evaluateStructure(ai.raw_report);
