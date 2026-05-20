@@ -13,7 +13,9 @@ import { sendEmail, reportReadyEmail, reportDelayEmail } from "@/lib/email/resen
 import { logStage } from "@/lib/observability/pipeline-log";
 
 const STUCK_PROCESSING_MS = 4 * 60 * 1000; // 4 min
-const STEP_TIMEOUT_MS = 8 * 60 * 1000;
+// CORE v3 produces 3000–3600 words (~5000 tokens), and Zod superRefine word-count rejections
+// can force AI retries with backoff. Give the AI step enough room for retries + fallback model.
+const STEP_TIMEOUT_MS = 15 * 60 * 1000;
 const MAX_GENERATION_ATTEMPTS = 2;
 
 let _sb: any = null;
