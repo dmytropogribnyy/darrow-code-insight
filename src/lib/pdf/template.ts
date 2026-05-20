@@ -1,4 +1,9 @@
 import type { DarrowReport, DarrowModule } from "@/lib/ai/schema";
+import {
+  getCoreSectionProse,
+  getCoreSectionProtocols,
+  getCoreSectionWarnings,
+} from "@/lib/ai/schema";
 // Inline the brand symbol as a base64 data URL so PDF renderers (APITemplate.io)
 // never have to fetch it from an external host. The PNG asset itself is kept
 // small (256x256, ~6KB) to keep total HTML well under APITemplate's payload
