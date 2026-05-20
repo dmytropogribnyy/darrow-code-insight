@@ -92,10 +92,10 @@ async function runDiagnostic(intake_id: string, mode: "sequential" | "parallel" 
   const length_diagnostics = evaluateCoreV3Lengths(core);
   const warnings_under_target = length_diagnostics.filter((d) => d.status === "WARN_UNDER_TARGET");
 
-  // Per-section word + char map
+  // Per-section word + char map (prose-only)
   const per_section: Record<string, { chars: number; words: number; status: string }> = {};
   for (const k of CORE_V3_KEYS) {
-    const v = typeof core?.[k] === "string" ? (core[k] as string) : "";
+    const v = getCoreSectionProse(core?.[k]);
     per_section[k] = {
       chars: v.length,
       words: v ? wordCount(v) : 0,
@@ -103,6 +103,14 @@ async function runDiagnostic(intake_id: string, mode: "sequential" | "parallel" 
     };
   }
   const total_words = Object.values(per_section).reduce((sum, s) => sum + s.words, 0);
+  const word_total_status =
+    total_words > CORE_V3_WORD_HARD_CAP
+      ? "OVER_HARD_CAP"
+      : total_words < CORE_V3_WORD_TARGET_RANGE[0]
+        ? "UNDER_TARGET"
+        : total_words > CORE_V3_WORD_TARGET_RANGE[1]
+          ? "OVER_TARGET"
+          : "OK";
 
   // Provider-interpretation leak check (basic substring scan in CORE body)
   const leakProbes = [
