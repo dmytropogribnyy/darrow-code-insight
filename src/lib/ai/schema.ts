@@ -1,8 +1,14 @@
 // Darrow Report schema — Zod runtime + JSON Schema for Anthropic tool.
 //
-// CORE module is v3 (17 sections, schema_version "core_v3").
-// Add-on modules retain the legacy shape for runtime compatibility — they
-// will be migrated in a later pass per docs/current/SOURCE_OF_TRUTH.md.
+// CORE module is v3.1 (17 sections, schema_version "core_v3").
+// 11 sections now support structured callout objects:
+//   { prose: string, protocols?: [{title, body}], warning_signals?: string[] }
+// 5 sections remain plain prose strings.
+// Zod accepts either shape (string OR section object) for forward/back-compat
+// with reports stored before v3.1 — getCoreSectionProse() in the PDF
+// template handles both. Anthropic emits the new shape.
+//
+// Add-on modules retain the legacy shape for runtime compatibility.
 
 import { z } from "zod";
 
@@ -15,50 +21,101 @@ const ModuleSnapshotSchema = z.object({
 });
 
 // ─────────────────────────────────────────────────────────────
-// CORE v3 — 17 named sections, schema_version="core_v3"
+// CORE v3.1 — structured callout sections
 // ─────────────────────────────────────────────────────────────
 
+export const CORE_V3_SECTIONS_WITH_PROTOCOLS = [
+  "core_architecture",
+  "battery",
+  "social_interface",
+  "numerology_code",
+  "cognitive_style",
+  "drive_and_rhythm",
+  "professional_archetype",
+  "money_and_value",
+  "relationship_baseline",
+  "vitality_baseline",
+  "environment_and_resonance",
+] as const;
+
+export const CORE_V3_SECTIONS_WITH_WARNINGS = [
+  "battery",
+  "professional_archetype",
+  "shadow_and_friction",
+] as const;
+
+export const CORE_V3_PROSE_ONLY_SECTIONS = [
+  "cover_tagline",
+  "orientation",
+  "before_after",
+  "executive_summary",
+  "next_step",
+] as const;
+
+const ProtocolObject = z.object({
+  title: z.string().min(1),
+  body: z.string().min(1),
+});
+
+const SectionObjectSchema = z
+  .object({
+    prose: z.string(),
+    protocols: z.array(ProtocolObject).optional(),
+    warning_signals: z.array(z.string()).optional(),
+  })
+  .passthrough();
+
+// Accept either a raw string (legacy / prose-only) or the structured object.
+const CoreSectionField = z.union([z.string(), SectionObjectSchema]);
+
+// Updated v3.1 minimums (prose length, not full object stringified).
+// These are per-section minimum prose char counts.
 const CORE_V3_MIN: Record<string, number> = {
   cover_tagline: 50,
-  orientation: 700,
-  core_architecture: 1000,
-  battery: 800,
-  social_interface: 750,
-  numerology_code: 900,
-  cognitive_style: 750,
-  drive_and_rhythm: 750,
-  professional_archetype: 800,
-  money_and_value: 750,
-  relationship_baseline: 750,
-  vitality_baseline: 650,
-  environment_and_resonance: 650,
-  shadow_and_friction: 900,
-  before_after: 450,
-  executive_summary: 1000,
-  next_step: 300,
+  orientation: 800,
+  core_architecture: 1100,
+  battery: 900,
+  social_interface: 800,
+  numerology_code: 1000,
+  cognitive_style: 800,
+  drive_and_rhythm: 800,
+  professional_archetype: 900,
+  money_and_value: 800,
+  relationship_baseline: 800,
+  vitality_baseline: 750,
+  environment_and_resonance: 750,
+  shadow_and_friction: 1000,
+  before_after: 500,
+  executive_summary: 1100,
+  next_step: 350,
 };
+
+function sectionProse(v: unknown): string {
+  if (typeof v === "string") return v;
+  if (v && typeof v === "object" && typeof (v as any).prose === "string") return (v as any).prose;
+  return "";
+}
 
 const CoreV3Schema = z
   .object({
     schema_version: z.literal("core_v3"),
-    cover_tagline: z.string(),
-    orientation: z.string(),
-    core_architecture: z.string(),
-    battery: z.string(),
-    social_interface: z.string(),
-    numerology_code: z.string(),
-    cognitive_style: z.string(),
-    drive_and_rhythm: z.string(),
-    professional_archetype: z.string(),
-    money_and_value: z.string(),
-    relationship_baseline: z.string(),
-    vitality_baseline: z.string(),
-    environment_and_resonance: z.string(),
-    shadow_and_friction: z.string(),
-    before_after: z.string(),
-    executive_summary: z.string(),
-    next_step: z.string(),
-    // Optional carry-overs (some flows still emit these; harmless if present)
+    cover_tagline: CoreSectionField,
+    orientation: CoreSectionField,
+    core_architecture: CoreSectionField,
+    battery: CoreSectionField,
+    social_interface: CoreSectionField,
+    numerology_code: CoreSectionField,
+    cognitive_style: CoreSectionField,
+    drive_and_rhythm: CoreSectionField,
+    professional_archetype: CoreSectionField,
+    money_and_value: CoreSectionField,
+    relationship_baseline: CoreSectionField,
+    vitality_baseline: CoreSectionField,
+    environment_and_resonance: CoreSectionField,
+    shadow_and_friction: CoreSectionField,
+    before_after: CoreSectionField,
+    executive_summary: CoreSectionField,
+    next_step: CoreSectionField,
     proof_tags: z.array(z.string()).optional(),
     module_snapshot: ModuleSnapshotSchema.optional(),
     color_palette: z.array(z.string()).optional(),
@@ -66,10 +123,10 @@ const CoreV3Schema = z
   })
   .superRefine((mod, ctx) => {
     for (const [k, min] of Object.entries(CORE_V3_MIN)) {
-      const actual = ((mod as any)[k] as string | undefined)?.length ?? 0;
+      const prose = sectionProse((mod as any)[k]);
+      const actual = prose.length;
       if (actual < min) {
-        // Diagnostic logging for under-generation debugging.
-        console.warn("[schema] CORE v3 section under min length", {
+        console.warn("[schema] CORE v3.1 section under min prose length", {
           section: k,
           actual,
           expected: min,
@@ -78,15 +135,14 @@ const CoreV3Schema = z
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           path: [k],
-          message: `CORE.${k} too short: ${actual} chars < ${min} required`,
+          message: `CORE.${k} prose too short: ${actual} chars < ${min} required`,
         });
       }
     }
   });
 
 // ─────────────────────────────────────────────────────────────
-// Legacy / add-on module shape (kept for LOVE/MONEY/BODY/YEAR/STYLE/PLACE
-// and for any legacy renderer fallback on old stored reports)
+// Legacy / add-on module shape
 // ─────────────────────────────────────────────────────────────
 
 const LegacyModuleSchema = z.object({
@@ -102,7 +158,6 @@ const LegacyModuleSchema = z.object({
   module_snapshot: ModuleSnapshotSchema.optional(),
   color_palette: z.array(z.string()).optional(),
   color_names: z.array(z.string()).optional(),
-  // Allow v3 add-on keys as optional so future add-on migrations don't break.
   module_opening: z.string().optional(),
   primary_architecture: z.string().optional(),
   mechanism: z.string().optional(),
@@ -111,7 +166,6 @@ const LegacyModuleSchema = z.object({
   bridge: z.string().optional(),
 });
 
-// Module is either v3 CORE or legacy add-on.
 const ModuleSchema = z.union([CoreV3Schema, LegacyModuleSchema]);
 
 export const DarrowReportSchema = z.object({
@@ -139,16 +193,58 @@ export const DarrowReportSchema = z.object({
 export type DarrowReport = z.infer<typeof DarrowReportSchema>;
 export type DarrowModule = z.infer<typeof LegacyModuleSchema>;
 export type DarrowCoreV3 = z.infer<typeof CoreV3Schema>;
+export type DarrowCoreSection = z.infer<typeof CoreSectionField>;
+
+// Helper used across template + diagnostics. Always returns the prose text
+// for a CORE v3 section whether it is stored as a string (legacy) or as the
+// new {prose, protocols?, warning_signals?} object.
+export function getCoreSectionProse(field: unknown): string {
+  return sectionProse(field);
+}
+export function getCoreSectionProtocols(field: unknown): Array<{ title: string; body: string }> {
+  if (field && typeof field === "object" && Array.isArray((field as any).protocols)) {
+    return (field as any).protocols as Array<{ title: string; body: string }>;
+  }
+  return [];
+}
+export function getCoreSectionWarnings(field: unknown): string[] {
+  if (field && typeof field === "object" && Array.isArray((field as any).warning_signals)) {
+    return ((field as any).warning_signals as unknown[]).map((x) => String(x));
+  }
+  return [];
+}
 
 // ─────────────────────────────────────────────────────────────
-// Anthropic tool input JSON Schema — must stay in lockstep with Zod.
-// CORE v3 keys are required; add-on legacy keys mirror LegacyModuleSchema.
+// Anthropic tool JSON Schema — lockstep with Zod.
+// CORE sections that carry callouts emit as objects; prose-only stays string.
 // ─────────────────────────────────────────────────────────────
 
-const coreV3Props = {
+const protocolJsonSchema = {
   type: "object",
-  required: [
-    "schema_version",
+  required: ["title", "body"],
+  properties: { title: { type: "string" }, body: { type: "string" } },
+} as const;
+
+function sectionObjectJsonSchema(opts: { protocols?: boolean; warnings?: boolean }) {
+  const properties: Record<string, any> = { prose: { type: "string" } };
+  const required: string[] = ["prose"];
+  if (opts.protocols) properties.protocols = { type: "array", items: protocolJsonSchema };
+  if (opts.warnings) properties.warning_signals = { type: "array", items: { type: "string" } };
+  return { type: "object", required, properties };
+}
+
+const SECTIONS_WITH_PROTOCOLS_SET = new Set<string>(CORE_V3_SECTIONS_WITH_PROTOCOLS);
+const SECTIONS_WITH_WARNINGS_SET = new Set<string>(CORE_V3_SECTIONS_WITH_WARNINGS);
+
+export function coreSectionJsonSchemaFor(key: string) {
+  const hasP = SECTIONS_WITH_PROTOCOLS_SET.has(key);
+  const hasW = SECTIONS_WITH_WARNINGS_SET.has(key);
+  if (!hasP && !hasW) return { type: "string" } as const;
+  return sectionObjectJsonSchema({ protocols: hasP, warnings: hasW });
+}
+
+const coreV3Props = (() => {
+  const allKeys = [
     "cover_tagline",
     "orientation",
     "core_architecture",
@@ -166,29 +262,18 @@ const coreV3Props = {
     "before_after",
     "executive_summary",
     "next_step",
-  ],
-  properties: {
+  ];
+  const properties: Record<string, any> = {
     schema_version: { type: "string", enum: ["core_v3"] },
-    cover_tagline: { type: "string" },
-    orientation: { type: "string" },
-    core_architecture: { type: "string" },
-    battery: { type: "string" },
-    social_interface: { type: "string" },
-    numerology_code: { type: "string" },
-    cognitive_style: { type: "string" },
-    drive_and_rhythm: { type: "string" },
-    professional_archetype: { type: "string" },
-    money_and_value: { type: "string" },
-    relationship_baseline: { type: "string" },
-    vitality_baseline: { type: "string" },
-    environment_and_resonance: { type: "string" },
-    shadow_and_friction: { type: "string" },
-    before_after: { type: "string" },
-    executive_summary: { type: "string" },
-    next_step: { type: "string" },
     proof_tags: { type: "array", items: { type: "string" } },
-  },
-} as const;
+  };
+  for (const k of allKeys) properties[k] = coreSectionJsonSchemaFor(k);
+  return {
+    type: "object",
+    required: ["schema_version", ...allKeys],
+    properties,
+  };
+})();
 
 const legacyModuleProps = {
   type: "object",
@@ -275,7 +360,7 @@ export const darrowReportJsonSchema = {
     modules: {
       type: "object",
       description:
-        "Keys are module codes. CORE uses v3 shape (schema_version=core_v3). Add-ons (LOVE/MONEY/BODY/YEAR/STYLE/PLACE) use the legacy shape.",
+        "Keys are module codes. CORE uses v3.1 shape (schema_version=core_v3, structured callout objects for 11 sections). Add-ons use the legacy shape.",
       properties: {
         CORE: coreV3Props,
         LOVE: legacyModuleProps,
