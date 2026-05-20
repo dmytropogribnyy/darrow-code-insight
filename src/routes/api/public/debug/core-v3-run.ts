@@ -16,11 +16,14 @@ import { renderReportHtmlSafe } from "@/lib/pdf/template";
 import { renderHtmlToPdf } from "@/lib/pdf/apitemplate.server";
 import {
   CORE_V3_KEYS,
+  CORE_V3_WORD_TARGET_RANGE,
+  CORE_V3_WORD_HARD_CAP,
   evaluateCoreV3Lengths,
   evaluateStructure,
   wordCount,
 } from "@/lib/ai/diagnostic.server";
 import { generateCoreV3Split } from "@/lib/ai/core-split.server";
+import { getCoreSectionProse } from "@/lib/ai/schema";
 import { BUILD_MARKER } from "./build-marker";
 
 let _sb: any = null;
