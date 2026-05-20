@@ -405,11 +405,15 @@ export function renderReportHtmlSafe(report: DarrowReport, opts: { assetsBaseUrl
   return `<!doctype html><html lang="en"><head><meta charset="utf-8"/><title>Darrow Code — Prepared for ${escape(clientName)}</title></head><body style="margin:0;background:#F6F4EF;padding:22mm 20mm;font-family:Arial,Helvetica,sans-serif;">${sections.join("\n")}</body></html>`;
 }
 
+// DEPRECATED — NOT USED BY PIPELINE. Do not modify or reactivate.
+// Legacy field names (opening/architecture/mechanic/...) remain here for
+// historical reference only. The active renderer is `renderReportHtmlSafe`
+// above; that is what `pipeline.server.ts` calls.
 export function renderReportHtml(report: DarrowReport, opts: { assetsBaseUrl?: string } = {}): string {
-  // Defensive: normalize known AI typos of "PROTOCOL" across all string fields
-  // before any rendering. Does not modify AI prompts or generation logic.
   report = normalizeReport(report);
-  const core = report.modules.CORE;
+  const core = report.modules.CORE as any;
+  const generated = report.generated_modules ?? Object.keys(report.modules);
+  const hasCore = !!core && generated.includes("CORE");
   const generated = report.generated_modules ?? Object.keys(report.modules);
   const hasCore = !!core && generated.includes("CORE");
   const addonCodes = generated.filter((c) => c !== "CORE");
