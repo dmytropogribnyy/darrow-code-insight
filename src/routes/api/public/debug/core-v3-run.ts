@@ -35,7 +35,7 @@ function snippet(s: string | undefined | null, sentences = 4): string {
   return parts.join(" ").slice(0, 1200);
 }
 
-async function runDiagnostic(intake_id: string) {
+async function runDiagnostic(intake_id: string, mode: "sequential" | "parallel" = "sequential") {
   const sb = admin();
   const t0 = Date.now();
 
@@ -81,7 +81,7 @@ async function runDiagnostic(intake_id: string) {
   const model = process.env.ANTHROPIC_MODEL_DEFAULT;
   if (!model) throw new Error("ANTHROPIC_MODEL_DEFAULT is not configured");
   const fallback = process.env.ANTHROPIC_MODEL_FALLBACK;
-  const ai = await generateCoreV3Split(userPrompt, model, fallback);
+  const ai = await generateCoreV3Split(userPrompt, model, fallback, { mode });
 
   // 3) Structural validation (hard) + length evaluation (warn)
   const structural_issues = evaluateStructure(ai.report);
@@ -162,6 +162,7 @@ async function runDiagnostic(intake_id: string) {
       model_used: ai.model_used,
       api_call_count: ai.api_call_count,
       ms: ai.ms_total,
+      split_mode: ai.mode,
       split: ai.per_call,
     },
     schema_version: core?.schema_version ?? null,
@@ -207,8 +208,9 @@ export const Route = createFileRoute("/api/public/debug/core-v3-run")({
         } catch {}
         const intake_id = typeof body?.intake_id === "string" ? body.intake_id : null;
         if (!intake_id) return Response.json({ ok: false, error: "intake_id required" }, { status: 400 });
+        const requestedMode = body?.mode === "parallel" ? "parallel" : "sequential";
         try {
-          const result = await runDiagnostic(intake_id);
+          const result = await runDiagnostic(intake_id, requestedMode);
           return Response.json({ ok: true, build_marker: BUILD_MARKER, result });
         } catch (e: any) {
           return Response.json(

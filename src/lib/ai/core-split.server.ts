@@ -223,44 +223,140 @@ function suffixA(): string {
   ].join("\n");
 }
 
-function suffixB(): string {
-  return [
+// Compact, model-readable digest of Call A's content. Used in sequential
+// mode so Call B can synthesise client_snapshot, executive_summary,
+// shadow_and_friction continuity, etc. from the ACTUAL CORE v1–9 text
+// rather than guessing from the chart alone.
+function buildCallASummary(client_name: string, sectionsA: any): string {
+  function head(s: string | undefined, chars: number): string {
+    if (!s) return "";
+    const t = String(s).replace(/\s+/g, " ").trim();
+    return t.length > chars ? t.slice(0, chars).trimEnd() + "…" : t;
+  }
+  // Per-section budget tuned so the whole digest stays well under ~1.5k tokens.
+  const budgets: Record<string, number> = {
+    cover_tagline: 200,
+    orientation: 700,
+    core_architecture: 1000,
+    battery: 700,
+    social_interface: 600,
+    numerology_code: 600,
+    cognitive_style: 600,
+    drive_and_rhythm: 600,
+    professional_archetype: 700,
+  };
+  const lines: string[] = [
+    "CALL-A SUMMARY (verbatim excerpts from CORE v3 sections 1–9 just produced for this client).",
+    "Use this as ground truth when writing sections 10–17, client_snapshot, and closing.",
+    "Do NOT contradict the language, pattern names, or tradition anchors established below.",
+    `client_name: ${client_name}`,
+  ];
+  for (const key of CORE_V3_SECTIONS_A) {
+    lines.push(`--- ${key} (excerpt) ---`);
+    lines.push(head(sectionsA[key], budgets[key] ?? 500));
+  }
+  if (Array.isArray(sectionsA.proof_tags) && sectionsA.proof_tags.length > 0) {
+    lines.push("--- proof_tags (Call A) ---");
+    lines.push(sectionsA.proof_tags.slice(0, 12).map((t: any) => `- ${String(t)}`).join("\n"));
+  }
+  return lines.join("\n");
+}
+
+function suffixB(callASummary?: string): string {
+  const base = [
     "",
     "SPLIT GENERATION — CALL B (sections 10–17 of CORE v3 + snapshot + closing).",
     "Return the tool payload `emit_darrow_core_b` with:",
     "  - core_sections_b containing EXACTLY these 8 sections:",
     `      ${CORE_V3_SECTIONS_B.join(", ")}`,
-    "  - client_snapshot (full 9-field structure, synthesized from ALL 17 CORE v3 sections)",
-    "  - closing.executive_summary (mirror of core executive_summary, ≥ 40 chars)",
+    "  - client_snapshot (full 9-field structure, synthesized from ALL 17 CORE v3 sections — sections 1–9 are provided below)",
+    "  - closing.executive_summary (must integrate insights from BOTH halves; ≥ 40 chars)",
     "  - closing.recommended_next_module",
     "Treat each section's word-count target from the system prompt as REQUIRED.",
-    "Keep voice and tradition anchors consistent with the same client's Call A.",
-  ].join("\n");
+    "Keep voice, pattern naming, and tradition anchors consistent with Call A.",
+    "shadow_and_friction MUST reference the architectural patterns from core_architecture / battery / drive_and_rhythm in Call A.",
+    "next_step MUST be coherent with professional_archetype, drive_and_rhythm, and core_architecture in Call A.",
+  ];
+  if (callASummary) {
+    base.push("");
+    base.push("============ CALL-A CONTEXT (READ FIRST) ============");
+    base.push(callASummary);
+    base.push("=====================================================");
+  }
+  return base.join("\n");
 }
 
 // ─── Public: split generator ─────────────────────────────────────────
+export type SplitMode = "sequential" | "parallel";
+
 export interface CoreSplitResult {
   // Production-compatible DarrowReport-shaped object (modules.CORE = full 17 sections).
   report: any;
-  model_used: string; // e.g. "claude-sonnet-4-6" or "claude-sonnet-4-6+claude-sonnet-4-5"
+  model_used: string;
   api_call_count: number;
   ms_total: number;
+  mode: SplitMode;
   per_call: {
     a: { tool: "emit_darrow_core_a"; model: string; ms: number };
-    b: { tool: "emit_darrow_core_b"; model: string; ms: number };
+    b: { tool: "emit_darrow_core_b"; model: string; ms: number; received_call_a_context: boolean };
   };
+}
+
+export interface GenerateCoreV3SplitOptions {
+  /**
+   * "sequential" (default, production-quality): Call A runs first, its
+   * output is summarised and passed into Call B's prompt so Call B can
+   * synthesise client_snapshot + closing + sections 10–17 with full
+   * knowledge of Call A. Slower (~2× single-call wall time) but coherent.
+   *
+   * "parallel" (diagnostic-only): both calls fire simultaneously. Call B
+   * works without Call A context. Faster but less coherent — use ONLY to
+   * isolate whether timeouts are caused by single-call size.
+   */
+  mode?: SplitMode;
+}
+
+function validateCallA(aInput: any) {
+  const sectionsA = aInput?.core_sections_a ?? {};
+  if (!aInput?.client_name) throw new Error("[core-split] Call A missing client_name");
+  if (!sectionsA.schema_version) throw new Error("[core-split] Call A missing schema_version");
+  if (sectionsA.schema_version !== "core_v3")
+    throw new Error(`[core-split] Call A wrong schema_version: ${sectionsA.schema_version}`);
+  for (const k of CORE_V3_SECTIONS_A) {
+    if (typeof sectionsA[k] !== "string" || sectionsA[k].trim().length === 0)
+      throw new Error(`[core-split] Call A missing or empty section: ${k}`);
+  }
+  return sectionsA;
+}
+
+function validateCallB(bInput: any) {
+  const sectionsB = bInput?.core_sections_b ?? {};
+  for (const k of CORE_V3_SECTIONS_B) {
+    if (typeof sectionsB[k] !== "string" || sectionsB[k].trim().length === 0)
+      throw new Error(`[core-split] Call B missing or empty section: ${k}`);
+  }
+  if (!bInput?.client_snapshot) throw new Error("[core-split] Call B missing client_snapshot");
+  if (!bInput?.closing) throw new Error("[core-split] Call B missing closing");
+  return sectionsB;
 }
 
 export async function generateCoreV3Split(
   userPrompt: string,
   model: string,
   fallbackModel?: string,
+  opts: GenerateCoreV3SplitOptions = {},
 ): Promise<CoreSplitResult> {
+  const mode: SplitMode = opts.mode ?? "sequential";
   const started = Date.now();
-  console.log("[core-split] starting parallel split CORE v3 generation", { model });
+  console.log(`[core-split] starting ${mode} split CORE v3 generation`, { model });
 
-  const [a, b] = await Promise.all([
-    callSubWithFallback(
+  let a: SubCallResult;
+  let b: SubCallResult;
+  let bReceivedContext = false;
+
+  if (mode === "sequential") {
+    // Production quality: A → summarise → B
+    a = await callSubWithFallback(
       {
         userPrompt: `${userPrompt}\n${suffixA()}`,
         model,
@@ -269,41 +365,52 @@ export async function generateCoreV3Split(
         toolDescription: "Emit CORE v3 sections 1–9 plus client_name.",
       },
       fallbackModel,
-    ),
-    callSubWithFallback(
+    );
+    const sectionsA = validateCallA(a.input);
+    const summary = buildCallASummary(a.input.client_name, sectionsA);
+    bReceivedContext = true;
+    b = await callSubWithFallback(
       {
-        userPrompt: `${userPrompt}\n${suffixB()}`,
+        userPrompt: `${userPrompt}\n${suffixB(summary)}`,
         model,
         toolName: TOOL_NAME_B,
         inputSchema: coreSplitBSchema,
-        toolDescription: "Emit CORE v3 sections 10–17 plus client_snapshot and closing.",
+        toolDescription: "Emit CORE v3 sections 10–17 plus client_snapshot and closing, grounded in Call-A context.",
       },
       fallbackModel,
-    ),
-  ]);
-
-  const aIn = a.input ?? {};
-  const bIn = b.input ?? {};
-  const sectionsA = aIn.core_sections_a ?? {};
-  const sectionsB = bIn.core_sections_b ?? {};
-
-  // Hard structural checks (warn-only on length is enforced upstream).
-  if (!aIn.client_name) throw new Error("[core-split] Call A missing client_name");
-  if (!sectionsA.schema_version) throw new Error("[core-split] Call A missing schema_version");
-  if (sectionsA.schema_version !== "core_v3")
-    throw new Error(`[core-split] Call A wrong schema_version: ${sectionsA.schema_version}`);
-  for (const k of CORE_V3_SECTIONS_A) {
-    if (typeof sectionsA[k] !== "string" || sectionsA[k].trim().length === 0)
-      throw new Error(`[core-split] Call A missing or empty section: ${k}`);
+    );
+  } else {
+    // Diagnostic only: fire both in parallel, Call B blind.
+    const both = await Promise.all([
+      callSubWithFallback(
+        {
+          userPrompt: `${userPrompt}\n${suffixA()}`,
+          model,
+          toolName: TOOL_NAME_A,
+          inputSchema: coreSplitASchema,
+          toolDescription: "Emit CORE v3 sections 1–9 plus client_name.",
+        },
+        fallbackModel,
+      ),
+      callSubWithFallback(
+        {
+          userPrompt: `${userPrompt}\n${suffixB()}`,
+          model,
+          toolName: TOOL_NAME_B,
+          inputSchema: coreSplitBSchema,
+          toolDescription: "Emit CORE v3 sections 10–17 plus client_snapshot and closing (no Call-A context — diagnostic only).",
+        },
+        fallbackModel,
+      ),
+    ]);
+    a = both[0];
+    b = both[1];
+    validateCallA(a.input);
   }
-  for (const k of CORE_V3_SECTIONS_B) {
-    if (typeof sectionsB[k] !== "string" || sectionsB[k].trim().length === 0)
-      throw new Error(`[core-split] Call B missing or empty section: ${k}`);
-  }
-  if (!bIn.client_snapshot) throw new Error("[core-split] Call B missing client_snapshot");
-  if (!bIn.closing) throw new Error("[core-split] Call B missing closing");
 
-  // Merge into production-shaped DarrowReport.
+  const sectionsA = a.input.core_sections_a ?? {};
+  const sectionsB = validateCallB(b.input);
+
   const coreModule = {
     schema_version: "core_v3" as const,
     ...Object.fromEntries(CORE_V3_SECTIONS_A.map((k) => [k, sectionsA[k]])),
@@ -312,19 +419,21 @@ export async function generateCoreV3Split(
   };
 
   const merged = {
-    client_name: aIn.client_name,
+    client_name: a.input.client_name,
     generated_modules: ["CORE"],
-    client_snapshot: bIn.client_snapshot,
+    client_snapshot: b.input.client_snapshot,
     modules: { CORE: coreModule },
-    closing: bIn.closing,
+    closing: b.input.closing,
   };
 
   const usedModels = Array.from(new Set([a.model_used, b.model_used]));
   console.log("[core-split] merged report built", {
+    mode,
     model_used: usedModels.join("+"),
     ms_total: Date.now() - started,
     a_ms: a.ms,
     b_ms: b.ms,
+    b_received_call_a_context: bReceivedContext,
   });
 
   return {
@@ -332,9 +441,11 @@ export async function generateCoreV3Split(
     model_used: usedModels.join("+"),
     api_call_count: 2,
     ms_total: Date.now() - started,
+    mode,
     per_call: {
       a: { tool: "emit_darrow_core_a", model: a.model_used, ms: a.ms },
-      b: { tool: "emit_darrow_core_b", model: b.model_used, ms: b.ms },
+      b: { tool: "emit_darrow_core_b", model: b.model_used, ms: b.ms, received_call_a_context: bReceivedContext },
     },
   };
 }
+
