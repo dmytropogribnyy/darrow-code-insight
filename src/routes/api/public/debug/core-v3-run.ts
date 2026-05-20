@@ -208,8 +208,9 @@ export const Route = createFileRoute("/api/public/debug/core-v3-run")({
         } catch {}
         const intake_id = typeof body?.intake_id === "string" ? body.intake_id : null;
         if (!intake_id) return Response.json({ ok: false, error: "intake_id required" }, { status: 400 });
+        const requestedMode = body?.mode === "parallel" ? "parallel" : "sequential";
         try {
-          const result = await runDiagnostic(intake_id);
+          const result = await runDiagnostic(intake_id, requestedMode);
           return Response.json({ ok: true, build_marker: BUILD_MARKER, result });
         } catch (e: any) {
           return Response.json(
