@@ -563,7 +563,7 @@ export function renderReportHtml(report: DarrowReport, opts: { assetsBaseUrl?: s
   ${hasCore && core
     ? renderCoreChapter(core, report.client_snapshot, report.closing)
     : renderSnapshotOnly(report.client_snapshot)}
-  ${addonCodes.map((c) => report.modules[c] ? renderAddon(c, report.modules[c]!, clientName) : "").join("")}
+  ${addonCodes.map((c) => report.modules[c] ? renderAddon(c, report.modules[c] as any, clientName) : "").join("")}
   ${renderCrossSell(generated, symbolSmall)}
 </body></html>`;
 }
