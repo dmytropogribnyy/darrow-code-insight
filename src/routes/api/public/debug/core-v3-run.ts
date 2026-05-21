@@ -24,6 +24,7 @@ import {
 } from "@/lib/ai/diagnostic.server";
 import { generateCoreV3Split } from "@/lib/ai/core-split.server";
 import { getCoreSectionProse } from "@/lib/ai/schema";
+import { evaluateQualityGate } from "@/lib/ai/quality-gate.server";
 import { BUILD_MARKER } from "./build-marker";
 
 let _sb: any = null;
