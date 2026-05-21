@@ -108,7 +108,14 @@ export async function renderHtmlToPdf(html: string, diag: RenderDiagnostics = {}
           attempt, order_id: diag.order_id, report_id: diag.report_id, modules: diag.modules, html_bytes: htmlBytes,
         });
       }
-      return result.pdf;
+      try {
+        return await stampPageNumbers(result.pdf);
+      } catch (e: any) {
+        console.error("[apitemplate] page-number stamping failed; returning unstamped PDF", {
+          error: String(e?.message ?? e), order_id: diag.order_id, report_id: diag.report_id,
+        });
+        return result.pdf;
+      }
     }
 
     lastError = result.error ?? "unknown error";
