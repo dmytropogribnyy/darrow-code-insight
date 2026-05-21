@@ -40,6 +40,11 @@ function isTransientStatus(status: number, body: string): boolean {
 async function attemptRender(html: string, apiKey: string): Promise<{ pdf?: Uint8Array; transient: boolean; error?: string; status?: number; body?: string }> {
   let res: Response;
   try {
+    // Zero APITemplate margins — we own the layout end-to-end in HTML so the
+    // cover/closing can bleed to the page edge and body sections can apply
+    // their own safe internal padding without fighting Chromium's printable
+    // area. Page numbers are stamped post-process via pdf-lib, so we no
+    // longer rely on @page CSS counters or APITemplate's displayHeaderFooter.
     res = await fetchWithTimeout(APITEMPLATE_URL + "?export_type=json", {
       method: "POST",
       headers: { "Content-Type": "application/json", "X-API-KEY": apiKey },
@@ -48,10 +53,10 @@ async function attemptRender(html: string, apiKey: string): Promise<{ pdf?: Uint
         settings: {
           paper_size: "A4",
           orientation: "1",
-          margin_top: "22mm",
-          margin_bottom: "22mm",
-          margin_left: "20mm",
-          margin_right: "20mm",
+          margin_top: "0",
+          margin_bottom: "0",
+          margin_left: "0",
+          margin_right: "0",
         },
       }),
     });
