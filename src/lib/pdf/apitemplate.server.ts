@@ -2,7 +2,11 @@
 // Uses the create-pdf-from-html endpoint so we own the HTML template.
 // Retries transient failures (5xx, 429, 408, network/timeouts, and the
 // generic 400 "Internal error unable to generate PDF") with exponential
-// backoff: 0s → 2s → 5s, 3 attempts total.
+// backoff: 0s → 2s → 5s, 3 attempts total. After a successful render the
+// PDF is post-processed via pdf-lib to stamp page numbers on body pages
+// (skipping the full-bleed cover and closing).
+
+import { stampPageNumbers } from "./stamp-page-numbers.server";
 
 const APITEMPLATE_URL = "https://rest.apitemplate.io/v2/create-pdf-from-html";
 const APITEMPLATE_TIMEOUT_MS = 150 * 1000;
