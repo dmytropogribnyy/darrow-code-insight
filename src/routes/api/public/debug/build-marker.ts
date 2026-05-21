@@ -50,6 +50,23 @@ export const Route = createFileRoute("/api/public/debug/build-marker")({
           word_hard_cap: 5000,
           pdf_page_soft_cap: 25,
           paper_background: "#FAF7F2",
+          pdf_layout: {
+            apitemplate_margins: "0 (HTML owns layout)",
+            cover_closing_bleed: "full A4, no cream strip",
+            body_padding: "22mm top, 20mm sides, 26mm bottom (page-number safe area)",
+            page_numbers: "stamped post-process via pdf-lib (cover + closing skipped)",
+            page_break_strategy: "page-break-before:always on every v3 section",
+            overflow_protection: "global box-sizing + overflow-wrap:break-word",
+          },
+          quality_gate: {
+            enabled: true,
+            mode: "warn_only",
+            heuristics: [
+              "recognition_first (no opening placement-led sentence)",
+              "dossier_tone (banned phrases: 'placed in the Xth house', 'Day Master is')",
+              "technical_density (raw degree/orb strings outside proof tags)",
+            ],
+          },
           deployed_at_check: new Date().toISOString(),
         }),
     },
