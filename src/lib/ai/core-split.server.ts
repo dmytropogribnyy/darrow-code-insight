@@ -340,7 +340,12 @@ function sectionPresent(v: any): boolean {
 function validateCallA(aInput: any) {
   const sectionsA = aInput?.core_sections_a ?? {};
   if (!aInput?.client_name) throw new Error("[core-split] Call A missing client_name");
-  if (!sectionsA.schema_version) throw new Error("[core-split] Call A missing schema_version");
+  // Tool schema requires schema_version="core_v3"; if Claude omits it, default
+  // to core_v3 rather than hard-fail (the partition itself defines the version).
+  if (!sectionsA.schema_version) {
+    console.warn("[core-split] Call A omitted schema_version; defaulting to core_v3");
+    sectionsA.schema_version = "core_v3";
+  }
   if (sectionsA.schema_version !== "core_v3")
     throw new Error(`[core-split] Call A wrong schema_version: ${sectionsA.schema_version}`);
   for (const k of CORE_V3_SECTIONS_A) {
