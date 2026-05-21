@@ -250,14 +250,22 @@ function renderCrossSell(generated: string[], symbolSmall: string): string {
   `;
 }
 
+// Section flows naturally; we no longer force `page-break-after:always` on
+// every section (that was producing 35-page reports with orphan callouts).
+// Sections only start a new page when content overflows, plus a generous
+// top margin gives the same "premium breathing room" feel.
 const safePageStyle =
-  "page-break-after:always;page-break-inside:avoid;orphans:3;widows:3;padding:0 0 12mm 0;box-sizing:border-box;";
+  "page-break-after:auto;page-break-inside:auto;orphans:3;widows:3;margin:0 0 22pt;padding:0;box-sizing:border-box;";
 const safeH2Style =
-  "font-family:Georgia,'Times New Roman',serif;color:#4A402D;font-size:24pt;font-weight:400;margin:0 0 14pt;line-height:1.2;";
+  "font-family:Georgia,'Times New Roman',serif;color:#4A402D;font-size:22pt;font-weight:400;margin:0 0 12pt;line-height:1.25;";
 const safePStyle =
-  "font-family:Arial,Helvetica,sans-serif;color:#151922;font-size:11pt;line-height:1.62;margin:0 0 9pt;";
+  "font-family:Arial,Helvetica,sans-serif;color:#151922;font-size:11pt;line-height:1.6;margin:0 0 9pt;";
 const safeBrandStyle =
-  "font-family:Arial,Helvetica,sans-serif;color:#D4AF37;font-size:9pt;letter-spacing:3pt;text-transform:uppercase;margin:0 0 18pt;";
+  "font-family:Arial,Helvetica,sans-serif;color:#D4AF37;font-size:9pt;letter-spacing:3pt;text-transform:uppercase;margin:0 0 14pt;";
+// Wraps heading + first paragraph so the heading never orphans at the
+// bottom of the previous page.
+const HEADING_KEEP_STYLE =
+  "page-break-inside:avoid;break-inside:avoid;page-break-after:avoid;break-after:avoid;";
 
 function safePara(s: string): string {
   return s
@@ -267,31 +275,33 @@ function safePara(s: string): string {
 }
 
 function safeSection(title: string, body: string): string {
-  return `<section style="${safePageStyle}"><div style="${safeBrandStyle}">Darrow Code</div><h2 style="${safeH2Style}">${escape(title)}</h2>${body}</section>`;
+  return `<section style="${safePageStyle}"><div style="${HEADING_KEEP_STYLE}"><div style="${safeBrandStyle}">Darrow Code</div><h2 style="${safeH2Style}">${escape(title)}</h2></div>${body}</section>`;
 }
 
 // ─────────────────────────────────────────────────────────────
 // v3.1 CORE-aware renderer (APITemplate-safe).
-// Inline CSS only, no @page rules, no base64 in CSS, no external fonts,
-// no header/footer. Structured callouts render from schema fields, not
-// from parsed prose markers.
+// Inline CSS only, no base64 in CSS, no external fonts, no Chrome
+// displayHeaderFooter (broke before). We DO use a small <style> block
+// with @page rules ONLY for the print page counter — APITemplate
+// (headless Chromium) handles CSS Paged Media reliably.
 // ─────────────────────────────────────────────────────────────
 
 const PROTOCOL_BOX =
-  "border-left:3pt solid #D4AF37;padding:10pt 14pt;margin:12pt 0;background:#FBF6E5;-webkit-print-color-adjust:exact;print-color-adjust:exact;page-break-inside:avoid;";
+  // page-break-before:avoid keeps the callout with the preceding prose
+  // so we don't get orphan callout-only pages.
+  "border-left:3pt solid #D4AF37;padding:9pt 14pt;margin:10pt 0;background:#FBF6E5;-webkit-print-color-adjust:exact;print-color-adjust:exact;page-break-inside:avoid;break-inside:avoid;page-break-before:avoid;break-before:avoid;";
 const PROTOCOL_LABEL =
   "font-family:Georgia,'Times New Roman',serif;font-size:9pt;letter-spacing:2pt;color:#A8841F;text-transform:uppercase;margin-bottom:6pt;";
 const WARNING_BOX =
-  "border-left:3pt solid #9CA3AF;padding:10pt 14pt;margin:12pt 0;background:#F2F2F0;-webkit-print-color-adjust:exact;print-color-adjust:exact;page-break-inside:avoid;";
+  "border-left:3pt solid #9CA3AF;padding:9pt 14pt;margin:10pt 0;background:#F2F2F0;-webkit-print-color-adjust:exact;print-color-adjust:exact;page-break-inside:avoid;break-inside:avoid;page-break-before:avoid;break-before:avoid;";
 const WARNING_LABEL =
   "font-family:Georgia,'Times New Roman',serif;font-size:9pt;letter-spacing:2pt;color:#6B6B6B;text-transform:uppercase;margin-bottom:6pt;";
 const PROOF_STYLE =
-  "font-family:Arial,Helvetica,sans-serif;color:#9CA3AF;font-size:9pt;font-style:italic;margin-top:12pt;padding-top:6pt;border-top:0.5pt solid #E5E7EB;";
+  "font-family:Arial,Helvetica,sans-serif;color:#9CA3AF;font-size:9pt;font-style:italic;margin-top:10pt;padding-top:6pt;border-top:0.5pt solid #E5E7EB;page-break-before:avoid;break-before:avoid;";
 
 function renderProseBlocks(text: string): { html: string; proof: string } {
   if (!text) return { html: "", proof: "" };
   const trimmed = text.trim();
-  // Pull out trailing proof tag: a final line wrapped in [ ... ].
   let proof = "";
   let body = trimmed;
   const proofMatch = trimmed.match(/\n*\[([^\[\]]+)\]\s*$/);
@@ -299,16 +309,17 @@ function renderProseBlocks(text: string): { html: string; proof: string } {
     proof = proofMatch[1].trim();
     body = trimmed.slice(0, proofMatch.index ?? trimmed.length).trim();
   }
-  // Strip any inline PROTOCOL: / Warning Signal: blocks that the model still
-  // emitted in prose (defensive — the v3.1 schema says these belong in
-  // structured fields, but tolerate stragglers without rendering them as
-  // wall-of-text paragraphs).
   const blocks = body
     .split(/\n{2,}/)
     .map((b) => b.trim())
     .filter((b) => b && !/^(PROTOCOL|Warning Signal)\s*:/i.test(b));
   const html = blocks
-    .map((blk) => `<p style="${safePStyle}">${escape(blk).replace(/\n/g, "<br/>")}</p>`)
+    .map((blk, i) => {
+      const style = i === 0
+        ? `${safePStyle}page-break-before:avoid;break-before:avoid;`
+        : safePStyle;
+      return `<p style="${style}">${escape(blk).replace(/\n/g, "<br/>")}</p>`;
+    })
     .join("\n");
   return { html, proof };
 }
@@ -339,7 +350,14 @@ function v3Section(title: string, field: unknown): string {
   const protocols = renderProtocolBlocks(getCoreSectionProtocols(field));
   const warnings = renderWarningBlocks(getCoreSectionWarnings(field));
   const proofHtml = proof ? `<div style="${PROOF_STYLE}">${escape(proof)}</div>` : "";
-  return `<section style="${safePageStyle}"><div style="${safeBrandStyle}">Darrow Code</div><h2 style="${safeH2Style}">${escape(title)}</h2>${html}${protocols}${warnings}${proofHtml}</section>`;
+  // Pull the first <p> out of html and bind it to the heading so the
+  // heading can never orphan at the bottom of the previous page.
+  const firstParaMatch = html.match(/^<p [^>]*>[\s\S]*?<\/p>/);
+  const firstPara = firstParaMatch ? firstParaMatch[0] : "";
+  const restHtml = firstParaMatch ? html.slice(firstParaMatch[0].length) : html;
+  const headerBlock =
+    `<div style="${HEADING_KEEP_STYLE}"><div style="${safeBrandStyle}">Darrow Code</div><h2 style="${safeH2Style}">${escape(title)}</h2>${firstPara}</div>`;
+  return `<section style="${safePageStyle}">${headerBlock}${restHtml}${protocols}${warnings}${proofHtml}</section>`;
 }
 
 export function renderReportHtmlSafe(report: DarrowReport, opts: { assetsBaseUrl?: string } = {}): string {
@@ -347,50 +365,66 @@ export function renderReportHtmlSafe(report: DarrowReport, opts: { assetsBaseUrl
   void opts.assetsBaseUrl;
   const core = report.modules.CORE as any;
   const clientName = report.client_name || "you";
-  // Cover and closing: fixed full-page dark cards (no overflow → no orphan p2).
+
+  // Dark cover / closing: full-bleed via negative margins that cancel the
+  // @page margin. Single-break strategy: cover has NO page-break-after,
+  // every following section uses page-break-before:always. Prevents the
+  // double-break blank-page-2 bug.
   const fullDark =
-    "margin:-22mm -20mm;padding:0 30mm;height:297mm;width:auto;-webkit-print-color-adjust:exact;print-color-adjust:exact;page-break-after:always;page-break-inside:avoid;box-sizing:border-box;text-align:center;display:block;overflow:hidden;";
+    "margin:-22mm -20mm;padding:0 30mm;height:297mm;width:auto;-webkit-print-color-adjust:exact;print-color-adjust:exact;page-break-inside:avoid;box-sizing:border-box;text-align:center;display:block;overflow:hidden;";
   const goldMark = `<div style="width:36pt;height:36pt;margin:0 auto 28pt;transform:rotate(45deg);background:#D4AF37;-webkit-print-color-adjust:exact;print-color-adjust:exact;"></div>`;
 
   const snap = report.client_snapshot;
   const sections: string[] = [];
 
-  // Page 1 — Cover (fixed 297mm, no overflow)
+  // ── Page 1 — Cover (named @page cover → no page number) ──────
   const tagline = core?.cover_tagline ? escape(getCoreSectionProse(core.cover_tagline)) : "";
   sections.push(
-    `<section style="${fullDark}background:#0A0F1E;color:#F6F4EF;padding-top:80mm;">${goldMark}<div style="font-family:Arial,Helvetica,sans-serif;color:#D4AF37;font-size:11pt;letter-spacing:6pt;text-transform:uppercase;margin-bottom:36pt;-webkit-print-color-adjust:exact;print-color-adjust:exact;">Darrow Code</div><h1 style="font-family:Georgia,'Times New Roman',serif;color:#D4AF37;font-size:34pt;font-weight:400;line-height:1.2;margin:0 0 18pt;-webkit-print-color-adjust:exact;print-color-adjust:exact;">The Personal Architecture Report</h1><div style="width:60pt;height:1pt;background:#D4AF37;margin:24pt auto;-webkit-print-color-adjust:exact;print-color-adjust:exact;"></div><div style="font-family:Arial,Helvetica,sans-serif;color:#9CA3AF;font-size:10pt;letter-spacing:3pt;text-transform:uppercase;margin-bottom:10pt;">Prepared for</div><div style="font-family:Georgia,'Times New Roman',serif;color:#F6F4EF;font-size:22pt;">${escape(clientName)}</div>${tagline ? `<p style="font-family:Georgia,'Times New Roman',serif;font-style:italic;color:#E5E7EB;font-size:13pt;margin:36pt auto 0;max-width:120mm;line-height:1.5;">${tagline}</p>` : ""}</section>`,
+    `<section style="${fullDark}background:#0A0F1E;color:#F6F4EF;padding-top:80mm;page:cover;">${goldMark}<div style="font-family:Arial,Helvetica,sans-serif;color:#D4AF37;font-size:11pt;letter-spacing:6pt;text-transform:uppercase;margin-bottom:36pt;-webkit-print-color-adjust:exact;print-color-adjust:exact;">Darrow Code</div><h1 style="font-family:Georgia,'Times New Roman',serif;color:#D4AF37;font-size:34pt;font-weight:400;line-height:1.2;margin:0 0 18pt;-webkit-print-color-adjust:exact;print-color-adjust:exact;">The Personal Architecture Report</h1><div style="width:60pt;height:1pt;background:#D4AF37;margin:24pt auto;-webkit-print-color-adjust:exact;print-color-adjust:exact;"></div><div style="font-family:Arial,Helvetica,sans-serif;color:#9CA3AF;font-size:10pt;letter-spacing:3pt;text-transform:uppercase;margin-bottom:10pt;">Prepared for</div><div style="font-family:Georgia,'Times New Roman',serif;color:#F6F4EF;font-size:22pt;">${escape(clientName)}</div>${tagline ? `<p style="font-family:Georgia,'Times New Roman',serif;font-style:italic;color:#E5E7EB;font-size:13pt;margin:36pt auto 0;max-width:120mm;line-height:1.5;">${tagline}</p>` : ""}</section>`,
   );
 
-  // Page 2 — Method / Disclaimer (forced start, kills near-blank page 2)
+  // ── Page 2 — Method & Orientation (warmer Darrow voice) ──────
   sections.push(
-    `<section style="${safePageStyle};page-break-before:always;"><div style="${safeBrandStyle}">Darrow Code</div><h2 style="${safeH2Style}">Method &amp; Disclaimer</h2>` +
-      `<p style="${safePStyle}"><strong>What this is.</strong> A structural reading drawing on Western natal astrology, Pythagorean numerology and Chinese Bazi, blended into one interpretive layer. The aim is orientation, not prediction.</p>` +
-      `<p style="${safePStyle}"><strong>What this is not.</strong> Not medical, legal, financial or psychiatric advice. Not destiny. Not a personality test. No outcomes are promised.</p>` +
-      `<p style="${safePStyle}"><strong>How to read it.</strong> Each section names a structural pattern, then offers protocols — concrete behavioural anchors — connected to your specific configuration.</p>` +
-      `</section>`,
+    `<section style="${safePageStyle}page-break-before:always;">` +
+      `<div style="${HEADING_KEEP_STYLE}">` +
+        `<div style="${safeBrandStyle}">Darrow Code</div>` +
+        `<h2 style="${safeH2Style}">Method &amp; Orientation</h2>` +
+        `<p style="font-family:Georgia,'Times New Roman',serif;font-style:italic;color:#4A402D;font-size:13pt;line-height:1.5;margin:0 0 14pt;">Clarity before action. Orientation over prediction.</p>` +
+      `</div>` +
+      `<p style="${safePStyle}">This report is a private orientation map built from your birth data and name. It brings Western astrology, Chinese BaZi, numerology and pattern psychology into one clear reading — not to tell you what will happen, but to help you recognize how your system works.</p>` +
+      `<p style="${safePStyle}">Read it for recognition, not instruction. When a line feels familiar, pause. Familiarity is data.</p>` +
+      `<p style="${safePStyle}color:#6B6B6B;font-size:10pt;font-style:italic;margin-top:18pt;">This is not medical, legal, financial or psychiatric advice. It does not replace your judgment. It gives language to patterns you may have felt for years.</p>` +
+    `</section>`,
   );
 
-  // Page 3 — Client Snapshot + Orientation
-  const snapshotBlock =
-    `<h3 style="font-family:Georgia,'Times New Roman',serif;color:#D4AF37;font-size:22pt;font-weight:400;margin:0 0 10pt;">${escape(snap.pattern_name)}</h3>` +
-    safePara(snap.core_pattern) +
-    safePara(snap.unique_signature) +
-    `<div style="margin-top:10pt;border-top:1pt solid #D4AF37;padding-top:10pt;">` +
-    `<p style="${safePStyle}"><strong>Primary Strength.</strong> ${escape(snap.primary_strength)}</p>` +
-    `<p style="${safePStyle}"><strong>Pressure Point.</strong> ${escape(snap.pressure_point)}</p>` +
-    `<p style="${safePStyle}"><strong>Best Operating Rhythm.</strong> ${escape(snap.best_operating_rhythm)}</p>` +
-    `<p style="${safePStyle}"><strong>Current Timing Theme.</strong> ${escape(snap.current_timing_theme)}</p>` +
-    `<p style="${safePStyle}"><strong>Practical Focus.</strong> ${escape(snap.practical_focus)}</p>` +
+  // ── Page 3 — Client Snapshot (premium summary, not chart memo) ───
+  // Snapshot lives on its own section. Orientation comes after as a
+  // separate v3Section so its heading can never orphan here.
+  const snapBullet = (label: string, body: string) =>
+    `<div style="margin:0 0 10pt;page-break-inside:avoid;break-inside:avoid;">` +
+      `<div style="font-family:Arial,Helvetica,sans-serif;color:#A8841F;font-size:9pt;letter-spacing:2pt;text-transform:uppercase;margin-bottom:3pt;">${escape(label)}</div>` +
+      `<p style="${safePStyle}margin:0;">${escape(body)}</p>` +
     `</div>`;
-  const orientationProse = core?.orientation ? getCoreSectionProse(core.orientation) : "";
-  const orientationBody = orientationProse
-    ? `<h2 style="${safeH2Style};margin-top:18pt;">Orientation</h2>${renderProseBlocks(orientationProse).html}`
-    : "";
-  sections.push(
-    `<section style="${safePageStyle}"><div style="${safeBrandStyle}">Darrow Code</div><h2 style="${safeH2Style}">Client Snapshot</h2>${snapshotBlock}${orientationBody}</section>`,
-  );
+  const snapshotBlock =
+    `<div style="${HEADING_KEEP_STYLE}">` +
+      `<div style="${safeBrandStyle}">Darrow Code</div>` +
+      `<h2 style="${safeH2Style}">Client Snapshot</h2>` +
+      `<h3 style="font-family:Georgia,'Times New Roman',serif;color:#D4AF37;font-size:22pt;font-weight:400;margin:0 0 12pt;-webkit-print-color-adjust:exact;print-color-adjust:exact;">${escape(snap.pattern_name)}</h3>` +
+      `<p style="font-family:Georgia,'Times New Roman',serif;font-size:13pt;color:#4A402D;font-style:italic;line-height:1.55;margin:0 0 14pt;">${escape(snap.core_pattern)}</p>` +
+    `</div>` +
+    `<p style="${safePStyle}">${escape(snap.unique_signature)}</p>` +
+    `<div style="margin-top:14pt;border-top:0.5pt solid #D4AF37;padding-top:12pt;-webkit-print-color-adjust:exact;print-color-adjust:exact;">` +
+      snapBullet("Primary Strength", snap.primary_strength) +
+      snapBullet("Pressure Point", snap.pressure_point) +
+      snapBullet("Best Rhythm", snap.best_operating_rhythm) +
+      snapBullet("Current Timing", snap.current_timing_theme) +
+      snapBullet("Practical Focus", snap.practical_focus) +
+    `</div>` +
+    `<div style="${PROOF_STYLE}">Proof anchors drawn from your natal chart, BaZi pillars and numerology code (see sections that follow).</div>`;
+  sections.push(`<section style="${safePageStyle}page-break-before:always;">${snapshotBlock}</section>`);
 
   if (core && core.schema_version === "core_v3") {
+    sections.push(v3Section("Orientation", core.orientation));
     sections.push(v3Section("Core Architecture", core.core_architecture));
     sections.push(v3Section("The Battery — Emotional Needs & Internal Fuel", core.battery));
     sections.push(v3Section("Social Interface", core.social_interface));
@@ -407,7 +441,6 @@ export function renderReportHtmlSafe(report: DarrowReport, opts: { assetsBaseUrl
     sections.push(v3Section("Executive Summary", core.executive_summary));
     sections.push(v3Section("Next Step", core.next_step));
   } else if (core) {
-    // Legacy fallback
     sections.push(
       safeSection("Opening", safePara(String(core.opening ?? "")) + safePara(String(core.architecture ?? ""))),
       safeSection("Mechanic", safePara(String(core.mechanic ?? ""))),
@@ -419,13 +452,31 @@ export function renderReportHtmlSafe(report: DarrowReport, opts: { assetsBaseUrl
     );
   }
 
-  // Closing dark page — full A4, forced page break before, no split
+  // Closing dark page — full A4, forced page break before, no break after
+  // (last section, so no trailing blank page).
   sections.push(
-    `<section style="${fullDark}background:#0A0F1E;color:#E5E7EB;padding-top:110mm;page-break-before:always;">${goldMark}<div style="font-family:Arial,Helvetica,sans-serif;color:#D4AF37;font-size:11pt;letter-spacing:6pt;text-transform:uppercase;margin-bottom:28pt;-webkit-print-color-adjust:exact;print-color-adjust:exact;">Darrow Code</div><p style="font-family:Georgia,'Times New Roman',serif;font-style:italic;font-size:15pt;color:#E5E7EB;margin:0 auto;max-width:120mm;line-height:1.5;">More than a horoscope. Your private birth code.</p></section>`,
+    `<section style="${fullDark}background:#0A0F1E;color:#E5E7EB;padding-top:110mm;page-break-before:always;page:closing;">${goldMark}<div style="font-family:Arial,Helvetica,sans-serif;color:#D4AF37;font-size:11pt;letter-spacing:6pt;text-transform:uppercase;margin-bottom:28pt;-webkit-print-color-adjust:exact;print-color-adjust:exact;">Darrow Code</div><p style="font-family:Georgia,'Times New Roman',serif;font-style:italic;font-size:15pt;color:#E5E7EB;margin:0 auto;max-width:120mm;line-height:1.5;">More than a horoscope. Your private birth code.</p></section>`,
   );
 
-  // Warm cream paper background.
-  return `<!doctype html><html lang="en"><head><meta charset="utf-8"/><title>Darrow Code — Prepared for ${escape(clientName)}</title></head><body style="margin:0;background:#FAF7F2;padding:22mm 20mm;font-family:Arial,Helvetica,sans-serif;">${sections.join("\n")}</body></html>`;
+  // Page counter via CSS Paged Media — APITemplate (headless Chromium)
+  // renders these reliably (no displayHeaderFooter needed). Cover (page 1)
+  // and the named `cover`/`closing` pages get no number.
+  const pageCounterStyle = `
+    @page { size: A4; margin: 22mm 20mm;
+      @bottom-right {
+        content: "Darrow Code  \u00B7  " counter(page);
+        font-family: Georgia, 'Times New Roman', serif;
+        font-size: 9pt;
+        color: #B79658;
+        letter-spacing: 1.5pt;
+      }
+    }
+    @page :first { margin: 0; @bottom-right { content: ""; } }
+    @page cover  { margin: 0; @bottom-right { content: ""; } }
+    @page closing{ margin: 0; @bottom-right { content: ""; } }
+  `;
+
+  return `<!doctype html><html lang="en"><head><meta charset="utf-8"/><title>Darrow Code — Prepared for ${escape(clientName)}</title><style>${pageCounterStyle}</style></head><body style="margin:0;background:#FAF7F2;font-family:Arial,Helvetica,sans-serif;">${sections.join("\n")}</body></html>`;
 }
 
 // DEPRECATED — NOT USED BY PIPELINE. Do not modify or reactivate.
