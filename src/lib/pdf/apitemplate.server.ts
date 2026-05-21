@@ -2,7 +2,11 @@
 // Uses the create-pdf-from-html endpoint so we own the HTML template.
 // Retries transient failures (5xx, 429, 408, network/timeouts, and the
 // generic 400 "Internal error unable to generate PDF") with exponential
-// backoff: 0s → 2s → 5s, 3 attempts total.
+// backoff: 0s → 2s → 5s, 3 attempts total. After a successful render the
+// PDF is post-processed via pdf-lib to stamp page numbers on body pages
+// (skipping the full-bleed cover and closing).
+
+import { stampPageNumbers } from "./stamp-page-numbers.server";
 
 const APITEMPLATE_URL = "https://rest.apitemplate.io/v2/create-pdf-from-html";
 const APITEMPLATE_TIMEOUT_MS = 150 * 1000;
@@ -40,6 +44,11 @@ function isTransientStatus(status: number, body: string): boolean {
 async function attemptRender(html: string, apiKey: string): Promise<{ pdf?: Uint8Array; transient: boolean; error?: string; status?: number; body?: string }> {
   let res: Response;
   try {
+    // Zero APITemplate margins — we own the layout end-to-end in HTML so the
+    // cover/closing can bleed to the page edge and body sections can apply
+    // their own safe internal padding without fighting Chromium's printable
+    // area. Page numbers are stamped post-process via pdf-lib, so we no
+    // longer rely on @page CSS counters or APITemplate's displayHeaderFooter.
     res = await fetchWithTimeout(APITEMPLATE_URL + "?export_type=json", {
       method: "POST",
       headers: { "Content-Type": "application/json", "X-API-KEY": apiKey },
@@ -48,10 +57,10 @@ async function attemptRender(html: string, apiKey: string): Promise<{ pdf?: Uint
         settings: {
           paper_size: "A4",
           orientation: "1",
-          margin_top: "22mm",
-          margin_bottom: "22mm",
-          margin_left: "20mm",
-          margin_right: "20mm",
+          margin_top: "0",
+          margin_bottom: "0",
+          margin_left: "0",
+          margin_right: "0",
         },
       }),
     });
@@ -99,7 +108,14 @@ export async function renderHtmlToPdf(html: string, diag: RenderDiagnostics = {}
           attempt, order_id: diag.order_id, report_id: diag.report_id, modules: diag.modules, html_bytes: htmlBytes,
         });
       }
-      return result.pdf;
+      try {
+        return await stampPageNumbers(result.pdf);
+      } catch (e: any) {
+        console.error("[apitemplate] page-number stamping failed; returning unstamped PDF", {
+          error: String(e?.message ?? e), order_id: diag.order_id, report_id: diag.report_id,
+        });
+        return result.pdf;
+      }
     }
 
     lastError = result.error ?? "unknown error";
