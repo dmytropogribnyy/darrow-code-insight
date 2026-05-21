@@ -211,8 +211,10 @@ async function runDiagnostic(intake_id: string, mode: "sequential" | "parallel" 
       bytes: pdf_bytes_len,
       storage_path: pdf_storage_path,
       signed_url: pdf_signed_url,
+      json_storage_path,
       error: pdf_error,
     },
+    quality_warnings,
     excerpts: {
       orientation: snippet(getCoreSectionProse(core?.orientation), 5),
       core_architecture: snippet(getCoreSectionProse(core?.core_architecture), 5),
