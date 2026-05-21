@@ -126,11 +126,15 @@ async function runDiagnostic(intake_id: string, mode: "sequential" | "parallel" 
     .toLowerCase();
   const provider_interpretation_leak = leakProbes.filter((p) => coreText.includes(p));
 
+  // Quality gate — heuristic warn-only checks (no retries).
+  const quality_warnings = evaluateQualityGate(core);
+
   // 4) PDF render (only if structurally valid enough to render)
   let pdf_status: "skipped" | "ok" | "failed" = "skipped";
   let pdf_bytes_len: number | null = null;
   let pdf_storage_path: string | null = null;
   let pdf_signed_url: string | null = null;
+  let json_storage_path: string | null = null;
   let pdf_error: string | null = null;
   const blockingStructural = structural_issues.filter(
     (i) =>
@@ -141,11 +145,18 @@ async function runDiagnostic(intake_id: string, mode: "sequential" | "parallel" 
   const canRender = blockingStructural.length === 0;
   if (canRender) {
     try {
+      const ts = new Date().toISOString().replace(/[:.]/g, "-");
+      // Persist the raw AI JSON so render-only re-runs can reuse it
+      // without burning Claude calls.
+      const jsonPath = `diagnostic/core-v3-${ts}.json`;
+      const jsonBytes = new TextEncoder().encode(JSON.stringify(ai.report, null, 2));
+      const jsonUp = await sb.storage.from("reports").upload(jsonPath, jsonBytes, { contentType: "application/json", upsert: true });
+      if (!jsonUp.error) json_storage_path = jsonPath;
+
       const html = renderReportHtmlSafe(ai.report as any, {});
       const pdf = await renderHtmlToPdf(html, { order_id: "diagnostic", report_id: "diagnostic", modules: ["CORE"] });
       pdf_bytes_len = pdf.byteLength;
       pdf_status = "ok";
-      const ts = new Date().toISOString().replace(/[:.]/g, "-");
       const path = `diagnostic/core-v3-${ts}.pdf`;
       const up = await sb.storage.from("reports").upload(path, pdf, { contentType: "application/pdf", upsert: true });
       if (up.error) throw new Error(`pdf upload failed: ${up.error.message}`);
