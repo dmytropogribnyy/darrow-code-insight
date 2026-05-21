@@ -225,6 +225,57 @@ async function runDiagnostic(intake_id: string, mode: "sequential" | "parallel" 
   };
 }
 
+async function runRenderOnly(): Promise<any> {
+  const sb = admin();
+  const t0 = Date.now();
+  // Find the latest persisted diagnostic AI JSON.
+  const list = await sb.storage
+    .from("reports")
+    .list("diagnostic", { limit: 200, sortBy: { column: "created_at", order: "desc" } });
+  if (list.error) throw new Error(`storage list failed: ${list.error.message}`);
+  const jsonFile = (list.data ?? []).find((f: any) => f.name?.endsWith(".json"));
+  if (!jsonFile) {
+    return {
+      ok: false,
+      build_marker: BUILD_MARKER,
+      mode: "render_only",
+      error:
+        "No cached diagnostic AI JSON found. Run a full diagnostic first (which now persists the JSON alongside the PDF) and then re-run render-only.",
+    };
+  }
+  const jsonPath = `diagnostic/${jsonFile.name}`;
+  const dl = await sb.storage.from("reports").download(jsonPath);
+  if (dl.error) throw new Error(`download failed: ${dl.error.message}`);
+  const text = await dl.data.text();
+  const report = JSON.parse(text);
+
+  const html = renderReportHtmlSafe(report, {});
+  const pdf = await renderHtmlToPdf(html, { order_id: "render_only", report_id: "render_only", modules: ["CORE"] });
+  const ts = new Date().toISOString().replace(/[:.]/g, "-");
+  const outPath = `diagnostic/render-only-${ts}.pdf`;
+  const up = await sb.storage.from("reports").upload(outPath, pdf, { contentType: "application/pdf", upsert: true });
+  if (up.error) throw new Error(`upload failed: ${up.error.message}`);
+  const signed = await sb.storage.from("reports").createSignedUrl(outPath, 3600);
+  return {
+    ok: true,
+    build_marker: BUILD_MARKER,
+    mode: "render_only",
+    elapsed_ms: Date.now() - t0,
+    source_json: jsonPath,
+    pdf: {
+      bytes: pdf.byteLength,
+      storage_path: outPath,
+      signed_url: signed?.data?.signedUrl ?? null,
+    },
+    notes: [
+      "No Claude call.",
+      "No FreeAstroAPI call.",
+      "No paid customer report mutated.",
+      "No Stripe / email.",
+    ],
+  };
+}
+
 export const Route = createFileRoute("/api/public/debug/core-v3-run")({
   server: {
     handlers: {
@@ -236,6 +287,19 @@ export const Route = createFileRoute("/api/public/debug/core-v3-run")({
         try {
           body = await request.json();
         } catch {}
+        // Render-only mode: reuse latest cached diagnostic JSON, re-render
+        // PDF only. No Claude, no FreeAstroAPI, no paid mutations.
+        if (body?.mode === "render_only") {
+          try {
+            const result = await runRenderOnly();
+            return Response.json(result);
+          } catch (e: any) {
+            return Response.json(
+              { ok: false, build_marker: BUILD_MARKER, mode: "render_only", error: String(e?.message ?? e).slice(0, 1000) },
+              { status: 500 },
+            );
+          }
+        }
         const intake_id = typeof body?.intake_id === "string" ? body.intake_id : null;
         if (!intake_id) return Response.json({ ok: false, error: "intake_id required" }, { status: 400 });
         const requestedMode = body?.mode === "parallel" ? "parallel" : "sequential";
