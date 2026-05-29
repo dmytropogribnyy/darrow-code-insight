@@ -3,7 +3,7 @@
 
 import { createFileRoute } from "@tanstack/react-router";
 
-export const BUILD_MARKER = "core-v3-1-render-fix-2026-05-20-6";
+export const BUILD_MARKER = "core-v3-1-stub-fix-2026-05-21-7";
 
 export const Route = createFileRoute("/api/public/debug/build-marker")({
   server: {
@@ -55,7 +55,7 @@ export const Route = createFileRoute("/api/public/debug/build-marker")({
             cover_closing_bleed: "full A4, no cream strip",
             body_padding: "22mm top, 20mm sides, 26mm bottom (page-number safe area)",
             page_numbers: "stamped post-process via pdf-lib (cover + closing skipped)",
-            page_break_strategy: "page-break-before:always on every v3 section",
+            page_break_strategy: "break-inside:avoid on every section; break-before:auto (flow-based) — v7 stub-page fix",
             overflow_protection: "global box-sizing + overflow-wrap:break-word",
           },
           quality_gate: {

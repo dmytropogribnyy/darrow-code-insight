@@ -288,9 +288,18 @@ const PROOF_STYLE =
 // 170mm × 249mm (with extra 4mm bottom for the stamped page number).
 // page-break-after:always ensures each section starts fresh; min-height
 // keeps short sections visually substantial without forcing blank fills.
+// Stub-page fix (v7): we previously forced page-break-before:always +
+// page-break-after:always on every v3 section. Short sections then pushed
+// the next section's forced break, leaving 3–4 essentially blank stub
+// pages that only carried the stamped page number. Switch to a flow-based
+// model: sections live in document flow with break-inside:avoid (so a
+// section won't be split mid-paragraph when it fits), and we let the
+// renderer decide when to break. The first section after cover/method
+// /snapshot still opts in via BODY_PAGE_BREAK_BEFORE for the wrapper that
+// passes breakBefore:true; subsequent ones inherit auto.
 const BODY_PAGE_STYLE =
-  "width:210mm;min-height:297mm;padding:22mm 20mm 26mm;background:#FAF7F2;color:#151922;box-sizing:border-box;page-break-after:always;page-break-inside:auto;break-after:page;-webkit-print-color-adjust:exact;print-color-adjust:exact;overflow-wrap:break-word;word-wrap:break-word;";
-const BODY_PAGE_BREAK_BEFORE = "page-break-before:always;break-before:page;";
+  "width:210mm;padding:22mm 20mm 26mm;background:#FAF7F2;color:#151922;box-sizing:border-box;break-inside:avoid;page-break-inside:avoid;-webkit-print-color-adjust:exact;print-color-adjust:exact;overflow-wrap:break-word;word-wrap:break-word;";
+const BODY_PAGE_BREAK_BEFORE = "page-break-before:auto;break-before:auto;";
 
 const safeH2Style =
   "font-family:Georgia,'Times New Roman',serif;color:#4A402D;font-size:22pt;font-weight:400;margin:0 0 12pt;line-height:1.25;overflow-wrap:break-word;word-wrap:break-word;";
