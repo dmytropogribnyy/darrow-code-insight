@@ -12,8 +12,20 @@ second-step cleanup plan so every doc file has a clear classification, future
 action, and runtime-connection status.
 
 Nothing is moved or deleted here. No old files are rewritten. This is the plan
-for Phase 2 (docs cleanup), which is NOT authorized until Phase 1 (CORE v4.1
-implementation) is complete and approved.
+for the docs cleanup step, which is NOT authorized until the render-fix diagnostic
+is approved — but may happen BEFORE Phase 1 code implementation.
+
+Correct sequence:
+1. Finish / approve render-fix diagnostic
+2. Perform approved docs cleanup / archive old v3 docs (this plan)
+3. Controlled CORE v4.1 code implementation
+4. v4.1 diagnostic generation
+5. Render-only PDF QA
+6. Publish after visual approval
+
+Archiving old v3 docs before implementation avoids them confusing the v4.1
+implementation step. Do not perform the cleanup now; only this inventory is
+authorized in Phase 0.
 
 ---
 
@@ -151,8 +163,9 @@ copy the key. Recommend key rotation if the key may still be active.
 
 ## 4 · PROPOSED SECOND-STEP CLEANUP
 
-This cleanup is **NOT authorized until Phase 1 (CORE v4.1 implementation) is complete
-and visually approved.** Do not perform any of these steps now.
+This cleanup is **NOT authorized until the render-fix diagnostic is approved.**
+It may be performed AFTER diagnostic approval and BEFORE Phase 1 code implementation.
+Do not perform any of these steps now.
 
 ### 4.1 Files to Archive
 

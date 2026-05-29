@@ -43,7 +43,7 @@ intelligent human privately recognized the client's pattern.
 
 | File | Change required |
 |------|----------------|
-| `src/lib/ai/darrowcode_ai_system_prompt.md` | Replace with v4.1 system prompt from `docs/darrowcode_ai_system_prompt_v4_1.md` |
+| `src/lib/ai/darrowcode_ai_system_prompt.md` | **Keep intact until migration switch is authorized.** Create a staged v4.1 runtime prompt file alongside it first; switch `system-prompt.ts` only during controlled Phase 1 implementation. |
 | `src/lib/ai/user-prompt.ts` | Update `coreV3Instructions()` for v4.1 word targets (4,350–5,250) and section map (17 v4.1 keys) |
 | `src/lib/ai/schema.ts` | Add `CoreV4Schema`; update `DarrowReportSchema` union; keep `CoreV3Schema` for legacy reports |
 | `src/lib/ai/core-split.server.ts` | Update section partition (A=keys 1–9, B=keys 10–17) for v4.1 key order (operating_mode at #3) |
@@ -87,9 +87,19 @@ v4.1 generation without touching the production CORE path.
 ### 4.1 AI Prompt Migration
 
 **Source:** `docs/darrowcode_ai_system_prompt_v4_1.md`
-**Target:** `src/lib/ai/darrowcode_ai_system_prompt.md`
+**Staging file:** `src/lib/ai/darrowcode_ai_system_prompt_v4_1.md` (create here first)
+**Active runtime file (keep intact until switch):** `src/lib/ai/darrowcode_ai_system_prompt.md`
+**Switch mechanism:** `src/lib/ai/system-prompt.ts` import — change only during controlled
+Phase 1 implementation, after diagnostic generation is approved.
+**Rollback:** revert `system-prompt.ts` import back to v3 file if v4.1 diagnostic fails.
 
-Changes:
+Migration steps:
+1. Create `src/lib/ai/darrowcode_ai_system_prompt_v4_1.md` with v4.1 content.
+2. Leave `src/lib/ai/darrowcode_ai_system_prompt.md` (v3) untouched.
+3. Point `system-prompt.ts` import to the v4.1 file only after diagnostic approval.
+4. Keep v3 file as rollback until v4.1 PDF is visually approved in production.
+
+Content changes for v4.1 prompt:
 - Replace REQUIRED "your system / the mechanism" language with PREFERRED human-facing openers
 - Update word targets: 4,350–5,250 prose words total
 - Update section map to v4.1 17-key set (see §4.3)
@@ -368,8 +378,10 @@ Do not skip ahead. Each step gates the next.
 5. **Migrate schema** (`schema.ts`). Keep CoreV3Schema. Add CoreV4Schema.
 
 6. **Migrate AI prompt and user-prompt builder.**
-   Swap `darrowcode_ai_system_prompt.md`. Update `user-prompt.ts`.
-   Update `core-split.server.ts` section partition for v4.1 key order.
+   Create `src/lib/ai/darrowcode_ai_system_prompt_v4_1.md` (staged, v3 file stays intact).
+   Update `system-prompt.ts` import to point to v4.1 file.
+   Update `user-prompt.ts`. Update `core-split.server.ts` section partition for v4.1 key order.
+   Keep v3 prompt file as rollback until v4.1 PDF is visually approved.
 
 7. **Migrate PDF template** (`template.ts`).
    26-page layout; all static pages; all structured fields.

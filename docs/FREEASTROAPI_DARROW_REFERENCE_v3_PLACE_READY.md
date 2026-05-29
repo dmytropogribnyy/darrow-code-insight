@@ -128,15 +128,19 @@ is authorized.
 
 | Endpoint | Purpose | Notes |
 |----------|---------|-------|
-| `/recommendations` | Location resonance recommendations based on natal + birth data | Requires accurate birth time |
-| `/city-check` | Check resonance score for a specific city | Requires birth time |
-| `/relocation` | Relocation chart for a destination city | Requires birth time |
-| `/lines` | Astrocartography planetary lines (which planets are angular where) | Requires birth time |
-| `/parans` | Parans — latitude bands where planetary lines cross | Requires birth time |
+| `POST /api/v1/western/astrocartography/recommendations` | Location resonance recommendations based on natal + birth data | Requires accurate birth time |
+| `POST /api/v1/western/astrocartography/city-check` | Check resonance score for a specific city | Requires birth time |
+| `POST /api/v1/western/astrocartography/relocation` | Relocation chart for a destination city | Requires birth time |
+| `POST /api/v1/western/astrocartography/lines` | Astrocartography planetary lines (which planets are angular where) | Requires birth time |
+| `POST /api/v1/western/astrocartography/parans` | Parans — latitude bands where planetary lines cross | Requires birth time |
 
 These endpoints are not a complete list of all possible FreeAstroAPI endpoints.
 Consult `src/lib/astro/FREEASTROAPI_REFERENCE.md` and `docs/freeastroapi.md` for
 current endpoint documentation.
+
+**AI data rule:** Do NOT pass raw GeoJSON or full endpoint response dumps to Claude.
+Pass only compact normalized summaries (resonant_qualities[], city name + score,
+line type + planet — not raw geometry). Claude must not receive unparsed endpoint output.
 
 **Important: astrocartography is broader than "lines only."** Future PLACE may use
 the full endpoint set above (recommendations, city-check, relocation, lines, parans)
@@ -158,18 +162,18 @@ normalized result would conceptually include:
   birth_time_required: true,       // always true for astrocartography
   // If available=true:
   resonant_qualities: string[],    // environmental characteristics, not city names
-  lines_summary?: {                // from /lines endpoint
+  lines_summary?: {                // from POST /api/v1/western/astrocartography/lines
     planet: string,
     line_type: string,             // e.g., "ASC", "MC", "DSC", "IC"
     longitude_degrees: number,
   }[],
-  recommendations?: {             // from /recommendations endpoint
+  recommendations?: {             // from POST /api/v1/western/astrocartography/recommendations
     city: string,
     country: string,
     resonance_score: number,
     qualities: string[],
   }[],
-  relocation_notes?: string,      // from /relocation or /city-check
+  relocation_notes?: string,      // from POST /api/v1/western/astrocartography/relocation or /city-check
 }
 ```
 
