@@ -16,11 +16,13 @@ import {
 // cover and closing pages.
 import symbolDataUrl from "@/assets/darrow-symbol-small.png?inline";
 
-const escape = (s: string) =>
-  s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+const escape = (s: string) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 
 const para = (s: string) =>
-  s.split(/\n{2,}/).map((p) => `<p>${escape(p).replace(/\n/g, "<br/>")}</p>`).join("\n");
+  s
+    .split(/\n{2,}/)
+    .map((p) => `<p>${escape(p).replace(/\n/g, "<br/>")}</p>`)
+    .join("\n");
 
 // Defensive normalization of common AI typos of the PROTOCOL label.
 // Catches: PROTECOL, PROTOCAL, PROTOKOL, PROTCOL, PROTOCO (followed by a
@@ -58,7 +60,10 @@ function normalizeReport<T>(report: T): T {
 
 // Render protocols block — split on "PROTOCOL:" markers if present.
 function renderProtocols(text: string): string {
-  const parts = text.split(/(?=PROTOCOL:)/g).map((s) => s.trim()).filter(Boolean);
+  const parts = text
+    .split(/(?=PROTOCOL:)/g)
+    .map((s) => s.trim())
+    .filter(Boolean);
   if (parts.length <= 1) return para(text);
   return parts
     .map((p) => {
@@ -87,7 +92,11 @@ const ADDONS: Array<{ code: string; tagline: string }> = [
   { code: "PLACE", tagline: "Geographic & environmental energy" },
 ];
 
-function renderCoreChapter(core: DarrowModule, snapshot: DarrowReport["client_snapshot"], closing: DarrowReport["closing"]): string {
+function renderCoreChapter(
+  core: DarrowModule,
+  snapshot: DarrowReport["client_snapshot"],
+  closing: DarrowReport["closing"],
+): string {
   return `
     <section class="page page-snapshot">
       <div class="brand">Darrow Code</div>
@@ -152,11 +161,15 @@ function renderCoreChapter(core: DarrowModule, snapshot: DarrowReport["client_sn
       ${para(core.next)}
       <h2 class="sub">Executive Summary</h2>
       ${para(closing.executive_summary)}
-      ${core.proof_tags?.length ? `
+      ${
+        core.proof_tags?.length
+          ? `
         <div class="proof-tags">
           <div class="block-label">Anchored in</div>
           <ul>${core.proof_tags.map((t) => `<li>${escape(t)}</li>`).join("")}</ul>
-        </div>` : ""}
+        </div>`
+          : ""
+      }
     </section>
   `;
 }
@@ -164,12 +177,15 @@ function renderCoreChapter(core: DarrowModule, snapshot: DarrowReport["client_sn
 function renderAddon(code: string, mod: DarrowModule, clientName: string): string {
   const title = MODULE_NAMES[code] ?? code;
   const snap = mod.module_snapshot;
-  const styleSwatches = code === "STYLE" && mod.color_palette?.length
-    ? `<div class="palette">${mod.color_palette.map((hex, i) => {
-        const name = mod.color_names?.[i] ?? "";
-        return `<div class="swatch"><span style="background:${escape(hex)}"></span><div>${escape(hex)}${name ? ` · ${escape(name)}` : ""}</div></div>`;
-      }).join("")}</div>`
-    : "";
+  const styleSwatches =
+    code === "STYLE" && mod.color_palette?.length
+      ? `<div class="palette">${mod.color_palette
+          .map((hex, i) => {
+            const name = mod.color_names?.[i] ?? "";
+            return `<div class="swatch"><span style="background:${escape(hex)}"></span><div>${escape(hex)}${name ? ` · ${escape(name)}` : ""}</div></div>`;
+          })
+          .join("")}</div>`
+      : "";
 
   return `
     <section class="page page-cover module-cover">
@@ -208,7 +224,9 @@ function renderAddon(code: string, mod: DarrowModule, clientName: string): strin
       <h2>Next Step</h2>
       ${para(mod.next)}
       ${styleSwatches}
-      ${snap ? `
+      ${
+        snap
+          ? `
         <div class="module-snapshot">
           <div class="block-label">Module Snapshot</div>
           <div class="snapshot-row"><span>Main Pattern</span><p>${escape(snap.main_pattern)}</p></div>
@@ -216,7 +234,9 @@ function renderAddon(code: string, mod: DarrowModule, clientName: string): strin
           <div class="snapshot-row"><span>Main Risk</span><p>${escape(snap.main_risk)}</p></div>
           <div class="snapshot-row"><span>Practical Protocol</span><p>${escape(snap.practical_protocol)}</p></div>
           <div class="snapshot-row"><span>Next Step</span><p>${escape(snap.next_step)}</p></div>
-        </div>` : ""}
+        </div>`
+          : ""
+      }
     </section>
   `;
 }
@@ -237,13 +257,17 @@ function renderCrossSell(generated: string[], symbolSmall: string): string {
       <h2>The Other Modules</h2>
       <p class="crosssell-intro">CORE shows your foundational architecture. Each module below opens a specific operational layer.</p>
       <div class="addon-list">
-        ${remaining.map((a) => `
+        ${remaining
+          .map(
+            (a) => `
           <div class="addon-item">
             <div class="addon-code">${escape(a.code)}</div>
             <div class="addon-name">${escape(MODULE_NAMES[a.code] ?? a.code)}</div>
             <div class="addon-tag">${escape(a.tagline)}</div>
           </div>
-        `).join("")}
+        `,
+          )
+          .join("")}
       </div>
     </section>
     ${closing}
@@ -340,9 +364,8 @@ function renderProseBlocks(text: string): { html: string; proof: string } {
     .filter((b) => b && !/^(PROTOCOL|Warning Signal)\s*:/i.test(b));
   const html = blocks
     .map((blk, i) => {
-      const style = i === 0
-        ? `${safePStyle}page-break-before:avoid;break-before:avoid;`
-        : safePStyle;
+      const style =
+        i === 0 ? `${safePStyle}page-break-before:avoid;break-before:avoid;` : safePStyle;
       return `<p style="${style}">${escape(blk).replace(/\n/g, "<br/>")}</p>`;
     })
     .join("\n");
@@ -388,15 +411,17 @@ function v3Section(title: string, field: unknown): string {
   const firstParaMatch = html.match(/^<p [^>]*>[\s\S]*?<\/p>/);
   const firstPara = firstParaMatch ? firstParaMatch[0] : "";
   const restHtml = firstParaMatch ? html.slice(firstParaMatch[0].length) : html;
-  const headerBlock =
-    `<div style="${HEADING_KEEP_STYLE}"><div style="${safeBrandStyle}">Darrow Code</div><h2 style="${safeH2Style}">${escape(title)}</h2>${firstPara}</div>`;
+  const headerBlock = `<div style="${HEADING_KEEP_STYLE}"><div style="${safeBrandStyle}">Darrow Code</div><h2 style="${safeH2Style}">${escape(title)}</h2>${firstPara}</div>`;
   // proofHtml renders before protocol/warning callouts so the proof metadata
   // stays attached to its prose and cannot orphan as a lone tail after a warning
   // block that falls at the bottom of a page.
   return `<section style="${BODY_PAGE_STYLE}${BODY_PAGE_BREAK_BEFORE}">${headerBlock}${restHtml}${proofHtml}${protocols}${warnings}</section>`;
 }
 
-export function renderReportHtmlSafe(report: DarrowReport, opts: { assetsBaseUrl?: string } = {}): string {
+export function renderReportHtmlSafe(
+  report: DarrowReport,
+  opts: { assetsBaseUrl?: string } = {},
+): string {
   report = normalizeReport(report);
   void opts.assetsBaseUrl;
   const core = report.modules.CORE as any;
@@ -422,39 +447,41 @@ export function renderReportHtmlSafe(report: DarrowReport, opts: { assetsBaseUrl
   sections.push(
     `<section style="${BODY_PAGE_STYLE}">` +
       `<div style="${HEADING_KEEP_STYLE}">` +
-        `<div style="${safeBrandStyle}">Darrow Code</div>` +
-        `<h2 style="${safeH2Style}">Method &amp; Orientation</h2>` +
-        `<p style="font-family:Georgia,'Times New Roman',serif;font-style:italic;color:#4A402D;font-size:13pt;line-height:1.5;margin:0 0 14pt;overflow-wrap:break-word;word-wrap:break-word;">Clarity before action. Orientation over prediction.</p>` +
+      `<div style="${safeBrandStyle}">Darrow Code</div>` +
+      `<h2 style="${safeH2Style}">Method &amp; Orientation</h2>` +
+      `<p style="font-family:Georgia,'Times New Roman',serif;font-style:italic;color:#4A402D;font-size:13pt;line-height:1.5;margin:0 0 14pt;overflow-wrap:break-word;word-wrap:break-word;">Clarity before action. Orientation over prediction.</p>` +
       `</div>` +
       `<p style="${safePStyle}">This report is a private orientation map built from your birth data and name. It brings Western astrology, Chinese BaZi, numerology and pattern psychology into one clear reading — not to tell you what will happen, but to help you recognize how your system works.</p>` +
       `<p style="${safePStyle}">Read it for recognition, not instruction. When a line feels familiar, pause. Familiarity is data.</p>` +
       `<p style="${safePStyle}color:#6B6B6B;font-size:10pt;font-style:italic;margin-top:18pt;">This is not medical, legal, financial or psychiatric advice. It does not replace your judgment. It gives language to patterns you may have felt for years.</p>` +
-    `</section>`,
+      `</section>`,
   );
 
   // ── Page 3 — Client Snapshot ─────────────────────────────────
   const snapBullet = (label: string, body: string) =>
     `<div style="margin:0 0 10pt;page-break-inside:avoid;break-inside:avoid;">` +
-      `<div style="font-family:Arial,Helvetica,sans-serif;color:#A8841F;font-size:9pt;letter-spacing:2pt;text-transform:uppercase;margin-bottom:3pt;">${escape(label)}</div>` +
-      `<p style="${safePStyle}margin:0;">${escape(body)}</p>` +
+    `<div style="font-family:Arial,Helvetica,sans-serif;color:#A8841F;font-size:9pt;letter-spacing:2pt;text-transform:uppercase;margin-bottom:3pt;">${escape(label)}</div>` +
+    `<p style="${safePStyle}margin:0;">${escape(body)}</p>` +
     `</div>`;
   const snapshotBlock =
     `<div style="${HEADING_KEEP_STYLE}">` +
-      `<div style="${safeBrandStyle}">Darrow Code</div>` +
-      `<h2 style="${safeH2Style}">Client Snapshot</h2>` +
-      `<h3 style="font-family:Georgia,'Times New Roman',serif;color:#D4AF37;font-size:22pt;font-weight:400;margin:0 0 12pt;-webkit-print-color-adjust:exact;print-color-adjust:exact;overflow-wrap:break-word;word-wrap:break-word;">${escape(snap.pattern_name)}</h3>` +
-      `<p style="font-family:Georgia,'Times New Roman',serif;font-size:13pt;color:#4A402D;font-style:italic;line-height:1.55;margin:0 0 14pt;overflow-wrap:break-word;word-wrap:break-word;">${escape(snap.core_pattern)}</p>` +
+    `<div style="${safeBrandStyle}">Darrow Code</div>` +
+    `<h2 style="${safeH2Style}">Client Snapshot</h2>` +
+    `<h3 style="font-family:Georgia,'Times New Roman',serif;color:#D4AF37;font-size:22pt;font-weight:400;margin:0 0 12pt;-webkit-print-color-adjust:exact;print-color-adjust:exact;overflow-wrap:break-word;word-wrap:break-word;">${escape(snap.pattern_name)}</h3>` +
+    `<p style="font-family:Georgia,'Times New Roman',serif;font-size:13pt;color:#4A402D;font-style:italic;line-height:1.55;margin:0 0 14pt;overflow-wrap:break-word;word-wrap:break-word;">${escape(snap.core_pattern)}</p>` +
     `</div>` +
     `<p style="${safePStyle}">${escape(snap.unique_signature)}</p>` +
     `<div style="margin-top:14pt;border-top:0.5pt solid #D4AF37;padding-top:12pt;-webkit-print-color-adjust:exact;print-color-adjust:exact;">` +
-      snapBullet("Primary Strength", snap.primary_strength) +
-      snapBullet("Pressure Point", snap.pressure_point) +
-      snapBullet("Best Rhythm", snap.best_operating_rhythm) +
-      snapBullet("Current Timing", snap.current_timing_theme) +
-      snapBullet("Practical Focus", snap.practical_focus) +
+    snapBullet("Primary Strength", snap.primary_strength) +
+    snapBullet("Pressure Point", snap.pressure_point) +
+    snapBullet("Best Rhythm", snap.best_operating_rhythm) +
+    snapBullet("Current Timing", snap.current_timing_theme) +
+    snapBullet("Practical Focus", snap.practical_focus) +
     `</div>` +
     `<div style="${PROOF_STYLE}">Proof anchors drawn from your natal chart, BaZi pillars and numerology code (see sections that follow).</div>`;
-  sections.push(`<section style="${BODY_PAGE_STYLE}${BODY_PAGE_BREAK_BEFORE}">${snapshotBlock}</section>`);
+  sections.push(
+    `<section style="${BODY_PAGE_STYLE}${BODY_PAGE_BREAK_BEFORE}">${snapshotBlock}</section>`,
+  );
 
   if (core && core.schema_version === "core_v3") {
     sections.push(v3Section("Orientation", core.orientation));
@@ -475,13 +502,19 @@ export function renderReportHtmlSafe(report: DarrowReport, opts: { assetsBaseUrl
     sections.push(v3Section("Next Step", core.next_step));
   } else if (core) {
     sections.push(
-      safeSection("Opening", safePara(String(core.opening ?? "")) + safePara(String(core.architecture ?? ""))),
+      safeSection(
+        "Opening",
+        safePara(String(core.opening ?? "")) + safePara(String(core.architecture ?? "")),
+      ),
       safeSection("Mechanic", safePara(String(core.mechanic ?? ""))),
       safeSection("Timing", safePara(String(core.timing ?? ""))),
       safeSection("Protocols", safePara(String(core.protocols ?? ""))),
       safeSection("Warning Signal", safePara(String(core.shadow ?? ""))),
       safeSection("Before / After", safePara(String(core.before_after ?? ""))),
-      safeSection("Next Step", safePara(String(core.next ?? "")) + safePara(report.closing.executive_summary)),
+      safeSection(
+        "Next Step",
+        safePara(String(core.next ?? "")) + safePara(report.closing.executive_summary),
+      ),
     );
   }
 
@@ -518,7 +551,10 @@ export function renderReportHtmlSafe(report: DarrowReport, opts: { assetsBaseUrl
 // Legacy field names (opening/architecture/mechanic/...) remain here for
 // historical reference only. The active renderer is `renderReportHtmlSafe`
 // above; that is what `pipeline.server.ts` calls.
-export function renderReportHtml(report: DarrowReport, opts: { assetsBaseUrl?: string } = {}): string {
+export function renderReportHtml(
+  report: DarrowReport,
+  opts: { assetsBaseUrl?: string } = {},
+): string {
   report = normalizeReport(report);
   const core = report.modules.CORE as any;
   const generated = report.generated_modules ?? Object.keys(report.modules);
@@ -669,10 +705,12 @@ export function renderReportHtml(report: DarrowReport, opts: { assetsBaseUrl?: s
 </style></head>
 <body>
   ${cover}
-  ${hasCore && core
-    ? renderCoreChapter(core, report.client_snapshot, report.closing)
-    : renderSnapshotOnly(report.client_snapshot)}
-  ${addonCodes.map((c) => report.modules[c] ? renderAddon(c, report.modules[c] as any, clientName) : "").join("")}
+  ${
+    hasCore && core
+      ? renderCoreChapter(core, report.client_snapshot, report.closing)
+      : renderSnapshotOnly(report.client_snapshot)
+  }
+  ${addonCodes.map((c) => (report.modules[c] ? renderAddon(c, report.modules[c] as any, clientName) : "")).join("")}
   ${renderCrossSell(generated, symbolSmall)}
 </body></html>`;
 }
