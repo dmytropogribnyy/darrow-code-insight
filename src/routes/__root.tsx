@@ -100,6 +100,9 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         name: "twitter:description",
         content: "AI-powered personal astrology · Darrow Code Method.",
       },
+      { name: "description", content: "A web app generating personalized astrology PDF reports from user birth data." },
+      { property: "og:description", content: "A web app generating personalized astrology PDF reports from user birth data." },
+      { name: "twitter:description", content: "A web app generating personalized astrology PDF reports from user birth data." },
     ],
     links: [
       { rel: "icon", type: "image/png", href: "/brand/darrow-favicon.png" },
