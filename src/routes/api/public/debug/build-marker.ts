@@ -55,7 +55,8 @@ export const Route = createFileRoute("/api/public/debug/build-marker")({
             cover_closing_bleed: "full A4, no cream strip",
             body_padding: "22mm top, 20mm sides, 26mm bottom (page-number safe area)",
             page_numbers: "stamped post-process via pdf-lib (cover + closing skipped)",
-            page_break_strategy: "break-inside:avoid on every section; break-before:auto (flow-based) — v7 stub-page fix",
+            page_break_strategy:
+              "break-inside:avoid on every section; break-before:auto (flow-based) — v7 stub-page fix",
             overflow_protection: "global box-sizing + overflow-wrap:break-word",
           },
           quality_gate: {
