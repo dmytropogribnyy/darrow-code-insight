@@ -288,17 +288,18 @@ const PROOF_STYLE =
 // 170mm × 249mm (with extra 4mm bottom for the stamped page number).
 // page-break-after:always ensures each section starts fresh; min-height
 // keeps short sections visually substantial without forcing blank fills.
-// Stub-page fix (v7): we previously forced page-break-before:always +
-// page-break-after:always on every v3 section. Short sections then pushed
-// the next section's forced break, leaving 3–4 essentially blank stub
-// pages that only carried the stamped page number. Switch to a flow-based
-// model: sections live in document flow with break-inside:avoid (so a
-// section won't be split mid-paragraph when it fits), and we let the
-// renderer decide when to break. The first section after cover/method
-// /snapshot still opts in via BODY_PAGE_BREAK_BEFORE for the wrapper that
-// passes breakBefore:true; subsequent ones inherit auto.
+// Flow-based layout (stub-fix v7 base, layout-polish-3 refinement):
+// Section-level break-inside:avoid was removed here because when a section's
+// total content exceeds one page the renderer is forced to break anyway, and
+// it picks the worst possible spot (right before proof tags), producing an
+// almost-blank ghost page with only 2 lines of proof text.
+// Individual elements carry their own break rules, which is sufficient:
+//   HEADING_KEEP_STYLE  — heading + first paragraph never orphan
+//   PROTOCOL_BOX        — protocol callout never splits mid-block
+//   WARNING_BOX         — warning callout never splits mid-block
+//   PROOF_STYLE         — proof tags stay with preceding element
 const BODY_PAGE_STYLE =
-  "width:210mm;padding:22mm 20mm 26mm;background:#FAF7F2;color:#151922;box-sizing:border-box;break-inside:avoid;page-break-inside:avoid;-webkit-print-color-adjust:exact;print-color-adjust:exact;overflow-wrap:break-word;word-wrap:break-word;";
+  "width:210mm;padding:22mm 20mm 26mm;background:#FAF7F2;color:#151922;box-sizing:border-box;-webkit-print-color-adjust:exact;print-color-adjust:exact;overflow-wrap:break-word;word-wrap:break-word;";
 const BODY_PAGE_BREAK_BEFORE = "page-break-before:auto;break-before:auto;";
 
 const safeH2Style =

@@ -3,7 +3,7 @@
 
 import { createFileRoute } from "@tanstack/react-router";
 
-export const BUILD_MARKER = "core-v3-1-layout-polish-2026-05-31-2";
+export const BUILD_MARKER = "core-v3-1-layout-polish-2026-05-31-3";
 
 export const Route = createFileRoute("/api/public/debug/build-marker")({
   server: {
