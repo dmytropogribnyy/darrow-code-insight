@@ -353,7 +353,7 @@ function renderProseBlocks(text: string): { html: string; proof: string } {
   const trimmed = text.trim();
   let proof = "";
   let body = trimmed;
-  const proofMatch = trimmed.match(/\n*\[([^\[\]]+)\]\s*$/);
+  const proofMatch = trimmed.match(/\n*\[([^[\]]+)\]\s*$/);
   if (proofMatch) {
     proof = proofMatch[1].trim();
     body = trimmed.slice(0, proofMatch.index ?? trimmed.length).trim();
