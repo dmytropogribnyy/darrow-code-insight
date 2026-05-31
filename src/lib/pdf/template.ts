@@ -375,11 +375,14 @@ function v3Section(title: string, field: unknown): string {
   const protocols = renderProtocolBlocks(getCoreSectionProtocols(field));
   const warnings = renderWarningBlocks(getCoreSectionWarnings(field));
   const proofHtml = proof ? `<div style="${PROOF_STYLE}">${escape(proof)}</div>` : "";
-  // Keep warnings and proof in one block so proof tags never orphan alone
-  // at the top of the next page as a lonely technical tail.
-  const trailingBlock = (warnings || proofHtml)
-    ? `<div style="page-break-inside:avoid;break-inside:avoid;">${warnings}${proofHtml}</div>`
-    : "";
+  // Each callout block (WARNING_BOX, PROTOCOL_BOX) already carries its own
+  // break-inside:avoid + page-break-before:avoid, so it won't be split or
+  // orphaned as a heading without body. PROOF_STYLE adds page-break-before:avoid
+  // + break-inside:avoid so the proof line stays attached to the preceding
+  // warning. We do NOT wrap warnings+proof in a shared break-inside:avoid
+  // container: doing so creates an oversized keep-together block that gets
+  // pushed to the next page as one unit, leaving a near-empty gap on the
+  // current page when there is not enough room for the combined block.
   // Pull the first <p> out of html and bind it to the heading so the
   // heading can never orphan at the bottom of the previous page.
   const firstParaMatch = html.match(/^<p [^>]*>[\s\S]*?<\/p>/);
@@ -387,7 +390,7 @@ function v3Section(title: string, field: unknown): string {
   const restHtml = firstParaMatch ? html.slice(firstParaMatch[0].length) : html;
   const headerBlock =
     `<div style="${HEADING_KEEP_STYLE}"><div style="${safeBrandStyle}">Darrow Code</div><h2 style="${safeH2Style}">${escape(title)}</h2>${firstPara}</div>`;
-  return `<section style="${BODY_PAGE_STYLE}${BODY_PAGE_BREAK_BEFORE}">${headerBlock}${restHtml}${protocols}${trailingBlock}</section>`;
+  return `<section style="${BODY_PAGE_STYLE}${BODY_PAGE_BREAK_BEFORE}">${headerBlock}${restHtml}${protocols}${warnings}${proofHtml}</section>`;
 }
 
 export function renderReportHtmlSafe(report: DarrowReport, opts: { assetsBaseUrl?: string } = {}): string {
