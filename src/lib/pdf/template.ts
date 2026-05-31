@@ -282,7 +282,7 @@ const WARNING_BOX =
 const WARNING_LABEL =
   "font-family:Georgia,'Times New Roman',serif;font-size:9pt;letter-spacing:2pt;color:#6B6B6B;text-transform:uppercase;margin-bottom:6pt;";
 const PROOF_STYLE =
-  "font-family:Arial,Helvetica,sans-serif;color:#9CA3AF;font-size:9pt;font-style:italic;margin-top:10pt;padding-top:6pt;border-top:0.5pt solid #E5E7EB;page-break-before:avoid;break-before:avoid;overflow-wrap:break-word;word-wrap:break-word;";
+  "font-family:Arial,Helvetica,sans-serif;color:#9CA3AF;font-size:9pt;font-style:italic;margin-top:10pt;padding-top:6pt;border-top:0.5pt solid #E5E7EB;page-break-before:avoid;break-before:avoid;page-break-inside:avoid;break-inside:avoid;overflow-wrap:break-word;word-wrap:break-word;";
 
 // A4 = 210mm × 297mm. Internal padding gives a safe content area of
 // 170mm × 249mm (with extra 4mm bottom for the stamped page number).
@@ -375,6 +375,11 @@ function v3Section(title: string, field: unknown): string {
   const protocols = renderProtocolBlocks(getCoreSectionProtocols(field));
   const warnings = renderWarningBlocks(getCoreSectionWarnings(field));
   const proofHtml = proof ? `<div style="${PROOF_STYLE}">${escape(proof)}</div>` : "";
+  // Keep warnings and proof in one block so proof tags never orphan alone
+  // at the top of the next page as a lonely technical tail.
+  const trailingBlock = (warnings || proofHtml)
+    ? `<div style="page-break-inside:avoid;break-inside:avoid;">${warnings}${proofHtml}</div>`
+    : "";
   // Pull the first <p> out of html and bind it to the heading so the
   // heading can never orphan at the bottom of the previous page.
   const firstParaMatch = html.match(/^<p [^>]*>[\s\S]*?<\/p>/);
@@ -382,7 +387,7 @@ function v3Section(title: string, field: unknown): string {
   const restHtml = firstParaMatch ? html.slice(firstParaMatch[0].length) : html;
   const headerBlock =
     `<div style="${HEADING_KEEP_STYLE}"><div style="${safeBrandStyle}">Darrow Code</div><h2 style="${safeH2Style}">${escape(title)}</h2>${firstPara}</div>`;
-  return `<section style="${BODY_PAGE_STYLE}${BODY_PAGE_BREAK_BEFORE}">${headerBlock}${restHtml}${protocols}${warnings}${proofHtml}</section>`;
+  return `<section style="${BODY_PAGE_STYLE}${BODY_PAGE_BREAK_BEFORE}">${headerBlock}${restHtml}${protocols}${trailingBlock}</section>`;
 }
 
 export function renderReportHtmlSafe(report: DarrowReport, opts: { assetsBaseUrl?: string } = {}): string {
@@ -474,10 +479,17 @@ export function renderReportHtmlSafe(report: DarrowReport, opts: { assetsBaseUrl
     );
   }
 
-  // ── Closing — full dark bleed, page-break-after:auto so we don't add a
-  // trailing blank page. ───────────────────────────────────────
+  // ── Closing — full dark bleed, content vertically centred via flex,
+  // page-break-before:always for a clean page start, page-break-after:auto
+  // so no trailing blank page is appended after the closing.
+  const closingStyle =
+    "width:210mm;height:297mm;padding:0 30mm;background:#0A0F1E;color:#F6F4EF;" +
+    "-webkit-print-color-adjust:exact;print-color-adjust:exact;" +
+    "box-sizing:border-box;text-align:center;" +
+    "display:flex;flex-direction:column;justify-content:center;align-items:center;" +
+    "overflow:hidden;page-break-before:always;break-before:page;page-break-after:auto;break-after:auto;";
   sections.push(
-    `<section style="${fullDark.replace("page-break-after:always;break-after:page;", "page-break-after:auto;break-after:auto;")}padding-top:110mm;">${goldMark}<div style="font-family:Arial,Helvetica,sans-serif;color:#D4AF37;font-size:11pt;letter-spacing:6pt;text-transform:uppercase;margin-bottom:28pt;-webkit-print-color-adjust:exact;print-color-adjust:exact;">Darrow Code</div><p style="font-family:Georgia,'Times New Roman',serif;font-style:italic;font-size:15pt;color:#E5E7EB;margin:0 auto;max-width:120mm;line-height:1.5;overflow-wrap:break-word;word-wrap:break-word;">More than a horoscope. Your private birth code.</p></section>`,
+    `<section style="${closingStyle}">${goldMark}<div style="font-family:Arial,Helvetica,sans-serif;color:#D4AF37;font-size:11pt;letter-spacing:6pt;text-transform:uppercase;margin-bottom:28pt;-webkit-print-color-adjust:exact;print-color-adjust:exact;">Darrow Code</div><p style="font-family:Georgia,'Times New Roman',serif;font-style:italic;font-size:15pt;color:#E5E7EB;margin:0 auto;max-width:120mm;line-height:1.5;overflow-wrap:break-word;word-wrap:break-word;">More than a horoscope. Your private birth code.</p></section>`,
   );
 
   // Global reset: box-sizing on every element + safe word wrapping kills
@@ -486,7 +498,7 @@ export function renderReportHtmlSafe(report: DarrowReport, opts: { assetsBaseUrl
   // sections sit edge-to-edge — full-bleed cover/closing depend on this.
   const globalCss = `
     * { box-sizing: border-box; }
-    html, body { margin: 0; padding: 0; background: #FAF7F2; }
+    html, body { margin: 0; padding: 0; background: #FAF7F2; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
     body { font-family: Arial, Helvetica, sans-serif; color: #151922; overflow-wrap: break-word; word-wrap: break-word; }
     p, h1, h2, h3, div { overflow-wrap: break-word; word-wrap: break-word; }
     img { max-width: 100%; height: auto; }
