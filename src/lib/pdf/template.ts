@@ -309,7 +309,17 @@ const WARNING_LABEL =
 export const PROOF_STYLE =
   "font-family:Arial,Helvetica,sans-serif;color:#9CA3AF;font-size:9pt;font-style:italic;margin-top:6pt;padding-top:4pt;border-top:0.5pt solid #E5E7EB;page-break-before:avoid;break-before:avoid;page-break-inside:avoid;break-inside:avoid;overflow-wrap:break-word;word-wrap:break-word;";
 
-// ── Layout contract (layout-foundation) ────────────────────────────────────
+// ── Layout contract (layout-foundation-2) ──────────────────────────────────
+//
+// FOOTER SAFE AREA:
+//   Stamps are placed at 12mm from the physical page bottom by pdf-lib.
+//   APITemplate ignores CSS @page rules (confirmed in stamp-page-numbers.ts),
+//   so @page margin cannot be used. Instead:
+//   - section padding-bottom:26mm protects the LAST physical page of each
+//     section (26mm > 12mm stamp clearance).
+//   - For sections that span multiple physical pages, the trailingBlock
+//     (see below) keeps warning+proof together so they never sit alone near
+//     the bottom of an intermediate page.
 //
 // SECTION START: page-break-before:always — each v3 section starts on a
 //   fresh page. Using ONLY before (not after) avoids the double-break trap:
@@ -320,23 +330,25 @@ export const PROOF_STYLE =
 //   section to a new page as an atomic block, leaving a blank stub before it.
 //   Individual elements carry their own break rules — that is sufficient.
 //
-// ELEMENT BREAK RULES (do not change):
-//   HEADING_KEEP_STYLE — heading + first paragraph: break-inside:avoid +
-//                         break-after:avoid (heading never orphans alone)
-//   PROTOCOL_BOX       — break-inside:avoid + page-break-before:avoid
-//   WARNING_BOX        — break-inside:avoid + page-break-before:avoid
-//   PROOF_STYLE        — page-break-before:avoid + break-inside:avoid
+// PROOF ATTACHMENT — trailingBlock rule:
+//   When a section has a warning block AND proof metadata, they are wrapped
+//   in a single break-inside:avoid container (trailingBlock). This prevents
+//   proof from being stranded alone at the top of a new physical page after
+//   the warning. page-break-before:avoid on proof alone is a Chromium hint —
+//   not a hard rule — and is unreliable when the warning fills the page bottom.
+//   When no warning exists, proof relies on its own page-break-before:avoid;
+//   proof is compact (≤15mm) so orphan risk is low without a warning.
 //
 // SECTION RENDER ORDER (invariant — do not reorder):
 //   1. heading + first paragraph (HEADING_KEEP_STYLE)
 //   2. remaining prose (flows naturally across pages)
 //   3. protocol blocks (each atomic, stays with preceding prose)
-//   4. warning blocks  (each atomic, stays with preceding content)
-//   5. proof/reference (compact, page-break-before:avoid, ALWAYS LAST)
+//   4. trailingBlock: [warning blocks + proof/reference] (atomic when warning
+//      present) OR just proof/reference alone (when no warning)
 //
-// PROOF PLACEMENT: proof is the last element so it stays with warnings, not
-//   before them. Moving proof before protocols breaks the semantic order and
-//   creates a technical tail that precedes actionable guidance.
+// PROOF PLACEMENT: proof is ALWAYS LAST — after protocols and warnings.
+//   Never before protocols. Moving proof before protocols breaks semantic
+//   order (technical metadata before actionable guidance).
 //
 // CLOSING PAGE: page-break-before:always + height:297mm + flex centering.
 //   No page-break-after — avoids trailing blank page.
@@ -426,10 +438,16 @@ function v3Section(title: string, field: unknown): string {
   const firstPara = firstParaMatch ? firstParaMatch[0] : "";
   const restHtml = firstParaMatch ? html.slice(firstParaMatch[0].length) : html;
   const headerBlock = `<div style="${HEADING_KEEP_STYLE}"><div style="${safeBrandStyle}">Darrow Code</div><h2 style="${safeH2Style}">${escape(title)}</h2>${firstPara}</div>`;
-  // Render order: prose → protocols → warnings → proof (invariant, see layout contract).
-  // Proof is LAST: it is supporting metadata that stays after actionable callouts.
-  // page-break-before:avoid on PROOF_STYLE keeps it attached to the preceding warning.
-  return `<section style="${BODY_PAGE_STYLE}${BODY_PAGE_BREAK_BEFORE}">${headerBlock}${restHtml}${protocols}${warnings}${proofHtml}</section>`;
+  // trailingBlock: when a warning exists, keep [warning + proof] atomic so proof
+  // can never be stranded alone at the top of a new page. page-break-before:avoid
+  // on proof is a Chromium hint only — unreliable when warning fills the page bottom.
+  // When no warning exists, proof is compact enough that page-break-before:avoid
+  // on PROOF_STYLE alone is sufficient.
+  const trailingBlock = warnings
+    ? `<div style="page-break-inside:avoid;break-inside:avoid;">${warnings}${proofHtml}</div>`
+    : `${proofHtml}`;
+  // Render order: prose → protocols → trailingBlock (invariant, see layout contract above).
+  return `<section style="${BODY_PAGE_STYLE}${BODY_PAGE_BREAK_BEFORE}">${headerBlock}${restHtml}${protocols}${trailingBlock}</section>`;
 }
 
 export function renderReportHtmlSafe(

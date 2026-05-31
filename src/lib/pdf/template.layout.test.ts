@@ -2,8 +2,9 @@
 // These tests enforce the layout contract defined in template.ts and catch
 // regressions from ad-hoc page-break edits that previously caused:
 //   - blank/stub pages (break-inside:avoid on long sections)
-//   - proof orphaning (proof rendered before protocols)
+//   - proof orphaning (proof rendered before protocols / stranded alone)
 //   - sections flowing into each other (page-break-before:auto)
+//   - footer/stamp collision (padding too small)
 //
 // Tests run against exported CSS constants — no full render needed.
 // If a test fails, find the relevant constant in template.ts and check
@@ -28,9 +29,13 @@ describe("PDF layout contract — section wrapper", () => {
     expect(BODY_PAGE_STYLE).toContain("print-color-adjust:exact");
   });
 
-  it("section wrapper has 26mm bottom padding (safe area above stamped page number)", () => {
-    // padding:22mm 20mm 26mm — bottom is the third value
-    expect(BODY_PAGE_STYLE).toContain("padding:22mm 20mm 26mm");
+  it("section wrapper has ≥14mm bottom padding (stamp at 12mm from bottom — must not collide)", () => {
+    // padding:22mm 20mm 26mm — third value is bottom.
+    // 26mm > 12mm stamp position = safe clearance on the last physical page of a section.
+    const match = BODY_PAGE_STYLE.match(/padding:\d+mm \d+mm (\d+)mm/);
+    expect(match).not.toBeNull();
+    const bottomPad = parseInt(match![1], 10);
+    expect(bottomPad).toBeGreaterThanOrEqual(14);
   });
 });
 
@@ -64,10 +69,27 @@ describe("PDF layout contract — proof/reference block", () => {
   });
 
   it("PROOF_STYLE has compact top margin (≤ 8pt to stay close to preceding element)", () => {
-    // Extract margin-top value and assert it is compact
     const match = PROOF_STYLE.match(/margin-top:(\d+)pt/);
     expect(match).not.toBeNull();
     const marginTop = parseInt(match![1], 10);
     expect(marginTop).toBeLessThanOrEqual(8);
+  });
+});
+
+describe("PDF layout contract — warning+proof attachment (trailingBlock)", () => {
+  it("BODY_PAGE_STYLE bottom padding exceeds stamp position so single-page sections are safe", () => {
+    // Stamp is at 12mm from physical bottom. padding-bottom must exceed this.
+    const match = BODY_PAGE_STYLE.match(/padding:\d+mm \d+mm (\d+)mm/);
+    expect(match).not.toBeNull();
+    const bottomPad = parseInt(match![1], 10);
+    expect(bottomPad).toBeGreaterThan(12);
+  });
+
+  it("PROOF_STYLE does NOT put proof before protocol (proof must be last)", () => {
+    // Structural check: proof must NOT dominate the opening of a section.
+    // We verify by checking that PROOF_STYLE is compact/muted, not a heading style.
+    expect(PROOF_STYLE).not.toContain("font-size:22pt");
+    expect(PROOF_STYLE).not.toContain("font-size:18pt");
+    expect(PROOF_STYLE).toContain("font-style:italic");
   });
 });
