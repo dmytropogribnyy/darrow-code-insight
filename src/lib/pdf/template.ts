@@ -305,25 +305,47 @@ const WARNING_BOX =
   "border-left:3pt solid #9CA3AF;padding:9pt 14pt;margin:10pt 0;background:#F2F2F0;-webkit-print-color-adjust:exact;print-color-adjust:exact;page-break-inside:avoid;break-inside:avoid;page-break-before:avoid;break-before:avoid;overflow-wrap:break-word;word-wrap:break-word;";
 const WARNING_LABEL =
   "font-family:Georgia,'Times New Roman',serif;font-size:9pt;letter-spacing:2pt;color:#6B6B6B;text-transform:uppercase;margin-bottom:6pt;";
-const PROOF_STYLE =
+// Exported so layout regression tests can assert proof style invariants.
+export const PROOF_STYLE =
   "font-family:Arial,Helvetica,sans-serif;color:#9CA3AF;font-size:9pt;font-style:italic;margin-top:6pt;padding-top:4pt;border-top:0.5pt solid #E5E7EB;page-break-before:avoid;break-before:avoid;page-break-inside:avoid;break-inside:avoid;overflow-wrap:break-word;word-wrap:break-word;";
 
-// A4 = 210mm × 297mm. Internal padding gives a safe content area of
-// 170mm × 249mm (with extra 4mm bottom for the stamped page number).
-// page-break-after:always ensures each section starts fresh; min-height
-// keeps short sections visually substantial without forcing blank fills.
-// Stub-page fix (v7): we previously forced page-break-before:always +
-// page-break-after:always on every v3 section. Short sections then pushed
-// the next section's forced break, leaving 3–4 essentially blank stub
-// pages that only carried the stamped page number. Switch to a flow-based
-// model: sections live in document flow with break-inside:avoid (so a
-// section won't be split mid-paragraph when it fits), and we let the
-// renderer decide when to break. The first section after cover/method
-// /snapshot still opts in via BODY_PAGE_BREAK_BEFORE for the wrapper that
-// passes breakBefore:true; subsequent ones inherit auto.
-const BODY_PAGE_STYLE =
-  "width:210mm;padding:22mm 20mm 26mm;background:#FAF7F2;color:#151922;box-sizing:border-box;break-inside:avoid;page-break-inside:avoid;-webkit-print-color-adjust:exact;print-color-adjust:exact;overflow-wrap:break-word;word-wrap:break-word;";
-const BODY_PAGE_BREAK_BEFORE = "page-break-before:auto;break-before:auto;";
+// ── Layout contract (layout-foundation) ────────────────────────────────────
+//
+// SECTION START: page-break-before:always — each v3 section starts on a
+//   fresh page. Using ONLY before (not after) avoids the double-break trap:
+//   adjacent before+after on consecutive sections = one blank stub page.
+//
+// SECTION WRAPPER: NO break-inside:avoid at section level. break-inside:avoid
+//   on a section longer than one page causes Chromium to push the entire
+//   section to a new page as an atomic block, leaving a blank stub before it.
+//   Individual elements carry their own break rules — that is sufficient.
+//
+// ELEMENT BREAK RULES (do not change):
+//   HEADING_KEEP_STYLE — heading + first paragraph: break-inside:avoid +
+//                         break-after:avoid (heading never orphans alone)
+//   PROTOCOL_BOX       — break-inside:avoid + page-break-before:avoid
+//   WARNING_BOX        — break-inside:avoid + page-break-before:avoid
+//   PROOF_STYLE        — page-break-before:avoid + break-inside:avoid
+//
+// SECTION RENDER ORDER (invariant — do not reorder):
+//   1. heading + first paragraph (HEADING_KEEP_STYLE)
+//   2. remaining prose (flows naturally across pages)
+//   3. protocol blocks (each atomic, stays with preceding prose)
+//   4. warning blocks  (each atomic, stays with preceding content)
+//   5. proof/reference (compact, page-break-before:avoid, ALWAYS LAST)
+//
+// PROOF PLACEMENT: proof is the last element so it stays with warnings, not
+//   before them. Moving proof before protocols breaks the semantic order and
+//   creates a technical tail that precedes actionable guidance.
+//
+// CLOSING PAGE: page-break-before:always + height:297mm + flex centering.
+//   No page-break-after — avoids trailing blank page.
+// ────────────────────────────────────────────────────────────────────────────
+
+// Exported so layout regression tests can assert invariants directly.
+export const BODY_PAGE_STYLE =
+  "width:210mm;padding:22mm 20mm 26mm;background:#FAF7F2;color:#151922;box-sizing:border-box;-webkit-print-color-adjust:exact;print-color-adjust:exact;overflow-wrap:break-word;word-wrap:break-word;";
+export const BODY_PAGE_BREAK_BEFORE = "page-break-before:always;break-before:page;";
 
 const safeH2Style =
   "font-family:Georgia,'Times New Roman',serif;color:#4A402D;font-size:22pt;font-weight:400;margin:0 0 12pt;line-height:1.25;overflow-wrap:break-word;word-wrap:break-word;";
@@ -398,24 +420,16 @@ function v3Section(title: string, field: unknown): string {
   const protocols = renderProtocolBlocks(getCoreSectionProtocols(field));
   const warnings = renderWarningBlocks(getCoreSectionWarnings(field));
   const proofHtml = proof ? `<div style="${PROOF_STYLE}">${escape(proof)}</div>` : "";
-  // Each callout block (WARNING_BOX, PROTOCOL_BOX) already carries its own
-  // break-inside:avoid + page-break-before:avoid, so it won't be split or
-  // orphaned as a heading without body. PROOF_STYLE adds page-break-before:avoid
-  // + break-inside:avoid so the proof line stays attached to the preceding
-  // warning. We do NOT wrap warnings+proof in a shared break-inside:avoid
-  // container: doing so creates an oversized keep-together block that gets
-  // pushed to the next page as one unit, leaving a near-empty gap on the
-  // current page when there is not enough room for the combined block.
   // Pull the first <p> out of html and bind it to the heading so the
   // heading can never orphan at the bottom of the previous page.
   const firstParaMatch = html.match(/^<p [^>]*>[\s\S]*?<\/p>/);
   const firstPara = firstParaMatch ? firstParaMatch[0] : "";
   const restHtml = firstParaMatch ? html.slice(firstParaMatch[0].length) : html;
   const headerBlock = `<div style="${HEADING_KEEP_STYLE}"><div style="${safeBrandStyle}">Darrow Code</div><h2 style="${safeH2Style}">${escape(title)}</h2>${firstPara}</div>`;
-  // proofHtml renders before protocol/warning callouts so the proof metadata
-  // stays attached to its prose and cannot orphan as a lone tail after a warning
-  // block that falls at the bottom of a page.
-  return `<section style="${BODY_PAGE_STYLE}${BODY_PAGE_BREAK_BEFORE}">${headerBlock}${restHtml}${proofHtml}${protocols}${warnings}</section>`;
+  // Render order: prose → protocols → warnings → proof (invariant, see layout contract).
+  // Proof is LAST: it is supporting metadata that stays after actionable callouts.
+  // page-break-before:avoid on PROOF_STYLE keeps it attached to the preceding warning.
+  return `<section style="${BODY_PAGE_STYLE}${BODY_PAGE_BREAK_BEFORE}">${headerBlock}${restHtml}${protocols}${warnings}${proofHtml}</section>`;
 }
 
 export function renderReportHtmlSafe(
