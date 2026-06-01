@@ -306,57 +306,72 @@ const WARNING_BOX =
 const WARNING_LABEL =
   "font-family:Georgia,'Times New Roman',serif;font-size:9pt;letter-spacing:2pt;color:#6B6B6B;text-transform:uppercase;margin-bottom:6pt;";
 // Exported so layout regression tests can assert proof style invariants.
+// NOTE: PROOF_STYLE is superseded by PROOF_EVIDENCE_STYLE in the active v3 renderer.
+// Kept exported so existing layout contract tests can continue to verify its invariants.
 export const PROOF_STYLE =
   "font-family:Arial,Helvetica,sans-serif;color:#9CA3AF;font-size:9pt;font-style:italic;margin-top:6pt;padding-top:4pt;border-top:0.5pt solid #E5E7EB;page-break-before:avoid;break-before:avoid;page-break-inside:avoid;break-inside:avoid;overflow-wrap:break-word;word-wrap:break-word;";
+// Compact evidence footnote for embedding inside the last callout block.
+// Proof is always attached to a warning or protocol box (which carry break-inside:avoid),
+// so no page-break properties are needed here — the outer callout handles containment.
+// This replaces standalone trailing proof rendering to prevent proof-only pages and
+// footer/proof collisions caused by proof landing near the stamped page-number zone.
+export const PROOF_EVIDENCE_STYLE =
+  "font-family:Arial,Helvetica,sans-serif;color:#9CA3AF;font-size:8pt;font-style:italic;margin-top:8pt;padding-top:4pt;border-top:0.5pt solid #E5E7EB;overflow-wrap:break-word;word-wrap:break-word;";
 
-// ── Layout contract (layout-foundation-2) ──────────────────────────────────
+// ── Layout contract (layout-foundation-3) ──────────────────────────────────
 //
 // FOOTER SAFE AREA:
-//   Stamps are placed at 12mm from the physical page bottom by pdf-lib.
-//   APITemplate ignores CSS @page rules (confirmed in stamp-page-numbers.ts),
-//   so @page margin cannot be used. Instead:
-//   - section padding-bottom:26mm protects the LAST physical page of each
-//     section (26mm > 12mm stamp clearance).
-//   - For sections that span multiple physical pages, the trailingBlock
-//     (see below) keeps warning+proof together so they never sit alone near
-//     the bottom of an intermediate page.
+//   Stamps are placed at y=12mm from the physical page bottom by pdf-lib
+//   (baseline). At 9pt text size, stamp text occupies from ~12mm to ~15.2mm
+//   from the bottom. section padding-bottom:20mm keeps all section content
+//   ≥20mm from the page bottom, leaving ≥4.8mm visual gap above the stamp
+//   text — safe, no collision.
+//   Reduced from previous 26mm: 26mm caused blank stub pages when section
+//   content filled to ~272mm (272+26=298 > 297mm A4). At 20mm, content can
+//   fill to 277mm before overflow, reducing blank-stub risk by 6mm.
+//   APITemplate ignores CSS @page rules; @page margin cannot be used.
 //
 // SECTION START: page-break-before:always — each v3 section starts on a
-//   fresh page. Using ONLY before (not after) avoids the double-break trap:
-//   adjacent before+after on consecutive sections = one blank stub page.
+//   fresh page. Using ONLY before (not after) avoids the double-break trap.
 //
 // SECTION WRAPPER: NO break-inside:avoid at section level. break-inside:avoid
 //   on a section longer than one page causes Chromium to push the entire
 //   section to a new page as an atomic block, leaving a blank stub before it.
 //   Individual elements carry their own break rules — that is sufficient.
 //
-// PROOF ATTACHMENT — trailingBlock rule:
-//   When a section has a warning block AND proof metadata, they are wrapped
-//   in a single break-inside:avoid container (trailingBlock). This prevents
-//   proof from being stranded alone at the top of a new physical page after
-//   the warning. page-break-before:avoid on proof alone is a Chromium hint —
-//   not a hard rule — and is unreliable when the warning fills the page bottom.
-//   When no warning exists, proof relies on its own page-break-before:avoid;
-//   proof is compact (≤15mm) so orphan risk is low without a warning.
+// PROOF ATTACHMENT — embedded in last callout (layout-foundation-3 change):
+//   Proof/reference metadata is rendered as a compact evidence line INSIDE
+//   the final callout block (warning if present, else protocol, else compact
+//   standalone). It is never an independent trailing div after all callouts.
+//
+//   Rationale: a standalone proof div after warnings was the root cause of
+//   two failure modes:
+//     a) Footer/proof collision — proof rendered near page bottom overlapped
+//        the stamped page number (12mm from bottom).
+//     b) Proof-only stub pages — proof pushed to a new page with nothing else.
+//   By embedding proof inside the last callout (which carries break-inside:avoid),
+//   proof is always anchored to meaningful content.
 //
 // SECTION RENDER ORDER (invariant — do not reorder):
 //   1. heading + first paragraph (HEADING_KEEP_STYLE)
 //   2. remaining prose (flows naturally across pages)
-//   3. protocol blocks (each atomic, stays with preceding prose)
-//   4. trailingBlock: [warning blocks + proof/reference] (atomic when warning
-//      present) OR just proof/reference alone (when no warning)
+//   3. protocol blocks (each atomic; proof embedded in last if no warnings)
+//   4. warning blocks (each atomic; proof embedded in last warning)
+//   5. [standalone proof only if section has zero callout blocks]
 //
-// PROOF PLACEMENT: proof is ALWAYS LAST — after protocols and warnings.
-//   Never before protocols. Moving proof before protocols breaks semantic
-//   order (technical metadata before actionable guidance).
+// PROOF PLACEMENT: proof is ALWAYS LAST — embedded at the tail of the last
+//   callout. Never before protocols.
 //
 // CLOSING PAGE: page-break-before:always + height:297mm + flex centering.
 //   No page-break-after — avoids trailing blank page.
 // ────────────────────────────────────────────────────────────────────────────
 
 // Exported so layout regression tests can assert invariants directly.
+// Bottom padding: 20mm. Stamp baseline at 12mm from bottom; stamp text (9pt ≈ 3.2mm)
+// top ≈ 15.2mm from bottom. 20mm padding → content ends ≤ 277mm → 4.8mm gap. Safe.
+// Previously 26mm caused blank stub pages (content+padding > 297mm A4).
 export const BODY_PAGE_STYLE =
-  "width:210mm;padding:22mm 20mm 26mm;background:#FAF7F2;color:#151922;box-sizing:border-box;-webkit-print-color-adjust:exact;print-color-adjust:exact;overflow-wrap:break-word;word-wrap:break-word;";
+  "width:210mm;padding:22mm 20mm 20mm;background:#FAF7F2;color:#151922;box-sizing:border-box;-webkit-print-color-adjust:exact;print-color-adjust:exact;overflow-wrap:break-word;word-wrap:break-word;";
 export const BODY_PAGE_BREAK_BEFORE = "page-break-before:always;break-before:page;";
 
 const safeH2Style =
@@ -406,48 +421,63 @@ function renderProseBlocks(text: string): { html: string; proof: string } {
   return { html, proof };
 }
 
-function renderProtocolBlocks(protocols: Array<{ title: string; body: string }>): string {
+// proof: optional compact evidence text to embed at the tail of the LAST block.
+// Embedding proof inside the callout anchors it to meaningful content and prevents
+// proof-only pages or footer/proof collisions.
+function renderProtocolBlocks(
+  protocols: Array<{ title: string; body: string }>,
+  proof = "",
+): string {
   if (!protocols.length) return "";
+  const lastIdx = protocols.length - 1;
   return protocols
-    .map(
-      (p) =>
-        `<div style="${PROTOCOL_BOX}"><div style="${PROTOCOL_LABEL}">PROTOCOL · ${escape(p.title)}</div><div style="${safePStyle}">${escape(p.body).replace(/\n/g, "<br/>")}</div></div>`,
-    )
+    .map((p, i) => {
+      const evidence =
+        i === lastIdx && proof ? `<div style="${PROOF_EVIDENCE_STYLE}">${escape(proof)}</div>` : "";
+      return `<div style="${PROTOCOL_BOX}"><div style="${PROTOCOL_LABEL}">PROTOCOL · ${escape(p.title)}</div><div style="${safePStyle}">${escape(p.body).replace(/\n/g, "<br/>")}</div>${evidence}</div>`;
+    })
     .join("\n");
 }
 
-function renderWarningBlocks(warnings: string[]): string {
+function renderWarningBlocks(warnings: string[], proof = ""): string {
   if (!warnings.length) return "";
+  const lastIdx = warnings.length - 1;
   return warnings
-    .map(
-      (w) =>
-        `<div style="${WARNING_BOX}"><div style="${WARNING_LABEL}">Warning Signal</div><div style="${safePStyle}">${escape(w).replace(/\n/g, "<br/>")}</div></div>`,
-    )
+    .map((w, i) => {
+      const evidence =
+        i === lastIdx && proof ? `<div style="${PROOF_EVIDENCE_STYLE}">${escape(proof)}</div>` : "";
+      return `<div style="${WARNING_BOX}"><div style="${WARNING_LABEL}">Warning Signal</div><div style="${safePStyle}">${escape(w).replace(/\n/g, "<br/>")}</div>${evidence}</div>`;
+    })
     .join("\n");
 }
 
 function v3Section(title: string, field: unknown): string {
   const prose = getCoreSectionProse(field);
   const { html, proof } = renderProseBlocks(prose);
-  const protocols = renderProtocolBlocks(getCoreSectionProtocols(field));
-  const warnings = renderWarningBlocks(getCoreSectionWarnings(field));
-  const proofHtml = proof ? `<div style="${PROOF_STYLE}">${escape(proof)}</div>` : "";
-  // Pull the first <p> out of html and bind it to the heading so the
-  // heading can never orphan at the bottom of the previous page.
+  const protocols = getCoreSectionProtocols(field);
+  const warningsList = getCoreSectionWarnings(field);
+
   const firstParaMatch = html.match(/^<p [^>]*>[\s\S]*?<\/p>/);
   const firstPara = firstParaMatch ? firstParaMatch[0] : "";
   const restHtml = firstParaMatch ? html.slice(firstParaMatch[0].length) : html;
   const headerBlock = `<div style="${HEADING_KEEP_STYLE}"><div style="${safeBrandStyle}">Darrow Code</div><h2 style="${safeH2Style}">${escape(title)}</h2>${firstPara}</div>`;
-  // trailingBlock: when a warning exists, keep [warning + proof] atomic so proof
-  // can never be stranded alone at the top of a new page. page-break-before:avoid
-  // on proof is a Chromium hint only — unreliable when warning fills the page bottom.
-  // When no warning exists, proof is compact enough that page-break-before:avoid
-  // on PROOF_STYLE alone is sufficient.
-  const trailingBlock = warnings
-    ? `<div style="page-break-inside:avoid;break-inside:avoid;">${warnings}${proofHtml}</div>`
-    : `${proofHtml}`;
-  // Render order: prose → protocols → trailingBlock (invariant, see layout contract above).
-  return `<section style="${BODY_PAGE_STYLE}${BODY_PAGE_BREAK_BEFORE}">${headerBlock}${restHtml}${protocols}${trailingBlock}</section>`;
+
+  // Proof routing: embed in the last callout (warning → protocol → standalone).
+  // Never render proof as a standalone trailing div — that causes proof-only stub pages
+  // and footer/proof collisions when proof lands near the stamped page-number zone.
+  const proofForWarning = warningsList.length > 0 ? proof : "";
+  const proofForProtocol = warningsList.length === 0 && protocols.length > 0 ? proof : "";
+  const standaloneProof =
+    warningsList.length === 0 && protocols.length === 0 && proof
+      ? `<div style="${PROOF_EVIDENCE_STYLE}">${escape(proof)}</div>`
+      : "";
+
+  const protocolsHtml = renderProtocolBlocks(protocols, proofForProtocol);
+  const warningsHtml = renderWarningBlocks(warningsList, proofForWarning);
+
+  // Render order (invariant): heading+firstPara → rest prose → protocols → warnings
+  // Proof is embedded in the last callout above; no standalone trailing proof div.
+  return `<section style="${BODY_PAGE_STYLE}${BODY_PAGE_BREAK_BEFORE}">${headerBlock}${restHtml}${protocolsHtml}${warningsHtml}${standaloneProof}</section>`;
 }
 
 export function renderReportHtmlSafe(

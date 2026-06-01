@@ -3,7 +3,7 @@
 
 import { createFileRoute } from "@tanstack/react-router";
 
-export const BUILD_MARKER = "core-v3-1-layout-foundation-2026-05-31-2";
+export const BUILD_MARKER = "core-v3-1-layout-foundation-2026-05-31-3";
 
 export const Route = createFileRoute("/api/public/debug/build-marker")({
   server: {
@@ -53,10 +53,13 @@ export const Route = createFileRoute("/api/public/debug/build-marker")({
           pdf_layout: {
             apitemplate_margins: "0 (HTML owns layout)",
             cover_closing_bleed: "full A4, no cream strip",
-            body_padding: "22mm top, 20mm sides, 26mm bottom (page-number safe area)",
+            body_padding:
+              "22mm top, 20mm sides, 20mm bottom (stamp text top ~15.2mm; 4.8mm clearance; reduced from 26mm to prevent blank stub pages)",
             page_numbers: "stamped post-process via pdf-lib (cover + closing skipped)",
             page_break_strategy:
-              "break-inside:avoid on every section; break-before:auto (flow-based) — v7 stub-page fix",
+              "no break-inside:avoid at section level; break-inside:avoid on individual callout blocks only",
+            proof_placement:
+              "embedded inside last callout (warning > protocol > standalone); never a standalone trailing div",
             overflow_protection: "global box-sizing + overflow-wrap:break-word",
           },
           quality_gate: {
