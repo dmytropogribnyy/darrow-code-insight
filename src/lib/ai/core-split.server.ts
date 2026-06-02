@@ -12,6 +12,11 @@
 //   - generateCoreV3SplitDiagnostic() — diagnostic route (warn-only lengths)
 
 import { DARROW_SYSTEM_PROMPT } from "./system-prompt";
+// Staged v4.1 runtime prompt — imported here for the v4 split path only.
+// system-prompt.ts is NOT changed; production stays on the active v3 prompt.
+// This raw import becomes active only when generateCoreV4Split() is called
+// by the future v4 diagnostic route (B3+). Until then nothing calls it.
+import darrowV4Prompt from "./darrowcode_ai_system_prompt_v4_1.md?raw";
 import {
   coreSectionJsonSchemaFor,
   CORE_V4_BODY_SECTION_KEYS,
@@ -19,6 +24,9 @@ import {
   CLOSING_PILLAR_TITLES,
   CoreV4Schema,
 } from "./schema";
+
+// Exported so tests can assert the v4 path uses exactly this text.
+export const DARROW_V4_SYSTEM_PROMPT: string = darrowV4Prompt;
 
 const ANTHROPIC_URL = "https://api.anthropic.com/v1/messages";
 const TOOL_NAME_A = "emit_darrow_core_a";
@@ -131,6 +139,9 @@ interface SubCallArgs {
   toolName: string;
   inputSchema: any;
   toolDescription: string;
+  // Optional override — defaults to DARROW_SYSTEM_PROMPT (v3 active prompt).
+  // generateCoreV4Split passes DARROW_V4_SYSTEM_PROMPT; v3 paths pass nothing.
+  systemPrompt?: string;
 }
 
 interface SubCallResult {
@@ -145,6 +156,7 @@ async function callAnthropicSub({
   toolName,
   inputSchema,
   toolDescription,
+  systemPrompt = DARROW_SYSTEM_PROMPT,
 }: SubCallArgs): Promise<SubCallResult> {
   const apiKey = process.env.ANTHROPIC_API_KEY;
   if (!apiKey) throw new Error("ANTHROPIC_API_KEY is not configured");
@@ -165,9 +177,7 @@ async function callAnthropicSub({
         model,
         max_tokens: MAX_TOKENS,
         temperature: 0.75,
-        system: [
-          { type: "text", text: DARROW_SYSTEM_PROMPT, cache_control: { type: "ephemeral" } },
-        ],
+        system: [{ type: "text", text: systemPrompt, cache_control: { type: "ephemeral" } }],
         tools: [{ name: toolName, description: toolDescription, input_schema: inputSchema }],
         tool_choice: { type: "tool", name: toolName },
         messages: [{ role: "user", content: userPrompt }],
@@ -755,6 +765,7 @@ export async function generateCoreV4Split(
         toolName: TOOL_NAME_V4_A,
         inputSchema: coreV4SplitASchema,
         toolDescription: "Emit CORE v4 cover_tagline + body sections 1–9 plus client_name.",
+        systemPrompt: DARROW_V4_SYSTEM_PROMPT,
       },
       fallbackModel,
     );
@@ -768,6 +779,7 @@ export async function generateCoreV4Split(
         toolName: TOOL_NAME_V4_B,
         inputSchema: coreV4SplitBSchema,
         toolDescription: "Emit CORE v4 body sections 10–17, grounded in Call-A context.",
+        systemPrompt: DARROW_V4_SYSTEM_PROMPT,
       },
       fallbackModel,
     );
@@ -780,6 +792,7 @@ export async function generateCoreV4Split(
           toolName: TOOL_NAME_V4_A,
           inputSchema: coreV4SplitASchema,
           toolDescription: "Emit CORE v4 cover_tagline + body sections 1–9 plus client_name.",
+          systemPrompt: DARROW_V4_SYSTEM_PROMPT,
         },
         fallbackModel,
       ),
@@ -791,6 +804,7 @@ export async function generateCoreV4Split(
           inputSchema: coreV4SplitBSchema,
           toolDescription:
             "Emit CORE v4 body sections 10–17 (no Call-A context — diagnostic only).",
+          systemPrompt: DARROW_V4_SYSTEM_PROMPT,
         },
         fallbackModel,
       ),

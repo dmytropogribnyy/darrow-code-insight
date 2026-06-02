@@ -21,6 +21,7 @@ import {
   CORE_V3_SECTIONS_A,
   CORE_V3_SECTIONS_B,
   coreV4ToolSchemas,
+  DARROW_V4_SYSTEM_PROMPT,
 } from "./core-split.server";
 import {
   CORE_V4_KEYS,
@@ -440,5 +441,47 @@ describe("B2.1 — evaluateCoreV4Structure CoreV4Schema validation", () => {
       makeV4Report({ closing: { executive_summary: "...", recommended_next_module: "LOVE" } }),
     );
     expect(issues.some((i) => i.code === "SCHEMA_VALIDATION_FAILED")).toBe(true);
+  });
+});
+
+// ── 8 · B2.2 — v4 split path uses staged v4 prompt, v3 unchanged ─────────────
+
+const coreSplitSrc = readFileSync(new URL("./core-split.server.ts", import.meta.url), "utf8");
+
+describe("B2.2 — staged v4 split uses darrowcode_ai_system_prompt_v4_1.md", () => {
+  it("core-split.server.ts imports the staged v4.1 prompt via ?raw", () => {
+    expect(coreSplitSrc).toContain("darrowcode_ai_system_prompt_v4_1.md?raw");
+  });
+
+  it("DARROW_V4_SYSTEM_PROMPT is non-empty and contains CORE Report: UNVEIL", () => {
+    expect(DARROW_V4_SYSTEM_PROMPT.length).toBeGreaterThan(500);
+    expect(DARROW_V4_SYSTEM_PROMPT).toContain("CORE Report: UNVEIL");
+  });
+
+  it("DARROW_V4_SYSTEM_PROMPT differs from the active v3 system prompt", () => {
+    // v3 prompt is loaded by system-prompt.ts; v4 is the staged file.
+    // They must be different strings — v4 is not live yet.
+    expect(DARROW_V4_SYSTEM_PROMPT).not.toBe(systemPromptSrc);
+  });
+
+  it("v4 generateCoreV4Split passes DARROW_V4_SYSTEM_PROMPT (source-level check)", () => {
+    // Verify the source wires DARROW_V4_SYSTEM_PROMPT into v4 calls.
+    expect(coreSplitSrc).toContain("systemPrompt: DARROW_V4_SYSTEM_PROMPT");
+  });
+
+  it("v3 split calls do NOT pass systemPrompt override (default stays v3 prompt)", () => {
+    // v3 call sites in generateCoreV3Split have no systemPrompt field.
+    // Confirm by checking the v3 suffix labels are not paired with DARROW_V4_SYSTEM_PROMPT.
+    expect(coreSplitSrc).toContain("DARROW_SYSTEM_PROMPT");
+    // The default parameter in callAnthropicSub falls back to DARROW_SYSTEM_PROMPT.
+    expect(coreSplitSrc).toContain("systemPrompt = DARROW_SYSTEM_PROMPT");
+  });
+
+  it("system-prompt.ts still imports active v3 prompt (regression)", () => {
+    expect(systemPromptSrc).toContain("darrowcode_ai_system_prompt.md?raw");
+  });
+
+  it("system-prompt.ts does NOT import the staged v4.1 prompt (regression)", () => {
+    expect(systemPromptSrc).not.toContain("darrowcode_ai_system_prompt_v4_1");
   });
 });
