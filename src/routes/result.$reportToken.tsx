@@ -72,7 +72,7 @@ function describeReport(modules: string[]): {
     return {
       kind: "complete",
       label: "CORE Complete",
-      sub: "Full reading · all 7 chapters · ~50 pages",
+      sub: "Complete set · CORE + 6 focused reports",
     };
   }
   if (set.has("CORE") && set.size > 1) {
@@ -80,7 +80,7 @@ function describeReport(modules: string[]): {
     return {
       kind: "addons",
       label: `CORE + ${addons.join(" + ")}`,
-      sub: `${modules.length} chapters in one PDF`,
+      sub: `${modules.length} separate focused reports`,
     };
   }
   if (set.has("CORE")) {
@@ -121,7 +121,7 @@ function ReportCard({
 
   let pendingCopy: string;
   if (isPremium) {
-    pendingCopy = "Composing your full reading… ~5–7 min · all 7 chapters + grand synthesis";
+    pendingCopy = "Composing your complete set… ~5–7 min · CORE + 6 focused reports";
   } else if (info.kind === "addons" && row.modules.length > 2) {
     pendingCopy = `Composing ${row.modules.length} chapters… ~${expectedMin} min · we'll email you`;
   } else {

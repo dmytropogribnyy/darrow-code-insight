@@ -235,7 +235,7 @@ function LandingPage() {
             className="text-center font-medium text-[13px] sm:text-[14px] mb-5"
             style={{ color: "#4A402D" }}
           >
-            Enter your birth data — checkout and your private report come next.
+            Enter your birth data — checkout comes next, then your private report.
           </p>
           <div className="relative">
             {/* Subtle gold accent line above card */}

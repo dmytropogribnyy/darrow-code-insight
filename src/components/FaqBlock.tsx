@@ -147,20 +147,22 @@ const aboutFaqs: Faq[] = [
     question: "What will I receive?",
     answer: (
       <div className="space-y-2.5">
-        <p>You receive a polished private PDF report delivered by email.</p>
         <p>
-          It reads like a personal astrology briefing about you — clear, interesting and easy to
+          You receive a polished private PDF report &mdash; or, for bundles, separate focused PDF
+          reports &mdash; delivered by email with secure download links.
+        </p>
+        <p>
+          It reads like a personal astrology briefing about you: clear, interesting and easy to
           understand.
         </p>
         <p>
-          Depending on what you choose, your report can include your main personality reading,
-          timing theme, love patterns, money patterns, stress rhythm, style direction and
-          place/environment insights.
+          Depending on what you choose, your order can include your CORE Report and any selected
+          Focused Chapters as separate readings.
         </p>
-        <p>You also get a secure download link. No account is required.</p>
+        <p>No account is required. Your report links are yours to keep.</p>
         <p>
-          Tap <strong>“See a sample”</strong> at the top of the page to preview the format before
-          buying.
+          Tap <strong>&ldquo;See a sample&rdquo;</strong> at the top of the page to preview the
+          format before buying.
         </p>
       </div>
     ),
@@ -171,7 +173,7 @@ const commonFaqs: Faq[] = [
   {
     question: "How long does report generation take?",
     answer:
-      "Most reports are ready within 2–4 minutes. Larger bundles (like CORE Complete with all 6 focused chapters) may take up to 6–8 minutes since each chapter is generated individually and then compiled into a single PDF.",
+      "Most reports are ready within 2–4 minutes. Larger bundles like CORE Complete may take up to 6–8 minutes because each Focused Chapter is generated separately.",
   },
   {
     question: "Do I save if I add multiple chapters?",
@@ -262,7 +264,7 @@ const commonFaqs: Faq[] = [
   {
     question: "Can I download or share my report?",
     answer:
-      "Absolutely. Once generated, your report is delivered as a multi-page PDF that you can download, print, or share however you like. It is yours forever with no subscription required.",
+      "Absolutely. Once generated, your report is delivered as a multi-page PDF. If you choose a bundle, each Focused Chapter is delivered as its own PDF. You can download, print, or share them however you like. They are yours forever with no subscription required.",
   },
 ];
 
