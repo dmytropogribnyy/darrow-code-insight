@@ -35,21 +35,29 @@ Not allowed:
 - importing protected tables/databases wholesale;
 - creating deterministic claims.
 
-## Planned future rule docs
+## KB2-A imported rule docs (2026-06-02)
+
+| File | Layer | Gate |
+|---|---|---|
+| `ASTRO_ZODIAC_RULES_v1.md` | 12 signs, elements, modalities, polarity | allowed |
+| `ASTRO_PLANET_RULES_v1.md` | 10 planets + conditional Chiron/Node/Lilith | allowed / conditional |
+| `ASTRO_ASPECT_RULES_v1.md` | 6 major aspects | allowed |
+| `ELEMENT_MODALITY_RULES_v1.md` | 4 elements, 3 modalities, polarity | allowed |
+| `ASTRO_HOUSE_RULES_v1.md` | 12 houses, groupings, empty-house, house-system policy | conditional (birth time required) |
+| `BIRTH_TIME_RELIABILITY_POLICY_v1.md` | exact / approximate / unknown definitions and fallback | policy doc |
+
+All files are curated Darrow rule docs · docs-only · not active in runtime.
+
+## Future rule docs (planned)
 
 ```text
-ASTRO_ZODIAC_RULES_v1.md
-ASTRO_PLANET_RULES_v1.md
-ASTRO_HOUSE_RULES_v1.md
-ASTRO_ASPECT_RULES_v1.md
-ELEMENT_MODALITY_RULES_v1.md
-NUMEROLOGY_RULES_v1.md
-BAZI_DAY_MASTER_RULES_v1.md
-CHINESE_ZODIAC_RULES_v1.md
-NAME_SYMBOLIC_RULES_v1.md
-COLOR_SYMBOLIC_RULES_v1.md
-STONE_SYMBOLIC_RULES_v1.md
-TREE_SYMBOLIC_MIRRORS_v1.md
+NUMEROLOGY_RULES_v1.md        — KB2-B
+BAZI_DAY_MASTER_RULES_v1.md   — KB2-C
+CHINESE_ZODIAC_RULES_v1.md    — KB2-C
+NAME_SYMBOLIC_RULES_v1.md     — KB2-D (gated)
+COLOR_SYMBOLIC_RULES_v1.md    — KB2-D (gated)
+STONE_SYMBOLIC_RULES_v1.md    — KB2-D (gated)
+TREE_SYMBOLIC_MIRRORS_v1.md   — KB2-D (gated)
 ```
 
 ## Gated defaults
