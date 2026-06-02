@@ -9,11 +9,7 @@ import { getCoreSectionProse } from "./schema";
 
 export interface QualityWarning {
   section: string;
-  code:
-    | "RECOGNITION_FIRST"
-    | "DOSSIER_TONE"
-    | "TECHNICAL_DENSITY"
-    | "LEAD_WITH_PLACEMENT";
+  code: "RECOGNITION_FIRST" | "DOSSIER_TONE" | "TECHNICAL_DENSITY" | "LEAD_WITH_PLACEMENT";
   detail: string;
 }
 
@@ -43,14 +39,15 @@ const DOSSIER_PHRASES = [
 
 // Long unbroken technical strings outside proof tags (degree+minute,
 // element percentages, stem/branch codes).
-const TECHNICAL_NOISE = /\b\d{1,3}°\d{1,2}'\b|\bgeng (zi|chou|yin|mao|chen|si|wu|wei|shen|you|xu|hai)\b|\b\d{1,3}% (water|wood|fire|earth|metal)\b/gi;
+const TECHNICAL_NOISE =
+  /\b\d{1,3}°\d{1,2}'\b|\bgeng (zi|chou|yin|mao|chen|si|wu|wei|shen|you|xu|hai)\b|\b\d{1,3}% (water|wood|fire|earth|metal)\b/gi;
 
 function firstSentence(s: string): string {
   return s.trim().split(/(?<=[.!?])\s+/)[0] ?? "";
 }
 
 function bodyWithoutProof(s: string): string {
-  return s.replace(/\n*\[[^\[\]]+\]\s*$/, "").trim();
+  return s.replace(/\n*\[[^[\]]+\]\s*$/, "").trim();
 }
 
 export function evaluateQualityGate(core: any): QualityWarning[] {
@@ -98,7 +95,11 @@ export function evaluateQualityGate(core: any): QualityWarning[] {
     if (!/^(you|your|there'?s|when|in (rooms|conversations|relationships|work))/i.test(lead)) {
       // Only flag if it also looks technical — avoid false positives on
       // declarative pattern lines like "The hidden cost of carrying both."
-      if (/sun|moon|venus|mars|mercury|jupiter|saturn|pluto|ascendant|midheaven|day master|life path|bazi|numerolog/i.test(lead)) {
+      if (
+        /sun|moon|venus|mars|mercury|jupiter|saturn|pluto|ascendant|midheaven|day master|life path|bazi|numerolog/i.test(
+          lead,
+        )
+      ) {
         warnings.push({
           section: key,
           code: "RECOGNITION_FIRST",

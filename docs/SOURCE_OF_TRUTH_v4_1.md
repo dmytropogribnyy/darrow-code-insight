@@ -1,6 +1,9 @@
 # DARROW CODE — SOURCE OF TRUTH v4.1
+
 # Module: CORE Report: UNVEIL (Cosmic Core Code Method)
+
 # Status: CANONICAL SOURCE OF TRUTH — v4.1 approved future standard; v3 runtime temporary
+
 # Supersedes: any prior SOURCE_OF_TRUTH for documentation/migration governance
 
 ---
@@ -25,16 +28,16 @@ migration map) govern together; legacy files do not.
 
 The complete approved source package is exactly these eight files:
 
-| File | Role |
-|---|---|
-| `DARROW_DOCS_AUDIT_AND_PLAN_v4_1.md` | Controlling migration map |
-| `DARROW_CORE_PRODUCT_CONCEPT_STANDARD_v4_1.md` | Philosophy / product intent |
-| `DARROW_CORE_MASTER_PATTERN_v4_1.md` | Canonical structure |
-| `DARROW_CORE_SAMPLE_REPORT_v4_1.md` | Gold reference |
-| `DARROW_REPORT_CONTENT_STANDARD_v4_1.md` | Quality layer |
-| `darrowcode_core_module_spec_v4_1.md` | Module / content map |
-| `darrowcode_ai_system_prompt_v4_1.md` | Future prompt source document — **not active runtime** |
-| `schema_template_patch_v4_1.md` | Future migration planning — **not active implementation** |
+| File                                           | Role                                                      |
+| ---------------------------------------------- | --------------------------------------------------------- |
+| `DARROW_DOCS_AUDIT_AND_PLAN_v4_1.md`           | Controlling migration map                                 |
+| `DARROW_CORE_PRODUCT_CONCEPT_STANDARD_v4_1.md` | Philosophy / product intent                               |
+| `DARROW_CORE_MASTER_PATTERN_v4_1.md`           | Canonical structure                                       |
+| `DARROW_CORE_SAMPLE_REPORT_v4_1.md`            | Gold reference                                            |
+| `DARROW_REPORT_CONTENT_STANDARD_v4_1.md`       | Quality layer                                             |
+| `darrowcode_core_module_spec_v4_1.md`          | Module / content map                                      |
+| `darrowcode_ai_system_prompt_v4_1.md`          | Future prompt source document — **not active runtime**    |
+| `schema_template_patch_v4_1.md`                | Future migration planning — **not active implementation** |
 
 These eight files are the **only** source package for future v4.1
 implementation. No other file may be used as a source instruction.
@@ -91,6 +94,7 @@ No adding, removing, renaming, merging, or reordering.
 ## 5 · STATIC PAGES LOCK
 
 Template-rendered, not AI-generated:
+
 - Cover
 - Personal Orientation System
 - Library page
@@ -120,6 +124,7 @@ v4.1 is approved on paper. Nothing about v4.1 is running in production.
 ## 7 · MIGRATION GATE
 
 Implementation may begin only after ALL of:
+
 - the render-fix diagnostic is approved
 - current v3 PDF rendering is visually stable
 - a backward-compatibility path is defined
@@ -133,6 +138,7 @@ Until every gate condition is met, no implementation is authorized.
 
 The following old v3/legacy files must **not** be used as source instructions for
 v4.1 implementation:
+
 - old Loveable prompts
 - old Source of Truth
 - old core module spec
@@ -182,11 +188,13 @@ legacy file conflicts with the approved eight-file package, the package wins.
 ## 12 · LIBRARY PAGE LOCK
 
 Approved Library structure (current storefront):
+
 - CORE Report
 - CORE Complete
 - LOVE / MONEY / BODY / YEAR / STYLE / PLACE
 
 Rules:
+
 - optional deeper lenses
 - no pricing / FOMO / urgency
 - no "you unlocked one layer"
@@ -198,6 +206,7 @@ Rules:
 ## 13 · WHAT IS NOT AUTHORIZED YET
 
 This source of truth does NOT authorize:
+
 - code changes
 - schema changes
 - template changes
@@ -258,7 +267,7 @@ implementation prompt be prepared.
 
 ## CHANGE LOG
 
-| Version | Change |
-|---|---|
-| (predecessor) | Old `SOURCE_OF_TRUTH` (v3) — described the v3 runtime as canonical. ARCHIVED; retained only as history per audit. |
-| v4.1 | **Current.** Final canonical source of truth built only from the approved eight-file package. Declares v4.1 the approved future standard with v3 runtime temporary until render-fix approval; lists and role-defines the eight approved files; locks product identity (CORE Report: UNVEIL / Cosmic Core Code Method), structure (26 pages / 4,350–5,250 words / 17 keys / static pages / cover_tagline / operating_mode migration-gated), current runtime status, migration gate, do-not-use/archive rules, data/provider lock, safety locks, backward-compatibility lock, Library page lock, what is not authorized yet, and next step (wait on render-fix; PLACE reference deferred). No code, schema, template, runtime swap, Loveable prompt, or deployment. |
+| Version       | Change                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| ------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| (predecessor) | Old `SOURCE_OF_TRUTH` (v3) — described the v3 runtime as canonical. ARCHIVED; retained only as history per audit.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| v4.1          | **Current.** Final canonical source of truth built only from the approved eight-file package. Declares v4.1 the approved future standard with v3 runtime temporary until render-fix approval; lists and role-defines the eight approved files; locks product identity (CORE Report: UNVEIL / Cosmic Core Code Method), structure (26 pages / 4,350–5,250 words / 17 keys / static pages / cover_tagline / operating_mode migration-gated), current runtime status, migration gate, do-not-use/archive rules, data/provider lock, safety locks, backward-compatibility lock, Library page lock, what is not authorized yet, and next step (wait on render-fix; PLACE reference deferred). No code, schema, template, runtime swap, Loveable prompt, or deployment. |

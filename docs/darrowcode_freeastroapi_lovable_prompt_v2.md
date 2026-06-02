@@ -447,8 +447,6 @@ Do not mark the task complete until verification passes.
 - https://www.freeastroapi.com/docs/geo/search
 - https://www.freeastroapi.com/pricing
 
-
-
 PROMPT 1C PATCH — Numerology + FreeAstroAPI Enrichment
 
 Implement a Darrow Code data enrichment upgrade.
@@ -457,6 +455,7 @@ Goal:
 Improve report depth without adding risky external dependencies.
 
 Scope:
+
 1. Keep numerology/name numerology fully internal.
 2. Add safe FreeAstroAPI enrichment endpoints where useful.
 3. Do not change checkout, Stripe, pricing, PDF layout, Resend, Supabase Auth rules, or core Darrow Code report schema unless explicitly required.
@@ -467,6 +466,7 @@ PART 1 — NAME NUMEROLOGY: INTERNAL ONLY
 ============================================================
 
 Do NOT add external APIs for:
+
 - numerology
 - name meaning
 - name origin
@@ -481,15 +481,18 @@ Reason:
 Name numerology must be deterministic, privacy-safe, cheap, and fully controllable.
 
 Use only:
+
 - date_of_birth
 - optional full_name_for_numerology
 
 If full_name_for_numerology is absent:
+
 - calculate only Life Path, Personal Year, and Birth Day Number
 - do not claim Expression, Soul Urge, Personality, Maturity, Hidden Passion, or Karmic Lessons
 
 If full_name_for_numerology is present:
 calculate internally:
+
 - Expression Number
 - Soul Urge Number
 - Personality Number
@@ -521,6 +524,7 @@ Use Pythagorean mapping:
 9: I R
 
 Normalize full name:
+
 - uppercase
 - remove spaces, hyphens, apostrophes, dots
 - remove Latin diacritics via Unicode NFKD normalization
@@ -531,6 +535,7 @@ Do not block checkout if name numerology cannot be calculated.
 Name numerology is optional enrichment only.
 
 Vowels:
+
 - A, E, I, O, U
 - Treat Y as consonant by default.
 - Add y_policy="consonant_by_default" to normalized_json.
@@ -545,6 +550,7 @@ Implement:
 reduceNumber(n, options)
 
 Rules:
+
 - Reduce by digit sum until 1-9.
 - Preserve master numbers 11, 22, 33 only when options.keepMasterNumbers=true.
 - Do not preserve arbitrary double numbers like 44, 55, 66.
@@ -552,39 +558,48 @@ Rules:
 Calculations:
 
 Life Path:
+
 - Sum all digits of YYYYMMDD.
 - Reduce with keepMasterNumbers=true.
 
 Birth Day Number:
+
 - Reduce day number with keepMasterNumbers=true.
 
 Personal Year:
+
 - Use birth month + birth day + current year digits.
 - Reduce to 1-9.
 - Also store master_marker if intermediate value is 11, 22, or 33, but final personal_year should stay 1-9.
 
 Expression Number:
+
 - Sum all mapped letters in full normalized name.
 - Reduce with keepMasterNumbers=true.
 
 Soul Urge Number:
+
 - Sum vowels only.
 - Reduce with keepMasterNumbers=true.
 
 Personality Number:
+
 - Sum consonants only.
 - Reduce with keepMasterNumbers=true.
 
 Maturity Number:
+
 - Expression Number + Life Path Number.
 - Reduce with keepMasterNumbers=true.
 
 Hidden Passion:
+
 - Count frequency of mapped letter values 1-9.
 - Highest frequency value(s) = hidden_passion_numbers.
 - If tie, return multiple values.
 
 Karmic Lessons:
+
 - Values 1-9 that are missing from the full name letter value frequency.
 
 ============================================================
@@ -601,35 +616,36 @@ Backend should provide concise meaning labels only.
 Example structure:
 
 {
-  1: {
-    core: "self-direction, initiative, identity pressure",
-    shadow: "isolation, control, impatience",
-    protocol_hint: "decide from direction, not reaction"
-  },
-  2: {
-    core: "sensitivity, mediation, relational intelligence",
-    shadow: "over-adaptation, hesitation, emotional over-reading",
-    protocol_hint: "separate peacekeeping from self-erasure"
-  },
-  ...
-  11: {
-    core: "heightened perception, symbolic sensitivity, signal amplification",
-    shadow: "nervous overstimulation, idealization, pressure to be exceptional",
-    protocol_hint: "ground insight before acting on it"
-  },
-  22: {
-    core: "large-scale building, structural vision, practical mastery",
-    shadow: "over-responsibility, pressure, delayed action",
-    protocol_hint: "turn scale into steps"
-  },
-  33: {
-    core: "care, teaching, emotional responsibility, service through presence",
-    shadow: "rescuer pattern, guilt, self-sacrifice",
-    protocol_hint: "serve without becoming the container for everyone"
-  }
+1: {
+core: "self-direction, initiative, identity pressure",
+shadow: "isolation, control, impatience",
+protocol_hint: "decide from direction, not reaction"
+},
+2: {
+core: "sensitivity, mediation, relational intelligence",
+shadow: "over-adaptation, hesitation, emotional over-reading",
+protocol_hint: "separate peacekeeping from self-erasure"
+},
+...
+11: {
+core: "heightened perception, symbolic sensitivity, signal amplification",
+shadow: "nervous overstimulation, idealization, pressure to be exceptional",
+protocol_hint: "ground insight before acting on it"
+},
+22: {
+core: "large-scale building, structural vision, practical mastery",
+shadow: "over-responsibility, pressure, delayed action",
+protocol_hint: "turn scale into steps"
+},
+33: {
+core: "care, teaching, emotional responsibility, service through presence",
+shadow: "rescuer pattern, guilt, self-sacrifice",
+protocol_hint: "serve without becoming the container for everyone"
+}
 }
 
 Language rules:
+
 - No destiny language.
 - No “your name means you are…”
 - No “soul mission”.
@@ -645,15 +661,15 @@ PART 5 — NORMALIZED JSON OUTPUT
 Extend normalized_json.numerology to include:
 
 numerology: {
-  available: true,
-  life_path: number,
-  birth_day_number: number,
-  personal_year: number,
-  personal_year_master_marker?: number | null,
+available: true,
+life_path: number,
+birth_day_number: number,
+personal_year: number,
+personal_year_master_marker?: number | null,
 
-  name_numerology: {
-    available: boolean,
-    reason?: string,
+name_numerology: {
+available: boolean,
+reason?: string,
 
     source_name_present: boolean,
     normalized_name?: string,
@@ -673,7 +689,8 @@ numerology: {
       personality?: { core: string, shadow: string, protocol_hint: string },
       maturity?: { core: string, shadow: string, protocol_hint: string }
     }
-  }
+
+}
 }
 
 Do not store or send unnecessary raw full name beyond what already exists in intake.
@@ -688,6 +705,7 @@ Update user-prompt builder, not the Darrow Code system prompt unless required.
 When name_numerology.available=true, include a compact block in the user prompt:
 
 NAME NUMEROLOGY DATA:
+
 - Expression Number: X — [core / shadow / protocol_hint]
 - Soul Urge Number: X — [core / shadow / protocol_hint]
 - Personality Number: X — [core / shadow / protocol_hint]
@@ -700,6 +718,7 @@ NAME NUMEROLOGY DATA:
 - Blend it into client_snapshot, CORE architecture, MONEY, STYLE, or proof_tags only when relevant.
 
 Rules for AI output:
+
 - Every name numerology claim must cite the exact number in proof_tags or in body.
 - Good: “Expression 8 reinforces the Saturn/Jupiter money architecture: value improves when pressure is structured before emotion enters.”
 - Bad: “Your name vibration means you are destined for wealth.”
@@ -711,6 +730,7 @@ PART 7 — FREEASTROAPI EXTRA ENDPOINTS TO ADD
 ============================================================
 
 Keep current core calls:
+
 1. Natal
 2. Transits
 3. BaZi
@@ -724,6 +744,7 @@ Endpoint:
 GET /api/v1/moon/phase
 
 Use for:
+
 - YEAR timing tone
 - BODY emotional rhythm nuance
 - STYLE symbolic visual layer
@@ -733,6 +754,7 @@ Call:
 GET /api/v1/moon/phase?date={currentDate}T12:00:00&lat={birth_latitude}&lon={birth_longitude}&include_zodiac=true&include_forecast=true&include_special=true&include_eclipse=true&include_traditional_moon=true&include_visuals=false&include_interpretation=false
 
 Important:
+
 - include_interpretation=false
 - Do not pass FreeAstroAPI interpretation text to Claude.
 - Store only deterministic fields:
@@ -756,29 +778,31 @@ Endpoint:
 POST /api/v1/chinese/bazi/flow
 
 Use for:
+
 - YEAR module
 - current timing layer
 - BaZi annual/monthly context
 
 Request:
 {
-  "year": birthYear,
-  "month": birthMonth,
-  "day": birthDay,
-  "hour": birthHourOr12,
-  "minute": birthMinuteOr0,
-  "city": birth_city,
-  "lat": latitude,
-  "lng": longitude,
-  "sex": bazi_sex,
-  "target_year": currentYear,
-  "target_year_end": currentYear,
-  "mode": "summary",
-  "include": ["interactions", "stars"],
-  "dictionary_response": false
+"year": birthYear,
+"month": birthMonth,
+"day": birthDay,
+"hour": birthHourOr12,
+"minute": birthMinuteOr0,
+"city": birth_city,
+"lat": latitude,
+"lng": longitude,
+"sex": bazi_sex,
+"target_year": currentYear,
+"target_year_end": currentYear,
+"mode": "summary",
+"include": ["interactions", "stars"],
+"dictionary_response": false
 }
 
 Important:
+
 - Do not request more than 1 year.
 - If bazi_sex is missing, skip and set bazi_flow.available=false reason="missing_bazi_sex".
 - If birth time unknown, use 12:00 only for BaZi technical calculation and mark time_confidence="reduced".
@@ -796,6 +820,7 @@ POST /api/v1/western/astrocartography/lines
 Do not call this for every report yet.
 
 Use only when:
+
 - PLACE module is purchased
 - birth_time_known=true
 - latitude/longitude/timezone are resolved
@@ -803,25 +828,26 @@ Use only when:
 
 Request:
 {
-  "natal": {
-    "year": birthYear,
-    "month": birthMonth,
-    "day": birthDay,
-    "hour": birthHour,
-    "minute": birthMinute,
-    "city": birth_city,
-    "lat": latitude,
-    "lng": longitude,
-    "tz_str": timezone,
-    "time_known": true,
-    "house_system": "placidus"
-  },
-  "bodies": ["sun", "moon", "venus", "jupiter", "saturn"],
-  "angles": ["asc", "mc", "ic", "dsc"],
-  "include_crossings": false
+"natal": {
+"year": birthYear,
+"month": birthMonth,
+"day": birthDay,
+"hour": birthHour,
+"minute": birthMinute,
+"city": birth_city,
+"lat": latitude,
+"lng": longitude,
+"tz_str": timezone,
+"time_known": true,
+"house_system": "placidus"
+},
+"bodies": ["sun", "moon", "venus", "jupiter", "saturn"],
+"angles": ["asc", "mc", "ic", "dsc"],
+"include_crossings": false
 }
 
 Important:
+
 - Do not set include_crossings=true because it may require higher plan access.
 - Do not fail PLACE if astrocartography fails.
 - If available, normalize only lightweight line metadata. Do not pass huge raw GeoJSON to Claude.
@@ -829,6 +855,7 @@ Important:
 - For MVP, if no city check is implemented, keep PLACE environmental rather than city-specific.
 
 D) Do NOT add these now:
+
 - Moon Phase Timeline /api/v1/moon/month — requires Entry/High; not needed for MVP.
 - Synastry — reserve for LOVE_TANDEM Phase 2.
 - BaZi Synastry — reserve for LOVE_TANDEM Phase 2.
@@ -843,51 +870,51 @@ PART 8 — EXTEND DARROWCHARTDATA
 Add optional fields:
 
 moon_phase?: {
-  available: boolean
-  phase?: {
-    name: string
-    illumination?: number
-    age_days?: number
-    is_waxing?: boolean
-  }
-  zodiac?: {
-    sign: string
-    degree?: number
-  }
-  next_phases?: Record<string, string>
-  special_moon?: {
-    labels?: string[]
-    is_supermoon?: boolean
-    is_blue_moon?: boolean
-  }
-  eclipse?: {
-    is_eclipse?: boolean
-    type?: string
-    days_from_query?: number
-  }
-  forecast?: Record<string, any>
-  reason?: string
+available: boolean
+phase?: {
+name: string
+illumination?: number
+age_days?: number
+is_waxing?: boolean
+}
+zodiac?: {
+sign: string
+degree?: number
+}
+next_phases?: Record<string, string>
+special_moon?: {
+labels?: string[]
+is_supermoon?: boolean
+is_blue_moon?: boolean
+}
+eclipse?: {
+is_eclipse?: boolean
+type?: string
+days_from_query?: number
+}
+forecast?: Record<string, any>
+reason?: string
 }
 
 bazi_flow?: {
-  available: boolean
-  target_year?: number
-  interactions?: any[]
-  stars?: any[]
-  summary?: any
-  reason?: string
+available: boolean
+target_year?: number
+interactions?: any[]
+stars?: any[]
+summary?: any
+reason?: string
 }
 
 astrocartography?: {
-  available: boolean
-  source?: "freeastroapi"
-  calculated_for_place_module?: boolean
-  lines_summary?: Array<{
-    body: string
-    angle: string
-    id: string
-  }>
-  reason?: string
+available: boolean
+source?: "freeastroapi"
+calculated_for_place_module?: boolean
+lines_summary?: Array<{
+body: string
+angle: string
+id: string
+}>
+reason?: string
 }
 
 ============================================================
@@ -895,28 +922,33 @@ PART 9 — DATA SOURCE PRIORITY FOR MODULES
 ============================================================
 
 CORE:
+
 - Natal
 - BaZi
 - Life Path
 - Expression/Soul Urge/Personality only if full_name_for_numerology exists
 
 LOVE:
+
 - Venus, Mars, Moon, 5H, 7H, Descendant
 - Name numerology only if it converges with relationship pattern
 - Do not use synastry in MVP
 
 MONEY:
+
 - 2H, 6H, 8H, 10H, Jupiter, Saturn, Venus, Pluto
 - Life Path, Expression, Maturity
 - BaZi favorable/unfavorable elements and structure
 
 BODY:
+
 - Moon, Mars, Saturn, 6H
 - BaZi element imbalance
 - Moon Phase as soft rhythm note
 - No medical claims
 
 YEAR:
+
 - Transits
 - Solar Return
 - Personal Year
@@ -925,6 +957,7 @@ YEAR:
 - Slow transits have priority over daily moon data
 
 STYLE:
+
 - Venus, Ascendant, Moon
 - BaZi element balance
 - Expression/Soul Urge as optional aesthetic nuance
@@ -932,6 +965,7 @@ STYLE:
 - Internal color/material map only
 
 PLACE:
+
 - Moon, IC, 4H, angular planets
 - BaZi favorable elements
 - Astrocartography only if PLACE purchased and birth_time_known=true
@@ -973,6 +1007,7 @@ City: Bratislava, Slovakia
 Birth sex for BaZi: M
 
 Show:
+
 1. normalized_json.numerology
 2. normalized_json.moon_phase
 3. normalized_json.bazi_flow
@@ -983,7 +1018,6 @@ Show:
 8. Proof tags showing real data anchors
 
 Do not skip verification.
-
 
 FreeAstroAPI core probe is green. Proceed with the next patch:
 
@@ -1006,32 +1040,32 @@ Use these existing project rules as source of truth:
 
 1. Darrow Code AI System Prompt
 
-* Product voice only
-* Warm Architect 70/30 balance
-* Dinner Table Test
-* Proof tags as evidence notes
-* No destiny / vibration / lucky / soul mission / generic horoscope language
-* Every interpretive claim must anchor in a named data point
+- Product voice only
+- Warm Architect 70/30 balance
+- Dinner Table Test
+- Proof tags as evidence notes
+- No destiny / vibration / lucky / soul mission / generic horoscope language
+- Every interpretive claim must anchor in a named data point
 
 2. Lovable production prompt
 
-* 80% client-friendly interpretation
-* 20% visible astrology / numerology / BaZi confirmation
-* Technical data mostly belongs in proof_tags
-* The report must be readable for a non-technical client
-* Do not write like an astrology textbook
-* Do not mechanically list placements
+- 80% client-friendly interpretation
+- 20% visible astrology / numerology / BaZi confirmation
+- Technical data mostly belongs in proof_tags
+- The report must be readable for a non-technical client
+- Do not write like an astrology textbook
+- Do not mechanically list placements
 
 3. Current verified FreeAstroAPI layer
 
-* Natal, Transits, BaZi, Solar Return are already green
-* provider_name=freeastroapi
-* interpretation_leak=false
-* transits available
-* BaZi available
-* Solar Return available
-* current_luck_cycle structured
-* hybrid endpoint strategy working under Worker budget
+- Natal, Transits, BaZi, Solar Return are already green
+- provider_name=freeastroapi
+- interpretation_leak=false
+- transits available
+- BaZi available
+- Solar Return available
+- current_luck_cycle structured
+- hybrid endpoint strategy working under Worker budget
 
 Do not break the verified FreeAstroAPI core layer.
 
@@ -1041,30 +1075,30 @@ DO NOT CHANGE
 
 Do NOT change:
 
-* checkout flow
-* Stripe
-* pricing
-* PDF layout
-* Resend/email delivery
-* token routes
-* Supabase Auth rule
-* Geoapify checkout geocoding
-* report JSON schema unless a small additive field is required
-* existing Darrow Code AI system prompt unless a tiny clarification is required
-* working FreeAstroAPI core endpoints
-* current hybrid concurrency strategy unless needed for budget safety
+- checkout flow
+- Stripe
+- pricing
+- PDF layout
+- Resend/email delivery
+- token routes
+- Supabase Auth rule
+- Geoapify checkout geocoding
+- report JSON schema unless a small additive field is required
+- existing Darrow Code AI system prompt unless a tiny clarification is required
+- working FreeAstroAPI core endpoints
+- current hybrid concurrency strategy unless needed for budget safety
 
 Keep Geoapify for:
 
-* city autocomplete
-* birth city resolution
-* lat/lng
-* timezone before checkout
+- city autocomplete
+- birth city resolution
+- lat/lng
+- timezone before checkout
 
 Keep FreeAstroAPI for:
 
-* astrology calculations only
-* deterministic source data only
+- astrology calculations only
+- deterministic source data only
 
 ============================================================
 CUSTOMER-FACING OUTPUT GUARDRAIL
@@ -1072,29 +1106,29 @@ CUSTOMER-FACING OUTPUT GUARDRAIL
 
 All new layers must make the final report feel:
 
-* more personal
-* more accurate
-* more specific
-* richer
-* more human-readable
-* more premium
+- more personal
+- more accurate
+- more specific
+- richer
+- more human-readable
+- more premium
 
 They must NOT make the report:
 
-* more technical
-* more textbook-like
-* more mystical
-* more generic
-* more list-like
-* more “AI generated”
+- more technical
+- more textbook-like
+- more mystical
+- more generic
+- more list-like
+- more “AI generated”
 
 Do not create customer-facing standalone sections like:
 
-* “Your Name Numerology”
-* “Your Moon Phase Meaning”
-* “Your BaZi Flow Reading”
-* “Your Lucky Numbers”
-* “Your Moon Energy”
+- “Your Name Numerology”
+- “Your Moon Phase Meaning”
+- “Your BaZi Flow Reading”
+- “Your Lucky Numbers”
+- “Your Moon Energy”
 
 Instead, blend these layers only when they converge with Western astrology, BaZi, transits, Solar Return, or the module theme.
 
@@ -1116,47 +1150,47 @@ PART 1 — INTERNAL NUMEROLOGY ONLY
 
 Do NOT add external APIs for:
 
-* numerology
-* name meaning
-* name origin
-* gender prediction
-* nationality prediction
-* ethnicity prediction
-* online name search
+- numerology
+- name meaning
+- name origin
+- gender prediction
+- nationality prediction
+- ethnicity prediction
+- online name search
 
 Do NOT use web search at runtime.
 
 Use only:
 
-* date_of_birth
-* optional full_name_for_numerology
+- date_of_birth
+- optional full_name_for_numerology
 
 If full_name_for_numerology is absent:
 
-* calculate only:
+- calculate only:
+  - Life Path
+  - Personal Year
+  - Birth Day Number
 
-  * Life Path
-  * Personal Year
-  * Birth Day Number
-* set name_numerology.available=false with reason="full_name_not_provided"
-* do not claim Expression, Soul Urge, Personality, Maturity, Hidden Passion, or Karmic Lessons
+- set name_numerology.available=false with reason="full_name_not_provided"
+- do not claim Expression, Soul Urge, Personality, Maturity, Hidden Passion, or Karmic Lessons
 
 If full_name_for_numerology is present:
 calculate internally:
 
-* Expression Number
-* Soul Urge Number
-* Personality Number
-* Maturity Number
-* Hidden Passion Number(s)
-* Karmic Lessons
-* name_letters_used
-* name_normalization_warning if relevant
+- Expression Number
+- Soul Urge Number
+- Personality Number
+- Maturity Number
+- Hidden Passion Number(s)
+- Karmic Lessons
+- name_letters_used
+- name_normalization_warning if relevant
 
 Create or update:
 
-* src/lib/numerology/numerology.ts
-* src/lib/numerology/numerology-meanings.ts
+- src/lib/numerology/numerology.ts
+- src/lib/numerology/numerology-meanings.ts
 
 Do not block checkout if name numerology cannot be calculated.
 Name numerology is optional enrichment only.
@@ -1179,18 +1213,18 @@ Use Pythagorean mapping:
 
 Normalize full name:
 
-* uppercase
-* remove spaces, hyphens, apostrophes, dots
-* remove Latin diacritics via Unicode NFKD normalization
-* keep only A-Z letters after normalization
-* if fewer than 2 valid letters remain, set name_numerology.available=false with reason="insufficient_latin_letters"
+- uppercase
+- remove spaces, hyphens, apostrophes, dots
+- remove Latin diacritics via Unicode NFKD normalization
+- keep only A-Z letters after normalization
+- if fewer than 2 valid letters remain, set name_numerology.available=false with reason="insufficient_latin_letters"
 
 Vowels:
 
-* A, E, I, O, U
-* Treat Y as consonant by default
-* Add y_policy="consonant_by_default" to normalized_json
-* Do not infer pronunciation
+- A, E, I, O, U
+- Treat Y as consonant by default
+- Add y_policy="consonant_by_default" to normalized_json
+- Do not infer pronunciation
 
 ============================================================
 PART 3 — NUMBER REDUCTION RULES
@@ -1200,57 +1234,57 @@ Implement reduceNumber(n, options).
 
 Rules:
 
-* Reduce by digit sum until 1-9.
-* Preserve master numbers 11, 22, 33 only when options.keepMasterNumbers=true.
-* Do not preserve arbitrary double numbers like 44, 55, 66.
+- Reduce by digit sum until 1-9.
+- Preserve master numbers 11, 22, 33 only when options.keepMasterNumbers=true.
+- Do not preserve arbitrary double numbers like 44, 55, 66.
 
 Calculations:
 
 Life Path:
 
-* Sum all digits of YYYYMMDD.
-* Reduce with keepMasterNumbers=true.
+- Sum all digits of YYYYMMDD.
+- Reduce with keepMasterNumbers=true.
 
 Birth Day Number:
 
-* Reduce day number with keepMasterNumbers=true.
+- Reduce day number with keepMasterNumbers=true.
 
 Personal Year:
 
-* Use birth month + birth day + current year digits.
-* Reduce to 1-9.
-* Also store personal_year_master_marker if intermediate value is 11, 22, or 33.
-* Final personal_year should stay 1-9.
+- Use birth month + birth day + current year digits.
+- Reduce to 1-9.
+- Also store personal_year_master_marker if intermediate value is 11, 22, or 33.
+- Final personal_year should stay 1-9.
 
 Expression Number:
 
-* Sum all mapped letters in full normalized name.
-* Reduce with keepMasterNumbers=true.
+- Sum all mapped letters in full normalized name.
+- Reduce with keepMasterNumbers=true.
 
 Soul Urge Number:
 
-* Sum vowels only.
-* Reduce with keepMasterNumbers=true.
+- Sum vowels only.
+- Reduce with keepMasterNumbers=true.
 
 Personality Number:
 
-* Sum consonants only.
-* Reduce with keepMasterNumbers=true.
+- Sum consonants only.
+- Reduce with keepMasterNumbers=true.
 
 Maturity Number:
 
-* Expression Number + Life Path Number.
-* Reduce with keepMasterNumbers=true.
+- Expression Number + Life Path Number.
+- Reduce with keepMasterNumbers=true.
 
 Hidden Passion:
 
-* Count frequency of mapped letter values 1-9.
-* Highest frequency value(s) = hidden_passion_numbers.
-* If tie, return multiple values.
+- Count frequency of mapped letter values 1-9.
+- Highest frequency value(s) = hidden_passion_numbers.
+- If tie, return multiple values.
 
 Karmic Lessons:
 
-* Values 1-9 missing from the full name letter value frequency.
+- Values 1-9 missing from the full name letter value frequency.
 
 ============================================================
 PART 4 — NUMEROLOGY MEANING LAYER
@@ -1271,23 +1305,22 @@ protocol_hint: string
 
 Language rules:
 
-* No destiny language.
-* No “your name means you are...”
-* No “soul mission”.
-* No “lucky number”.
-* No “vibration”.
-* No mystical claims.
-* No “healer” identity labels.
-* Use Darrow Code language:
-
-  * structure
-  * mechanism
-  * operating pattern
-  * pressure point
-  * protocol
-  * configuration
-  * signal
-  * rhythm
+- No destiny language.
+- No “your name means you are...”
+- No “soul mission”.
+- No “lucky number”.
+- No “vibration”.
+- No mystical claims.
+- No “healer” identity labels.
+- Use Darrow Code language:
+  - structure
+  - mechanism
+  - operating pattern
+  - pressure point
+  - protocol
+  - configuration
+  - signal
+  - rhythm
 
 Include meanings for:
 1,2,3,4,5,6,7,8,9,11,22,33
@@ -1380,12 +1413,12 @@ When name_numerology.available=true, include compact data:
 
 NAME NUMEROLOGY DATA:
 
-* Expression Number: X — core / shadow / protocol_hint
-* Soul Urge Number: X — core / shadow / protocol_hint
-* Personality Number: X — core / shadow / protocol_hint
-* Maturity Number: X — core / shadow / protocol_hint
-* Hidden Passion: X
-* Karmic Lessons: X, Y
+- Expression Number: X — core / shadow / protocol_hint
+- Soul Urge Number: X — core / shadow / protocol_hint
+- Personality Number: X — core / shadow / protocol_hint
+- Maturity Number: X — core / shadow / protocol_hint
+- Hidden Passion: X
+- Karmic Lessons: X, Y
 
 Add these instructions to Claude in the user prompt:
 
@@ -1401,11 +1434,11 @@ Do not use name-origin, ethnicity, nationality, or gender assumptions.
 
 Blend name numerology into:
 
-* client_snapshot
-* CORE architecture
-* MONEY
-* STYLE
-* proof_tags
+- client_snapshot
+- CORE architecture
+- MONEY
+- STYLE
+- proof_tags
 
 Only use it when relevant.
 
@@ -1439,38 +1472,38 @@ GET /api/v1/moon/phase
 
 Use for:
 
-* YEAR timing tone
-* BODY emotional rhythm nuance
-* STYLE symbolic visual layer
+- YEAR timing tone
+- BODY emotional rhythm nuance
+- STYLE symbolic visual layer
 
 Use report generation date as the date.
 
 Use birth location as location fallback:
 
-* lat = birth latitude
-* lon = birth longitude
-* tz_str = stored birth timezone
+- lat = birth latitude
+- lon = birth longitude
+- tz_str = stored birth timezone
 
 Do not collect current location now.
 Do not change intake.
 
 Query flags:
 
-* include_zodiac=true
-* include_special=true
-* include_eclipse=true
-* include_forecast=true
-* include_traditional_moon=true
-* include_visuals=false
-* include_interpretation=false
+- include_zodiac=true
+- include_special=true
+- include_eclipse=true
+- include_forecast=true
+- include_traditional_moon=true
+- include_visuals=false
+- include_interpretation=false
 
 Important:
 
-* Do not pass provider interpretation text to Claude.
-* Request include_interpretation=false.
-* Strip interpretation / interpretations recursively if returned.
-* Do not store SVG visuals now.
-* Do not render moon visuals in PDF now unless already trivial and non-disruptive.
+- Do not pass provider interpretation text to Claude.
+- Request include_interpretation=false.
+- Strip interpretation / interpretations recursively if returned.
+- Do not store SVG visuals now.
+- Do not render moon visuals in PDF now unless already trivial and non-disruptive.
 
 Store only compact deterministic fields:
 moon_phase: {
@@ -1528,40 +1561,40 @@ POST /api/v1/chinese/bazi/flow
 
 Use for:
 
-* YEAR module
-* current timing layer
-* BaZi annual/monthly context
+- YEAR module
+- current timing layer
+- BaZi annual/monthly context
 
 Request requirements:
 
-* target_year = currentYear
-* target_year_end = currentYear
-* mode = "summary"
-* include = ["interactions", "stars"]
-* dictionary_response = false
-* sex = bazi_sex
+- target_year = currentYear
+- target_year_end = currentYear
+- mode = "summary"
+- include = ["interactions", "stars"]
+- dictionary_response = false
+- sex = bazi_sex
 
 Use the same birth data already used for BaZi:
 
-* year
-* month
-* day
-* hour
-* minute
-* city
-* lat
-* lng
-* sex
+- year
+- month
+- day
+- hour
+- minute
+- city
+- lat
+- lng
+- sex
 
 Important:
 
-* Do not request multi-year ranges.
-* Do not use mode="standard" or mode="debug" for production report generation.
-* If bazi_sex is missing, skip and set bazi_flow.available=false reason="missing_bazi_sex".
-* If birth time unknown, use 12:00 only for technical calculation and mark time_confidence="reduced".
-* Do not make precise hour-pillar claims if birth time is unknown.
-* Strip all provider prose / interpretation / rationale / advice.
-* Keep only compact structured fields.
+- Do not request multi-year ranges.
+- Do not use mode="standard" or mode="debug" for production report generation.
+- If bazi_sex is missing, skip and set bazi_flow.available=false reason="missing_bazi_sex".
+- If birth time unknown, use 12:00 only for technical calculation and mark time_confidence="reduced".
+- Do not make precise hour-pillar claims if birth time is unknown.
+- Strip all provider prose / interpretation / rationale / advice.
+- Keep only compact structured fields.
 
 Normalize to:
 
@@ -1606,25 +1639,25 @@ Do not add cost/time to CORE generation.
 
 Only update reference docs:
 
-* PLACE can use astrocartography later.
-* Call only when PLACE is purchased and birth_time_known=true.
-* Do not pass huge raw GeoJSON to Claude.
-* Normalize only compact line summaries.
-* Do not name specific cities unless real astrocartography line data exists.
+- PLACE can use astrocartography later.
+- Call only when PLACE is purchased and birth_time_known=true.
+- Do not pass huge raw GeoJSON to Claude.
+- Normalize only compact line summaries.
+- Do not name specific cities unless real astrocartography line data exists.
 
 D) Do NOT add now:
 
-* Synastry
-* BaZi Synastry
-* Moon Phase Timeline / /api/v1/moon/month
-* Health / Neijing / medical endpoints
-* provider-generated psychological reports
-* provider-generated daily sign/personal reports
-* SVG chart generation
-* name-origin APIs
-* external numerology APIs
-* color APIs
-* crystal APIs
+- Synastry
+- BaZi Synastry
+- Moon Phase Timeline / /api/v1/moon/month
+- Health / Neijing / medical endpoints
+- provider-generated psychological reports
+- provider-generated daily sign/personal reports
+- SVG chart generation
+- name-origin APIs
+- external numerology APIs
+- color APIs
+- crystal APIs
 
 ============================================================
 PART 8 — CONCURRENCY / BUDGET
@@ -1636,18 +1669,18 @@ Natal remains critical and runs first.
 
 After Natal succeeds, run graceful endpoints with Promise.allSettled and small stagger:
 
-* Transits
-* BaZi
-* Solar Return
-* Moon Phase
-* BaZi Flow
+- Transits
+- BaZi
+- Solar Return
+- Moon Phase
+- BaZi Flow
 
 Use compact per-endpoint diagnostics:
 
-* endpoint_timing_ms
-* endpoint_errors
-* hit_429
-* available
+- endpoint_timing_ms
+- endpoint_errors
+- hit_429
+- available
 
 Do not let Moon Phase or BaZi Flow kill the generation.
 
@@ -1655,9 +1688,9 @@ Total generation must stay under Worker budget.
 
 If an enrichment endpoint fails or times out:
 
-* return available=false
-* include reason/status
-* continue generation
+- return available=false
+- include reason/status
+- continue generation
 
 Do not enter long retry/backoff loops.
 Respect Retry-After only if it is reasonable and does not exceed Worker budget.
@@ -1668,56 +1701,56 @@ PART 9 — REPORT USAGE RULES BY MODULE
 
 CORE:
 
-* Use Natal
-* BaZi
-* Life Path
-* Expression/Soul Urge/Personality only if full_name_for_numerology exists and converges with main pattern
+- Use Natal
+- BaZi
+- Life Path
+- Expression/Soul Urge/Personality only if full_name_for_numerology exists and converges with main pattern
 
 LOVE:
 
-* Use Venus, Mars, Moon, 5H, 7H, Descendant
-* Use name numerology only if it converges with attraction/relationship pattern
-* Do not use synastry in MVP
+- Use Venus, Mars, Moon, 5H, 7H, Descendant
+- Use name numerology only if it converges with attraction/relationship pattern
+- Do not use synastry in MVP
 
 MONEY:
 
-* Use 2H, 6H, 8H, 10H, Jupiter, Saturn, Venus, Pluto
-* Use Life Path, Expression, Maturity if relevant
-* Use BaZi favorable/unfavorable elements and structure
-* Keep language practical: income mechanism, value structure, pressure, boundaries
+- Use 2H, 6H, 8H, 10H, Jupiter, Saturn, Venus, Pluto
+- Use Life Path, Expression, Maturity if relevant
+- Use BaZi favorable/unfavorable elements and structure
+- Keep language practical: income mechanism, value structure, pressure, boundaries
 
 BODY:
 
-* Use Moon, Mars, Saturn, 6H
-* Use BaZi element imbalance
-* Use Moon Phase only as a soft rhythm note
-* No medical claims
-* Use “your system may respond to...” language
+- Use Moon, Mars, Saturn, 6H
+- Use BaZi element imbalance
+- Use Moon Phase only as a soft rhythm note
+- No medical claims
+- Use “your system may respond to...” language
 
 YEAR:
 
-* Slow transits are priority
-* Solar Return is priority
-* Personal Year is priority
-* BaZi Flow can enrich annual timing
-* Moon Phase can add small emotional/timing texture
-* Do not let daily moon data overpower slow transits or Solar Return
+- Slow transits are priority
+- Solar Return is priority
+- Personal Year is priority
+- BaZi Flow can enrich annual timing
+- Moon Phase can add small emotional/timing texture
+- Do not let daily moon data overpower slow transits or Solar Return
 
 STYLE:
 
-* Use Venus, Ascendant, Moon
-* Use BaZi element balance
-* Use Expression/Soul Urge as optional aesthetic nuance
-* Use Moon Phase as optional symbolic visual layer
-* Keep colors/materials internal and elegant
-* Do not claim colors/stones attract love, money, luck, protection, or healing
+- Use Venus, Ascendant, Moon
+- Use BaZi element balance
+- Use Expression/Soul Urge as optional aesthetic nuance
+- Use Moon Phase as optional symbolic visual layer
+- Keep colors/materials internal and elegant
+- Do not claim colors/stones attract love, money, luck, protection, or healing
 
 PLACE:
 
-* Use Moon, IC, 4H, angular planets
-* Use BaZi favorable elements
-* Astrocartography later only if PLACE purchased and birth_time_known=true
-* Otherwise describe environmental qualities, not specific cities
+- Use Moon, IC, 4H, angular planets
+- Use BaZi favorable elements
+- Astrocartography later only if PLACE purchased and birth_time_known=true
+- Otherwise describe environmental qualities, not specific cities
 
 ============================================================
 PART 10 — AI SYSTEM PROMPT CLARIFICATION
@@ -1746,27 +1779,27 @@ src/lib/astro/FREEASTROAPI_REFERENCE.md
 
 Add:
 
-* Moon Phase endpoint details
-* BaZi Flow endpoint details
-* Do not use Moon Phase Timeline now
-* Do not use Astrocartography globally now
-* Do not use provider interpretations
-* Keep all enrichment endpoints graceful
-* Human-readable customer output guardrail
+- Moon Phase endpoint details
+- BaZi Flow endpoint details
+- Do not use Moon Phase Timeline now
+- Do not use Astrocartography globally now
+- Do not use provider interpretations
+- Keep all enrichment endpoints graceful
+- Human-readable customer output guardrail
 
 Update or create:
 src/lib/numerology/NUMEROLOGY_REFERENCE.md
 
 Include:
 
-* Pythagorean map
-* reduction rules
-* master number policy
-* Y policy
-* full_name_for_numerology optionality
-* no name-origin/gender/nationality/ethnicity inference
-* no external numerology APIs
-* no generic numerology report
+- Pythagorean map
+- reduction rules
+- master number policy
+- Y policy
+- full_name_for_numerology optionality
+- no name-origin/gender/nationality/ethnicity inference
+- no external numerology APIs
+- no generic numerology report
 
 ============================================================
 PART 12 — ABSOLUTE RULES
@@ -1784,24 +1817,24 @@ Strip interpretation blocks recursively if returned.
 
 Do not use external:
 
-* name-origin APIs
-* gender APIs
-* nationality APIs
-* ethnicity APIs
-* numerology APIs
-* crystal APIs
-* color APIs
+- name-origin APIs
+- gender APIs
+- nationality APIs
+- ethnicity APIs
+- numerology APIs
+- crystal APIs
+- color APIs
 
 Do not make:
 
-* medical claims
-* legal claims
-* financial guarantees
-* healing claims
-* lucky claims
-* protection claims
-* attraction claims
-* destiny/fate claims
+- medical claims
+- legal claims
+- financial guarantees
+- healing claims
+- lucky claims
+- protection claims
+- attraction claims
+- destiny/fate claims
 
 Do not fail the order if Moon Phase or BaZi Flow fails.
 
@@ -1849,9 +1882,9 @@ Show:
 
 The report preview must not contain standalone generic sections like:
 
-* Your Name Numerology
-* Your Moon Phase Meaning
-* Your BaZi Flow Reading
+- Your Name Numerology
+- Your Moon Phase Meaning
+- Your BaZi Flow Reading
 
 It should show Darrow Code synthesis, not mechanical data listing.
 

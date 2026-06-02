@@ -70,17 +70,18 @@ export const Route = createFileRoute("/api/public/health/generation-pipeline")({
       GET: async () => {
         const s = sb();
         try {
-          const [paid_no_job, queued_5m, processing_10m, failed_24h, last_ok, last_sweep] = await Promise.all([
-            countPaidOrdersWithoutJob24h(s),
-            countByStatusOlderThan(s, "queued", 5 * 60 * 1000),
-            countByStatusOlderThan(s, "processing", 10 * 60 * 1000),
-            countFailedReports24h(s),
-            lastSuccessfulGenerationAt(s),
-            lastSweeperRunAt(s),
-          ]);
-          const sweepFresh =
-            !!last_sweep && Date.now() - Date.parse(last_sweep) < 15 * 60 * 1000;
-          const healthy = paid_no_job === 0 && queued_5m === 0 && processing_10m === 0 && sweepFresh;
+          const [paid_no_job, queued_5m, processing_10m, failed_24h, last_ok, last_sweep] =
+            await Promise.all([
+              countPaidOrdersWithoutJob24h(s),
+              countByStatusOlderThan(s, "queued", 5 * 60 * 1000),
+              countByStatusOlderThan(s, "processing", 10 * 60 * 1000),
+              countFailedReports24h(s),
+              lastSuccessfulGenerationAt(s),
+              lastSweeperRunAt(s),
+            ]);
+          const sweepFresh = !!last_sweep && Date.now() - Date.parse(last_sweep) < 15 * 60 * 1000;
+          const healthy =
+            paid_no_job === 0 && queued_5m === 0 && processing_10m === 0 && sweepFresh;
           return Response.json(
             {
               healthy,

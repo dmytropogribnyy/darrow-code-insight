@@ -19,7 +19,10 @@ export interface StampOpts {
   prefix?: string;
 }
 
-export async function stampPageNumbers(input: Uint8Array, opts: StampOpts = {}): Promise<Uint8Array> {
+export async function stampPageNumbers(
+  input: Uint8Array,
+  opts: StampOpts = {},
+): Promise<Uint8Array> {
   const skipFirst = opts.skipFirst !== false;
   const skipLast = opts.skipLast !== false;
   const prefix = opts.prefix ?? "Darrow Code  \u00B7  ";

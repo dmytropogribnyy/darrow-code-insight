@@ -12,13 +12,13 @@ to generate accurate, interesting reports.
 
 You should already have this from previous design work. Need these formats:
 
-| File name | Size | Format | Where used |
-|---|---|---|---|
-| `darrow-symbol-gold.png` | 1024×1024 | PNG transparent | PDF covers, generating animation, watermarks |
-| `darrow-symbol-small.png` | 256×256 | PNG transparent | Result screen mark, small embeds |
-| `darrow-favicon.png` | 128×128 | PNG | Browser favicon |
-| `darrow-favicon.ico` | 32×32 (multi-size) | ICO | Browser favicon (legacy) |
-| `darrow-app-icon.png` | 512×512 | PNG | iOS/Android PWA icon (future) |
+| File name                 | Size               | Format          | Where used                                   |
+| ------------------------- | ------------------ | --------------- | -------------------------------------------- |
+| `darrow-symbol-gold.png`  | 1024×1024          | PNG transparent | PDF covers, generating animation, watermarks |
+| `darrow-symbol-small.png` | 256×256            | PNG transparent | Result screen mark, small embeds             |
+| `darrow-favicon.png`      | 128×128            | PNG             | Browser favicon                              |
+| `darrow-favicon.ico`      | 32×32 (multi-size) | ICO             | Browser favicon (legacy)                     |
+| `darrow-app-icon.png`     | 512×512            | PNG             | iOS/Android PWA icon (future)                |
 
 **Color spec for symbol:** `#D4AF37` Luxury Gold on transparent background.
 
@@ -26,11 +26,12 @@ You should already have this from previous design work. Need these formats:
 
 For Open Graph meta tags (link previews when site is shared):
 
-| File name | Size | Format | Content |
-|---|---|---|---|
+| File name                   | Size     | Format  | Content                                            |
+| --------------------------- | -------- | ------- | -------------------------------------------------- |
 | `darrow-social-preview.png` | 1200×630 | PNG/JPG | Symbol + "DARROW CODE" + tagline on `#0A0F1E` navy |
 
 Suggested layout:
+
 - Background: Midnight Navy `#0A0F1E`
 - Center: Gold symbol (medium size)
 - Below symbol: "DARROW CODE" in Cormorant SC, `#D4AF37`
@@ -40,11 +41,11 @@ Suggested layout:
 
 Three watermarked sample pages from an existing manual UNVEIL report:
 
-| File name | Format | Content |
-|---|---|---|
-| `sample-cover.jpg` | JPG @ 72dpi, 800×1131px | PDF cover page with sample data |
+| File name             | Format                  | Content                                        |
+| --------------------- | ----------------------- | ---------------------------------------------- |
+| `sample-cover.jpg`    | JPG @ 72dpi, 800×1131px | PDF cover page with sample data                |
 | `sample-interior.jpg` | JPG @ 72dpi, 800×1131px | One interior section page (e.g., Architecture) |
-| `sample-closing.jpg` | JPG @ 72dpi, 800×1131px | Executive Summary / closing page |
+| `sample-closing.jpg`  | JPG @ 72dpi, 800×1131px | Executive Summary / closing page               |
 
 These should have a subtle "SAMPLE" watermark or use anonymized birth data
 to prevent literal reuse but show real quality.
@@ -53,9 +54,9 @@ to prevent literal reuse but show real quality.
 
 For the report delivery email:
 
-| File name | Size | Format | Content |
-|---|---|---|---|
-| `email-header.png` | 600×200 | PNG | "DARROW CODE" wordmark in gold on navy, simple |
+| File name          | Size    | Format | Content                                        |
+| ------------------ | ------- | ------ | ---------------------------------------------- |
+| `email-header.png` | 600×200 | PNG    | "DARROW CODE" wordmark in gold on navy, simple |
 
 ---
 
@@ -111,13 +112,13 @@ that feed every report.
 
 Collected via the intake form:
 
-| Field | Source | How it's used |
-|---|---|---|
-| First name | User input | Personalization 1-2 times per module |
-| Email | User input | PDF delivery, account-less identity |
-| Date of birth | User input | Foundation for all astro calculations |
-| Birth time | User input (optional) | Refines Ascendant + Houses precision |
-| City of birth | User input | Latitude/longitude/timezone resolution |
+| Field         | Source                | How it's used                          |
+| ------------- | --------------------- | -------------------------------------- |
+| First name    | User input            | Personalization 1-2 times per module   |
+| Email         | User input            | PDF delivery, account-less identity    |
+| Date of birth | User input            | Foundation for all astro calculations  |
+| Birth time    | User input (optional) | Refines Ascendant + Houses precision   |
+| City of birth | User input            | Latitude/longitude/timezone resolution |
 
 **Storage:** Supabase `intakes` table. Never shared, never sold.
 
@@ -129,6 +130,7 @@ mathematical chart data.
 **For MVP, use one of these providers** (verify current pricing before connecting):
 
 **Option A — AstrologyAPI (recommended for MVP)**
+
 - Endpoint: https://json.astrologyapi.com
 - Provides: Western natal chart, transits, Solar Return, numerology,
   basic Chinese astrology
@@ -136,17 +138,20 @@ mathematical chart data.
 - Covers: CORE, LOVE, MONEY, YEAR modules cleanly
 
 **Option B — DivineAPI**
+
 - Endpoint: https://divineapi.com
 - Provides: Western, Vedic, Numerology, Horoscope endpoints
 - Pricing: subscription tiers
 - Covers: most modules; Bazi requires verification
 
 **For Bazi Four Pillars specifically:**
+
 - FreeAstroAPI has explicit BaZi Four Pillars endpoint
 - Returns: Day Master, Ten Gods, element balance, life stages
 - Use only if primary API doesn't cover Bazi adequately
 
 **For numerology basics (Life Path, Personal Year):**
+
 - Calculate directly in Edge Function — no API needed
 - Pythagorean reduction from birth date is simple arithmetic
 - Saves cost and gives full control
@@ -190,15 +195,15 @@ The astro data alone isn't a report. It becomes a report through interpretation.
 The Darrow Code system prompt instructs Claude to work in the methodological
 tradition of established astrologers:
 
-| Module | Interpretive tradition |
-|---|---|
-| CORE | Pelletier (Personal Portrait) + Greene (Psychological Horoscope) |
-| LOVE | Townley (Mars/Venus) + Greene (relational shadow) |
-| MONEY | Jehle (8th house) + Greene (vocation) + Pelletier (career houses) |
-| BODY | Greene (nervous patterns) + traditional medical astrology disclaimers |
-| YEAR | Hand (transit interpretation) — slow transits, long arcs |
-| STYLE | Color Horoscope tradition + Venus/Ascendant correspondences |
-| PLACE | AstroClick / astrocartography tradition |
+| Module | Interpretive tradition                                                |
+| ------ | --------------------------------------------------------------------- |
+| CORE   | Pelletier (Personal Portrait) + Greene (Psychological Horoscope)      |
+| LOVE   | Townley (Mars/Venus) + Greene (relational shadow)                     |
+| MONEY  | Jehle (8th house) + Greene (vocation) + Pelletier (career houses)     |
+| BODY   | Greene (nervous patterns) + traditional medical astrology disclaimers |
+| YEAR   | Hand (transit interpretation) — slow transits, long arcs              |
+| STYLE  | Color Horoscope tradition + Venus/Ascendant correspondences           |
+| PLACE  | AstroClick / astrocartography tradition                               |
 
 **Important:** Claude is NOT given those authors' texts to copy. It uses
 general methodological principles associated with those traditions, without
@@ -297,6 +302,7 @@ Inter                 all body, UI, forms, checkout         →  #151922 (or #E5
 ```
 
 Load via Google Fonts:
+
 ```
 https://fonts.googleapis.com/css2?family=Cormorant+SC:wght@400;500&family=Cormorant+Garamond:wght@400;500;600&family=Inter:wght@400;500;600&display=swap
 ```
@@ -314,12 +320,14 @@ Beyond color/font compliance, PDF pages must FEEL modern, pleasant to read,
 and stylish. These are the typography and layout rules that achieve that.
 
 ### Page geometry
+
 - Page size: A4 (210 × 297 mm) or Letter (8.5 × 11")
 - Margins: **20mm top/bottom, 25mm left/right** (generous, premium)
 - Single column only (never two-column)
 - Page background: Warm Paper #F6F4EF (matte, not white)
 
 ### Typography rhythm
+
 - Body: Inter, **11-12pt**, line-height **1.7-1.75**
 - Line length target: **55-70 characters per line** (optimal reading zone)
 - Paragraph spacing: 12-14pt between paragraphs (1.2x line-height)
@@ -329,6 +337,7 @@ and stylish. These are the typography and layout rules that achieve that.
 - Pull quotes: Cormorant Garamond italic, 14pt, with 2px gold left border
 
 ### Visual hierarchy on each page
+
 1. **Top margin block** — section number (e.g. "02") in Garamond #9CA3AF
    on left, brand mark "DARROW CODE" in Cormorant SC 9pt #D4AF37 on right
 2. **Section label** small caps above main heading
@@ -341,6 +350,7 @@ and stylish. These are the typography and layout rules that achieve that.
 8. **Footer line** — report name + page number in gold
 
 ### Specific elements
+
 - **PROTOCOL: blocks** — slight offset (background #F1EEE6 or just padding-left 12px),
   number "01/02/03" in Cormorant Garamond gold, body in Inter
 - **Warning Signal blocks** — italic intro, no special background, just typography
@@ -348,6 +358,7 @@ and stylish. These are the typography and layout rules that achieve that.
 - **Proof tags** — thin horizontal rule above, then dot-separated tags
 
 ### What makes it FEEL modern (not Victorian)
+
 - **NO ornamental flourishes** — no decorative borders, fleurons, or vintage motifs
 - **NO drop caps** — modern editorial doesn't use them
 - **NO justified text** — ragged right reads more modern
@@ -358,6 +369,7 @@ and stylish. These are the typography and layout rules that achieve that.
 - **Photographic quality margins** — same proportions as luxury magazine layouts
 
 ### Page types
+
 - **Type A — Section page** (one concept per page): heading + body + optional pull quote
 - **Type B — Protocol page** (lists): heading + 2-3 PROTOCOL blocks
 - **Type C — Before/After page** (paired): two short blocks with generous space
@@ -365,7 +377,9 @@ and stylish. These are the typography and layout rules that achieve that.
 - **Type E — Closing** (light): executive summary + next module invitation
 
 ### Mobile PDF reading
+
 PDFs will be read on phones often. Ensure:
+
 - Each page fits on phone screen without horizontal scrolling
 - Body text remains readable at phone zoom level (11pt at native size)
 - Cover page works as a thumbnail (recognizable at small size)
@@ -382,11 +396,13 @@ increases complexity disproportionately for the launch goal of validating
 the basic flow.
 
 **MVP launch:**
+
 - LOVE = Solo only ($2.99 add-on)
 - Analyzes the buyer's own attraction pattern, intimacy mechanics, repeat patterns
 - Single intake — no partner data needed
 
 **Phase 2 (after first ~100 CORE Reports sold):**
+
 - Add LOVE · TANDEM as separate add-on ($4.99)
 - Analyzes the buyer + a specific named partner — synastry, polarity, conflict loops
 - Requires additional intake step for partner's birth data
@@ -424,6 +440,7 @@ You + a specific partner. Requires partner's birth data.
 ```
 
 When TANDEM is clicked, an inline partner intake appears with:
+
 - Partner first name
 - Partner date of birth
 - Partner birth time (optional)
@@ -454,18 +471,18 @@ This will be added to the AI system prompt in Phase 2.
 
 ---
 
-
-
 Before connecting `app.darrowcode.com` and switching Stripe to live mode,
 verify all of these:
 
 ### Assets ready
+
 - [ ] Symbol PNG (1024×1024) provided to Lovable
 - [ ] Favicon (128×128 + .ico) provided
 - [ ] Social preview (1200×630) created
 - [ ] Sample report images (3 pages) prepared
 
 ### API connections live
+
 - [ ] Astrology API account created and key in env vars
 - [ ] Anthropic API key in env vars (`ANTHROPIC_API_KEY`)
 - [ ] Stripe account verified, test + live keys in env
@@ -473,12 +490,14 @@ verify all of these:
 - [ ] Resend account + key for email delivery
 
 ### Configuration set
+
 - [ ] `ANTHROPIC_MODEL_DEFAULT = claude-opus-4-7`
 - [ ] `ANTHROPIC_MODEL_FALLBACK = claude-sonnet-4-6`
 - [ ] Prompt caching enabled in Edge Function
 - [ ] All required env vars present (see Lovable prompt)
 
 ### Functional tests passed
+
 - [ ] Form validation works (try blank fields, invalid email)
 - [ ] Stripe test mode checkout completes
 - [ ] Webhook fires after payment → order created in DB
@@ -492,6 +511,7 @@ verify all of these:
 - [ ] Mobile responsive tested on iPhone Safari + Android Chrome
 
 ### Brand/voice quality check
+
 - [ ] Generated reports use canonical fonts (Cormorant SC, Garamond, Inter)
 - [ ] Generated reports use canonical colors only
 - [ ] AI output passes Dinner Table Test
@@ -500,6 +520,7 @@ verify all of these:
 - [ ] Reader feels RELIEF, not guilt (subjective test with 3+ readers)
 
 ### Legal
+
 - [ ] Disclaimer present on landing page
 - [ ] Disclaimer on every PDF (page 2)
 - [ ] Privacy policy page exists (basic)
@@ -512,22 +533,26 @@ verify all of these:
 Track these in Supabase queries / Stripe dashboard:
 
 **Volume metrics:**
+
 - Daily CORE Report purchases
 - CORE → add-on conversion rate
 - CORE → FULL CODE upgrade rate
 
 **Quality metrics:**
+
 - Generation success rate (vs failures)
 - Average generation time (target <90 sec, alert at >180 sec)
 - Email delivery success rate
 
 **Cost metrics:**
+
 - AI cost per report (monitor closely; expected to remain acceptable at launch volume with caching enabled)
 - Astrology API cost per report
 - PDF generation cost per report
 - Total cost per CORE report (target <$0.20)
 
 **Customer signals:**
+
 - Refund requests (target <2%)
 - Support tickets re: report quality
 - Repeat purchases (FULL CODE after CORE+modules)
@@ -538,11 +563,11 @@ If any quality metric drops, audit AI output for voice drift before scaling.
 
 ## CONTACT POINTS — WHO PROVIDES WHAT
 
-| Item | Who provides | When |
-|---|---|---|
-| Brand symbol files | You (Dmitry) | Before Lovable build starts |
-| Favicon, social preview | You (or designer) | Before Lovable build starts |
-| Sample report images | You (from existing manual reports) | Before /sample page goes live |
-| API keys (Stripe, Anthropic, Astrology, PDFShift, Resend) | You — create accounts | Before testing |
-| DNS CNAME record | You — via Namecheap | After Lovable testing succeeds |
-| Sample customer feedback | Real first 5-10 customers | First month |
+| Item                                                      | Who provides                       | When                           |
+| --------------------------------------------------------- | ---------------------------------- | ------------------------------ |
+| Brand symbol files                                        | You (Dmitry)                       | Before Lovable build starts    |
+| Favicon, social preview                                   | You (or designer)                  | Before Lovable build starts    |
+| Sample report images                                      | You (from existing manual reports) | Before /sample page goes live  |
+| API keys (Stripe, Anthropic, Astrology, PDFShift, Resend) | You — create accounts              | Before testing                 |
+| DNS CNAME record                                          | You — via Namecheap                | After Lovable testing succeeds |
+| Sample customer feedback                                  | Real first 5-10 customers          | First month                    |

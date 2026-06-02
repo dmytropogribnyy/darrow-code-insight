@@ -63,7 +63,9 @@ function GeneratingPage() {
         if (res.generation_status === "failed_generation" || res.job_status === "failed") {
           setFailed(true);
           setStatus("We hit a delay preparing your report.");
-          setDetail("No action or second payment is needed — we’ve saved your order and will email you when it’s ready.");
+          setDetail(
+            "No action or second payment is needed — we’ve saved your order and will email you when it’s ready.",
+          );
         }
       } catch {
         // ignore — keep polling
@@ -123,9 +125,7 @@ function GeneratingPage() {
         <p className="mt-4 text-[15px] sm:text-[17px] text-light-grey/90">
           Building your private Darrow Code report
         </p>
-        <p className="mt-2 text-[14px] sm:text-[15px] text-muted-grey">
-          {detail}
-        </p>
+        <p className="mt-2 text-[14px] sm:text-[15px] text-muted-grey">{detail}</p>
         <p
           className="mt-7 text-[14px] sm:text-[15px] text-muted-grey/85 italic"
           style={{

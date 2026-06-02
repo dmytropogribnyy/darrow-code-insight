@@ -41,7 +41,11 @@ export async function sendEmail(args: SendEmailArgs): Promise<{ id?: string }> {
 }
 
 function escape(s: string): string {
-  return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+  return s
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
 }
 
 export function reportReadyEmail(args: {
@@ -97,10 +101,10 @@ export function reportReadyEmail(args: {
   };
 }
 
-export function reportDelayEmail(args: {
-  first_name: string | null;
-  assets_base_url?: string;
-}): { subject: string; html: string } {
+export function reportDelayEmail(args: { first_name: string | null; assets_base_url?: string }): {
+  subject: string;
+  html: string;
+} {
   const name = args.first_name ?? "";
   const greeting = name ? `Hi ${escape(name)},` : "Hi,";
   return {

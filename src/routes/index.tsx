@@ -9,7 +9,6 @@ import { MODULE_CODES, type ModuleCode } from "@/lib/modules";
 
 type Selectable = "CORE" | ModuleCode;
 
-
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
@@ -131,7 +130,8 @@ function LandingPage() {
 
           {/* Explainer */}
           <p className="mt-6 sm:mt-7 text-[16px] sm:text-[17px] md:text-[18px] text-muted-grey max-w-[640px] mx-auto leading-[1.6] font-sans">
-            Get a premium private astrology report built from your birth data — revealing your personal pattern: how you think, react, choose and move through change.
+            Get a premium private astrology report built from your birth data — revealing your
+            personal pattern: how you think, react, choose and move through change.
           </p>
 
           {/* Quote box */}
@@ -185,9 +185,7 @@ function LandingPage() {
                   >
                     {m}
                   </button>
-                  {i < 5 && (
-                    <span className="text-[#6B6B6B] text-[12px]">·</span>
-                  )}
+                  {i < 5 && <span className="text-[#6B6B6B] text-[12px]">·</span>}
                 </span>
               ))}
             </div>
@@ -233,7 +231,10 @@ function LandingPage() {
       {/* INTAKE — paper section */}
       <section className="flex-1">
         <div className="max-w-[480px] mx-auto px-4 sm:px-6 pt-6 sm:pt-8 pb-4 sm:pb-5">
-          <p className="text-center font-medium text-[13px] sm:text-[14px] mb-5" style={{ color: "#4A402D" }}>
+          <p
+            className="text-center font-medium text-[13px] sm:text-[14px] mb-5"
+            style={{ color: "#4A402D" }}
+          >
             Enter your birth data — checkout and your private report come next.
           </p>
           <div className="relative">

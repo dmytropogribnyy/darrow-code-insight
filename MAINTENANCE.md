@@ -90,13 +90,13 @@ Emails go to `ADMIN_NOTIFICATION_EMAIL`. Throttled at 1 email per kind per
 
 Conditions:
 
-| Kind                | Trigger                                                  |
-|---------------------|----------------------------------------------------------|
-| `paid_no_job_3m`    | Paid order >3 min with no `generation_jobs` row.         |
-| `queued_5m`         | Any job in `queued` status with `updated_at` >5 min ago. |
-| `processing_10m`    | Any job in `processing` status with `updated_at` >10 min ago. |
+| Kind                | Trigger                                                          |
+| ------------------- | ---------------------------------------------------------------- |
+| `paid_no_job_3m`    | Paid order >3 min with no `generation_jobs` row.                 |
+| `queued_5m`         | Any job in `queued` status with `updated_at` >5 min ago.         |
+| `processing_10m`    | Any job in `processing` status with `updated_at` >10 min ago.    |
 | `failed_generation` | Any `reports.generation_status='failed_generation'` in last 24h. |
-| `sweeper_stale_15m` | Sweeper hasn't logged a successful cron run in 15 min.   |
+| `sweeper_stale_15m` | Sweeper hasn't logged a successful cron run in 15 min.           |
 
 Reset throttle for one kind: `DELETE FROM admin_alerts WHERE kind = '…'`.
 
@@ -172,6 +172,7 @@ Key stages: `webhook_received`, `job_enqueued`, `worker_claimed`,
 `result: success|retry|failed` and `duration_ms`.
 
 Also useful:
+
 - `[dispatcher]` — sweeper picking jobs.
 - `[pipeline]` — legacy pipeline progress logs (kept alongside structured logs).
 - `[webhook]` — Stripe webhook handler.
@@ -196,4 +197,3 @@ Run through this list before every publish. Do not skip steps — the order matt
    - `processing_older_than_10m`
 6. **`failed_generation_24h`**: may legitimately be `1` if a prior force-failed test order is still inside the 24h window. Cross-check the offending `order_id` against the known historical force-fail test record. **If it's a new failure**, stop and investigate before proceeding to live mode.
 7. **Stripe mode**: do NOT switch Stripe to Live Mode until the post-publish Test Mode smoke (3 scenarios — CORE, CORE+chapter, returning-customer add-on) all pass cleanly with zero alerts.
-

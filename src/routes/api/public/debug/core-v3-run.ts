@@ -35,7 +35,10 @@ function admin(): any {
 
 function snippet(s: string | undefined | null, sentences = 4): string {
   if (!s) return "";
-  const parts = String(s).trim().split(/(?<=[.!?])\s+/).slice(0, sentences);
+  const parts = String(s)
+    .trim()
+    .split(/(?<=[.!?])\s+/)
+    .slice(0, sentences);
   return parts.join(" ").slice(0, 1200);
 }
 
@@ -45,7 +48,9 @@ async function runDiagnostic(intake_id: string, mode: "sequential" | "parallel" 
 
   const { data: intake, error: intakeErr } = await sb
     .from("intakes")
-    .select("id, customer_id, date_of_birth, birth_time, birth_time_known, birth_city, latitude, longitude, timezone, full_name_for_numerology, bazi_sex")
+    .select(
+      "id, customer_id, date_of_birth, birth_time, birth_time_known, birth_city, latitude, longitude, timezone, full_name_for_numerology, bazi_sex",
+    )
     .eq("id", intake_id)
     .maybeSingle();
   if (intakeErr || !intake) throw new Error(`intake ${intake_id} not found`);
@@ -114,12 +119,7 @@ async function runDiagnostic(intake_id: string, mode: "sequential" | "parallel" 
           : "OK";
 
   // Provider-interpretation leak check (basic substring scan in CORE body)
-  const leakProbes = [
-    "interpretation provided by",
-    "horoscope.com",
-    "astro-seek",
-    "provider says",
-  ];
+  const leakProbes = ["interpretation provided by", "horoscope.com", "astro-seek", "provider says"];
   const coreText = Object.values(core)
     .map((v) => getCoreSectionProse(v) || (typeof v === "string" ? v : ""))
     .join("\n")
@@ -150,15 +150,23 @@ async function runDiagnostic(intake_id: string, mode: "sequential" | "parallel" 
       // without burning Claude calls.
       const jsonPath = `diagnostic/core-v3-${ts}.json`;
       const jsonBytes = new TextEncoder().encode(JSON.stringify(ai.report, null, 2));
-      const jsonUp = await sb.storage.from("reports").upload(jsonPath, jsonBytes, { contentType: "application/json", upsert: true });
+      const jsonUp = await sb.storage
+        .from("reports")
+        .upload(jsonPath, jsonBytes, { contentType: "application/json", upsert: true });
       if (!jsonUp.error) json_storage_path = jsonPath;
 
       const html = renderReportHtmlSafe(ai.report as any, {});
-      const pdf = await renderHtmlToPdf(html, { order_id: "diagnostic", report_id: "diagnostic", modules: ["CORE"] });
+      const pdf = await renderHtmlToPdf(html, {
+        order_id: "diagnostic",
+        report_id: "diagnostic",
+        modules: ["CORE"],
+      });
       pdf_bytes_len = pdf.byteLength;
       pdf_status = "ok";
       const path = `diagnostic/core-v3-${ts}.pdf`;
-      const up = await sb.storage.from("reports").upload(path, pdf, { contentType: "application/pdf", upsert: true });
+      const up = await sb.storage
+        .from("reports")
+        .upload(path, pdf, { contentType: "application/pdf", upsert: true });
       if (up.error) throw new Error(`pdf upload failed: ${up.error.message}`);
       pdf_storage_path = path;
       const signed = await sb.storage.from("reports").createSignedUrl(path, 3600);
@@ -194,7 +202,8 @@ async function runDiagnostic(intake_id: string, mode: "sequential" | "parallel" 
     schema_version: core?.schema_version ?? null,
     structural_issues,
     structural_ok: structural_issues.length === 0,
-    sections_present_count: CORE_V3_KEYS.filter((k) => getCoreSectionProse(core?.[k]).length > 0).length,
+    sections_present_count: CORE_V3_KEYS.filter((k) => getCoreSectionProse(core?.[k]).length > 0)
+      .length,
     expected_section_count: CORE_V3_KEYS.length,
     sections_per_target: per_section,
     warnings_under_target,
@@ -250,10 +259,16 @@ async function runRenderOnly(): Promise<any> {
   const report = JSON.parse(text);
 
   const html = renderReportHtmlSafe(report, {});
-  const pdf = await renderHtmlToPdf(html, { order_id: "render_only", report_id: "render_only", modules: ["CORE"] });
+  const pdf = await renderHtmlToPdf(html, {
+    order_id: "render_only",
+    report_id: "render_only",
+    modules: ["CORE"],
+  });
   const ts = new Date().toISOString().replace(/[:.]/g, "-");
   const outPath = `diagnostic/render-only-${ts}.pdf`;
-  const up = await sb.storage.from("reports").upload(outPath, pdf, { contentType: "application/pdf", upsert: true });
+  const up = await sb.storage
+    .from("reports")
+    .upload(outPath, pdf, { contentType: "application/pdf", upsert: true });
   if (up.error) throw new Error(`upload failed: ${up.error.message}`);
   const signed = await sb.storage.from("reports").createSignedUrl(outPath, 3600);
   return {
@@ -280,13 +295,16 @@ export const Route = createFileRoute("/api/public/debug/core-v3-run")({
   server: {
     handlers: {
       POST: async ({ request }) => {
-        if (!process.env.JOB_DISPATCH_SECRET) return new Response("not configured", { status: 500 });
+        if (!process.env.JOB_DISPATCH_SECRET)
+          return new Response("not configured", { status: 500 });
         const auth = checkWorkerAuth(request.headers);
         if (!auth.ok) return unauthorizedResponse(auth);
         let body: any = {};
         try {
           body = await request.json();
-        } catch {}
+        } catch {
+          // ignore: request body may be absent or non-JSON
+        }
         // Render-only mode: reuse latest cached diagnostic JSON, re-render
         // PDF only. No Claude, no FreeAstroAPI, no paid mutations.
         if (body?.mode === "render_only") {
@@ -295,20 +313,30 @@ export const Route = createFileRoute("/api/public/debug/core-v3-run")({
             return Response.json(result);
           } catch (e: any) {
             return Response.json(
-              { ok: false, build_marker: BUILD_MARKER, mode: "render_only", error: String(e?.message ?? e).slice(0, 1000) },
+              {
+                ok: false,
+                build_marker: BUILD_MARKER,
+                mode: "render_only",
+                error: String(e?.message ?? e).slice(0, 1000),
+              },
               { status: 500 },
             );
           }
         }
         const intake_id = typeof body?.intake_id === "string" ? body.intake_id : null;
-        if (!intake_id) return Response.json({ ok: false, error: "intake_id required" }, { status: 400 });
+        if (!intake_id)
+          return Response.json({ ok: false, error: "intake_id required" }, { status: 400 });
         const requestedMode = body?.mode === "parallel" ? "parallel" : "sequential";
         try {
           const result = await runDiagnostic(intake_id, requestedMode);
           return Response.json({ ok: true, build_marker: BUILD_MARKER, result });
         } catch (e: any) {
           return Response.json(
-            { ok: false, build_marker: BUILD_MARKER, error: String(e?.message ?? e).slice(0, 1000) },
+            {
+              ok: false,
+              build_marker: BUILD_MARKER,
+              error: String(e?.message ?? e).slice(0, 1000),
+            },
             { status: 500 },
           );
         }

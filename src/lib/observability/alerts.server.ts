@@ -23,7 +23,11 @@ function sb(): any {
 
 async function shouldSend(kind: AlertKind): Promise<boolean> {
   const s = sb();
-  const { data } = await s.from("admin_alerts").select("last_sent_at").eq("kind", kind).maybeSingle();
+  const { data } = await s
+    .from("admin_alerts")
+    .select("last_sent_at")
+    .eq("kind", kind)
+    .maybeSingle();
   if (!data) return true;
   const last = Date.parse(data.last_sent_at);
   if (!Number.isFinite(last)) return true;
@@ -67,7 +71,11 @@ export async function checkAlertConditions(): Promise<void> {
     .limit(20);
   const orphans: any[] = [];
   for (const o of orphanOrders ?? []) {
-    const { data: j } = await s.from("generation_jobs").select("id").eq("order_id", o.id).maybeSingle();
+    const { data: j } = await s
+      .from("generation_jobs")
+      .select("id")
+      .eq("order_id", o.id)
+      .maybeSingle();
     if (!j) orphans.push(o);
   }
   if (orphans.length > 0) {
@@ -90,7 +98,11 @@ export async function checkAlertConditions(): Promise<void> {
     await emit(
       "queued_5m",
       `${queuedOld!.length} generation job(s) queued >5 min`,
-      queuedOld!.map((j: any) => `- order=${j.order_id}  attempts=${j.attempt_count}  updated=${j.updated_at}`).join("\n"),
+      queuedOld!
+        .map(
+          (j: any) => `- order=${j.order_id}  attempts=${j.attempt_count}  updated=${j.updated_at}`,
+        )
+        .join("\n"),
     );
   }
 
@@ -107,7 +119,10 @@ export async function checkAlertConditions(): Promise<void> {
       "processing_10m",
       `${procOld!.length} generation job(s) stuck processing >10 min`,
       procOld!
-        .map((j: any) => `- order=${j.order_id}  attempts=${j.attempt_count}  updated=${j.updated_at}\n  last_error=${j.last_error ?? "(none)"}`)
+        .map(
+          (j: any) =>
+            `- order=${j.order_id}  attempts=${j.attempt_count}  updated=${j.updated_at}\n  last_error=${j.last_error ?? "(none)"}`,
+        )
         .join("\n\n"),
     );
   }
@@ -133,7 +148,12 @@ export async function checkAlertConditions(): Promise<void> {
     await emit(
       "failed_generation",
       `${failed!.length} new report(s) marked failed_generation since ${sinceIso}`,
-      failed!.map((r: any) => `- report=${r.id}  intake=${r.intake_id}  at=${r.created_at}\n  error=${r.generation_error ?? "(none)"}`).join("\n\n"),
+      failed!
+        .map(
+          (r: any) =>
+            `- report=${r.id}  intake=${r.intake_id}  at=${r.created_at}\n  error=${r.generation_error ?? "(none)"}`,
+        )
+        .join("\n\n"),
     );
   }
 

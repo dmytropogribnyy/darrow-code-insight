@@ -12,15 +12,15 @@ Source check date: 2026-05-17.
 
 ## Endpoints
 
-| Purpose | Method | Path | Tier |
-|---|---|---|---|
-| City search / geocoding (NOT used — Geoapify kept) | GET | `/api/v2/geo/search?q=...&limit=10` | n/a |
-| Western natal | POST | `/api/v1/natal/calculate` | CRITICAL |
-| Western transits | POST | `/api/v1/transits/calculate` | GRACEFUL |
-| Chinese BaZi (Four Pillars) | POST | `/api/v1/chinese/bazi` | GRACEFUL |
-| Western Solar Return | POST | `/api/v1/western/solar/calculate` | GRACEFUL |
-| Moon Phase | GET  | `/api/v1/moon/phase` | GRACEFUL (enrichment) |
-| BaZi Flow | POST | `/api/v1/chinese/bazi/flow` | GRACEFUL (enrichment) |
+| Purpose                                            | Method | Path                                | Tier                  |
+| -------------------------------------------------- | ------ | ----------------------------------- | --------------------- |
+| City search / geocoding (NOT used — Geoapify kept) | GET    | `/api/v2/geo/search?q=...&limit=10` | n/a                   |
+| Western natal                                      | POST   | `/api/v1/natal/calculate`           | CRITICAL              |
+| Western transits                                   | POST   | `/api/v1/transits/calculate`        | GRACEFUL              |
+| Chinese BaZi (Four Pillars)                        | POST   | `/api/v1/chinese/bazi`              | GRACEFUL              |
+| Western Solar Return                               | POST   | `/api/v1/western/solar/calculate`   | GRACEFUL              |
+| Moon Phase                                         | GET    | `/api/v1/moon/phase`                | GRACEFUL (enrichment) |
+| BaZi Flow                                          | POST   | `/api/v1/chinese/bazi/flow`         | GRACEFUL (enrichment) |
 
 **Do NOT use** the deprecated `/api/v1/solar-return/calculate` path.
 **Do NOT use** Moon Phase Timeline (`/api/v1/moon/month`) in MVP.
@@ -92,6 +92,7 @@ any field is written to `normalized_json`.
 `GET /api/v1/moon/phase`
 
 **Use for:**
+
 - YEAR module — small timing tone, never overriding slow transits or Solar Return
 - BODY module — soft emotional rhythm nuance
 - STYLE module — symbolic visual tone
@@ -100,6 +101,7 @@ any field is written to `normalized_json`.
 **Location fallback:** birth lat / lon / timezone (no current-location intake change).
 
 **Query flags (required):**
+
 - `include_zodiac=true`
 - `include_special=true`
 - `include_eclipse=true`
@@ -124,9 +126,11 @@ On failure: `moon_phase = { available: false, reason }`. Generation continues.
 `POST /api/v1/chinese/bazi/flow`
 
 **Use for:**
+
 - YEAR module — annual/monthly timing layer
 
 **Request:**
+
 - Same birth data as BaZi (year/month/day/hour/minute/city/lat/lng/sex)
 - `target_year = currentYear`
 - `target_year_end = currentYear` (single year only — no multi-year ranges)
@@ -145,15 +149,15 @@ Generation continues.
 
 ## Module usage routing (where each layer belongs)
 
-| Module | Primary signals | Enrichment that may converge |
-|---|---|---|
-| CORE  | Natal + BaZi pillars + Life Path + Birth Day + Day Master | Expression/Soul Urge/Personality if `full_name_for_numerology` exists AND converges |
-| LOVE  | Venus, Mars, Moon, 5H, 7H, Descendant | Name numerology only if it reinforces the relationship pattern. No synastry in MVP. |
-| MONEY | 2H, 6H, 8H, 10H, Jupiter, Saturn, Venus, Pluto | Life Path / Expression / Maturity; BaZi favorable elements + structure |
-| BODY  | Moon, Mars, Saturn, 6H | BaZi element imbalance; Moon Phase as soft rhythm note. **No medical claims.** |
-| YEAR  | Slow transits + Solar Return + Personal Year | BaZi Flow as annual/monthly layer; Moon Phase as small texture. Daily moon must NOT overpower slow transits or SR. |
-| STYLE | Venus, Ascendant, Moon | BaZi element balance; Expression/Soul Urge as aesthetic nuance; Moon Phase as symbolic visual tone. Visual-resonance language only. **No healing/luck/protection/attraction claims.** |
-| PLACE | Moon, IC, 4H, angular planets | BaZi favorable elements. Astrocartography NOT in MVP — never name specific cities without real ACG line data. |
+| Module | Primary signals                                           | Enrichment that may converge                                                                                                                                                          |
+| ------ | --------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| CORE   | Natal + BaZi pillars + Life Path + Birth Day + Day Master | Expression/Soul Urge/Personality if `full_name_for_numerology` exists AND converges                                                                                                   |
+| LOVE   | Venus, Mars, Moon, 5H, 7H, Descendant                     | Name numerology only if it reinforces the relationship pattern. No synastry in MVP.                                                                                                   |
+| MONEY  | 2H, 6H, 8H, 10H, Jupiter, Saturn, Venus, Pluto            | Life Path / Expression / Maturity; BaZi favorable elements + structure                                                                                                                |
+| BODY   | Moon, Mars, Saturn, 6H                                    | BaZi element imbalance; Moon Phase as soft rhythm note. **No medical claims.**                                                                                                        |
+| YEAR   | Slow transits + Solar Return + Personal Year              | BaZi Flow as annual/monthly layer; Moon Phase as small texture. Daily moon must NOT overpower slow transits or SR.                                                                    |
+| STYLE  | Venus, Ascendant, Moon                                    | BaZi element balance; Expression/Soul Urge as aesthetic nuance; Moon Phase as symbolic visual tone. Visual-resonance language only. **No healing/luck/protection/attraction claims.** |
+| PLACE  | Moon, IC, 4H, angular planets                             | BaZi favorable elements. Astrocartography NOT in MVP — never name specific cities without real ACG line data.                                                                         |
 
 ## Human-readable output guardrail
 
@@ -173,14 +177,14 @@ medical claims, legal claims, financial guarantees.
 
 ## Error handling matrix
 
-| Endpoint | Failure handling |
-|---|---|
-| Natal | Abort generation, mark `failed_generation`. |
-| Transits | `available=false`, YEAR module weakened. |
-| BaZi | `available=false`, no BaZi claims allowed. |
-| Solar Return | `available=false`, YEAR falls back to transits + personal year. |
-| Moon Phase | `available=false`, YEAR/BODY/STYLE skip the moon nuance layer. |
-| BaZi Flow | `available=false`, YEAR skips annual BaZi timing layer. |
+| Endpoint                | Failure handling                                                        |
+| ----------------------- | ----------------------------------------------------------------------- |
+| Natal                   | Abort generation, mark `failed_generation`.                             |
+| Transits                | `available=false`, YEAR module weakened.                                |
+| BaZi                    | `available=false`, no BaZi claims allowed.                              |
+| Solar Return            | `available=false`, YEAR falls back to transits + personal year.         |
+| Moon Phase              | `available=false`, YEAR/BODY/STYLE skip the moon nuance layer.          |
+| BaZi Flow               | `available=false`, YEAR skips annual BaZi timing layer.                 |
 | `429 Too Many Requests` | Honour `Retry-After` (≤6s) else 1.5s backoff, cap 1 retry per endpoint. |
 
 ## Verification checklist

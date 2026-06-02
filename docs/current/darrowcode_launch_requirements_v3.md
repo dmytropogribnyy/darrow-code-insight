@@ -1,5 +1,7 @@
 # Darrow Code — Launch Requirements v3
+
 # docs/current/darrowcode_launch_requirements_v3.md
+
 # Replaces: darrowcode_launch_requirements.md (archived)
 
 ---
@@ -8,51 +10,54 @@
 
 ### A. Brand Symbol
 
-| File | Size | Format | Where used |
-|---|---|---|---|
-| `darrow-symbol-gold.png` | 1024×1024 | PNG transparent | PDF covers, generating animation, watermarks |
-| `darrow-symbol-small.png` | 256×256 | PNG transparent | Result screen mark, small embeds |
-| `darrow-favicon.png` | 128×128 | PNG | Browser favicon |
-| `darrow-favicon.ico` | 32×32 (multi-size) | ICO | Browser favicon (legacy) |
+| File                      | Size               | Format          | Where used                                   |
+| ------------------------- | ------------------ | --------------- | -------------------------------------------- |
+| `darrow-symbol-gold.png`  | 1024×1024          | PNG transparent | PDF covers, generating animation, watermarks |
+| `darrow-symbol-small.png` | 256×256            | PNG transparent | Result screen mark, small embeds             |
+| `darrow-favicon.png`      | 128×128            | PNG             | Browser favicon                              |
+| `darrow-favicon.ico`      | 32×32 (multi-size) | ICO             | Browser favicon (legacy)                     |
 
 **Color spec:** `#D4AF37` Luxury Gold on transparent background.
 
 ### B. Social Preview Image
 
-| File | Size | Format | Content |
-|---|---|---|---|
-| `darrow-social-preview.png` | 1200×630 | PNG | Symbol + "DARROW CODE" + tagline on #0A0F1E |
+| File                        | Size     | Format | Content                                     |
+| --------------------------- | -------- | ------ | ------------------------------------------- |
+| `darrow-social-preview.png` | 1200×630 | PNG    | Symbol + "DARROW CODE" + tagline on #0A0F1E |
 
 ### C. Sample Report PDF Pages (/sample trust page)
 
 Three watermarked sample pages from a real UNVEIL report:
 
-| File | Format | Content |
-|---|---|---|
-| `sample-cover.jpg` | JPG 72dpi, 800×1131px | Cover page |
+| File                  | Format                | Content                                   |
+| --------------------- | --------------------- | ----------------------------------------- |
+| `sample-cover.jpg`    | JPG 72dpi, 800×1131px | Cover page                                |
 | `sample-interior.jpg` | JPG 72dpi, 800×1131px | Interior section (e.g. Core Architecture) |
-| `sample-closing.jpg` | JPG 72dpi, 800×1131px | Executive Summary / closing page |
+| `sample-closing.jpg`  | JPG 72dpi, 800×1131px | Executive Summary / closing page          |
 
 Use anonymized birth data or "SAMPLE" watermark.
 
 ### D. Email Header (optional)
 
-| File | Size | Format |
-|---|---|---|
-| `email-header.png` | 600×200 | PNG |
+| File               | Size    | Format |
+| ------------------ | ------- | ------ |
+| `email-header.png` | 600×200 | PNG    |
 
 ---
 
 ## PART 2 — ASSET DELIVERY PHASES
 
 **Phase 1 — Before first Lovable build:**
+
 - `darrow-symbol-gold.png`, `darrow-favicon.png`, `darrow-social-preview.png`
 
 **Phase 2 — Before PDF template build:**
+
 - `darrow-symbol-gold.png` (high-res for covers)
 - `darrow-symbol-small.png` (for watermarks)
 
 **Phase 3 — Before public launch:**
+
 - `sample-cover.jpg`, `sample-interior.jpg`, `sample-closing.jpg`
 - `email-header.png`
 
@@ -62,26 +67,26 @@ Use anonymized birth data or "SAMPLE" watermark.
 
 ### LAYER 1 — Personal data (from intake form)
 
-| Field | Status |
-|---|---|
-| First name | ✅ Active |
-| Email | ✅ Active |
-| Date of birth | ✅ Active |
-| Birth time | ✅ Active (optional, stored as birth_time_known boolean) |
-| City of birth | ✅ Active (geocoded before checkout) |
-| Full name for numerology | ✅ Active (optional) |
-| Birth sex for Bazi | ✅ Active (M/F, required for FreeAstroAPI Bazi endpoint) |
+| Field                    | Status                                                   |
+| ------------------------ | -------------------------------------------------------- |
+| First name               | ✅ Active                                                |
+| Email                    | ✅ Active                                                |
+| Date of birth            | ✅ Active                                                |
+| Birth time               | ✅ Active (optional, stored as birth_time_known boolean) |
+| City of birth            | ✅ Active (geocoded before checkout)                     |
+| Full name for numerology | ✅ Active (optional)                                     |
+| Birth sex for Bazi       | ✅ Active (M/F, required for FreeAstroAPI Bazi endpoint) |
 
 ### LAYER 2 — Astrological data (CURRENT PROVIDER)
 
 **FreeAstroAPI — ACTIVE PRODUCTION PROVIDER**
 
-| Endpoint | Status |
-|---|---|
-| GET /api/v2/geo/search | ✅ City search / geocoding |
-| POST /api/v1/natal/calculate | ✅ Western natal chart |
-| POST /api/v1/transits/calculate | ✅ Current transits |
-| POST /api/v1/chinese/bazi | ✅ Bazi Four Pillars |
+| Endpoint                             | Status                                |
+| ------------------------------------ | ------------------------------------- |
+| GET /api/v2/geo/search               | ✅ City search / geocoding            |
+| POST /api/v1/natal/calculate         | ✅ Western natal chart                |
+| POST /api/v1/transits/calculate      | ✅ Current transits                   |
+| POST /api/v1/chinese/bazi            | ✅ Bazi Four Pillars                  |
 | POST /api/v1/western/solar/calculate | ✅ Solar Return (birth time required) |
 
 **Numerology:** Calculated internally in Edge Function — no API needed.
@@ -101,13 +106,14 @@ Active specs: `src/lib/ai/darrowcode_core_module_spec.md` and `darrowcode_addon_
 
 ## PART 4 — CONTENT TARGETS (v3 — CURRENT)
 
-| Module | Pages | Words | Sections |
-|---|---|---|---|
-| CORE | 18–20 | 3,000–3,600 | 17 |
-| Each add-on | 8–10 | 1,200–1,500 | 10 |
+| Module                    | Pages | Words         | Sections              |
+| ------------------------- | ----- | ------------- | --------------------- |
+| CORE                      | 18–20 | 3,000–3,600   | 17                    |
+| Each add-on               | 8–10  | 1,200–1,500   | 10                    |
 | Full Code / CORE Complete | 65–75 | 12,000–14,000 | all + grand_synthesis |
 
 **Old targets (deprecated, must not appear in active files):**
+
 - ~~CORE 12–14 pages / 900–1,160 words~~
 - ~~Add-ons 6–8 pages / 480–690 words~~
 - ~~Full Code ~50 pages~~
@@ -119,6 +125,7 @@ Active specs: `src/lib/ai/darrowcode_core_module_spec.md` and `darrowcode_addon_
 **Provider:** APITemplate — active production renderer.
 
 **APITemplate safe renderer rules (proven in production):**
+
 - ✅ Inline CSS only — no external stylesheet links
 - ✅ No base64-encoded images (use hosted URLs for symbol/watermark)
 - ✅ No external font loading inside PDF template (fonts embedded or system-safe)
@@ -128,6 +135,7 @@ Active specs: `src/lib/ai/darrowcode_core_module_spec.md` and `darrowcode_addon_
 - ✅ Gold (#D4AF37) headings and accents only
 
 **PDF template mapping:**
+
 - `src/lib/pdf/template.ts` maps v3 JSON section keys to PDF pages
 - v3 section keys (cover_tagline, orientation, core_architecture, etc.) are the active keys
 - Legacy keys (modules.CORE.opening, etc.) must not be used in v3 template
@@ -202,6 +210,7 @@ Inter                 all body, UI, forms, checkout         →  #151922 / #E5E7
 ```
 
 Google Fonts import:
+
 ```
 https://fonts.googleapis.com/css2?family=Cormorant+SC:wght@400;500&family=Cormorant+Garamond:wght@400;500;600&family=Inter:wght@400;500;600&display=swap
 ```

@@ -32,7 +32,10 @@ export async function getAstroProvider(): Promise<AstroProvider> {
   }
 
   if (kind === "mock") {
-    if (process.env.NODE_ENV === "production" && process.env.ALLOW_MOCK_ASTRO_IN_PRODUCTION !== "true") {
+    if (
+      process.env.NODE_ENV === "production" &&
+      process.env.ALLOW_MOCK_ASTRO_IN_PRODUCTION !== "true"
+    ) {
       throw new Error(
         "Mock astro provider is disabled in production. Set ASTRO_PROVIDER=freeastroapi or ALLOW_MOCK_ASTRO_IN_PRODUCTION=true to override.",
       );

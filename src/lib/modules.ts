@@ -68,10 +68,7 @@ export interface PriceQuote {
  *  - CORE + N chapters (1..5) → CORE SKU + chapter line(s) at bundle ladder
  *    (line items: CORE + bundle_modules_N for N≥2, or CORE + single chapter for N=1)
  */
-export function priceForModules(
-  chapters: ModuleCode[],
-  includesCore: boolean,
-): PriceQuote {
+export function priceForModules(chapters: ModuleCode[], includesCore: boolean): PriceQuote {
   const uniqueChapters = Array.from(new Set(chapters)) as ModuleCode[];
   const n = uniqueChapters.length;
 
@@ -112,8 +109,7 @@ export function priceForModules(
   if (includesCore && n >= 1 && n <= 5) {
     const chapterCents = CHAPTER_BUNDLE_CENTS[n];
     const cents = CORE_PRICE_CENTS + chapterCents;
-    const chapterKey =
-      n === 1 ? MODULE_PRICE_ID[uniqueChapters[0]] : CHAPTER_BUNDLE_LOOKUP[n];
+    const chapterKey = n === 1 ? MODULE_PRICE_ID[uniqueChapters[0]] : CHAPTER_BUNDLE_LOOKUP[n];
     return {
       cents,
       separate_cents,

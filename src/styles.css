@@ -4,7 +4,7 @@
 
 @custom-variant dark (&:is(.dark *));
 
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+SC:wght@400;500&family=Cormorant+Garamond:wght@400;500;600&family=Inter:wght@400;500;600&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Cormorant+SC:wght@400;500&family=Cormorant+Garamond:wght@400;500;600&family=Inter:wght@400;500;600&display=swap");
 
 /*
  * Darrow Code design tokens — LOCKED palette.
@@ -48,43 +48,43 @@
   --color-charcoal: var(--charcoal);
   --color-neutral-grey: var(--neutral-grey);
 
-  --font-serif-display: 'Cormorant SC', serif;
-  --font-serif: 'Cormorant Garamond', serif;
-  --font-sans: 'Inter', system-ui, sans-serif;
+  --font-serif-display: "Cormorant SC", serif;
+  --font-serif: "Cormorant Garamond", serif;
+  --font-sans: "Inter", system-ui, sans-serif;
 }
 
 :root {
   --radius: 0.375rem;
 
   /* Canonical palette */
-  --paper: #F6F4EF;
-  --navy: #0A0F1E;
-  --gold: #D4AF37;
-  --light-grey: #E5E7EB;
-  --muted-grey: #9CA3AF;
-  --warm-brown: #4A402D;
+  --paper: #f6f4ef;
+  --navy: #0a0f1e;
+  --gold: #d4af37;
+  --light-grey: #e5e7eb;
+  --muted-grey: #9ca3af;
+  --warm-brown: #4a402d;
   --charcoal: #151922;
-  --neutral-grey: #6B6B6B;
+  --neutral-grey: #6b6b6b;
 
   /* Shadcn semantic mappings (light) */
   --background: var(--paper);
   --foreground: var(--charcoal);
   --card: var(--paper);
   --card-foreground: var(--charcoal);
-  --popover: #FFFFFF;
+  --popover: #ffffff;
   --popover-foreground: var(--charcoal);
   --primary: var(--navy);
   --primary-foreground: var(--paper);
-  --secondary: #ECE8DD;
+  --secondary: #ece8dd;
   --secondary-foreground: var(--charcoal);
-  --muted: #ECE8DD;
+  --muted: #ece8dd;
   --muted-foreground: var(--neutral-grey);
   --accent: var(--gold);
   --accent-foreground: var(--navy);
-  --destructive: #B23A3A;
+  --destructive: #b23a3a;
   --destructive-foreground: var(--paper);
-  --border: #E2DCCB;
-  --input: #E2DCCB;
+  --border: #e2dccb;
+  --input: #e2dccb;
   --ring: var(--gold);
 }
 
@@ -99,73 +99,119 @@
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
   }
-  h1, h2, h3, h4 {
+  h1,
+  h2,
+  h3,
+  h4 {
     font-family: var(--font-serif);
     color: var(--color-warm-brown);
   }
 }
 
 /* Utility helpers used across the app */
-.font-display { font-family: var(--font-serif-display); }
-.font-serif { font-family: var(--font-serif); }
-.tracking-brand { letter-spacing: 0.25em; }
-.tracking-meta { letter-spacing: 0.15em; }
+.font-display {
+  font-family: var(--font-serif-display);
+}
+.font-serif {
+  font-family: var(--font-serif);
+}
+.tracking-brand {
+  letter-spacing: 0.25em;
+}
+.tracking-meta {
+  letter-spacing: 0.15em;
+}
 
-.cta-premium { transition: filter .15s ease, transform .08s ease, background-color .15s ease; }
-.cta-premium:hover:not(:disabled) { background-color: #C9A227 !important; filter: brightness(1.04); }
-.cta-premium:active:not(:disabled) { background-color: #B8941F !important; transform: scale(0.98); }
+.cta-premium {
+  transition:
+    filter 0.15s ease,
+    transform 0.08s ease,
+    background-color 0.15s ease;
+}
+.cta-premium:hover:not(:disabled) {
+  background-color: #c9a227 !important;
+  filter: brightness(1.04);
+}
+.cta-premium:active:not(:disabled) {
+  background-color: #b8941f !important;
+  transform: scale(0.98);
+}
 
 /* Intake form polish */
 .intake-input {
   width: 100%;
-  background-color: #FFFFFF;
-  border: 1px solid #E2DCCB;
+  background-color: #ffffff;
+  border: 1px solid #e2dccb;
   border-radius: 8px;
   padding: 12px 14px;
   font-size: 15px;
   color: #151922;
-  transition: border-color .15s ease, box-shadow .15s ease, background-color .15s ease;
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease,
+    background-color 0.15s ease;
 }
-.intake-input::placeholder { color: #9CA3AF; font-size: 14px; }
-.intake-input:hover { border-color: #D6CDB6; }
+.intake-input::placeholder {
+  color: #9ca3af;
+  font-size: 14px;
+}
+.intake-input:hover {
+  border-color: #d6cdb6;
+}
 .intake-input:focus,
 .intake-input:focus-visible {
   outline: none;
-  border-color: #D4AF37;
-  box-shadow: 0 0 0 3px rgba(212,175,55,0.18);
-  background-color: #FFFFFF;
+  border-color: #d4af37;
+  box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.18);
+  background-color: #ffffff;
 }
-.intake-input[aria-invalid="true"] { border-color: #B23A3A; }
+.intake-input[aria-invalid="true"] {
+  border-color: #b23a3a;
+}
 
 .intake-label {
   display: block;
   font-size: 12px;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: #4A402D;
+  color: #4a402d;
   margin-bottom: 6px;
   font-weight: 500;
 }
 
 .intake-card {
-  background-color: #FFFFFF;
-  border: 1px solid #ECE6D6;
+  background-color: #ffffff;
+  border: 1px solid #ece6d6;
   border-radius: 14px;
   padding: 28px 26px;
-  box-shadow: 0 1px 2px rgba(10,15,30,0.04), 0 12px 32px -16px rgba(10,15,30,0.10);
+  box-shadow:
+    0 1px 2px rgba(10, 15, 30, 0.04),
+    0 12px 32px -16px rgba(10, 15, 30, 0.1);
 }
 @media (max-width: 640px) {
-  .intake-card { padding: 22px 18px; border-radius: 12px; }
+  .intake-card {
+    padding: 22px 18px;
+    border-radius: 12px;
+  }
 }
 
 /* Darrow Code symbol — slow rotation + subtle breathing opacity */
 @keyframes darrow-symbol-rotate {
-  from { transform: rotate(0deg); }
-  to   { transform: rotate(360deg); }
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 @keyframes darrow-symbol-breathe {
-  0%, 100% { opacity: 0.88; }
-  50%      { opacity: 1; }
+  0%,
+  100% {
+    opacity: 0.88;
+  }
+  50% {
+    opacity: 1;
+  }
 }
 .darrow-symbol-ritual {
   transform-origin: center;
@@ -175,19 +221,39 @@
   will-change: transform, opacity;
 }
 @media (prefers-reduced-motion: reduce) {
-  .darrow-symbol-ritual { animation: none; opacity: 1; }
+  .darrow-symbol-ritual {
+    animation: none;
+    opacity: 1;
+  }
 }
 
 /* Chapter card pulse — triggered by hero pill clicks */
 @keyframes chapter-pulse {
-  0%   { box-shadow: 0 0 0 0 rgba(184,134,11,0.55), 0 4px 14px -8px rgba(160,123,31,0.5); border-color: #B8860B; }
-  60%  { box-shadow: 0 0 0 10px rgba(184,134,11,0), 0 4px 18px -6px rgba(160,123,31,0.65); border-color: #B8860B; }
-  100% { box-shadow: 0 0 0 0 rgba(184,134,11,0), 0 4px 14px -8px rgba(160,123,31,0.5); border-color: #B8860B; }
+  0% {
+    box-shadow:
+      0 0 0 0 rgba(184, 134, 11, 0.55),
+      0 4px 14px -8px rgba(160, 123, 31, 0.5);
+    border-color: #b8860b;
+  }
+  60% {
+    box-shadow:
+      0 0 0 10px rgba(184, 134, 11, 0),
+      0 4px 18px -6px rgba(160, 123, 31, 0.65);
+    border-color: #b8860b;
+  }
+  100% {
+    box-shadow:
+      0 0 0 0 rgba(184, 134, 11, 0),
+      0 4px 14px -8px rgba(160, 123, 31, 0.5);
+    border-color: #b8860b;
+  }
 }
 .chapter-pulse {
   animation: chapter-pulse 1.6s ease-out 1;
-  border-color: #B8860B !important;
+  border-color: #b8860b !important;
 }
 @media (prefers-reduced-motion: reduce) {
-  .chapter-pulse { animation: none; }
+  .chapter-pulse {
+    animation: none;
+  }
 }

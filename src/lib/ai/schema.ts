@@ -300,13 +300,7 @@ const legacyModuleProps = {
     proof_tags: { type: "array", items: { type: "string" }, minItems: 1 },
     module_snapshot: {
       type: "object",
-      required: [
-        "main_pattern",
-        "main_strength",
-        "main_risk",
-        "practical_protocol",
-        "next_step",
-      ],
+      required: ["main_pattern", "main_strength", "main_risk", "practical_protocol", "next_step"],
       properties: {
         main_pattern: { type: "string" },
         main_strength: { type: "string" },
@@ -322,13 +316,7 @@ const legacyModuleProps = {
 
 export const darrowReportJsonSchema = {
   type: "object",
-  required: [
-    "client_name",
-    "generated_modules",
-    "client_snapshot",
-    "modules",
-    "closing",
-  ],
+  required: ["client_name", "generated_modules", "client_snapshot", "modules", "closing"],
   properties: {
     client_name: { type: "string" },
     generated_modules: { type: "array", items: { type: "string" }, minItems: 1 },

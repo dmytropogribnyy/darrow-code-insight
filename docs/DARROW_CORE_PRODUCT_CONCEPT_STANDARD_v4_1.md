@@ -1,13 +1,23 @@
 # DARROW CORE — PRODUCT CONCEPT STANDARD v4.1
+
 # Product: CORE Report: UNVEIL
+
 # Method / brand layer: Cosmic Core Code Method
+
 # Status: ACTIVE v4.1 STANDARD (philosophy layer)
+
 # Source of truth: COSMIC_CORE_CODE_concept.docx (CANONICAL · NON-NEGOTIABLE)
+
 # Structure/voice reference: DARROW_CORE_MASTER_PATTERN_v4_1.md
+
 # Governed by: DARROW_DOCS_AUDIT_AND_PLAN_v4_1.md (controlling document)
+
 #
+
 # This file defines WHAT CORE is for the client — emotionally, cognitively,
+
 # and product-wise. It is a product concept standard, not an implementation spec.
+
 # It does not define keys, schema, page maps, or runtime behavior.
 
 ---
@@ -47,6 +57,7 @@ different product layer — not to CORE.
 ## 3 · CORE IS / CORE IS NOT
 
 **CORE IS:**
+
 - a personalized interpretive orientation
 - a structural mirror
 - a grounding reference
@@ -54,6 +65,7 @@ different product layer — not to CORE.
 - a private operating manual
 
 **CORE IS NOT:**
+
 - a prediction
 - an instruction set
 - a strategy document
@@ -71,6 +83,7 @@ their chart.
 ## 4 · CLIENT EFFECT
 
 After reading CORE, the client should feel:
+
 - recognized
 - relieved
 - less confused by their own patterns
@@ -91,6 +104,7 @@ from a promise.
 ## 5 · STRUCTURAL BALANCE (70 / 30)
 
 CORE holds a deliberate balance:
+
 - **70% structural clarity**
 - **30% human warmth and integration**
 
@@ -142,6 +156,7 @@ page map — it defines the experiential arc the page map must deliver.
 ## 7 · VOICE
 
 CORE speaks:
+
 - calmly
 - precisely
 - humanly
@@ -153,6 +168,7 @@ The voice should feel like:
 **"I see how this works in you — and nothing here makes you broken."**
 
 The voice avoids:
+
 - superiority
 - fear
 - mystique
@@ -171,6 +187,7 @@ at — they should feel met by someone who already understands how they work.
 Praise is allowed in CORE — but only when grounded in observed structure.
 
 Praise may reference:
+
 - structural resilience
 - capacity to carry responsibility
 - ability to function under pressure
@@ -178,6 +195,7 @@ Praise may reference:
 - lived strength, not potential fantasy
 
 Praise must never become:
+
 - generic encouragement ("you're amazing")
 - emotional inflation ("you have unlimited potential")
 - empty reassurance ("everything will be fine")
@@ -192,6 +210,7 @@ points at a fantasy of who they might become. CORE only does the first.
 
 Recognition is not neutral. When a person genuinely understands their own
 structure, many experience real, tangible shifts:
+
 - reduced inner friction
 - calmer decision-making
 - greater self-acceptance
@@ -215,17 +234,20 @@ the value of recognition — but it always describes **a shift in perception, no
 a guaranteed outcome**.
 
 Canonical form:
+
 > **Before:** life experienced without a clear internal reference.
 > **After:** the same life — clearer, steadier, and easier to navigate.
 
 The reality does not change between Before and After. Only the legibility does.
 
 Examples that fit:
+
 - pressure remains, but loses its confusion
 - responsibility remains, but feels contained
 - complexity remains, but becomes readable
 
 Examples that do not fit (outcome promises — never allowed):
+
 - "Before: you struggled. After: you succeed."
 - "Before: you were lost. After: everything is solved."
 
@@ -275,12 +297,14 @@ starts forecasting years or prescribing timing, it has stopped being CORE.
 The separation above is about **product scope**, not about execution quality.
 
 The Full Destiny Codex must not be imported into CORE as scope — meaning:
+
 - Do NOT bring Full Destiny's long-range strategy into CORE.
 - Do NOT bring multi-year timing or forecasting into CORE.
 - Do NOT bring strategic navigation across years into CORE.
 
-But the Full Destiny *manual* may still be used as a **style and depth
+But the Full Destiny _manual_ may still be used as a **style and depth
 reference** for how CORE is executed. Specifically, borrow its:
+
 - premium depth
 - scenario rhythm
 - human readability
@@ -318,6 +342,7 @@ it is never the subject of the reading.
 ## 14 · FINAL LOCK
 
 CORE prioritizes:
+
 - understanding over explanation
 - relief over instruction
 - permission over pressure
@@ -325,12 +350,14 @@ CORE prioritizes:
 - recognition over performance
 
 **Belongs in CORE** — anything that:
+
 - reduces friction
 - increases self-trust
 - improves lived experience
 - respects autonomy
 
 **Does not belong in CORE** — anything that:
+
 - pressures
 - predicts
 - commands
@@ -343,9 +370,9 @@ CORE prioritizes:
 
 ## CHANGE LOG
 
-| Version | Change |
-|---|---|
-| concept (docx) | Original COSMIC CORE CODE: UNVEIL concept — marked FINAL · CANONICAL |
-| v4.1 | Formalized the canonical concept into the v4.1 documentation set. Aligned the four-phase flow (Orientation → Recognition → Normalization → Integration) to the 26-page master pattern without becoming a page map. Carried over grounded-praise and quality-of-life sections. Added explicit separation from the Full Destiny Codex so the two products never blur. Kept Dinner Table Test and Final Lock intact. No structural, schema, or runtime content — philosophy layer only. |
-| v4.1 (rev. 2) | Added REFERENCE USE CLARIFICATION after Section 12: Full Destiny Codex must not be merged into CORE as product scope, but its manual-quality execution (premium depth, scenario rhythm, readability, protocols, proof-tag discipline, closing style, return-to feeling) may be used as a style/depth reference. Locked the dual-reference model: Cosmic Core = CORE identity & recognition sequence; Full Destiny = premium depth & reading rhythm. Scope separate, execution quality shared. |
-| v4.1 (rev. 3) | **Current.** Aligned product naming with the approved CORE Report: UNVEIL hierarchy (header, Section 1) and added the Cosmic Core Code Method as the brand/method layer. Softened "system" language in Section 6 Orientation. No philosophy, structure, or implementation changes. |
+| Version        | Change                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| -------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| concept (docx) | Original COSMIC CORE CODE: UNVEIL concept — marked FINAL · CANONICAL                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| v4.1           | Formalized the canonical concept into the v4.1 documentation set. Aligned the four-phase flow (Orientation → Recognition → Normalization → Integration) to the 26-page master pattern without becoming a page map. Carried over grounded-praise and quality-of-life sections. Added explicit separation from the Full Destiny Codex so the two products never blur. Kept Dinner Table Test and Final Lock intact. No structural, schema, or runtime content — philosophy layer only.          |
+| v4.1 (rev. 2)  | Added REFERENCE USE CLARIFICATION after Section 12: Full Destiny Codex must not be merged into CORE as product scope, but its manual-quality execution (premium depth, scenario rhythm, readability, protocols, proof-tag discipline, closing style, return-to feeling) may be used as a style/depth reference. Locked the dual-reference model: Cosmic Core = CORE identity & recognition sequence; Full Destiny = premium depth & reading rhythm. Scope separate, execution quality shared. |
+| v4.1 (rev. 3)  | **Current.** Aligned product naming with the approved CORE Report: UNVEIL hierarchy (header, Section 1) and added the Cosmic Core Code Method as the brand/method layer. Softened "system" language in Section 6 Orientation. No philosophy, structure, or implementation changes.                                                                                                                                                                                                            |

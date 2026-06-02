@@ -1,5 +1,7 @@
 # Darrow Code AI System Prompt — v3.0 MERGED (Active Runtime)
+
 # Replaces: darrowcode_ai_system_prompt_v2.1.md
+
 # Status: ACTIVE RUNTIME — this is the file used by generate-report edge function
 
 ---
@@ -659,6 +661,6 @@ Total: ~3,700–4,600 words across 17 sections + client_snapshot.
 
 ## VERSION LOG
 
-| Version | Date | Key changes |
-|---|---|---|
-| v3.0 | current | CORE 3,000–3,600 words, 17 sections; add-ons 1,200–1,500 words, 10 sections; FreeAstroAPI data rules integrated; schema migration note added |
+| Version | Date    | Key changes                                                                                                                                  |
+| ------- | ------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
+| v3.0    | current | CORE 3,000–3,600 words, 17 sections; add-ons 1,200–1,500 words, 10 sections; FreeAstroAPI data rules integrated; schema migration note added |

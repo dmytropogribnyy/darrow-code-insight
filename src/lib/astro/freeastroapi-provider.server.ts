@@ -120,7 +120,9 @@ async function postJson(
             // Only respect if within budget; otherwise fall back to default.
             backoff = ms <= MAX_RETRY_AFTER_MS ? ms : DEFAULT_429_BACKOFF_MS;
           }
-          console.warn(`[freeastroapi] ${label} 429 → wait ${backoff}ms (attempt ${attempt}/${maxAttempts})`);
+          console.warn(
+            `[freeastroapi] ${label} 429 → wait ${backoff}ms (attempt ${attempt}/${maxAttempts})`,
+          );
           await sleep(backoff);
           continue;
         }
@@ -139,7 +141,6 @@ async function postJson(
   }
   throw lastErr ?? new Error(`${path} failed`);
 }
-
 
 function stripInterpretation<T>(obj: T): T {
   // Recursively delete `interpretation` / `interpretations` keys anywhere in
@@ -192,9 +193,7 @@ function normalizeAspect(a: any): AspectRow & { high_priority?: boolean; _transi
   const aRaw = String(
     a?.a ?? a?.from ?? a?.planet1 ?? a?.transit_planet ?? a?.p1 ?? a?.first ?? "",
   );
-  const bRaw = String(
-    a?.b ?? a?.to ?? a?.planet2 ?? a?.natal_planet ?? a?.p2 ?? a?.second ?? "",
-  );
+  const bRaw = String(a?.b ?? a?.to ?? a?.planet2 ?? a?.natal_planet ?? a?.p2 ?? a?.second ?? "");
   const aP = stripSideSuffix(aRaw);
   const bP = stripSideSuffix(bRaw);
   // Detect transit body: explicit (T) marker, then explicit field, then default to b.
@@ -216,11 +215,7 @@ function normalizeAspect(a: any): AspectRow & { high_priority?: boolean; _transi
 // ============================================================
 // NATAL — critical
 // ============================================================
-async function fetchNatal(
-  apiKey: string,
-  input: NatalInput,
-  diag: EndpointDiag,
-): Promise<any> {
+async function fetchNatal(apiKey: string, input: NatalInput, diag: EndpointDiag): Promise<any> {
   const { y, m, d } = parseDate(input.date_of_birth);
   const tm = parseTime(input.birth_time ?? null);
   const body: Record<string, any> = {
@@ -246,20 +241,22 @@ async function fetchNatal(
     body.hour = tm.h;
     body.minute = tm.min;
   }
-  return postJson(apiKey, "/api/v1/natal/calculate", body, {
-    maxAttempts: NATAL_MAX_ATTEMPTS,
-    label: "natal",
-  }, diag);
+  return postJson(
+    apiKey,
+    "/api/v1/natal/calculate",
+    body,
+    {
+      maxAttempts: NATAL_MAX_ATTEMPTS,
+      label: "natal",
+    },
+    diag,
+  );
 }
 
 // ============================================================
 // TRANSITS — graceful
 // ============================================================
-async function fetchTransits(
-  apiKey: string,
-  input: NatalInput,
-  diag: EndpointDiag,
-): Promise<any> {
+async function fetchTransits(apiKey: string, input: NatalInput, diag: EndpointDiag): Promise<any> {
   const { y, m, d } = parseDate(input.date_of_birth);
   const tm = parseTime(input.birth_time ?? null);
   const natalBody: Record<string, any> = {
@@ -293,20 +290,22 @@ async function fetchTransits(
     },
     interpretation: { enable: false },
   };
-  return postJson(apiKey, "/api/v1/transits/calculate", body, {
-    maxAttempts: GRACEFUL_MAX_ATTEMPTS,
-    label: "transits",
-  }, diag);
+  return postJson(
+    apiKey,
+    "/api/v1/transits/calculate",
+    body,
+    {
+      maxAttempts: GRACEFUL_MAX_ATTEMPTS,
+      label: "transits",
+    },
+    diag,
+  );
 }
 
 // ============================================================
 // BAZI — graceful
 // ============================================================
-async function fetchBazi(
-  apiKey: string,
-  input: NatalInput,
-  diag: EndpointDiag,
-): Promise<any> {
+async function fetchBazi(apiKey: string, input: NatalInput, diag: EndpointDiag): Promise<any> {
   if (input.bazi_sex !== "M" && input.bazi_sex !== "F") {
     throw new Error("missing_bazi_sex");
   }
@@ -331,10 +330,16 @@ async function fetchBazi(
     include_professional: true,
     interpretation: { enable: false },
   };
-  return postJson(apiKey, "/api/v1/chinese/bazi", body, {
-    maxAttempts: GRACEFUL_MAX_ATTEMPTS,
-    label: "bazi",
-  }, diag);
+  return postJson(
+    apiKey,
+    "/api/v1/chinese/bazi",
+    body,
+    {
+      maxAttempts: GRACEFUL_MAX_ATTEMPTS,
+      label: "bazi",
+    },
+    diag,
+  );
 }
 
 // ============================================================
@@ -391,20 +396,22 @@ async function fetchSolarReturn(
     },
     interpretation: { enable: false },
   };
-  return postJson(apiKey, "/api/v1/western/solar/calculate", body, {
-    maxAttempts: GRACEFUL_MAX_ATTEMPTS,
-    label: "solar_return",
-  }, diag);
+  return postJson(
+    apiKey,
+    "/api/v1/western/solar/calculate",
+    body,
+    {
+      maxAttempts: GRACEFUL_MAX_ATTEMPTS,
+      label: "solar_return",
+    },
+    diag,
+  );
 }
 
 // ============================================================
 // MOON PHASE — graceful enrichment
 // ============================================================
-async function fetchMoonPhase(
-  apiKey: string,
-  input: NatalInput,
-  diag: EndpointDiag,
-): Promise<any> {
+async function fetchMoonPhase(apiKey: string, input: NatalInput, diag: EndpointDiag): Promise<any> {
   const now = new Date();
   const params = new URLSearchParams({
     date: now.toISOString().slice(0, 10),
@@ -463,11 +470,7 @@ async function fetchMoonPhase(
 // ============================================================
 // BAZI FLOW — graceful enrichment (single year, summary mode)
 // ============================================================
-async function fetchBaziFlow(
-  apiKey: string,
-  input: NatalInput,
-  diag: EndpointDiag,
-): Promise<any> {
+async function fetchBaziFlow(apiKey: string, input: NatalInput, diag: EndpointDiag): Promise<any> {
   if (input.bazi_sex !== "M" && input.bazi_sex !== "F") {
     throw new Error("missing_bazi_sex");
   }
@@ -493,10 +496,16 @@ async function fetchBaziFlow(
     dictionary_response: false,
     interpretation: { enable: false },
   };
-  return postJson(apiKey, "/api/v1/chinese/bazi/flow", body, {
-    maxAttempts: GRACEFUL_MAX_ATTEMPTS,
-    label: "bazi_flow",
-  }, diag);
+  return postJson(
+    apiKey,
+    "/api/v1/chinese/bazi/flow",
+    body,
+    {
+      maxAttempts: GRACEFUL_MAX_ATTEMPTS,
+      label: "bazi_flow",
+    },
+    diag,
+  );
 }
 function buildNatalBlock(raw: any, hasHouses: boolean): DarrowChartData["natal"] {
   const cleaned = stripInterpretation(raw ?? {});
@@ -506,17 +515,27 @@ function buildNatalBlock(raw: any, hasHouses: boolean): DarrowChartData["natal"]
   const houses = hasHouses && housesRaw.length > 0 ? housesRaw.map(normalizeHouse) : null;
   const aspectsRaw: any[] = Array.isArray(cleaned.aspects) ? cleaned.aspects : [];
   // Core proof layer = major aspects only.
-  const aspects = aspectsRaw
-    .map(normalizeAspect)
-    .filter((a) => a.is_major !== false);
+  const aspects = aspectsRaw.map(normalizeAspect).filter((a) => a.is_major !== false);
 
   const angles = cleaned.angles_details ?? cleaned.angles ?? null;
-  const ascendant = hasHouses && angles?.asc
-    ? { name: "Ascendant", sign: normalizeSign(angles.asc.sign), degree: Number(angles.asc.degree ?? 0), house: 1 }
-    : null;
-  const midheaven = hasHouses && angles?.mc
-    ? { name: "Midheaven", sign: normalizeSign(angles.mc.sign), degree: Number(angles.mc.degree ?? 0), house: 10 }
-    : null;
+  const ascendant =
+    hasHouses && angles?.asc
+      ? {
+          name: "Ascendant",
+          sign: normalizeSign(angles.asc.sign),
+          degree: Number(angles.asc.degree ?? 0),
+          house: 1,
+        }
+      : null;
+  const midheaven =
+    hasHouses && angles?.mc
+      ? {
+          name: "Midheaven",
+          sign: normalizeSign(angles.mc.sign),
+          degree: Number(angles.mc.degree ?? 0),
+          house: 10,
+        }
+      : null;
 
   const findPlanet = (name: string) =>
     planets.find((p) => p.name.toLowerCase() === name.toLowerCase()) ?? {
@@ -529,19 +548,47 @@ function buildNatalBlock(raw: any, hasHouses: boolean): DarrowChartData["natal"]
 
   const angles_details = hasHouses
     ? {
-        asc: angles?.asc ? { sign: normalizeSign(angles.asc.sign), degree: Number(angles.asc.degree ?? 0) } : null,
-        mc: angles?.mc ? { sign: normalizeSign(angles.mc.sign), degree: Number(angles.mc.degree ?? 0) } : null,
-        ic: angles?.ic ? { sign: normalizeSign(angles.ic.sign), degree: Number(angles.ic.degree ?? 0) } : null,
-        desc: angles?.desc ? { sign: normalizeSign(angles.desc.sign), degree: Number(angles.desc.degree ?? 0) } : null,
+        asc: angles?.asc
+          ? { sign: normalizeSign(angles.asc.sign), degree: Number(angles.asc.degree ?? 0) }
+          : null,
+        mc: angles?.mc
+          ? { sign: normalizeSign(angles.mc.sign), degree: Number(angles.mc.degree ?? 0) }
+          : null,
+        ic: angles?.ic
+          ? { sign: normalizeSign(angles.ic.sign), degree: Number(angles.ic.degree ?? 0) }
+          : null,
+        desc: angles?.desc
+          ? { sign: normalizeSign(angles.desc.sign), degree: Number(angles.desc.degree ?? 0) }
+          : null,
       }
     : null;
 
   // Validation warnings (logged only).
-  if (hasHouses && angles_details?.asc && houses && houses[0] && angles_details.asc.sign !== houses[0].sign) {
-    console.warn("[freeastroapi] ASC sign mismatch with house 1", angles_details.asc.sign, houses[0].sign);
+  if (
+    hasHouses &&
+    angles_details?.asc &&
+    houses &&
+    houses[0] &&
+    angles_details.asc.sign !== houses[0].sign
+  ) {
+    console.warn(
+      "[freeastroapi] ASC sign mismatch with house 1",
+      angles_details.asc.sign,
+      houses[0].sign,
+    );
   }
-  if (hasHouses && angles_details?.mc && houses && houses[9] && angles_details.mc.sign !== houses[9].sign) {
-    console.warn("[freeastroapi] MC sign mismatch with house 10", angles_details.mc.sign, houses[9].sign);
+  if (
+    hasHouses &&
+    angles_details?.mc &&
+    houses &&
+    houses[9] &&
+    angles_details.mc.sign !== houses[9].sign
+  ) {
+    console.warn(
+      "[freeastroapi] MC sign mismatch with house 10",
+      angles_details.mc.sign,
+      houses[9].sign,
+    );
   }
 
   return {
@@ -641,16 +688,9 @@ function buildLuckCyclePillar(c: any): BaziLuckCycle {
   const ganInfo = c?.gan_info ?? (typeof c?.stem === "object" ? c.stem : null);
   const zhiInfo = c?.zhi_info ?? (typeof c?.branch === "object" ? c.branch : null);
   const startYear = Number(c?.start_year);
-  const endYear = Number(
-    c?.end_year ?? (Number.isFinite(startYear) ? startYear + 9 : NaN),
-  );
+  const endYear = Number(c?.end_year ?? (Number.isFinite(startYear) ? startYear + 9 : NaN));
   const startAge = c?.start_age != null ? Number(c.start_age) : null;
-  const endAge =
-    c?.end_age != null
-      ? Number(c.end_age)
-      : startAge != null
-        ? startAge + 9
-        : null;
+  const endAge = c?.end_age != null ? Number(c.end_age) : startAge != null ? startAge + 9 : null;
   return {
     start_year: startYear,
     end_year: endYear,
@@ -693,13 +733,10 @@ function buildBaziBlock(raw: any, birthTimeKnown: boolean): BaziBlock {
     ? cleaned.luck_cycle.pillars.map(buildLuckCyclePillar)
     : [];
   const now = new Date().getFullYear();
-  const current =
-    luckCyclePillars.find((c) => c.start_year <= now && now <= c.end_year) ?? null;
+  const current = luckCyclePillars.find((c) => c.start_year <= now && now <= c.end_year) ?? null;
 
   const starsRaw: any[] = Array.isArray(cleaned.stars) ? cleaned.stars : [];
-  const interactionsRaw: any[] = Array.isArray(cleaned.interactions)
-    ? cleaned.interactions
-    : [];
+  const interactionsRaw: any[] = Array.isArray(cleaned.interactions) ? cleaned.interactions : [];
 
   return {
     available: true,
@@ -755,10 +792,18 @@ function buildSolarReturnBlock(raw: any, year: number): SolarReturnBlock {
     planets: planetsRaw.map(normalizePlanet),
     angles_details: angles
       ? {
-          asc: angles.asc ? { sign: normalizeSign(angles.asc.sign), degree: Number(angles.asc.degree ?? 0) } : null,
-          mc: angles.mc ? { sign: normalizeSign(angles.mc.sign), degree: Number(angles.mc.degree ?? 0) } : null,
-          ic: angles.ic ? { sign: normalizeSign(angles.ic.sign), degree: Number(angles.ic.degree ?? 0) } : null,
-          desc: angles.desc ? { sign: normalizeSign(angles.desc.sign), degree: Number(angles.desc.degree ?? 0) } : null,
+          asc: angles.asc
+            ? { sign: normalizeSign(angles.asc.sign), degree: Number(angles.asc.degree ?? 0) }
+            : null,
+          mc: angles.mc
+            ? { sign: normalizeSign(angles.mc.sign), degree: Number(angles.mc.degree ?? 0) }
+            : null,
+          ic: angles.ic
+            ? { sign: normalizeSign(angles.ic.sign), degree: Number(angles.ic.degree ?? 0) }
+            : null,
+          desc: angles.desc
+            ? { sign: normalizeSign(angles.desc.sign), degree: Number(angles.desc.degree ?? 0) }
+            : null,
         }
       : null,
     natal_comparison: {
@@ -801,15 +846,13 @@ function buildMoonPhaseBlock(raw: any): MoonPhaseBlock {
               : typeof phase.phase_angle === "number"
                 ? phase.phase_angle
                 : undefined,
-          is_waxing:
-            typeof phase.is_waxing === "boolean" ? phase.is_waxing : undefined,
+          is_waxing: typeof phase.is_waxing === "boolean" ? phase.is_waxing : undefined,
         }
       : undefined,
     zodiac: zodiac
       ? {
           sign: zodiac.sign ? normalizeSign(zodiac.sign) : undefined,
-          degree:
-            typeof zodiac.degree === "number" ? zodiac.degree : undefined,
+          degree: typeof zodiac.degree === "number" ? zodiac.degree : undefined,
           zodiac_type: zodiac.zodiac_type ?? zodiac.type ?? undefined,
         }
       : undefined,
@@ -829,15 +872,12 @@ function buildMoonPhaseBlock(raw: any): MoonPhaseBlock {
       : undefined,
     eclipse: eclipse
       ? {
-          is_eclipse:
-            typeof eclipse.is_eclipse === "boolean" ? eclipse.is_eclipse : undefined,
+          is_eclipse: typeof eclipse.is_eclipse === "boolean" ? eclipse.is_eclipse : undefined,
           is_blood_moon:
             typeof eclipse.is_blood_moon === "boolean" ? eclipse.is_blood_moon : undefined,
           type: eclipse.type ?? undefined,
           days_from_query:
-            typeof eclipse.days_from_query === "number"
-              ? eclipse.days_from_query
-              : undefined,
+            typeof eclipse.days_from_query === "number" ? eclipse.days_from_query : undefined,
         }
       : undefined,
     traditional_moon: tradMoon
@@ -905,20 +945,21 @@ function buildBaziFlowBlock(raw: any, birthTimeKnown: boolean): BaziFlowBlock {
 
   const annualSource =
     yearBlock.annual_pillar ?? yearBlock.year_pillar ?? yearBlock.annual ?? yearBlock;
-  const annual_pillar = annualSource && (annualSource.gan_zhi || annualSource.gan || annualSource.year)
-    ? {
-        year:
-          typeof annualSource.year === "number"
-            ? annualSource.year
-            : Number(annualSource.year ?? cleaned.target_year),
-        gan_zhi: annualSource.gan_zhi ?? annualSource.pillar ?? undefined,
-        gan: annualSource.gan ?? annualSource.stem ?? undefined,
-        zhi: annualSource.zhi ?? annualSource.branch ?? undefined,
-        gan_pinyin: annualSource.gan_pinyin ?? undefined,
-        zhi_pinyin: annualSource.zhi_pinyin ?? undefined,
-        ten_god: annualSource.ten_god ?? undefined,
-      }
-    : undefined;
+  const annual_pillar =
+    annualSource && (annualSource.gan_zhi || annualSource.gan || annualSource.year)
+      ? {
+          year:
+            typeof annualSource.year === "number"
+              ? annualSource.year
+              : Number(annualSource.year ?? cleaned.target_year),
+          gan_zhi: annualSource.gan_zhi ?? annualSource.pillar ?? undefined,
+          gan: annualSource.gan ?? annualSource.stem ?? undefined,
+          zhi: annualSource.zhi ?? annualSource.branch ?? undefined,
+          gan_pinyin: annualSource.gan_pinyin ?? undefined,
+          zhi_pinyin: annualSource.zhi_pinyin ?? undefined,
+          ten_god: annualSource.ten_god ?? undefined,
+        }
+      : undefined;
 
   const monthlyRaw: any[] = Array.isArray(yearBlock.months)
     ? yearBlock.months
@@ -1039,9 +1080,7 @@ export class FreeAstroAPIProvider implements AstroProvider {
     };
 
     // 1) Natal — critical. Abort if it fails.
-    const natalRes = await run("natal", diagNatal, () =>
-      fetchNatal(this.apiKey, input, diagNatal),
-    );
+    const natalRes = await run("natal", diagNatal, () => fetchNatal(this.apiKey, input, diagNatal));
     if (!natalRes.ok) {
       throw new Error(`FreeAstroAPI natal failed: ${natalRes.error}`);
     }
@@ -1056,23 +1095,48 @@ export class FreeAstroAPIProvider implements AstroProvider {
     const [transitsSettled, baziSettled, solarSettled, moonSettled, baziFlowSettled] =
       await Promise.allSettled([
         staggered(GRACEFUL_STAGGER.transits, () =>
-          run("transits", diagTransits, () => fetchTransits(this.apiKey, input, diagTransits), GRACEFUL_ENDPOINT_BUDGET_MS),
+          run(
+            "transits",
+            diagTransits,
+            () => fetchTransits(this.apiKey, input, diagTransits),
+            GRACEFUL_ENDPOINT_BUDGET_MS,
+          ),
         ),
         staggered(GRACEFUL_STAGGER.bazi, () =>
-          run("bazi", diagBazi, () => fetchBazi(this.apiKey, input, diagBazi), GRACEFUL_ENDPOINT_BUDGET_MS),
+          run(
+            "bazi",
+            diagBazi,
+            () => fetchBazi(this.apiKey, input, diagBazi),
+            GRACEFUL_ENDPOINT_BUDGET_MS,
+          ),
         ),
         staggered(GRACEFUL_STAGGER.solar, () =>
-          run("solar_return", diagSolar, () => fetchSolarReturn(this.apiKey, input, diagSolar), GRACEFUL_ENDPOINT_BUDGET_MS),
+          run(
+            "solar_return",
+            diagSolar,
+            () => fetchSolarReturn(this.apiKey, input, diagSolar),
+            GRACEFUL_ENDPOINT_BUDGET_MS,
+          ),
         ),
         staggered(GRACEFUL_STAGGER.moon, () =>
-          run("moon_phase", diagMoon, () => fetchMoonPhase(this.apiKey, input, diagMoon), GRACEFUL_ENDPOINT_BUDGET_MS),
+          run(
+            "moon_phase",
+            diagMoon,
+            () => fetchMoonPhase(this.apiKey, input, diagMoon),
+            GRACEFUL_ENDPOINT_BUDGET_MS,
+          ),
         ),
         staggered(GRACEFUL_STAGGER.baziflow, () =>
-          run("bazi_flow", diagBaziFlow, () => fetchBaziFlow(this.apiKey, input, diagBaziFlow), GRACEFUL_ENDPOINT_BUDGET_MS),
+          run(
+            "bazi_flow",
+            diagBaziFlow,
+            () => fetchBaziFlow(this.apiKey, input, diagBaziFlow),
+            GRACEFUL_ENDPOINT_BUDGET_MS,
+          ),
         ),
       ]);
 
-    const extract = <T,>(
+    const extract = <T>(
       s: PromiseSettledResult<{ ok: true; value: T } | { ok: false; error: string }>,
     ): T | { __error: string } => {
       if (s.status === "rejected") return { __error: String(s.reason?.message ?? s.reason) };

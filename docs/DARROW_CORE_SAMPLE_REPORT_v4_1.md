@@ -1,25 +1,36 @@
 # COSMIC CORE CODE: UNVEIL — FULL SAMPLE REPORT
+
 # Status: GOLD REFERENCE (Step 4 deliverable)
+
 # Sample client: Dmitry · June 25, 1979 · 04:30 · Kharkiv, UA
+
 # Built from: DARROW_CORE_MASTER_PATTERN_v4_1.md (structure)
-#           + DARROW_CORE_PRODUCT_CONCEPT_STANDARD_v4_1.md (intent)
-#           + manual references (execution quality only)
+
+# + DARROW_CORE_PRODUCT_CONCEPT_STANDARD_v4_1.md (intent)
+
+# + manual references (execution quality only)
+
 #
+
 # ⚠️ operating_mode (PAGE 06) is included in this sample as part of the v4.1
-#    standard, but it is a schema migration and is NOT yet implemented in
-#    Loveable. Do not implement until the render-fix diagnostic is approved.
+
+# standard, but it is a schema migration and is NOT yet implemented in
+
+# Loveable. Do not implement until the render-fix diagnostic is approved.
+
 #
+
 # This is sample/reference data. Placements are the canonical Dmitry sample.
 
 ═══════════════════════════════════════════════════════════════════
-PAGE 01 · COVER  [STATIC + cover sub-fields]
+PAGE 01 · COVER [STATIC + cover sub-fields]
 ═══════════════════════════════════════════════════════════════════
 
 CORE Report: UNVEIL
 Cosmic Core Code Method · Personal Orientation System
 
 Prepared for: Dmitry
-Date of Birth: June 25, 1979  |  Time: 04:30  |  Location: Kharkiv, UA
+Date of Birth: June 25, 1979 | Time: 04:30 | Location: Kharkiv, UA
 
 Cover tagline:
 Your personal architecture — how you read pressure, make decisions, restore
@@ -27,9 +38,8 @@ energy, and recognize your own signal. The baseline for everything that follows.
 
 DarrowCode©
 
-
 ═══════════════════════════════════════════════════════════════════
-PAGE 02 · PERSONAL ORIENTATION SYSTEM  [STATIC]
+PAGE 02 · PERSONAL ORIENTATION SYSTEM [STATIC]
 ═══════════════════════════════════════════════════════════════════
 
 PERSONAL ORIENTATION SYSTEM
@@ -53,9 +63,8 @@ It does not replace medical, legal, or financial advice. You remain the sole
 authority over your life choices. The Darrow Code provides context, not
 deterministic prediction.
 
-
 ═══════════════════════════════════════════════════════════════════
-PAGE 03 · INTRODUCTION  [orientation]
+PAGE 03 · INTRODUCTION [orientation]
 ═══════════════════════════════════════════════════════════════════
 
 You are not built for surface-level noise.
@@ -80,9 +89,8 @@ Read it for recognition, not instruction. If a passage feels familiar — if you
 catch yourself thinking "yes, that is exactly it" — that recognition is the point.
 That is the document working.
 
-
 ═══════════════════════════════════════════════════════════════════
-PAGE 04–05 · CORE ARCHITECTURE  [core_architecture]
+PAGE 04–05 · CORE ARCHITECTURE [core_architecture]
 ═══════════════════════════════════════════════════════════════════
 
 Most people carry a quiet argument inside them. The head says one thing, the
@@ -131,9 +139,8 @@ not a luxury.
 
 [Sun conjunct ASC 0°43' · Moon conjunct ASC 7°13' · Gui Water DM Peak · Water Dominant 59% · Cancer Stellium]
 
-
 ═══════════════════════════════════════════════════════════════════
-PAGE 06 · OPERATING MODE  [operating_mode]
+PAGE 06 · OPERATING MODE [operating_mode]
 ═══════════════════════════════════════════════════════════════════
 ⚠️ Included per v4.1 standard. Not yet implemented in Loveable.
 
@@ -170,9 +177,8 @@ someone built for them.
 
 [Bundle Shape · Water Dominant 59% · Cancer Stellium · Cardinal Mode]
 
-
 ═══════════════════════════════════════════════════════════════════
-PAGE 07 · THE BATTERY  [battery]
+PAGE 07 · THE BATTERY [battery]
 ═══════════════════════════════════════════════════════════════════
 
 You do not recharge the way most people are told to. Rest alone does not quite do
@@ -216,9 +222,8 @@ here. Stepping back, and reaching for one of the above, almost always does.
 
 [Moon conjunct ASC 7°13' Cancer · Sun conjunct Moon Cancer · Water Dominant 59% · Bundle Shape]
 
-
 ═══════════════════════════════════════════════════════════════════
-PAGE 08 · SOCIAL INTERFACE  [social_interface]
+PAGE 08 · SOCIAL INTERFACE [social_interface]
 ═══════════════════════════════════════════════════════════════════
 
 People meet a warm, calm version of you long before they meet the rest.
@@ -246,9 +251,8 @@ warmth lands where it belongs.
 
 [Cancer ASC 2°13' · Moon 1H ruler · Water Dominant 59% · Cardinal Mode]
 
-
 ═══════════════════════════════════════════════════════════════════
-PAGE 09–10 · NUMEROLOGY CODE  [numerology_code]
+PAGE 09–10 · NUMEROLOGY CODE [numerology_code]
 ═══════════════════════════════════════════════════════════════════
 
 There is a quiet tension running through your name, and it explains a great deal.
@@ -294,9 +298,8 @@ in some fixed way. They are gears you can shift between, on purpose.
 
 [Expression 8 · Soul Urge 7 · Personality 1 · Life Path 3 · Personal Year 4→5]
 
-
 ═══════════════════════════════════════════════════════════════════
-PAGE 11 · COGNITIVE STYLE  [cognitive_style]
+PAGE 11 · COGNITIVE STYLE [cognitive_style]
 ═══════════════════════════════════════════════════════════════════
 
 Your thinking does not run on dry facts. It runs on meaning.
@@ -327,9 +330,8 @@ is what produces the paralysis.
 
 [Mercury Cancer 2H · Intuitive cognition · Water Dominant 59%]
 
-
 ═══════════════════════════════════════════════════════════════════
-PAGE 12 · DRIVE & RHYTHM  [drive_and_rhythm]
+PAGE 12 · DRIVE & RHYTHM [drive_and_rhythm]
 ═══════════════════════════════════════════════════════════════════
 
 Your drive does not look like other people's drive.
@@ -359,9 +361,8 @@ victory is in the long game, where stamina beats flash.
 
 [Mars Taurus 12H · Fixed Earth · Hidden drive · Bundle Shape]
 
-
 ═══════════════════════════════════════════════════════════════════
-PAGE 13–14 · PROFESSIONAL ARCHETYPE  [professional_archetype]
+PAGE 13–14 · PROFESSIONAL ARCHETYPE [professional_archetype]
 ═══════════════════════════════════════════════════════════════════
 
 You are the architect of the system, not the face of it.
@@ -406,9 +407,8 @@ have been there before you arrived.
 
 [Saturn Virgo 4H · MC Aquarius 29° · Mars sq MC 0°02' exact · Bundle Shape]
 
-
 ═══════════════════════════════════════════════════════════════════
-PAGE 15 · MONEY & VALUE MECHANICS  [money_and_value]
+PAGE 15 · MONEY & VALUE MECHANICS [money_and_value]
 ═══════════════════════════════════════════════════════════════════
 
 For you, money is first a wall, and only second a tool.
@@ -440,9 +440,8 @@ back your authentic "I want," rather than your dutiful "I should."
 
 [2H Mercury · Pluto 5H · Security/creation axis · Cancer Stellium]
 
-
 ═══════════════════════════════════════════════════════════════════
-PAGE 16 · RELATIONSHIP BASELINE  [relationship_baseline]
+PAGE 16 · RELATIONSHIP BASELINE [relationship_baseline]
 ═══════════════════════════════════════════════════════════════════
 
 Closeness, for you, is mostly private.
@@ -471,9 +470,8 @@ garden show, on purpose.
 
 [Venus Gemini 12H · Venus opp Neptune · Air/Water mix · 12H privacy]
 
-
 ═══════════════════════════════════════════════════════════════════
-PAGE 17 · VITALITY BASELINE  [vitality_baseline]
+PAGE 17 · VITALITY BASELINE [vitality_baseline]
 ═══════════════════════════════════════════════════════════════════
 
 Your body is a sensitive instrument, not a machine you can run on anything.
@@ -507,9 +505,8 @@ professional for any health concerns.
 
 [Uranus/Neptune 6H · Mars Taurus tempo · Saturn Virgo routine]
 
-
 ═══════════════════════════════════════════════════════════════════
-PAGE 18 · ENVIRONMENT & RESONANCE  [environment_and_resonance]
+PAGE 18 · ENVIRONMENT & RESONANCE [environment_and_resonance]
 ═══════════════════════════════════════════════════════════════════
 
 Your environment is not a backdrop. It is part of how you function.
@@ -536,9 +533,8 @@ you do not actually rest — you just change location.
 
 [Water Dominant 59% · 12H seclusion · Venus Gemini comfort]
 
-
 ═══════════════════════════════════════════════════════════════════
-PAGE 19–20 · SHADOW & FRICTION  [shadow_and_friction]
+PAGE 19–20 · SHADOW & FRICTION [shadow_and_friction]
 ═══════════════════════════════════════════════════════════════════
 
 The friction in your life rarely comes from what other people do to you. It comes
@@ -586,9 +582,8 @@ disagreement. During it. It is the most reliable early sign you will get.
 
 [Venus opp Neptune · Moon sq Pluto 6°59' · Mars Taurus 12H · Cancer Stellium]
 
-
 ═══════════════════════════════════════════════════════════════════
-PAGE 21 · BEFORE / AFTER  [before_after]
+PAGE 21 · BEFORE / AFTER [before_after]
 ═══════════════════════════════════════════════════════════════════
 
 Nothing here changes your life. It changes how legible your life is to you.
@@ -612,9 +607,8 @@ correctly.
 The pressure does not disappear. The complexity does not disappear. They simply stop
 being confusing — and a life you can read is far easier to carry than one you cannot.
 
-
 ═══════════════════════════════════════════════════════════════════
-PAGE 22–23 · EXECUTIVE SUMMARY  [executive_summary]
+PAGE 22–23 · EXECUTIVE SUMMARY [executive_summary]
 ═══════════════════════════════════════════════════════════════════
 
 YOUR CORE ADVANTAGE
@@ -655,9 +649,8 @@ already have the base.
 
 [no proof tags — summary section]
 
-
 ═══════════════════════════════════════════════════════════════════
-PAGE 24 · CLOSING  [next_step]
+PAGE 24 · CLOSING [next_step]
 ═══════════════════════════════════════════════════════════════════
 
 Dmitry, this document is not meant to be memorized. It is meant to be returned to —
@@ -692,9 +685,8 @@ Return to this when orientation blurs. Set it aside when clarity returns.
 
 © DarrowCode. All rights reserved. 2026.
 
-
 ═══════════════════════════════════════════════════════════════════
-PAGE 25 · DARROW CODE ECOSYSTEM  [STATIC]
+PAGE 25 · DARROW CODE ECOSYSTEM [STATIC]
 ═══════════════════════════════════════════════════════════════════
 
 THE DARROW CODE LIBRARY
@@ -748,9 +740,8 @@ The kinds of environments that support your clarity, steadiness, and energy.
 
 Explore at your own pace → darrowcode.com
 
-
 ═══════════════════════════════════════════════════════════════════
-PAGE 26 · BACK COVER  [STATIC]
+PAGE 26 · BACK COVER [STATIC]
 ═══════════════════════════════════════════════════════════════════
 
 [Brand mark — centered]
@@ -759,7 +750,6 @@ DARROW CODE
 darrowcode.com
 
 © DarrowCode. All rights reserved.
-
 
 ═══════════════════════════════════════════════════════════════════
 APPROXIMATE WORD COUNT (generated sections only)
@@ -774,7 +764,6 @@ executive_summary ~360 · next_step ~290
 
 Total generated prose: ~4,900 words (within the 4,350–5,250 target).
 
-
 ═══════════════════════════════════════════════════════════════════
 APPENDIX — NOTES FOR FUTURE DOCS (not part of the client report body)
 ═══════════════════════════════════════════════════════════════════
@@ -782,6 +771,7 @@ APPENDIX — NOTES FOR FUTURE DOCS (not part of the client report body)
 PLACE / GEOGRAPHY DATA RULE
 
 CORE / UNVEIL:
+
 - Do NOT name specific cities or "best places."
 - Do NOT make relocation or astrocartography-line claims.
 - Use environmental resonance / qualities only (climate, landscape, density,
@@ -789,6 +779,7 @@ CORE / UNVEIL:
 
 PLACE CODE (separate focused chapter) may use FreeAstroAPI astrocartography
 endpoints later:
+
 - /api/v1/western/astrocartography/recommendations
 - /api/v1/western/astrocartography/city-check
 - /api/v1/western/astrocartography/relocation
@@ -796,12 +787,14 @@ endpoints later:
 - /api/v1/western/astrocartography/parans
 
 Specific city recommendations require ALL of:
+
 - PLACE chapter purchased
 - birth_time_known = true
 - resolved birth coordinates / timezone
 - real astrocartography / relocation data returned
 
 If birth_time_known = false:
+
 - Do NOT generate city rankings, "best places," relocation claims, or
   astrocartography line claims.
 - Use environmental qualities only.
@@ -821,15 +814,15 @@ However, several checkout DESCRIPTIONS use stronger/riskier wording than the
 safe positioning locked in this sample and in the product concept standard.
 Align them during the later UI cleanup. Do NOT change UI now.
 
-| Chapter | Current checkout copy (riskier) | Safe replacement to use later |
-|---|---|---|
-| PLACE | "Where you'll thrive — and where to avoid" | "Your location rhythm & environmental fit" / "Where your environment supports clarity, steadiness & energy" |
-| MONEY | "Your real wealth pattern & income mechanism" | "Your value pattern, income approach & resource pressure" (drop "real wealth" — reads as a wealth promise) |
-| YEAR | "What this year will demand of you" | "The themes and pressure of your current cycle" (orientation, not prediction) |
-| CORE | "Your private birth code: how you think, react, choose and move through change" | Acceptable as-is, or align to: "Your personal architecture: how you read pressure, decide, and restore energy" |
-| LOVE | "Who you attract — and why it keeps happening" | Acceptable — pattern framing, no promise |
-| BODY | "Your stress signature & recovery rhythm" | Acceptable — matches safe positioning |
-| STYLE | "Your colors, aesthetic & personal signature" | Acceptable — no lucky/healing claim |
+| Chapter | Current checkout copy (riskier)                                                 | Safe replacement to use later                                                                                  |
+| ------- | ------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
+| PLACE   | "Where you'll thrive — and where to avoid"                                      | "Your location rhythm & environmental fit" / "Where your environment supports clarity, steadiness & energy"    |
+| MONEY   | "Your real wealth pattern & income mechanism"                                   | "Your value pattern, income approach & resource pressure" (drop "real wealth" — reads as a wealth promise)     |
+| YEAR    | "What this year will demand of you"                                             | "The themes and pressure of your current cycle" (orientation, not prediction)                                  |
+| CORE    | "Your private birth code: how you think, react, choose and move through change" | Acceptable as-is, or align to: "Your personal architecture: how you read pressure, decide, and restore energy" |
+| LOVE    | "Who you attract — and why it keeps happening"                                  | Acceptable — pattern framing, no promise                                                                       |
+| BODY    | "Your stress signature & recovery rhythm"                                       | Acceptable — matches safe positioning                                                                          |
+| STYLE   | "Your colors, aesthetic & personal signature"                                   | Acceptable — no lucky/healing claim                                                                            |
 
 Priority flags (highest risk): PLACE ("thrive / avoid") and MONEY ("real
 wealth"). These two break the no-promise positioning most directly.

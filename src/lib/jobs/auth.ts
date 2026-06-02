@@ -79,7 +79,8 @@ export function checkWorkerAuth(headers: Headers, envOverride?: AuthEnv): AuthOu
   return {
     ok: false,
     code: "AUTH_REQUIRED",
-    message: "Missing or invalid worker credentials. Provide Authorization: Bearer <JOB_DISPATCH_SECRET> or apikey: <publishable key>.",
+    message:
+      "Missing or invalid worker credentials. Provide Authorization: Bearer <JOB_DISPATCH_SECRET> or apikey: <publishable key>.",
   };
 }
 

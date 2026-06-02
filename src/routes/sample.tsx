@@ -9,8 +9,7 @@ export const Route = createFileRoute("/sample")({
       { title: "Sample Report — Darrow Code" },
       {
         name: "description",
-        content:
-          "A preview of the Darrow Code Astro Report — cover, interior pages, and closing.",
+        content: "A preview of the Darrow Code Astro Report — cover, interior pages, and closing.",
       },
       { property: "og:title", content: "Sample Report — Darrow Code" },
       {
@@ -80,8 +79,8 @@ function SamplePage() {
             What you actually receive
           </h1>
           <p className="mt-4 text-[14px] text-neutral-grey leading-relaxed max-w-xl mx-auto">
-            A premium downloadable PDF, generated privately from your birth data
-            and delivered to your email — yours to keep, with no subscription.
+            A premium downloadable PDF, generated privately from your birth data and delivered to
+            your email — yours to keep, with no subscription.
           </p>
         </div>
 
@@ -110,13 +109,8 @@ function SamplePage() {
               ["Proof tags", "Real astrology, BaZi and numerology anchors behind each insight."],
               ["Email delivery + secure download link", "Token-protected — no account needed."],
             ].map(([title, desc]) => (
-              <li
-                key={title}
-                className="border border-border rounded-md p-4 bg-white/60"
-              >
-                <p className="font-semibold text-warm-brown text-[13px] mb-1">
-                  {title}
-                </p>
+              <li key={title} className="border border-border rounded-md p-4 bg-white/60">
+                <p className="font-semibold text-warm-brown text-[13px] mb-1">{title}</p>
                 <p className="text-[12.5px] leading-relaxed">{desc}</p>
               </li>
             ))}

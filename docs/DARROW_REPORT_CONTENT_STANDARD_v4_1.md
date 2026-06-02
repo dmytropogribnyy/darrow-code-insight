@@ -1,6 +1,9 @@
 # DARROW — REPORT CONTENT STANDARD v4.1
+
 # Scope: CORE Report: UNVEIL (Cosmic Core Code Method)
+
 # Status: ACTIVE v4.1 STANDARD (quality layer)
+
 # Governed by: DARROW_DOCS_AUDIT_AND_PLAN_v4_1.md (controlling document)
 
 ---
@@ -28,17 +31,17 @@ must be regenerated, regardless of whether it validated against the schema.
 Each approved document owns one layer. They do not overlap, and in a conflict the
 roles below decide which file governs.
 
-| Layer | File | Owns |
-|---|---|---|
-| Intent | `DARROW_CORE_PRODUCT_CONCEPT_STANDARD_v4_1.md` | WHAT CORE is for the client; philosophy, scope, product boundaries |
-| Structure | `DARROW_CORE_MASTER_PATTERN_v4_1.md` | Section sequence, word targets, page structure, formatting logic |
-| Execution quality | `DARROW_CORE_SAMPLE_REPORT_v4_1.md` | The approved GOLD REFERENCE — the tone, rhythm, and reader intimacy to match |
-| Pass/fail quality | **This file** | The quality rules a generated report must clear |
-| Migration control | `DARROW_DOCS_AUDIT_AND_PLAN_v4_1.md` | File status, conflict resolution, migration order |
+| Layer             | File                                           | Owns                                                                         |
+| ----------------- | ---------------------------------------------- | ---------------------------------------------------------------------------- |
+| Intent            | `DARROW_CORE_PRODUCT_CONCEPT_STANDARD_v4_1.md` | WHAT CORE is for the client; philosophy, scope, product boundaries           |
+| Structure         | `DARROW_CORE_MASTER_PATTERN_v4_1.md`           | Section sequence, word targets, page structure, formatting logic             |
+| Execution quality | `DARROW_CORE_SAMPLE_REPORT_v4_1.md`            | The approved GOLD REFERENCE — the tone, rhythm, and reader intimacy to match |
+| Pass/fail quality | **This file**                                  | The quality rules a generated report must clear                              |
+| Migration control | `DARROW_DOCS_AUDIT_AND_PLAN_v4_1.md`           | File status, conflict resolution, migration order                            |
 
-Rule of thumb: the concept standard says *why*, the master pattern says *how it
-is structured*, the gold sample shows *what good looks like*, and this file says
-*whether a given output passes*.
+Rule of thumb: the concept standard says _why_, the master pattern says _how it
+is structured_, the gold sample shows _what good looks like_, and this file says
+_whether a given output passes_.
 
 ---
 
@@ -70,6 +73,7 @@ is structured*, the gold sample shows *what good looks like*, and this file says
 The single quality bar: the client closes the report thinking **"This explains me."**
 
 Every report must be:
+
 - **recognition first** — the client feels seen before they feel explained
 - **human-readable** — readable and useful with no astrology knowledge
 - **a private reading** — made for one person, not distributed to a list
@@ -79,8 +83,8 @@ Every report must be:
 - **orientation over prediction** — it describes how the person works, not what
   will happen
 
-If a section reads as impressive astrology *about* the client rather than a
-description the client recognizes as *themselves*, it fails — rewrite it.
+If a section reads as impressive astrology _about_ the client rather than a
+description the client recognizes as _themselves_, it fails — rewrite it.
 
 ---
 
@@ -123,6 +127,7 @@ Reduce mechanical, machine-like phrasing. The report should read as a private
 reading for a person, not as one system describing another.
 
 **Avoid overuse of:**
+
 - "your system"
 - "your factory settings"
 - "your settings"
@@ -132,6 +137,7 @@ reading for a person, not as one system describing another.
 - "technical architecture"
 
 **Preferred human-facing language:**
+
 - how you are built
 - your way of reading pressure
 - your way of deciding
@@ -160,7 +166,7 @@ Every generated section should generally move in this order:
 2. **Lived scenario / recognizable moment** — a real scene, present tense
 3. **Human pattern** — what the client actually experiences
 4. **Plain-language explanation** — how it works, in ordinary words
-5. **Technical placement / data confirmation** — only *after* the human pattern
+5. **Technical placement / data confirmation** — only _after_ the human pattern
    is already clear, as confirmation
 6. **Protocol or warning signal** — where appropriate for the section
 7. **Proof tags** — quiet, at the very end
@@ -203,6 +209,7 @@ single astrological term.
 ## 11 · PROTOCOL RULES
 
 Protocols must be:
+
 - **behavioral** — a specific observable action, not a mindset
 - **specific** — concrete to how this person functions
 - **supportive, not commanding** — "this is how you work best," not "do this or fail"
@@ -210,6 +217,7 @@ Protocols must be:
 - grounded in the client's actual pattern, never generic
 
 **Banned protocol content:**
+
 - "just relax" / "be more present" / vague self-care
 - "trust the universe" / "manifest" / "heal your energy"
 - medical, financial, or legal advice
@@ -227,6 +235,7 @@ tool, not an order.
 ## 12 · WARNING SIGNAL RULES
 
 Warning signals must be:
+
 - **observable** — something the client can notice in their own behavior
 - **non-judgmental** — never shaming or pathologizing
 - **practical** — useful as an early-recognition cue
@@ -245,10 +254,12 @@ perception, never a guaranteed outcome.** The reality does not change between
 Before and After — only the legibility does.
 
 ✅ Good:
+
 > Before: pressure remains confusing.
 > After: pressure becomes readable.
 
 ❌ Bad (outcome promise):
+
 > Before: you struggle.
 > After: you succeed.
 
@@ -263,6 +274,7 @@ cannot.
 Praise is allowed **only when grounded** in observed structure or lived strength.
 
 **Allowed** (points at something real):
+
 - structural resilience
 - capacity to carry responsibility
 - ability to function under pressure
@@ -270,6 +282,7 @@ Praise is allowed **only when grounded** in observed structure or lived strength
 - lived strength
 
 **Not allowed** (points at fantasy):
+
 - "you are amazing"
 - "unlimited potential"
 - "destined for greatness"
@@ -291,6 +304,7 @@ Focused chapters may be mentioned only as **optional deeper lenses**, never as
 requirements, and never in a way that implies CORE is incomplete without them.
 
 Approved structure (matches current storefront):
+
 - **CORE Report** = the complete foundation
 - **CORE Complete** = CORE Report + all six focused chapters in one reading
 - **LOVE / MONEY / BODY / YEAR / STYLE / PLACE** = optional focused chapters
@@ -345,12 +359,14 @@ the focused chapters when those are written later:
 ## 18 · PLACE DATA RULE
 
 **CORE / UNVEIL:**
+
 - Do not name specific cities or "best places."
 - Do not make relocation or astrocartography-line claims.
 - Use environmental resonance / qualities only (climate, landscape, density,
   quiet, proximity to water, privacy).
 
 **PLACE focused chapter** may later use FreeAstroAPI astrocartography endpoints:
+
 - /api/v1/western/astrocartography/recommendations
 - /api/v1/western/astrocartography/city-check
 - /api/v1/western/astrocartography/relocation
@@ -358,6 +374,7 @@ the focused chapters when those are written later:
 - /api/v1/western/astrocartography/parans
 
 Specific city recommendations require ALL of:
+
 - PLACE purchased
 - birth_time_known = true
 - resolved coordinates / timezone
@@ -397,6 +414,7 @@ on invented placements.
 ## 20 · CLIENT READABILITY / FORMATTING STANDARD
 
 Stable visual hierarchy per section:
+
 - section title
 - short opening line (the hook)
 - scenario paragraph (visually distinct — italic or set apart)
@@ -442,7 +460,7 @@ intimacy, and safety level.
 
 Do **not** copy it verbatim. The sample client (Dmitry) and that chart's specific
 placements, scenarios, archetype names, and metaphors belong to that chart only.
-Match the *quality and voice* of the gold sample; generate the *content* fresh
+Match the _quality and voice_ of the gold sample; generate the _content_ fresh
 from each client's real data.
 
 ---
@@ -453,8 +471,8 @@ from each client's real data.
 
 ## CHANGE LOG
 
-| Version | Change |
-|---|---|
-| (predecessor) | `DARROW_REPORT_CONTENT_STANDARD.md` (v3) — quality bar with v3 targets (CORE 18–20 pages / 3,000–3,600 words / 17 sections), still contained the older "system" framing. |
-| v4.1 | New quality standard aligned to the approved v4.1 set. Updated targets to 26 pages / 4,350–5,250 words / 17 generated keys + static pages. Added source hierarchy, scenario-first rule, language rules reducing mechanical phrasing, grounded-praise rule, product-completeness rule, naming consistency (CORE Report: UNVEIL + Cosmic Core Code Method), module safety rules, PLACE data rule, data availability rules, formatting standard, pass/fail checklist, and gold-sample reference. Quality layer only — no schema, page mapping, runtime prompt, or implementation code. |
-| v4.1 (approval cleanup) | **Current.** Replaced "unlock" wording in data availability (§19), clarified command-tone vs descriptive need-language (§11), and added no-direct-cross-sell rule for body sections (§15). No schema, runtime, implementation, or Loveable prompt content added. |
+| Version                 | Change                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| (predecessor)           | `DARROW_REPORT_CONTENT_STANDARD.md` (v3) — quality bar with v3 targets (CORE 18–20 pages / 3,000–3,600 words / 17 sections), still contained the older "system" framing.                                                                                                                                                                                                                                                                                                                                                                                                            |
+| v4.1                    | New quality standard aligned to the approved v4.1 set. Updated targets to 26 pages / 4,350–5,250 words / 17 generated keys + static pages. Added source hierarchy, scenario-first rule, language rules reducing mechanical phrasing, grounded-praise rule, product-completeness rule, naming consistency (CORE Report: UNVEIL + Cosmic Core Code Method), module safety rules, PLACE data rule, data availability rules, formatting standard, pass/fail checklist, and gold-sample reference. Quality layer only — no schema, page mapping, runtime prompt, or implementation code. |
+| v4.1 (approval cleanup) | **Current.** Replaced "unlock" wording in data availability (§19), clarified command-tone vs descriptive need-language (§11), and added no-direct-cross-sell rule for body sections (§15). No schema, runtime, implementation, or Loveable prompt content added.                                                                                                                                                                                                                                                                                                                    |

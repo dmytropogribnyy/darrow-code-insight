@@ -9,10 +9,7 @@ import { MODULE_CODES, type ModuleCode } from "@/lib/modules";
 let _sb: any = null;
 export function adminClient(): any {
   if (!_sb) {
-    _sb = createClient(
-      process.env.SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!,
-    );
+    _sb = createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!);
   }
   return _sb;
 }
@@ -32,7 +29,13 @@ async function buildPlaceholderPdf(args: {
   const muted = rgb(0.45, 0.45, 0.5);
 
   page.drawText("DARROW CODE", { x: 50, y: 790, size: 10, font: sans, color: gold });
-  page.drawText("Astro Report — Preview", { x: 50, y: 760, size: 22, font: serif, color: charcoal });
+  page.drawText("Astro Report — Preview", {
+    x: 50,
+    y: 760,
+    size: 22,
+    font: serif,
+    color: charcoal,
+  });
   page.drawLine({ start: { x: 50, y: 745 }, end: { x: 545, y: 745 }, thickness: 0.5, color: gold });
 
   const lines: string[] = [
@@ -55,7 +58,11 @@ async function buildPlaceholderPdf(args: {
     y -= 18;
   }
   page.drawText("More than a horoscope. Your private birth code.", {
-    x: 50, y: 60, size: 10, font: serif, color: muted,
+    x: 50,
+    y: 60,
+    size: 10,
+    font: serif,
+    color: muted,
   });
   return doc.save();
 }
@@ -89,11 +96,13 @@ export async function runPlaceholderGeneration(order_id: string): Promise<void> 
   const { data: intake } = await sb
     .from("intakes")
     .select("date_of_birth, birth_city")
-    .eq("id", order.intake_id).single();
+    .eq("id", order.intake_id)
+    .single();
   const { data: customer } = await sb
     .from("customers")
     .select("first_name")
-    .eq("id", order.customer_id).single();
+    .eq("id", order.customer_id)
+    .single();
 
   const pdfBytes = await buildPlaceholderPdf({
     first_name: customer?.first_name ?? null,
@@ -107,19 +116,26 @@ export async function runPlaceholderGeneration(order_id: string): Promise<void> 
   if (existingReport) {
     report_id = existingReport.id;
     download_token = existingReport.download_token;
-    await sb.from("reports").update({
-      modules_array: allModules,
-      generation_status: "complete",
-      model_used: "placeholder-1.0",
-    }).eq("id", report_id);
+    await sb
+      .from("reports")
+      .update({
+        modules_array: allModules,
+        generation_status: "complete",
+        model_used: "placeholder-1.0",
+      })
+      .eq("id", report_id);
   } else {
-    const { data: created, error } = await sb.from("reports").insert({
-      customer_id: order.customer_id,
-      intake_id: order.intake_id,
-      modules_array: allModules,
-      generation_status: "complete",
-      model_used: "placeholder-1.0",
-    }).select("id, download_token").single();
+    const { data: created, error } = await sb
+      .from("reports")
+      .insert({
+        customer_id: order.customer_id,
+        intake_id: order.intake_id,
+        modules_array: allModules,
+        generation_status: "complete",
+        model_used: "placeholder-1.0",
+      })
+      .select("id, download_token")
+      .single();
     if (error || !created) throw new Error(`could not create report: ${error?.message}`);
     report_id = created.id;
     download_token = created.download_token;

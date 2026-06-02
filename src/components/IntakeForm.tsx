@@ -6,10 +6,7 @@ import { getStripeEnvironment } from "@/lib/stripe";
 import { StripeEmbeddedCheckoutBox } from "@/components/StripeEmbeddedCheckout";
 import { PlaceAutocomplete } from "@/components/PlaceAutocomplete";
 import type { PlaceSuggestion } from "@/utils/places.functions";
-import {
-  priceForModules,
-  type ModuleCode,
-} from "@/lib/modules";
+import { priceForModules, type ModuleCode } from "@/lib/modules";
 import { ctaLabelFor } from "@/components/ProductSelector";
 
 type FormState = {
@@ -58,7 +55,6 @@ export function IntakeForm({
       setSessionId(null);
       setSubmitting(false);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [resetSignal]);
 
   const hasSelection = includesCore || chapters.length > 0;
@@ -128,9 +124,7 @@ export function IntakeForm({
   if (clientSecret) {
     return (
       <div className="w-full max-w-[480px] mx-auto">
-        <StripeEmbeddedCheckoutBox
-          fetchClientSecret={async () => clientSecret}
-        />
+        <StripeEmbeddedCheckoutBox fetchClientSecret={async () => clientSecret} />
         <p className="mt-3 text-center text-[11px] text-muted-grey">
           After payment you'll be redirected to your report.
           {sessionId && (
@@ -157,7 +151,13 @@ export function IntakeForm({
     <form onSubmit={onSubmit} className="w-full space-y-[18px]">
       <div>
         <label className={labelCls}>First name</label>
-        <input className={inputCls} value={form.first_name} onChange={update("first_name")} placeholder="Your first name" required />
+        <input
+          className={inputCls}
+          value={form.first_name}
+          onChange={update("first_name")}
+          placeholder="Your first name"
+          required
+        />
       </div>
 
       <div>
@@ -222,7 +222,10 @@ export function IntakeForm({
 
       <div>
         <label className={labelCls} style={{ opacity: 0.75 }}>
-          Full name <span className="normal-case tracking-normal" style={{ color: "#6B6B6B" }}>— optional</span>
+          Full name{" "}
+          <span className="normal-case tracking-normal" style={{ color: "#6B6B6B" }}>
+            — optional
+          </span>
         </label>
         <input
           className={inputCls}
@@ -278,7 +281,9 @@ export function IntakeForm({
           }}
           className="cta-premium w-full font-sans font-semibold rounded-[10px] py-3.5 px-4 text-[15px] sm:text-[16px] flex items-center justify-center gap-2.5 disabled:opacity-60"
         >
-          <span>{submitting ? "Preparing…" : hasSelection ? ctaText : "Choose your report above"}</span>
+          <span>
+            {submitting ? "Preparing…" : hasSelection ? ctaText : "Choose your report above"}
+          </span>
           {hasSelection && (
             <span
               className="font-mono text-[13px] px-2 py-[3px] rounded"
@@ -288,7 +293,10 @@ export function IntakeForm({
             </span>
           )}
         </button>
-        <p className="mt-4 text-[12.5px] sm:text-[13px] font-medium leading-relaxed" style={{ color: "#4A402D" }}>
+        <p
+          className="mt-4 text-[12.5px] sm:text-[13px] font-medium leading-relaxed"
+          style={{ color: "#4A402D" }}
+        >
           Start instantly · Ready in a few minutes · Multi-page PDF ·{" "}
           <span style={{ color: "#D4AF37" }}>No subscription required</span> · Yours forever
         </p>

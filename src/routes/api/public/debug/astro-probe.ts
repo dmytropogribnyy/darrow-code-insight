@@ -66,8 +66,7 @@ export const Route = createFileRoute("/api/public/debug/astro-probe")({
           return new Response("disabled", { status: 404 });
         }
         const url = new URL(request.url);
-        const provided =
-          request.headers.get("x-debug-secret") || url.searchParams.get("secret");
+        const provided = request.headers.get("x-debug-secret") || url.searchParams.get("secret");
         if (!checkSecret(provided)) {
           return new Response("unauthorized", { status: 401 });
         }
@@ -105,7 +104,7 @@ export const Route = createFileRoute("/api/public/debug/astro-probe")({
           const mcSign = natal.midheaven?.sign ?? null;
           const h10Sign = natal.houses?.[9]?.sign ?? null;
           const transitsAvail = (data.transits as any)?.available === true;
-          const transitsAspects = transitsAvail ? (data.transits as any).aspects ?? [] : [];
+          const transitsAspects = transitsAvail ? ((data.transits as any).aspects ?? []) : [];
           const highPriority = transitsAspects
             .filter((a: any) => a.high_priority === true)
             .slice(0, 5);
@@ -128,14 +127,14 @@ export const Route = createFileRoute("/api/public/debug/astro-probe")({
             mc_sign: mcSign,
             h10_sign: h10Sign,
             bazi_available: baziAvail,
-            bazi_day_master: baziAvail ? (data.bazi as any).day_master ?? null : null,
-            current_luck_cycle: baziAvail ? (data.bazi as any).current_luck_cycle ?? null : null,
+            bazi_day_master: baziAvail ? ((data.bazi as any).day_master ?? null) : null,
+            current_luck_cycle: baziAvail ? ((data.bazi as any).current_luck_cycle ?? null) : null,
             transits_available: transitsAvail,
             transits_aspects_count: transitsAspects.length,
             high_priority_examples: highPriority,
             solar_return_available: solarAvail,
             solar_return_sr_asc: solarAvail
-              ? (data.solar_return as any).angles_details?.asc ?? null
+              ? ((data.solar_return as any).angles_details?.asc ?? null)
               : null,
             numerology: numerology
               ? {
@@ -162,8 +161,7 @@ export const Route = createFileRoute("/api/public/debug/astro-probe")({
                   illumination: (data.moon_phase as any).phase?.illumination ?? null,
                   is_waxing: (data.moon_phase as any).phase?.is_waxing ?? null,
                   zodiac_sign: (data.moon_phase as any).zodiac?.sign ?? null,
-                  is_supermoon:
-                    (data.moon_phase as any).special_moon?.is_supermoon ?? null,
+                  is_supermoon: (data.moon_phase as any).special_moon?.is_supermoon ?? null,
                   is_eclipse: (data.moon_phase as any).eclipse?.is_eclipse ?? null,
                   days_until_full_moon:
                     (data.moon_phase as any).forecast?.days_until_full_moon ?? null,
@@ -171,9 +169,7 @@ export const Route = createFileRoute("/api/public/debug/astro-probe")({
                     (data.moon_phase as any).forecast?.days_until_new_moon ?? null,
                 }
               : null,
-            moon_phase_has_prose: moonAvail
-              ? deepHasProse((data as any).moon_phase)
-              : false,
+            moon_phase_has_prose: moonAvail ? deepHasProse((data as any).moon_phase) : false,
             bazi_flow_available: baziFlowAvail,
             bazi_flow: baziFlowAvail
               ? {
@@ -181,17 +177,13 @@ export const Route = createFileRoute("/api/public/debug/astro-probe")({
                   reason: (data.bazi_flow as any).reason ?? null,
                   target_year: (data.bazi_flow as any).target_year ?? null,
                   annual_pillar: (data.bazi_flow as any).annual_pillar ?? null,
-                  monthly_pillars_count:
-                    (data.bazi_flow as any).monthly_pillars?.length ?? 0,
-                  interactions_count:
-                    (data.bazi_flow as any).interactions?.length ?? 0,
+                  monthly_pillars_count: (data.bazi_flow as any).monthly_pillars?.length ?? 0,
+                  interactions_count: (data.bazi_flow as any).interactions?.length ?? 0,
                   stars_count: (data.bazi_flow as any).stars?.length ?? 0,
                   time_confidence: (data.bazi_flow as any).time_confidence ?? null,
                 }
               : null,
-            bazi_flow_has_prose: baziFlowAvail
-              ? deepHasProse((data as any).bazi_flow)
-              : false,
+            bazi_flow_has_prose: baziFlowAvail ? deepHasProse((data as any).bazi_flow) : false,
             any_hit_429: Object.values(data.meta.endpoint_timing_ms ?? {}).some(() => false), // placeholder
             interpretation_leak: interpretationLeak,
             bazi_size_bytes: baziSize,
@@ -200,10 +192,7 @@ export const Route = createFileRoute("/api/public/debug/astro-probe")({
           cachedProbe = { at: Date.now(), body };
           return Response.json(body);
         } catch (e: any) {
-          return Response.json(
-            { ok: false, error: String(e?.message ?? e) },
-            { status: 500 },
-          );
+          return Response.json({ ok: false, error: String(e?.message ?? e) }, { status: 500 });
         }
       },
     },

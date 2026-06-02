@@ -15,7 +15,10 @@ const MODEL_TIMEOUT_MS = 10 * 60 * 1000;
 
 // CORE v3.1 targets — richer reads, structured callouts.
 // min_chars applies to prose only (callouts are extra).
-export const CORE_V3_TARGETS: Record<string, { min_chars: number; word_lo: number; word_hi: number }> = {
+export const CORE_V3_TARGETS: Record<
+  string,
+  { min_chars: number; word_lo: number; word_hi: number }
+> = {
   cover_tagline: { min_chars: 50, word_lo: 15, word_hi: 25 },
   orientation: { min_chars: 800, word_lo: 200, word_hi: 250 },
   core_architecture: { min_chars: 1100, word_lo: 300, word_hi: 380 },
@@ -110,8 +113,7 @@ export function evaluateStructure(report: any): StructuralIssue[] {
     if (!(k in core)) issues.push({ code: "MISSING_SECTION_KEY", detail: k });
     else {
       const prose = getCoreSectionProse(core[k]);
-      if (!prose || prose.trim().length === 0)
-        issues.push({ code: "EMPTY_SECTION", detail: k });
+      if (!prose || prose.trim().length === 0) issues.push({ code: "EMPTY_SECTION", detail: k });
     }
   }
   return issues;
@@ -124,7 +126,10 @@ export interface DiagAiResult {
   ms_total: number;
 }
 
-export async function generateCoreV3Diagnostic(userPrompt: string, model: string): Promise<DiagAiResult> {
+export async function generateCoreV3Diagnostic(
+  userPrompt: string,
+  model: string,
+): Promise<DiagAiResult> {
   const apiKey = process.env.ANTHROPIC_API_KEY;
   if (!apiKey) throw new Error("ANTHROPIC_API_KEY is not configured");
   const started = Date.now();
@@ -145,9 +150,15 @@ export async function generateCoreV3Diagnostic(userPrompt: string, model: string
         model,
         max_tokens: MAX_TOKENS,
         temperature: 0.75,
-        system: [{ type: "text", text: DARROW_SYSTEM_PROMPT, cache_control: { type: "ephemeral" } }],
+        system: [
+          { type: "text", text: DARROW_SYSTEM_PROMPT, cache_control: { type: "ephemeral" } },
+        ],
         tools: [
-          { name: TOOL_NAME, description: "Emit the final Darrow report as structured JSON.", input_schema: darrowReportJsonSchema },
+          {
+            name: TOOL_NAME,
+            description: "Emit the final Darrow report as structured JSON.",
+            input_schema: darrowReportJsonSchema,
+          },
         ],
         tool_choice: { type: "tool", name: TOOL_NAME },
         messages: [{ role: "user", content: userPrompt }],
@@ -165,7 +176,9 @@ export async function generateCoreV3Diagnostic(userPrompt: string, model: string
     throw new Error(`Anthropic ${res.status}: ${text.slice(0, 500)}`);
   }
   const data = (await res.json()) as any;
-  const toolBlock = (data?.content ?? []).find((b: any) => b?.type === "tool_use" && b?.name === TOOL_NAME);
+  const toolBlock = (data?.content ?? []).find(
+    (b: any) => b?.type === "tool_use" && b?.name === TOOL_NAME,
+  );
   if (!toolBlock) throw new Error("Anthropic returned no tool_use block");
   return {
     raw_report: toolBlock.input,

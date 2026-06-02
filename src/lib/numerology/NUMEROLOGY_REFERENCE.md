@@ -13,12 +13,14 @@ synthesis engine — it is **never** a customer-facing standalone "Numerology Re
 - `full_name_for_numerology` (OPTIONAL — collected only when the customer opts in)
 
 If `full_name_for_numerology` is absent:
+
 - Compute only: Life Path, Birth Day Number, Personal Year.
 - `name_numerology.available = false`, `reason = "full_name_not_provided"`.
 - Do NOT claim Expression / Soul Urge / Personality / Maturity / Hidden Passion / Karmic Lessons.
 
 If `full_name_for_numerology` is present but yields fewer than 2 valid Latin letters
 after normalization:
+
 - `name_numerology.available = false`, `reason = "insufficient_latin_letters"`.
 
 Numerology never blocks checkout. It is optional enrichment only.
@@ -63,17 +65,17 @@ Do not transliterate non-Latin scripts. Do not call any external service.
 
 ## Number definitions
 
-| Number | Formula | keepMasterNumbers |
-|---|---|---|
-| Life Path | Digit sum of `YYYYMMDD` | true |
-| Birth Day Number | Reduce the day component | true |
-| Personal Year | Digit sum of (birth month + birth day + current year), reduced to 1–9. Also record `personal_year_master_marker` if the intermediate is 11/22/33. | final stays 1–9 |
-| Expression | Sum of all mapped letters of normalized name | true |
-| Soul Urge | Sum of vowels only | true |
-| Personality | Sum of consonants only | true |
-| Maturity | Expression + Life Path | true |
-| Hidden Passion | Letter value(s) with the highest frequency (tie → array) | n/a |
-| Karmic Lessons | Letter values in 1–9 missing from the frequency map | n/a |
+| Number           | Formula                                                                                                                                           | keepMasterNumbers |
+| ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------- |
+| Life Path        | Digit sum of `YYYYMMDD`                                                                                                                           | true              |
+| Birth Day Number | Reduce the day component                                                                                                                          | true              |
+| Personal Year    | Digit sum of (birth month + birth day + current year), reduced to 1–9. Also record `personal_year_master_marker` if the intermediate is 11/22/33. | final stays 1–9   |
+| Expression       | Sum of all mapped letters of normalized name                                                                                                      | true              |
+| Soul Urge        | Sum of vowels only                                                                                                                                | true              |
+| Personality      | Sum of consonants only                                                                                                                            | true              |
+| Maturity         | Expression + Life Path                                                                                                                            | true              |
+| Hidden Passion   | Letter value(s) with the highest frequency (tie → array)                                                                                          | n/a               |
+| Karmic Lessons   | Letter values in 1–9 missing from the frequency map                                                                                               | n/a               |
 
 ## Meaning layer
 
@@ -84,10 +86,12 @@ Backend stores concise meaning labels only in `numerology-meanings.ts`:
 ```
 
 Language must be Darrow Code:
+
 - structure, mechanism, operating pattern, pressure point, protocol,
   configuration, signal, rhythm.
 
 Forbidden language:
+
 - destiny, fate, soul mission, lucky number, vibration, healing, protection,
   attraction, mystical claims, "your name means you are…", identity labels
   like "healer".
@@ -134,15 +138,15 @@ numerology: {
 
 ## Module usage routing
 
-| Module | Numerology contribution |
-|---|---|
-| CORE  | Life Path + Birth Day always. Expression/Soul Urge/Personality only when `full_name_for_numerology` exists AND they converge with the main astrology + BaZi pattern. **Never a separate "Name Numerology" section.** |
-| LOVE  | Name numerology only if it reinforces the relationship pattern (Venus/Mars/Moon/5H/7H/Descendant). Never a compatibility claim from numerology alone. |
-| MONEY | Life Path, Expression, Maturity may support income mechanism + value structure alongside 2H/6H/8H/10H, Jupiter, Saturn, Venus, Pluto. |
-| BODY  | Numerology generally not used. |
-| YEAR  | Personal Year supports the annual theme alongside slow transits and Solar Return. Never overrides them. |
-| STYLE | Expression / Soul Urge may add aesthetic nuance when relevant — visual-resonance language only. |
-| PLACE | Numerology not used. |
+| Module | Numerology contribution                                                                                                                                                                                              |
+| ------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| CORE   | Life Path + Birth Day always. Expression/Soul Urge/Personality only when `full_name_for_numerology` exists AND they converge with the main astrology + BaZi pattern. **Never a separate "Name Numerology" section.** |
+| LOVE   | Name numerology only if it reinforces the relationship pattern (Venus/Mars/Moon/5H/7H/Descendant). Never a compatibility claim from numerology alone.                                                                |
+| MONEY  | Life Path, Expression, Maturity may support income mechanism + value structure alongside 2H/6H/8H/10H, Jupiter, Saturn, Venus, Pluto.                                                                                |
+| BODY   | Numerology generally not used.                                                                                                                                                                                       |
+| YEAR   | Personal Year supports the annual theme alongside slow transits and Solar Return. Never overrides them.                                                                                                              |
+| STYLE  | Expression / Soul Urge may add aesthetic nuance when relevant — visual-resonance language only.                                                                                                                      |
+| PLACE  | Numerology not used.                                                                                                                                                                                                 |
 
 ## Hard rules
 

@@ -1,11 +1,19 @@
 # DARROW CODE — CORE MODULE MASTER PATTERN v4.1
+
 # Stable skeleton for CORE Report: UNVEIL (Cosmic Core Code Method)
+
 # Target: 26 PDF pages · 4,350–5,250 words
+
 # Status: CANONICAL — fixed skeleton, AI fills VARIABLE fields only
+
 #
+
 # ⚠️ IMPLEMENTATION NOTE FOR LOVEABLE:
+
 # The new section `operating_mode` introduced in v4 is a schema migration.
+
 # Do NOT implement it during the current render-fix diagnostic.
+
 # Add it only after PDF rendering is confirmed stable on v3 sections.
 
 ---
@@ -78,7 +86,7 @@ They appear after the human pattern is established, as confirmation.
 ## MANUAL SAMPLE STYLE PRINCIPLES
 
 Based directly on the two English reference documents:
-*Cosmic Core Code: UNVEIL* and *Full Destiny Codex*.
+_Cosmic Core Code: UNVEIL_ and _Full Destiny Codex_.
 
 Study these principles. Apply them to every section.
 
@@ -226,11 +234,11 @@ Rewrite: human pattern first, placement as confirmation.
 
 Three field types. Apply strictly.
 
-| Type | Rule | Example |
-|---|---|---|
-| `[STATIC]` | Universal brand/method text only. True for every client. Never modified. | "Clarity before action. Orientation over prediction." |
-| `[SEMI-STATIC]` | Fixed sentence frame, but the conclusion is filled by AI from chart data. | "Your [X] is your primary structural advantage." |
-| `[VARIABLE]` | Fully client-specific. AI generates from chart. Nothing is pre-written. | Core Architecture section prose |
+| Type            | Rule                                                                      | Example                                               |
+| --------------- | ------------------------------------------------------------------------- | ----------------------------------------------------- |
+| `[STATIC]`      | Universal brand/method text only. True for every client. Never modified.  | "Clarity before action. Orientation over prediction." |
+| `[SEMI-STATIC]` | Fixed sentence frame, but the conclusion is filled by AI from chart data. | "Your [X] is your primary structural advantage."      |
+| `[VARIABLE]`    | Fully client-specific. AI generates from chart. Nothing is pre-written.   | Core Architecture section prose                       |
 
 **When in doubt:** if a line makes a claim about the client's specific chart,
 personality, or circumstances — it is VARIABLE or SEMI-STATIC.
@@ -251,47 +259,57 @@ client always knows where they are.
 ---
 
 ### 1. Section title
+
 Clear, premium, easy to scan. One line.
 (Cormorant Garamond, warm dark brown — per visual canon.)
 
 ### 2. Opening line
+
 A short declarative sentence. Visually emphasized as the section's hook —
 slightly larger or weighted, set apart from the body.
 This is the line the client reads first and remembers.
 
 ### 3. Scenario line
+
 Visually distinct from the mechanism prose — ideally italic or slightly
 indented/separated. Its job is immediate recognition: the client should
 see themselves before they read any explanation.
 
 ### 4. Mechanism paragraphs
+
 Normal body prose. Short paragraphs, 2–4 sentences each, with breathing room.
 One blank line between paragraphs. No text walls.
 
 ### 5. Key insight
+
 The single central sentence of the section may use **bold** for emphasis.
 One per section maximum. Bold loses its meaning if it appears more than once
 or twice on a page — reserve it for the line that matters most.
 
 ### 6. PROTOCOL blocks
+
 Render as a separate callout box (left border + subtle tint — per schema patch).
 Label: `PROTOCOL: [Name]`
 2–4 sentences. Behavioral and practical.
 Visually lifted out of the prose so it reads as a usable tool, not a paragraph.
 
 ### 7. Warning Signal blocks
+
 Render as a separate, muted callout box (grey border, lighter tint).
 Label: `WARNING SIGNAL`
 Observable behavior, never judgment. Quieter than the protocol box —
 it is a note, not an alarm.
 
 ### 8. Before / After section
+
 Use bold labels: **Before:** and **After:**
 Keep each block short and highly scannable. The contrast should be visible
 at a glance without reading the full sentences.
 
 ### 9. Executive Summary
+
 Use clear sublabels, each on its own line:
+
 - YOUR CORE ADVANTAGE
 - YOUR PRIMARY SENSITIVITY
 - YOUR DECISION FORMULA
@@ -303,12 +321,14 @@ These act as quiet section markers so the client can navigate the close
 and return to any single line later.
 
 ### 10. Proof tags
+
 Small, muted, placed at the very end of the section.
 They support the insight — they must never visually dominate.
 The eye should land on them last, as confirmation, not as content.
 (Muted grey, smaller size — per visual canon.)
 
 ### 11. Bullet points
+
 Allowed only where they genuinely improve readability:
 protocols, the executive summary, the ecosystem page, and short lists.
 Never turn a normal prose section into bullet-heavy content —
@@ -341,6 +361,7 @@ Formatting should be **driven by structured fields and template rendering**,
 not by markdown that the AI happens to generate inside a prose string.
 
 The correct path:
+
 - AI emits structured fields (prose, protocols[], warning_signals[], proof_tags[])
 - The PDF template controls all visual hierarchy from those fields
 - The AI never decides the visual look through inline markdown
@@ -388,9 +409,10 @@ energy, and recognize your own signal. The baseline for everything that follows.
 ```
 
 > Naming hierarchy (locked):
+>
 > - **CORE Report: UNVEIL** = customer-facing product name (matches checkout)
 > - **Cosmic Core Code Method** = brand / method layer
-> The customer must recognize the product they bought from checkout on the cover.
+>   The customer must recognize the product they bought from checkout on the cover.
 
 ---
 
@@ -443,6 +465,7 @@ A direct "You are not built for X" statement specific to this client's configura
 Not generic. Based on the chart.
 
 Then:
+
 - What this document is: a description of operating architecture, not a prediction
 - What this configuration does that people around them typically misread
 - One sentence that sets the reading mode:
@@ -474,6 +497,7 @@ A realistic situation the client would immediately recognize.
 Not invented. Not abstract. A real moment.
 
 Then:
+
 - The primary natal convergence (stellium, dominant element, chart shape)
 - Bazi Day Master + elemental strength — stated in plain language, not jargon
 - Life Path convergence
@@ -513,6 +537,7 @@ of their chart shape and dominant element.
 SCENARIO LINE: a moment of pressure, multitasking, or scattered demands
 
 Then:
+
 - Chart shape (Bundle / Locomotive / Splash / Bowl / Bucket) in plain language:
   what it means for focus, depth, and blind spots
 - Dominant element as fuel type:
@@ -543,12 +568,14 @@ not "Moon in Cancer in the 1st house" as an opener —
 but "Your emotional system recharges through [X]."
 
 Then:
+
 - How emotional data enters and processes for this Moon placement
 - What depletes vs. restores this specific configuration
 
 3 RECHARGE PROTOCOLS (each named, each specific and behavioral):
 
 Example naming style from reference documents:
+
 - "Water Therapy: Physical contact with water tends to clear what ordinary
   rest does not. It works as a concrete reset ritual."
 - "Absolute Silence: Periods of zero input — no screens, no conversations —
@@ -585,6 +612,7 @@ and a cost.
 SCENARIO LINE: entering a new room, meeting, or group for the first time
 
 Then:
+
 - Ascendant sign + degree: what it broadcasts externally to others
 - The interior process behind the exterior:
   (the security scan, the assessment, the filtering that no one sees)
@@ -656,6 +684,7 @@ and becomes a decision — and why their thinking method is often misread
 SCENARIO LINE: a decision or problem-solving moment where the usual method fails
 
 Then:
+
 - Mercury placement + house in plain language:
   not "Mercury in Cancer in the 2nd house" as an opener —
   but "Your thinking does not run on dry facts."
@@ -688,6 +717,7 @@ SCENARIO LINE: a moment of external pressure to "act fast" or "be more visible"
 that conflicts with inner rhythm
 
 Then:
+
 - Mars placement + house + sign in plain language
 - The operating tempo named explicitly:
   sprint (Aries/Sagittarius) / endurance (Taurus/Capricorn) /
@@ -722,6 +752,7 @@ SCENARIO LINE: being offered a conventional, prestigious role that produces
 an immediate internal rejection — before any rational analysis
 
 Then:
+
 - Saturn placement + house: the structural approach to work, what "responsibility" means
 - MC sign + degree: the career orientation and ambition vector
 - Any Mars-MC tension: the gas/brake dynamic if present — named clearly
@@ -752,6 +783,7 @@ relationship to money and value — including both the driver and the trap.
 SCENARIO LINE: a financial decision moment that reveals the psychological pattern
 
 Then:
+
 - 2nd house ruler or planets: the accumulation psychology
 - 5th house, 8th house, or Pluto: the risk/creative/shared-resource factor
 - The psychological driver named: what money represents for this configuration.
@@ -784,6 +816,7 @@ SCENARIO LINE: an intimacy or trust moment — the point where the
 real dynamic activates, often different from what the client expected of themselves
 
 Then:
+
 - Venus placement + house + sign in plain language
 - What "closeness" means for this configuration —
   the specific form of intimacy this Venus seeks
@@ -956,6 +989,7 @@ After:  [Same — now legible]
 ```
 
 **Rules:**
+
 - 2 Before + 2 After only. No more, no less.
 - No outcome promises: "you will achieve X" is not allowed
 - No "you will feel better" language
@@ -1119,6 +1153,7 @@ Explore at your own pace → darrowcode.com
 ```
 
 > Page 25 rules (locked):
+>
 > - CORE is complete on its own — never framed as "one layer unlocked" or
 >   requiring "the full suite."
 > - Focused chapters are optional deeper lenses, no pressure.
@@ -1149,30 +1184,30 @@ darrowcode.com
 
 ## TOTAL STRUCTURE SUMMARY
 
-| Page | Section key | Type | Word target |
-|---|---|---|---|
-| 01 | Cover | STATIC + VARIABLE | — |
-| 02 | Orientation System | STATIC | — |
-| 03 | `orientation` | VARIABLE | 220–270 |
-| 04–05 | `core_architecture` | VARIABLE | 380–460 |
-| 06 | `operating_mode` ⚠️ | VARIABLE | 260–310 |
-| 07 | `battery` | VARIABLE | 290–340 |
-| 08 | `social_interface` | VARIABLE | 230–270 |
-| 09–10 | `numerology_code` | VARIABLE | 340–400 |
-| 11 | `cognitive_style` | VARIABLE | 230–270 |
-| 12 | `drive_and_rhythm` | VARIABLE | 230–270 |
-| 13–14 | `professional_archetype` | VARIABLE | 300–360 |
-| 15 | `money_and_value` | VARIABLE | 230–270 |
-| 16 | `relationship_baseline` | VARIABLE | 230–270 |
-| 17 | `vitality_baseline` | VARIABLE | 210–250 |
-| 18 | `environment_and_resonance` | VARIABLE | 210–250 |
-| 19–20 | `shadow_and_friction` | VARIABLE | 340–400 |
-| 21 | `before_after` | VARIABLE | 160–200 |
-| 22–23 | `executive_summary` | VARIABLE | 340–400 |
-| 24 | `next_step` | SEMI-STATIC + VARIABLE | 130–160 |
-| 25 | Library | STATIC | — |
-| 26 | Back Cover | STATIC | — |
-| **TOTAL** | | | **~4,350–5,250 words** |
+| Page      | Section key                 | Type                   | Word target            |
+| --------- | --------------------------- | ---------------------- | ---------------------- |
+| 01        | Cover                       | STATIC + VARIABLE      | —                      |
+| 02        | Orientation System          | STATIC                 | —                      |
+| 03        | `orientation`               | VARIABLE               | 220–270                |
+| 04–05     | `core_architecture`         | VARIABLE               | 380–460                |
+| 06        | `operating_mode` ⚠️         | VARIABLE               | 260–310                |
+| 07        | `battery`                   | VARIABLE               | 290–340                |
+| 08        | `social_interface`          | VARIABLE               | 230–270                |
+| 09–10     | `numerology_code`           | VARIABLE               | 340–400                |
+| 11        | `cognitive_style`           | VARIABLE               | 230–270                |
+| 12        | `drive_and_rhythm`          | VARIABLE               | 230–270                |
+| 13–14     | `professional_archetype`    | VARIABLE               | 300–360                |
+| 15        | `money_and_value`           | VARIABLE               | 230–270                |
+| 16        | `relationship_baseline`     | VARIABLE               | 230–270                |
+| 17        | `vitality_baseline`         | VARIABLE               | 210–250                |
+| 18        | `environment_and_resonance` | VARIABLE               | 210–250                |
+| 19–20     | `shadow_and_friction`       | VARIABLE               | 340–400                |
+| 21        | `before_after`              | VARIABLE               | 160–200                |
+| 22–23     | `executive_summary`         | VARIABLE               | 340–400                |
+| 24        | `next_step`                 | SEMI-STATIC + VARIABLE | 130–160                |
+| 25        | Library                     | STATIC                 | —                      |
+| 26        | Back Cover                  | STATIC                 | —                      |
+| **TOTAL** |                             |                        | **~4,350–5,250 words** |
 
 ⚠️ `operating_mode` — new section, v4 schema migration. Do not implement in Loveable until render pipeline is confirmed stable on existing v3 sections.
 
@@ -1278,14 +1313,14 @@ the human pattern, not the system language, should dominate.
 
 ## CHANGE LOG
 
-| Version | Change |
-|---|---|
-| v1 | Original Cosmic Core Code manual (18 pages, ~2,000 words) |
-| v2 | Added word targets and section spec (18–20 pages, 3,000–3,600 words) |
-| v3 | Added prose structure rules + schema patch for structured callouts |
-| v4 | Expanded to 26 pages / 4,350–5,250 words. Added Operating Mode. Merged Shadow sections. Expanded Numerology and Executive Summary. Introduced STATIC/VARIABLE field split. |
-| v4.1 | Major revision for human readability and premium tone. Added VOICE ANCHOR section. Added MANUAL SAMPLE STYLE PRINCIPLES from reference documents. Added STATIC/SEMI-STATIC/VARIABLE decision rule. Rewrote all section instructions to lead with human pattern, not technical spec. Removed universal static "promise of scale" line — moved to VARIABLE. Revised Page 24 closing to SEMI-STATIC + VARIABLE. Added ⚠️ schema migration note for operating_mode. All section descriptions now match tone and rhythm of reference documents. |
-| v4.1 (readability pass) | Added CLIENT READABILITY / FORMATTING SYSTEM section: stable visual hierarchy per section (title → opening line → scenario → mechanism → key insight → protocol → warning signal → proof tags), bullet-point rules, and a warning that formatting must be driven by structured fields and template rendering, not raw AI markdown. No structural changes to the 26-page sequence. |
-| v4.1 (consistency cleanup) | Internal consistency fixes only. Removed unsafe/mystical example wording in Battery spec ("psychic static," "literal nervous system reset" → "what ordinary rest does not clear," "concrete reset ritual," "return to neutral"). Removed historical claim in Core Architecture spec ("built in different traditions, centuries apart" → "two separate symbolic systems confirm the same pattern"). Replaced REQUIRED VOCABULARY with PREFERRED VOCABULARY — human-facing openers now lead; system phrasing demoted to "allowed sparingly, never dominant." No structural changes. |
+| Version                         | Change                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
+| ------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| v1                              | Original Cosmic Core Code manual (18 pages, ~2,000 words)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| v2                              | Added word targets and section spec (18–20 pages, 3,000–3,600 words)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| v3                              | Added prose structure rules + schema patch for structured callouts                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| v4                              | Expanded to 26 pages / 4,350–5,250 words. Added Operating Mode. Merged Shadow sections. Expanded Numerology and Executive Summary. Introduced STATIC/VARIABLE field split.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| v4.1                            | Major revision for human readability and premium tone. Added VOICE ANCHOR section. Added MANUAL SAMPLE STYLE PRINCIPLES from reference documents. Added STATIC/SEMI-STATIC/VARIABLE decision rule. Rewrote all section instructions to lead with human pattern, not technical spec. Removed universal static "promise of scale" line — moved to VARIABLE. Revised Page 24 closing to SEMI-STATIC + VARIABLE. Added ⚠️ schema migration note for operating_mode. All section descriptions now match tone and rhythm of reference documents.                                                                                                                                                                                                                                                                                           |
+| v4.1 (readability pass)         | Added CLIENT READABILITY / FORMATTING SYSTEM section: stable visual hierarchy per section (title → opening line → scenario → mechanism → key insight → protocol → warning signal → proof tags), bullet-point rules, and a warning that formatting must be driven by structured fields and template rendering, not raw AI markdown. No structural changes to the 26-page sequence.                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| v4.1 (consistency cleanup)      | Internal consistency fixes only. Removed unsafe/mystical example wording in Battery spec ("psychic static," "literal nervous system reset" → "what ordinary rest does not clear," "concrete reset ritual," "return to neutral"). Removed historical claim in Core Architecture spec ("built in different traditions, centuries apart" → "two separate symbolic systems confirm the same pattern"). Replaced REQUIRED VOCABULARY with PREFERRED VOCABULARY — human-facing openers now lead; system phrasing demoted to "allowed sparingly, never dominant." No structural changes.                                                                                                                                                                                                                                                    |
 | v4.1 (gold reference alignment) | Aligned product naming with CORE Report: UNVEIL (cover + header), added Cosmic Core Code Method as brand/method layer, replaced factory-settings language with approved human-facing phrasing, updated Page 25 to the approved THE DARROW CODE LIBRARY structure (CORE Report / CORE Complete / six focused chapters; no Full Destiny in current CORE ecosystem; no "best places"), removed the direct DYAD cross-sell from the Relationship Baseline body spec, added an environmental-resonance-only safety guard to the Environment section, and replaced a mechanical "Your system…" example with human-facing wording. No structural, schema, or implementation changes; 26-page structure, 17 keys, word targets, operating_mode migration warning, STATIC/SEMI-STATIC/VARIABLE logic, and proof-tag max-5 rule all unchanged. |
-| v4.1 (final structural cleanup) | **Current.** Restored the missing PAGE 19–20 Shadow & Friction heading (heading + section key had been consumed by the Environment safety-guard edit), removed "Your system" from model/framing examples (Correct example + Shadow framing rule now human-facing), and clarified cover_tagline as a VARIABLE cover sub-field rather than a static page in WHAT NEVER CHANGES. No structure, schema, or implementation changes. |
+| v4.1 (final structural cleanup) | **Current.** Restored the missing PAGE 19–20 Shadow & Friction heading (heading + section key had been consumed by the Environment safety-guard edit), removed "Your system" from model/framing examples (Correct example + Shadow framing rule now human-facing), and clarified cover_tagline as a VARIABLE cover sub-field rather than a static page in WHAT NEVER CHANGES. No structure, schema, or implementation changes.                                                                                                                                                                                                                                                                                                                                                                                                       |

@@ -32,7 +32,12 @@ function appBaseUrl(): string {
   return u.replace(/\/$/, "");
 }
 
-async function withTimeout<T>(label: string, promise: Promise<T>, ms = STEP_TIMEOUT_MS, onTick?: () => Promise<void>): Promise<T> {
+async function withTimeout<T>(
+  label: string,
+  promise: Promise<T>,
+  ms = STEP_TIMEOUT_MS,
+  onTick?: () => Promise<void>,
+): Promise<T> {
   let timeout: ReturnType<typeof setTimeout> | undefined;
   let interval: ReturnType<typeof setInterval> | undefined;
   try {
@@ -44,7 +49,10 @@ async function withTimeout<T>(label: string, promise: Promise<T>, ms = STEP_TIME
     return await Promise.race([
       promise,
       new Promise<never>((_, reject) => {
-        timeout = setTimeout(() => reject(new Error(`${label} timed out after ${Math.round(ms / 1000)}s`)), ms);
+        timeout = setTimeout(
+          () => reject(new Error(`${label} timed out after ${Math.round(ms / 1000)}s`)),
+          ms,
+        );
       }),
     ]);
   } finally {
@@ -66,19 +74,24 @@ async function loadOrderContext(order_id: string) {
   const { data: order } = await sb
     .from("orders")
     .select("id, customer_id, intake_id, status")
-    .eq("id", order_id).single();
+    .eq("id", order_id)
+    .single();
   if (!order) throw new Error(`order ${order_id} not found`);
 
   const { data: intake } = await sb
     .from("intakes")
-    .select("id, date_of_birth, birth_time, birth_time_known, birth_city, latitude, longitude, timezone, full_name_for_numerology, bazi_sex")
-    .eq("id", order.intake_id).single();
+    .select(
+      "id, date_of_birth, birth_time, birth_time_known, birth_city, latitude, longitude, timezone, full_name_for_numerology, bazi_sex",
+    )
+    .eq("id", order.intake_id)
+    .single();
   if (!intake) throw new Error(`intake ${order.intake_id} not found`);
 
   const { data: customer } = await sb
     .from("customers")
     .select("id, first_name, email")
-    .eq("id", order.customer_id).single();
+    .eq("id", order.customer_id)
+    .single();
 
   const { data: ownedRows } = await sb
     .from("modules_purchased")
@@ -99,24 +112,43 @@ async function upsertReportProcessing(intake_id: string, customer_id: string, mo
     .select("id, download_token, ai_content_json, model_used")
     .eq("intake_id", intake_id)
     .order("created_at", { ascending: false })
-    .limit(1).maybeSingle();
+    .limit(1)
+    .maybeSingle();
 
   if (existing) {
-    await sb.from("reports").update({
-      modules_array: modules,
-      generation_status: "processing",
-      generation_error: null,
-    }).eq("id", existing.id);
-    return existing as { id: string; download_token: string; ai_content_json: any; model_used: string | null };
+    await sb
+      .from("reports")
+      .update({
+        modules_array: modules,
+        generation_status: "processing",
+        generation_error: null,
+      })
+      .eq("id", existing.id);
+    return existing as {
+      id: string;
+      download_token: string;
+      ai_content_json: any;
+      model_used: string | null;
+    };
   }
 
-  const { data: created, error } = await sb.from("reports").insert({
-    customer_id, intake_id,
-    modules_array: modules,
-    generation_status: "processing",
-  }).select("id, download_token, ai_content_json, model_used").single();
+  const { data: created, error } = await sb
+    .from("reports")
+    .insert({
+      customer_id,
+      intake_id,
+      modules_array: modules,
+      generation_status: "processing",
+    })
+    .select("id, download_token, ai_content_json, model_used")
+    .single();
   if (error || !created) throw new Error(`could not create report: ${error?.message}`);
-  return created as { id: string; download_token: string; ai_content_json: any; model_used: string | null };
+  return created as {
+    id: string;
+    download_token: string;
+    ai_content_json: any;
+    model_used: string | null;
+  };
 }
 
 async function claimGenerationJob(sb: any, order_id: string): Promise<boolean> {
@@ -134,24 +166,41 @@ async function claimGenerationJob(sb: any, order_id: string): Promise<boolean> {
 
   const updatedAtMs = Date.parse(job.updated_at ?? "");
   const isStuckProcessing =
-    job.status === "processing" && Number.isFinite(updatedAtMs) && Date.now() - updatedAtMs > STUCK_PROCESSING_MS;
+    job.status === "processing" &&
+    Number.isFinite(updatedAtMs) &&
+    Date.now() - updatedAtMs > STUCK_PROCESSING_MS;
   if (job.status !== "queued" && !isStuckProcessing) return false;
 
   if ((job.attempt_count ?? 0) >= MAX_GENERATION_ATTEMPTS) {
     const msg = `Generation timed out after ${MAX_GENERATION_ATTEMPTS} attempts`;
-    const { data: order } = await sb.from("orders").select("intake_id").eq("id", order_id).maybeSingle();
+    const { data: order } = await sb
+      .from("orders")
+      .select("intake_id")
+      .eq("id", order_id)
+      .maybeSingle();
     if (order?.intake_id) {
-      await sb.from("reports").update({
-        generation_status: "failed_generation",
-        generation_error: msg,
-      }).eq("intake_id", order.intake_id).neq("generation_status", "complete");
+      await sb
+        .from("reports")
+        .update({
+          generation_status: "failed_generation",
+          generation_error: msg,
+        })
+        .eq("intake_id", order.intake_id)
+        .neq("generation_status", "complete");
     }
-    await sb.from("generation_jobs").update({
-      status: "failed",
-      last_error: msg,
-      updated_at: new Date().toISOString(),
-    }).eq("id", job.id);
-    console.error("[pipeline] max attempts exhausted", { order_id, attempts: job.attempt_count, error: msg });
+    await sb
+      .from("generation_jobs")
+      .update({
+        status: "failed",
+        last_error: msg,
+        updated_at: new Date().toISOString(),
+      })
+      .eq("id", job.id);
+    console.error("[pipeline] max attempts exhausted", {
+      order_id,
+      attempts: job.attempt_count,
+      error: msg,
+    });
     return false;
   }
 
@@ -170,7 +219,13 @@ async function claimGenerationJob(sb: any, order_id: string): Promise<boolean> {
   if (claimErr) throw new Error(`could not claim generation job: ${claimErr.message}`);
   if (claimed) {
     console.log("[pipeline] job claimed", { order_id, attempt: (job.attempt_count ?? 0) + 1 });
-    logStage({ stage: "worker_claimed", result: "success", order_id, generation_job_id: job.id, extra: { attempt: (job.attempt_count ?? 0) + 1 } });
+    logStage({
+      stage: "worker_claimed",
+      result: "success",
+      order_id,
+      generation_job_id: job.id,
+      extra: { attempt: (job.attempt_count ?? 0) + 1 },
+    });
   }
   return !!claimed;
 }
@@ -217,11 +272,24 @@ export async function runFullGenerationPipeline(order_id: string): Promise<void>
     let model_used: string = report ? (r.model_used ?? "reused") : "reused";
 
     if (report) {
-      console.log("[pipeline] reusing existing ai_content_json", { order_id, report_id, model_used, schema: storedCore?.schema_version ?? "(unset)" });
-      logStage({ stage: "ai_generation_completed", result: "success", order_id, extra: { model_used, reused: true } });
+      console.log("[pipeline] reusing existing ai_content_json", {
+        order_id,
+        report_id,
+        model_used,
+        schema: storedCore?.schema_version ?? "(unset)",
+      });
+      logStage({
+        stage: "ai_generation_completed",
+        result: "success",
+        order_id,
+        extra: { model_used, reused: true },
+      });
       await heartbeat(order_id);
     } else if (stored && includesCore) {
-      console.warn("[pipeline] discarding stale legacy ai_content_json — will regenerate", { order_id, report_id });
+      console.warn("[pipeline] discarding stale legacy ai_content_json — will regenerate", {
+        order_id,
+        report_id,
+      });
       await sb.from("reports").update({ ai_content_json: null }).eq("id", report_id);
     } else {
       // 1) Astro data — persist normalized JSON.
@@ -238,7 +306,12 @@ export async function runFullGenerationPipeline(order_id: string): Promise<void>
         birth_city: intake.birth_city ?? null,
         bazi_sex: (intake.bazi_sex as "M" | "F" | null) ?? null,
       };
-      const chart = await withTimeout("Astro calculation", provider.computeNatal(natal), 30 * 1000, () => heartbeat(order_id));
+      const chart = await withTimeout(
+        "Astro calculation",
+        provider.computeNatal(natal),
+        30 * 1000,
+        () => heartbeat(order_id),
+      );
       await heartbeat(order_id);
 
       const tAstro = Date.now();
@@ -253,7 +326,12 @@ export async function runFullGenerationPipeline(order_id: string): Promise<void>
         normalized_json: chart,
         raw_json: null,
       });
-      logStage({ stage: "astro_data_generated", result: "success", order_id, duration_ms: Date.now() - tAstro });
+      logStage({
+        stage: "astro_data_generated",
+        result: "success",
+        order_id,
+        duration_ms: Date.now() - tAstro,
+      });
 
       // 2) AI generation via Anthropic.
       const userPrompt = buildUserPrompt({
@@ -265,14 +343,25 @@ export async function runFullGenerationPipeline(order_id: string): Promise<void>
       });
       logStage({ stage: "ai_generation_started", result: "success", order_id, extra: { modules } });
       const tAi = Date.now();
-      const ai = await withTimeout("AI report generation", generateDarrowReport(userPrompt), STEP_TIMEOUT_MS, () => heartbeat(order_id));
+      const ai = await withTimeout(
+        "AI report generation",
+        generateDarrowReport(userPrompt),
+        STEP_TIMEOUT_MS,
+        () => heartbeat(order_id),
+      );
       report = ai.report;
       model_used = ai.model_used;
       await heartbeat(order_id);
       // Persist immediately so PDF-only retries can skip this step on the next attempt.
       await sb.from("reports").update({ ai_content_json: report, model_used }).eq("id", report_id);
       console.log("[pipeline] AI done", { order_id, report_id, model_used });
-      logStage({ stage: "ai_generation_completed", result: "success", order_id, duration_ms: Date.now() - tAi, extra: { model_used } });
+      logStage({
+        stage: "ai_generation_completed",
+        result: "success",
+        order_id,
+        duration_ms: Date.now() - tAi,
+        extra: { model_used },
+      });
     }
 
     // 3) HTML → PDF.
@@ -286,7 +375,13 @@ export async function runFullGenerationPipeline(order_id: string): Promise<void>
     );
     await heartbeat(order_id);
     console.log("[pipeline] PDF done", { order_id, report_id, bytes: pdfBytes.byteLength });
-    logStage({ stage: "pdf_generated", result: "success", order_id, duration_ms: Date.now() - tPdf, extra: { bytes: pdfBytes.byteLength } });
+    logStage({
+      stage: "pdf_generated",
+      result: "success",
+      order_id,
+      duration_ms: Date.now() - tPdf,
+      extra: { bytes: pdfBytes.byteLength },
+    });
 
     // 4) Upload PDF.
     const path = `${download_token}.pdf`;
@@ -297,19 +392,30 @@ export async function runFullGenerationPipeline(order_id: string): Promise<void>
     if (upload.error) throw new Error(`pdf upload failed: ${upload.error.message}`);
 
     // 5) Save final state.
-    await sb.from("reports").update({
-      ai_content_json: report,
-      pdf_url: path,
-      model_used,
-      generation_status: "complete",
-      generation_error: null,
-    }).eq("id", report_id);
+    await sb
+      .from("reports")
+      .update({
+        ai_content_json: report,
+        pdf_url: path,
+        model_used,
+        generation_status: "complete",
+        generation_error: null,
+      })
+      .eq("id", report_id);
     await sb.from("orders").update({ status: "complete" }).eq("id", order_id);
-    await sb.from("generation_jobs").update({
-      status: "complete",
-      updated_at: new Date().toISOString(),
-    }).eq("order_id", order_id);
-    logStage({ stage: "status_updated", result: "success", order_id, extra: { status: "complete" } });
+    await sb
+      .from("generation_jobs")
+      .update({
+        status: "complete",
+        updated_at: new Date().toISOString(),
+      })
+      .eq("order_id", order_id);
+    logStage({
+      stage: "status_updated",
+      result: "success",
+      order_id,
+      extra: { status: "complete" },
+    });
 
     // 6) Send "report ready" email — only if not already sent for this
     // report+token. This makes PDF-only retries idempotent and prevents
@@ -324,16 +430,38 @@ export async function runFullGenerationPipeline(order_id: string): Promise<void>
       const downloadUrl = `${appBaseUrl()}/download/${download_token}`;
       const resultUrl = `${appBaseUrl()}/result/${download_token}`;
       const chapterCount = modules.filter((m) => m !== "CORE").length;
-      const { subject, html } = reportReadyEmail({ first_name: firstName, download_url: downloadUrl, result_url: resultUrl, assets_base_url: appBaseUrl(), has_core: modules.includes("CORE" as any), chapter_count: chapterCount, modules: modules as string[] });
+      const { subject, html } = reportReadyEmail({
+        first_name: firstName,
+        download_url: downloadUrl,
+        result_url: resultUrl,
+        assets_base_url: appBaseUrl(),
+        has_core: modules.includes("CORE" as any),
+        chapter_count: chapterCount,
+        modules: modules as string[],
+      });
       const tMail = Date.now();
       try {
         await sendEmail({ to: customerEmail, subject, html });
-        await sb.from("reports").update({ ready_email_sent_at: new Date().toISOString() }).eq("id", report_id);
+        await sb
+          .from("reports")
+          .update({ ready_email_sent_at: new Date().toISOString() })
+          .eq("id", report_id);
         console.log("[pipeline] email sent", { order_id, report_id, to: customerEmail });
-        logStage({ stage: "email_sent", result: "success", order_id, duration_ms: Date.now() - tMail });
+        logStage({
+          stage: "email_sent",
+          result: "success",
+          order_id,
+          duration_ms: Date.now() - tMail,
+        });
       } catch (mailErr: any) {
         console.error("[pipeline] report-ready email failed", mailErr);
-        logStage({ stage: "email_sent", result: "failed", order_id, duration_ms: Date.now() - tMail, error: mailErr?.message });
+        logStage({
+          stage: "email_sent",
+          result: "failed",
+          order_id,
+          duration_ms: Date.now() - tMail,
+          error: mailErr?.message,
+        });
       }
     }
     console.log("[pipeline] job completed", { order_id, report_id, download_token });
@@ -349,18 +477,28 @@ export async function runFullGenerationPipeline(order_id: string): Promise<void>
     const shouldRetry = (failedJob?.attempt_count ?? 0) < 2;
 
     if (report_id) {
-      await sb.from("reports").update({
-        generation_status: shouldRetry ? "processing" : "failed_generation",
-        generation_error: msg,
-      }).eq("id", report_id);
+      await sb
+        .from("reports")
+        .update({
+          generation_status: shouldRetry ? "processing" : "failed_generation",
+          generation_error: msg,
+        })
+        .eq("id", report_id);
     }
     await sb.from("orders").update({ status: "paid" }).eq("id", order_id);
-    await sb.from("generation_jobs").update({
-      status: shouldRetry ? "queued" : "failed",
-      last_error: msg,
-      updated_at: new Date().toISOString(),
-    }).eq("order_id", order_id);
-    console.error("[pipeline] job failure recorded", { order_id, should_retry: shouldRetry, error: msg });
+    await sb
+      .from("generation_jobs")
+      .update({
+        status: shouldRetry ? "queued" : "failed",
+        last_error: msg,
+        updated_at: new Date().toISOString(),
+      })
+      .eq("order_id", order_id);
+    console.error("[pipeline] job failure recorded", {
+      order_id,
+      should_retry: shouldRetry,
+      error: msg,
+    });
     logStage({
       stage: "status_updated",
       result: shouldRetry ? "retry" : "failed",

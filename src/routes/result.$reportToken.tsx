@@ -62,10 +62,18 @@ type ReportRow = {
   is_current: boolean;
 };
 
-function describeReport(modules: string[]): { kind: "complete" | "addons" | "core"; label: string; sub: string } {
+function describeReport(modules: string[]): {
+  kind: "complete" | "addons" | "core";
+  label: string;
+  sub: string;
+} {
   const set = new Set(modules);
   if (set.size === 7) {
-    return { kind: "complete", label: "CORE Complete", sub: "Full reading · all 7 chapters · ~50 pages" };
+    return {
+      kind: "complete",
+      label: "CORE Complete",
+      sub: "Full reading · all 7 chapters · ~50 pages",
+    };
   }
   if (set.has("CORE") && set.size > 1) {
     const addons = modules.filter((m) => m !== "CORE").map((m) => MODULE_LABEL[m] ?? m);
@@ -79,7 +87,11 @@ function describeReport(modules: string[]): { kind: "complete" | "addons" | "cor
     return { kind: "core", label: "CORE Reading", sub: "Your foundational reading" };
   }
   const labels = modules.map((m) => MODULE_LABEL[m] ?? m).join(" + ");
-  return { kind: "addons", label: labels, sub: `${modules.length} focused chapter${modules.length > 1 ? "s" : ""}` };
+  return {
+    kind: "addons",
+    label: labels,
+    sub: `${modules.length} focused chapter${modules.length > 1 ? "s" : ""}`,
+  };
 }
 
 function ReportCard({
@@ -230,7 +242,10 @@ function ResultPage() {
   const [selected, setSelected] = useState<Set<ModuleCode>>(new Set());
   const [clientSecret, setClientSecret] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
-  const [busyAction, setBusyAction] = useState<{ token: string; action: "open" | "download" } | null>(null);
+  const [busyAction, setBusyAction] = useState<{
+    token: string;
+    action: "open" | "download";
+  } | null>(null);
   const queryClient = useQueryClient();
   const refreshReports = () =>
     queryClient.invalidateQueries({ queryKey: ["report-context", reportToken] });
@@ -313,7 +328,9 @@ function ResultPage() {
     setBusy(true);
     try {
       const modules =
-        orderType === "FULL_CODE_UPGRADE" ? [...MODULE_CODES] : (Array.from(selected) as ModuleCode[]);
+        orderType === "FULL_CODE_UPGRADE"
+          ? [...MODULE_CODES]
+          : (Array.from(selected) as ModuleCode[]);
       const res = await createUpsellCheckout({
         data: {
           report_token: reportToken,
@@ -370,8 +387,8 @@ function ResultPage() {
             Your Darrow Code Library
           </h1>
           <p className="mt-3 text-[12.5px] text-light-grey/75 max-w-sm mx-auto">
-            Each PDF is delivered separately and also sent to your email. Bookmark this page to access
-            all of your readings.
+            Each PDF is delivered separately and also sent to your email. Bookmark this page to
+            access all of your readings.
           </p>
         </div>
       </section>
@@ -380,7 +397,10 @@ function ResultPage() {
       <section className="bg-paper">
         <div className="max-w-xl mx-auto px-6 pt-10 pb-2 w-full">
           {ctxQ.isLoading ? (
-            <div className="flex items-center justify-center py-10 text-[13px]" style={{ color: "#7A6F58" }}>
+            <div
+              className="flex items-center justify-center py-10 text-[13px]"
+              style={{ color: "#7A6F58" }}
+            >
               <Loader2 className="w-4 h-4 animate-spin mr-2" /> Loading your readings…
             </div>
           ) : reports.length === 0 ? (
@@ -488,7 +508,10 @@ function ResultPage() {
                 <p className="text-[14px] mt-1.5 leading-snug" style={{ color: "#1F1A12" }}>
                   All 6 Focused Chapters in one bound PDF with a grand synthesis. Save $7.94.
                 </p>
-                <p className="font-mono text-[14px] mt-2 font-semibold" style={{ color: "#0A0F1E" }}>
+                <p
+                  className="font-mono text-[14px] mt-2 font-semibold"
+                  style={{ color: "#0A0F1E" }}
+                >
                   +$10.00
                 </p>
               </button>
@@ -513,7 +536,8 @@ function ResultPage() {
                   {quote.saved_cents > 0 && (
                     <div className="flex items-center justify-between text-[11.5px] mt-1">
                       <span style={{ color: "#7A6F58" }}>
-                        if bought separately: <span className="line-through">{fmt(quote.separate_cents)}</span>
+                        if bought separately:{" "}
+                        <span className="line-through">{fmt(quote.separate_cents)}</span>
                       </span>
                       <span className="font-mono text-gold">save {fmt(quote.saved_cents)}</span>
                     </div>

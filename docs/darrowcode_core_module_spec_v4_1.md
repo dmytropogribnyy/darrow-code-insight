@@ -1,6 +1,9 @@
 # DARROW CODE — CORE MODULE SPEC v4.1
+
 # Module: CORE Report: UNVEIL (Cosmic Core Code Method)
+
 # Status: ACTIVE v4.1 STANDARD (module specification / runtime planning layer)
+
 # Governed by: DARROW_DOCS_AUDIT_AND_PLAN_v4_1.md (controlling document)
 
 ---
@@ -14,6 +17,7 @@ the 17 generated section keys, word targets, field intent, static/semi-static/
 variable behavior, data dependencies, and per-section safety rules.
 
 This file is **not**:
+
 - a JSON schema (final validation lives in `schema_template_patch_v4_1.md`)
 - a runtime AI prompt (lives in `darrowcode_ai_system_prompt_v4_1.md`)
 - a Loveable implementation prompt
@@ -25,13 +29,13 @@ It is a planning and content-map document only. No code appears in it.
 
 ## 2 · SOURCE HIERARCHY
 
-| Layer | File | Owns |
-|---|---|---|
-| Intent | `DARROW_CORE_PRODUCT_CONCEPT_STANDARD_v4_1.md` | WHY CORE exists; philosophy, scope, product boundaries |
-| Structure | `DARROW_CORE_MASTER_PATTERN_v4_1.md` | Section sequence, page structure, word targets, formatting logic |
-| Quality bar | `DARROW_REPORT_CONTENT_STANDARD_v4_1.md` | Pass/fail rules for generated prose |
-| Execution quality | `DARROW_CORE_SAMPLE_REPORT_v4_1.md` | The approved GOLD REFERENCE — tone, rhythm, reader intimacy to match |
-| Migration control | `DARROW_DOCS_AUDIT_AND_PLAN_v4_1.md` | File status, conflict resolution, migration order |
+| Layer             | File                                           | Owns                                                                 |
+| ----------------- | ---------------------------------------------- | -------------------------------------------------------------------- |
+| Intent            | `DARROW_CORE_PRODUCT_CONCEPT_STANDARD_v4_1.md` | WHY CORE exists; philosophy, scope, product boundaries               |
+| Structure         | `DARROW_CORE_MASTER_PATTERN_v4_1.md`           | Section sequence, page structure, word targets, formatting logic     |
+| Quality bar       | `DARROW_REPORT_CONTENT_STANDARD_v4_1.md`       | Pass/fail rules for generated prose                                  |
+| Execution quality | `DARROW_CORE_SAMPLE_REPORT_v4_1.md`            | The approved GOLD REFERENCE — tone, rhythm, reader intimacy to match |
+| Migration control | `DARROW_DOCS_AUDIT_AND_PLAN_v4_1.md`           | File status, conflict resolution, migration order                    |
 
 This spec sits between structure and implementation: it reads the master
 pattern and content standard, and produces the map the schema/prompt files will
@@ -57,29 +61,29 @@ identity or Library page.
 
 ## 4 · PAGE STRUCTURE OVERVIEW (26 pages)
 
-| Page | Content |
-|---|---|
-| 01 | Cover |
-| 02 | Personal Orientation System |
-| 03 | `orientation` |
-| 04–05 | `core_architecture` |
-| 06 | `operating_mode` ⚠️ migration |
-| 07 | `battery` |
-| 08 | `social_interface` |
-| 09–10 | `numerology_code` |
-| 11 | `cognitive_style` |
-| 12 | `drive_and_rhythm` |
-| 13–14 | `professional_archetype` |
-| 15 | `money_and_value` |
-| 16 | `relationship_baseline` |
-| 17 | `vitality_baseline` |
-| 18 | `environment_and_resonance` |
-| 19–20 | `shadow_and_friction` |
-| 21 | `before_after` |
-| 22–23 | `executive_summary` |
-| 24 | `next_step` |
-| 25 | Library |
-| 26 | Back Cover |
+| Page  | Content                       |
+| ----- | ----------------------------- |
+| 01    | Cover                         |
+| 02    | Personal Orientation System   |
+| 03    | `orientation`                 |
+| 04–05 | `core_architecture`           |
+| 06    | `operating_mode` ⚠️ migration |
+| 07    | `battery`                     |
+| 08    | `social_interface`            |
+| 09–10 | `numerology_code`             |
+| 11    | `cognitive_style`             |
+| 12    | `drive_and_rhythm`            |
+| 13–14 | `professional_archetype`      |
+| 15    | `money_and_value`             |
+| 16    | `relationship_baseline`       |
+| 17    | `vitality_baseline`           |
+| 18    | `environment_and_resonance`   |
+| 19–20 | `shadow_and_friction`         |
+| 21    | `before_after`                |
+| 22–23 | `executive_summary`           |
+| 24    | `next_step`                   |
+| 25    | Library                       |
+| 26    | Back Cover                    |
 
 Total target: 26 pages · 4,350–5,250 generated words.
 
@@ -123,29 +127,29 @@ approval is out of scope.
 
 ## 7 · SECTION MAP TABLE
 
-| Page | Section key | Display title | Type | Word target | AI-generated? | Template-rendered? | Notes |
-|---|---|---|---|---|---|---|---|
-| 01 | (cover) | CORE Report: UNVEIL | STATIC + cover sub-field | — | tagline only | yes | Title + method line static; `cover_tagline` + client data are variable cover sub-fields |
-| 02 | (orientation_system) | Personal Orientation System | STATIC | — | no | yes | Brand/method + interpretive framework boilerplate |
-| 03 | `orientation` | Introduction | VARIABLE | 220–270 | yes | yes | Sets reading mode; no product mentions |
-| 04–05 | `core_architecture` | Core Architecture | VARIABLE | 380–460 | yes | yes | Primary structural read; spans 2 pages |
-| 06 | `operating_mode` | Operating Mode | VARIABLE | 260–310 | yes ⚠️ | yes | Migration — not in live pipeline yet |
-| 07 | `battery` | The Battery | VARIABLE | 290–340 | yes | yes | 3 recharge protocols + 1 warning signal |
-| 08 | `social_interface` | Social Interface | VARIABLE | 230–270 | yes | yes | Appearance vs inner read |
-| 09–10 | `numerology_code` | Numerology Code | VARIABLE | 340–400 | yes | yes | Spans 2 pages |
-| 11 | `cognitive_style` | Cognitive Style | VARIABLE | 230–270 | yes | yes | How thinking/decisions work |
-| 12 | `drive_and_rhythm` | Drive & Rhythm | VARIABLE | 230–270 | yes | yes | One grounded metaphor |
-| 13–14 | `professional_archetype` | Professional Archetype | VARIABLE | 300–360 | yes | yes | Spans 2 pages; named archetype |
-| 15 | `money_and_value` | Money & Value Mechanics | VARIABLE | 230–270 | yes | yes | No wealth promises |
-| 16 | `relationship_baseline` | Relationship Baseline | VARIABLE | 230–270 | yes | yes | No body cross-sell |
-| 17 | `vitality_baseline` | Vitality Baseline | VARIABLE | 210–250 | yes | yes | Carries medical disclaimer |
-| 18 | `environment_and_resonance` | Environment & Resonance | VARIABLE | 210–250 | yes | yes | Environmental resonance only, no cities |
-| 19–20 | `shadow_and_friction` | Shadow & Friction | VARIABLE | 340–400 | yes | yes | Spans 2 pages; disarming protocol + warning |
-| 21 | `before_after` | Before / After | VARIABLE | 160–200 | yes | yes | Exactly 2 Before / 2 After |
-| 22–23 | `executive_summary` | Executive Summary | VARIABLE | 340–400 | yes | yes | Spans 2 pages; 6-part structure |
-| 24 | `next_step` | Closing | SEMI-STATIC + VARIABLE | 130–160 | yes | yes | 4 pillars frame fixed, conclusions variable |
-| 25 | (library) | The Darrow Code Library | STATIC | — | no | yes | Optional deeper lenses; current storefront |
-| 26 | (back_cover) | Back Cover | STATIC | — | no | yes | Brand mark + URL |
+| Page  | Section key                 | Display title               | Type                     | Word target | AI-generated? | Template-rendered? | Notes                                                                                   |
+| ----- | --------------------------- | --------------------------- | ------------------------ | ----------- | ------------- | ------------------ | --------------------------------------------------------------------------------------- |
+| 01    | (cover)                     | CORE Report: UNVEIL         | STATIC + cover sub-field | —           | tagline only  | yes                | Title + method line static; `cover_tagline` + client data are variable cover sub-fields |
+| 02    | (orientation_system)        | Personal Orientation System | STATIC                   | —           | no            | yes                | Brand/method + interpretive framework boilerplate                                       |
+| 03    | `orientation`               | Introduction                | VARIABLE                 | 220–270     | yes           | yes                | Sets reading mode; no product mentions                                                  |
+| 04–05 | `core_architecture`         | Core Architecture           | VARIABLE                 | 380–460     | yes           | yes                | Primary structural read; spans 2 pages                                                  |
+| 06    | `operating_mode`            | Operating Mode              | VARIABLE                 | 260–310     | yes ⚠️        | yes                | Migration — not in live pipeline yet                                                    |
+| 07    | `battery`                   | The Battery                 | VARIABLE                 | 290–340     | yes           | yes                | 3 recharge protocols + 1 warning signal                                                 |
+| 08    | `social_interface`          | Social Interface            | VARIABLE                 | 230–270     | yes           | yes                | Appearance vs inner read                                                                |
+| 09–10 | `numerology_code`           | Numerology Code             | VARIABLE                 | 340–400     | yes           | yes                | Spans 2 pages                                                                           |
+| 11    | `cognitive_style`           | Cognitive Style             | VARIABLE                 | 230–270     | yes           | yes                | How thinking/decisions work                                                             |
+| 12    | `drive_and_rhythm`          | Drive & Rhythm              | VARIABLE                 | 230–270     | yes           | yes                | One grounded metaphor                                                                   |
+| 13–14 | `professional_archetype`    | Professional Archetype      | VARIABLE                 | 300–360     | yes           | yes                | Spans 2 pages; named archetype                                                          |
+| 15    | `money_and_value`           | Money & Value Mechanics     | VARIABLE                 | 230–270     | yes           | yes                | No wealth promises                                                                      |
+| 16    | `relationship_baseline`     | Relationship Baseline       | VARIABLE                 | 230–270     | yes           | yes                | No body cross-sell                                                                      |
+| 17    | `vitality_baseline`         | Vitality Baseline           | VARIABLE                 | 210–250     | yes           | yes                | Carries medical disclaimer                                                              |
+| 18    | `environment_and_resonance` | Environment & Resonance     | VARIABLE                 | 210–250     | yes           | yes                | Environmental resonance only, no cities                                                 |
+| 19–20 | `shadow_and_friction`       | Shadow & Friction           | VARIABLE                 | 340–400     | yes           | yes                | Spans 2 pages; disarming protocol + warning                                             |
+| 21    | `before_after`              | Before / After              | VARIABLE                 | 160–200     | yes           | yes                | Exactly 2 Before / 2 After                                                              |
+| 22–23 | `executive_summary`         | Executive Summary           | VARIABLE                 | 340–400     | yes           | yes                | Spans 2 pages; 6-part structure                                                         |
+| 24    | `next_step`                 | Closing                     | SEMI-STATIC + VARIABLE   | 130–160     | yes           | yes                | 4 pillars frame fixed, conclusions variable                                             |
+| 25    | (library)                   | The Darrow Code Library     | STATIC                   | —           | no            | yes                | Optional deeper lenses; current storefront                                              |
+| 26    | (back_cover)                | Back Cover                  | STATIC                   | —           | no            | yes                | Brand mark + URL                                                                        |
 
 ---
 
@@ -159,6 +163,7 @@ proof tags. Required components are listed per section below.
 ---
 
 ### `orientation` — Introduction
+
 - **Page(s):** 03
 - **Purpose:** Establish what kind of document this is and what the client's
   configuration does that gets misread — before any placement appears.
@@ -175,6 +180,7 @@ proof tags. Required components are listed per section below.
 ---
 
 ### `core_architecture` — Core Architecture
+
 - **Page(s):** 04–05
 - **Purpose:** The primary structural read — convergence of multiple systems on
   one core pattern.
@@ -191,6 +197,7 @@ proof tags. Required components are listed per section below.
 ---
 
 ### `operating_mode` — Operating Mode ⚠️ migration
+
 - **Page(s):** 06
 - **Purpose:** How energy concentrates and moves (chart shape + dominant element
   as operating logic).
@@ -205,6 +212,7 @@ proof tags. Required components are listed per section below.
 ---
 
 ### `battery` — The Battery
+
 - **Page(s):** 07
 - **Purpose:** The actual recharge mechanism — what restores vs depletes.
 - **Word target:** 290–340
@@ -220,6 +228,7 @@ proof tags. Required components are listed per section below.
 ---
 
 ### `social_interface` — Social Interface
+
 - **Page(s):** 08
 - **Purpose:** The gap between how the client appears and what runs internally.
 - **Word target:** 230–270
@@ -233,6 +242,7 @@ proof tags. Required components are listed per section below.
 ---
 
 ### `numerology_code` — Numerology Code
+
 - **Page(s):** 09–10
 - **Purpose:** Numerological layer confirming and extending the chart read.
 - **Word target:** 340–400
@@ -248,6 +258,7 @@ proof tags. Required components are listed per section below.
 ---
 
 ### `cognitive_style` — Cognitive Style
+
 - **Page(s):** 11
 - **Purpose:** How information enters, processes, and becomes a decision.
 - **Word target:** 230–270
@@ -261,6 +272,7 @@ proof tags. Required components are listed per section below.
 ---
 
 ### `drive_and_rhythm` — Drive & Rhythm
+
 - **Page(s):** 12
 - **Purpose:** The actual drive mechanism and operating tempo.
 - **Word target:** 230–270
@@ -274,6 +286,7 @@ proof tags. Required components are listed per section below.
 ---
 
 ### `professional_archetype` — Professional Archetype
+
 - **Page(s):** 13–14
 - **Purpose:** Natural function in professional systems; incompatible environments.
 - **Word target:** 300–360
@@ -287,6 +300,7 @@ proof tags. Required components are listed per section below.
 ---
 
 ### `money_and_value` — Money & Value Mechanics
+
 - **Page(s):** 15
 - **Purpose:** The psychological architecture behind money and value.
 - **Word target:** 230–270
@@ -301,6 +315,7 @@ proof tags. Required components are listed per section below.
 ---
 
 ### `relationship_baseline` — Relationship Baseline
+
 - **Page(s):** 16
 - **Purpose:** How the intimacy/bonding system actually operates.
 - **Word target:** 230–270
@@ -315,6 +330,7 @@ proof tags. Required components are listed per section below.
 ---
 
 ### `vitality_baseline` — Vitality Baseline
+
 - **Page(s):** 17
 - **Purpose:** How the physical/nervous system operates and signals overload.
 - **Word target:** 210–250
@@ -331,6 +347,7 @@ proof tags. Required components are listed per section below.
 ---
 
 ### `environment_and_resonance` — Environment & Resonance
+
 - **Page(s):** 18
 - **Purpose:** How environment recharges vs depletes; environment as a tool.
 - **Word target:** 210–250
@@ -346,6 +363,7 @@ proof tags. Required components are listed per section below.
 ---
 
 ### `shadow_and_friction` — Shadow & Friction
+
 - **Page(s):** 19–20
 - **Purpose:** The primary internal tension as a recurring script, with an
   interrupt — not a moral failing.
@@ -362,6 +380,7 @@ proof tags. Required components are listed per section below.
 ---
 
 ### `before_after` — Before / After
+
 - **Page(s):** 21
 - **Purpose:** The experiential shift from not having the map to having it.
 - **Word target:** 160–200
@@ -375,6 +394,7 @@ proof tags. Required components are listed per section below.
 ---
 
 ### `executive_summary` — Executive Summary
+
 - **Page(s):** 22–23
 - **Purpose:** Clean consolidation; crystallizes, does not repeat.
 - **Word target:** 340–400
@@ -391,6 +411,7 @@ proof tags. Required components are listed per section below.
 ---
 
 ### `next_step` — Closing
+
 - **Page(s):** 24
 - **Purpose:** A personal close the client returns to; the 4 pillars.
 - **Word target:** 130–160
@@ -408,6 +429,7 @@ proof tags. Required components are listed per section below.
 ## 9 · STATIC / TEMPLATE PAGES SPEC
 
 ### Cover (Page 01)
+
 - **Static content:** "CORE Report: UNVEIL" (product name) + "Cosmic Core Code
   Method · Personal Orientation System" (method line) + "DarrowCode©".
 - **Variable sub-fields:** client name, birth data, `cover_tagline`.
@@ -417,6 +439,7 @@ proof tags. Required components are listed per section below.
 - **AI generates it?** Only the `cover_tagline` sub-field. The rest is template.
 
 ### Personal Orientation System (Page 02)
+
 - **Static content:** "Clarity before action / Orientation over prediction";
   the personal-architecture line; the interpretive framework disclaimer.
 - **Variable sub-fields:** none.
@@ -424,6 +447,7 @@ proof tags. Required components are listed per section below.
 - **AI generates it?** No — fully template.
 
 ### Library (Page 25)
+
 - **Static content:** "THE DARROW CODE LIBRARY / Optional Deeper Lenses";
   CORE Report; CORE Complete; the six focused chapters with safe descriptions.
 - **Variable sub-fields:** none.
@@ -433,6 +457,7 @@ proof tags. Required components are listed per section below.
 - **AI generates it?** No — fully template.
 
 ### Back Cover (Page 26)
+
 - **Static content:** brand mark, "DARROW CODE", URL, copyright.
 - **Variable sub-fields:** none.
 - **AI generates it?** No — fully template.
@@ -446,6 +471,7 @@ planning map only — not JSON, not validation.** Final schema lives in
 `schema_template_patch_v4_1.md`.
 
 Conceptual fields a generated section may carry:
+
 - `opening_line` — the short declarative hook
 - `scenario` — the lived recognizable moment (where required)
 - `prose` — the body paragraphs
@@ -463,27 +489,28 @@ field types, minimums, and validation are deferred to the schema file.
 
 ## 11 · DATA DEPENDENCIES BY SECTION
 
-| Section | Required data | Optional data | Fallback if unavailable |
-|---|---|---|---|
-| orientation | birth chart basics | BaZi, numerology | high-level only; omit missing layers |
-| core_architecture | natal placements | BaZi DM, Life Path | drop BaZi/Life Path lines if absent |
-| operating_mode | chart shape, element balance | — | describe element balance only if shape unclear |
-| battery | Moon | element balance | sign-level Moon if house unknown |
-| social_interface | Ascendant (needs birth time) | — | if birth_time_known=false, soften, no firm Asc claim |
-| numerology_code | birth date (Life Path, PY) | full_name (Expr/Soul/Pers) | full_name absent → Life Path + PY only |
-| cognitive_style | Mercury | element balance | sign-level if house unknown |
-| drive_and_rhythm | Mars | — | sign-level if house unknown |
-| professional_archetype | Saturn; MC (needs birth time) | Mars-MC | birth_time_known=false → no MC claim |
-| money_and_value | 2nd-house factor (needs birth time) | Pluto/Jupiter | birth_time_known=false → sign/aspect only |
-| relationship_baseline | Venus | 7th/8th house | houses need birth time; else Venus sign/aspect |
-| vitality_baseline | 6th-house factor (needs birth time) | Mars tempo | birth_time_known=false → general nervous-system tendency |
-| environment_and_resonance | element balance | 12th house/Neptune, Venus | environmental resonance only, no cities |
-| shadow_and_friction | relevant aspects | — | use available aspects only |
-| before_after | synthesis | — | derive from generated sections |
-| executive_summary | synthesis; Personal Year | active transits | no transits → Personal Year only, no transit claims |
-| next_step | synthesis | — | omit form-of-scale line if unsupported |
+| Section                   | Required data                       | Optional data              | Fallback if unavailable                                  |
+| ------------------------- | ----------------------------------- | -------------------------- | -------------------------------------------------------- |
+| orientation               | birth chart basics                  | BaZi, numerology           | high-level only; omit missing layers                     |
+| core_architecture         | natal placements                    | BaZi DM, Life Path         | drop BaZi/Life Path lines if absent                      |
+| operating_mode            | chart shape, element balance        | —                          | describe element balance only if shape unclear           |
+| battery                   | Moon                                | element balance            | sign-level Moon if house unknown                         |
+| social_interface          | Ascendant (needs birth time)        | —                          | if birth_time_known=false, soften, no firm Asc claim     |
+| numerology_code           | birth date (Life Path, PY)          | full_name (Expr/Soul/Pers) | full_name absent → Life Path + PY only                   |
+| cognitive_style           | Mercury                             | element balance            | sign-level if house unknown                              |
+| drive_and_rhythm          | Mars                                | —                          | sign-level if house unknown                              |
+| professional_archetype    | Saturn; MC (needs birth time)       | Mars-MC                    | birth_time_known=false → no MC claim                     |
+| money_and_value           | 2nd-house factor (needs birth time) | Pluto/Jupiter              | birth_time_known=false → sign/aspect only                |
+| relationship_baseline     | Venus                               | 7th/8th house              | houses need birth time; else Venus sign/aspect           |
+| vitality_baseline         | 6th-house factor (needs birth time) | Mars tempo                 | birth_time_known=false → general nervous-system tendency |
+| environment_and_resonance | element balance                     | 12th house/Neptune, Venus  | environmental resonance only, no cities                  |
+| shadow_and_friction       | relevant aspects                    | —                          | use available aspects only                               |
+| before_after              | synthesis                           | —                          | derive from generated sections                           |
+| executive_summary         | synthesis; Personal Year            | active transits            | no transits → Personal Year only, no transit claims      |
+| next_step                 | synthesis                           | —                          | omit form-of-scale line if unsupported                   |
 
 **Global data rules:**
+
 - If `birth_time_known=false`: no houses, angles, Ascendant, MC, IC, Descendant
   claims (body or tags).
 - If BaZi unavailable: do not mention BaZi, Day Master, elements, or branches.
@@ -544,11 +571,13 @@ cues. Never shaming or pathologizing.
 ## 16 · LIBRARY PAGE RULES
 
 Current storefront structure only:
+
 - CORE Report — the complete foundation
 - CORE Complete — CORE Report + all six focused chapters
 - LOVE / MONEY / BODY / YEAR / STYLE / PLACE — optional focused chapters
 
 Rules:
+
 - CORE is complete on its own.
 - Focused chapters are optional deeper lenses only.
 - No urgency, FOMO, or pricing language.
@@ -571,6 +600,7 @@ renderer is for reading old stored reports only, never for new generations.
 ## 18 · OUT OF SCOPE
 
 This file does NOT:
+
 - change Stripe, checkout, or pricing
 - change the provider implementation or FreeAstroAPI calls
 - change APITemplate or Resend
@@ -604,8 +634,8 @@ It is a module specification and content map only.
 
 ## CHANGE LOG
 
-| Version | Change |
-|---|---|
-| (predecessor) | `darrowcode_core_module_spec.md` (v3) — 16/17-section CORE, 18–20 pages / 3,000–3,600 words, contained unsafe example wording. ARCHIVED per audit. |
-| v4.1 | New module specification built only from the approved v4.1 five-file package. 26 pages / 4,350–5,250 words / 17 generated keys + static pages. Section map table, section-by-section spec for all 17 keys, static-page spec, conceptual field intent (no schema), data-dependency table, module safety rules, proof-tag/protocol/warning/before-after rules, Library page rules, backward-compatibility note, out-of-scope list, approval checklist. operating_mode flagged as migration. No schema, runtime prompt, Loveable prompt, or code. |
-| v4.1 (approval cleanup) | **Current.** Clarified the operating_mode migration wording (§6) to avoid key-count ambiguity — v4.1 has exactly 17 generated keys; pre-migration runtime remains separate until render-fix approval. No schema, runtime prompt, Loveable prompt, or code added. |
+| Version                 | Change                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| ----------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| (predecessor)           | `darrowcode_core_module_spec.md` (v3) — 16/17-section CORE, 18–20 pages / 3,000–3,600 words, contained unsafe example wording. ARCHIVED per audit.                                                                                                                                                                                                                                                                                                                                                                                             |
+| v4.1                    | New module specification built only from the approved v4.1 five-file package. 26 pages / 4,350–5,250 words / 17 generated keys + static pages. Section map table, section-by-section spec for all 17 keys, static-page spec, conceptual field intent (no schema), data-dependency table, module safety rules, proof-tag/protocol/warning/before-after rules, Library page rules, backward-compatibility note, out-of-scope list, approval checklist. operating_mode flagged as migration. No schema, runtime prompt, Loveable prompt, or code. |
+| v4.1 (approval cleanup) | **Current.** Clarified the operating_mode migration wording (§6) to avoid key-count ambiguity — v4.1 has exactly 17 generated keys; pre-migration runtime remains separate until render-fix approval. No schema, runtime prompt, Loveable prompt, or code added.                                                                                                                                                                                                                                                                               |

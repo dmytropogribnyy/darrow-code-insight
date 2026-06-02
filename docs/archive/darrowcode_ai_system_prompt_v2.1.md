@@ -3,6 +3,7 @@
 # Darrow Code AI System Prompt — Production v2.1
 
 **Updates from v2.0:**
+
 - ★ Corrected **brand colors** to canonical Visual Masterfile spec (#F6F4EF + #D4AF37 + #0A0F1E)
 - ★ Locked **fonts** (Cormorant SC, Cormorant Garamond, Inter)
 - ★ Added **DATA SOURCES** section — which interpretive tradition feeds which module
@@ -734,38 +735,39 @@ This mapping tells the PDF template engine which JSON field renders on which pag
 
 ### CORE Report Layout (12-14 pages)
 
-| Page | Content | Source |
-|---|---|---|
-| 1 | COVER — title + name + birth data | static + client_name |
-| 2 | Inner page — disclaimer + framework | static |
-| 3 | Client Snapshot — pattern_name + core_pattern + unique_signature + primary_strength + pressure_point + best_operating_rhythm + current_timing_theme + practical_focus + recommended_next_module | client_snapshot |
-| 4 | Opening + Architecture (combined) | modules.CORE.opening + .architecture |
-| 5 | Mechanic | modules.CORE.mechanic |
-| 6 | Timing | modules.CORE.timing |
-| 7-8 | Protocols (with whitespace for list) | modules.CORE.protocols |
-| 9 | Shadow (Warning Signal box) | modules.CORE.shadow |
-| 10 | Before / After | modules.CORE.before_after |
-| 11 | Next + Executive Summary | modules.CORE.next + closing.executive_summary |
-| 12-14 | Ecosystem cross-sell (other modules available) | static |
+| Page  | Content                                                                                                                                                                                         | Source                                        |
+| ----- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------- |
+| 1     | COVER — title + name + birth data                                                                                                                                                               | static + client_name                          |
+| 2     | Inner page — disclaimer + framework                                                                                                                                                             | static                                        |
+| 3     | Client Snapshot — pattern_name + core_pattern + unique_signature + primary_strength + pressure_point + best_operating_rhythm + current_timing_theme + practical_focus + recommended_next_module | client_snapshot                               |
+| 4     | Opening + Architecture (combined)                                                                                                                                                               | modules.CORE.opening + .architecture          |
+| 5     | Mechanic                                                                                                                                                                                        | modules.CORE.mechanic                         |
+| 6     | Timing                                                                                                                                                                                          | modules.CORE.timing                           |
+| 7-8   | Protocols (with whitespace for list)                                                                                                                                                            | modules.CORE.protocols                        |
+| 9     | Shadow (Warning Signal box)                                                                                                                                                                     | modules.CORE.shadow                           |
+| 10    | Before / After                                                                                                                                                                                  | modules.CORE.before_after                     |
+| 11    | Next + Executive Summary                                                                                                                                                                        | modules.CORE.next + closing.executive_summary |
+| 12-14 | Ecosystem cross-sell (other modules available)                                                                                                                                                  | static                                        |
 
 Page 3 must render `unique_signature` as a highlighted editorial block and `practical_focus` as a small practical card.
 
 ### Add-on Module Layout (6-8 pages)
 
-| Page | Content | Source |
-|---|---|---|
-| 1 | Module cover | static + client_name |
-| 2 | Opening + Architecture | modules.{X}.opening + .architecture |
-| 3 | Mechanic + Timing | modules.{X}.mechanic + .timing |
-| 4-5 | Protocols | modules.{X}.protocols |
-| 6 | Shadow + Before/After | modules.{X}.shadow + .before_after |
-| 7 | Next + Cross-sell | modules.{X}.next + cross-sell |
-| 8 | Closing watermark page | static |
+| Page | Content                | Source                              |
+| ---- | ---------------------- | ----------------------------------- |
+| 1    | Module cover           | static + client_name                |
+| 2    | Opening + Architecture | modules.{X}.opening + .architecture |
+| 3    | Mechanic + Timing      | modules.{X}.mechanic + .timing      |
+| 4-5  | Protocols              | modules.{X}.protocols               |
+| 6    | Shadow + Before/After  | modules.{X}.shadow + .before_after  |
+| 7    | Next + Cross-sell      | modules.{X}.next + cross-sell       |
+| 8    | Closing watermark page | static                              |
 
 ### CORE Complete Layout (~50 pages)
 
 Combines master cover + methodology + CORE (10 pp) + 6 add-ons (5-6 pp each)
-+ grand synthesis (2 pp) + closing (1 pp).
+
+- grand synthesis (2 pp) + closing (1 pp).
 
 ---
 
@@ -775,25 +777,25 @@ These are LOCKED. Do not deviate. If a color is not listed, it does not exist.
 
 ### Colors
 
-| Token | Hex | Use |
-|---|---|---|
-| Warm Paper | `#F6F4EF` | Primary content background — PDF body pages, website pages, forms |
-| Midnight Navy | `#0A0F1E` | PDF covers, hero sections, dark dividers |
-| Luxury Gold | `#D4AF37` | THE ONLY ACCENT — product titles, H1, CTA borders, logo. Never body text. Never footer. Never mass-applied. |
-| Soft Light Grey | `#E5E7EB` | Light text on dark backgrounds — cover subtitles, hero secondary text |
-| Muted Grey | `#9CA3AF` | Meta text, "Prepared for", technical captions |
-| Warm Dark Brown | `#4A402D` | Page titles, section headings on light backgrounds |
-| Deep Charcoal | `#151922` | Primary body text on light backgrounds |
-| Neutral Grey | `#6B6B6B` | ONLY for footer, disclaimers, legal text |
+| Token           | Hex       | Use                                                                                                         |
+| --------------- | --------- | ----------------------------------------------------------------------------------------------------------- |
+| Warm Paper      | `#F6F4EF` | Primary content background — PDF body pages, website pages, forms                                           |
+| Midnight Navy   | `#0A0F1E` | PDF covers, hero sections, dark dividers                                                                    |
+| Luxury Gold     | `#D4AF37` | THE ONLY ACCENT — product titles, H1, CTA borders, logo. Never body text. Never footer. Never mass-applied. |
+| Soft Light Grey | `#E5E7EB` | Light text on dark backgrounds — cover subtitles, hero secondary text                                       |
+| Muted Grey      | `#9CA3AF` | Meta text, "Prepared for", technical captions                                                               |
+| Warm Dark Brown | `#4A402D` | Page titles, section headings on light backgrounds                                                          |
+| Deep Charcoal   | `#151922` | Primary body text on light backgrounds                                                                      |
+| Neutral Grey    | `#6B6B6B` | ONLY for footer, disclaimers, legal text                                                                    |
 
 ### Fonts
 
-| Font | Use | Color |
-|---|---|---|
-| **Cormorant SC** | Product titles, PDF covers | `#D4AF37` |
-| **Cormorant SC** | App sales hero H1 (exception) | `#F6F4EF` or `#E5E7EB` — ivory on dark navy for readability |
-| **Cormorant Garamond** | Page titles, section headings | `#4A402D` |
-| **Inter** | All body, UI, forms, checkout | `#151922` (or `#E5E7EB` on dark) |
+| Font                   | Use                           | Color                                                       |
+| ---------------------- | ----------------------------- | ----------------------------------------------------------- |
+| **Cormorant SC**       | Product titles, PDF covers    | `#D4AF37`                                                   |
+| **Cormorant SC**       | App sales hero H1 (exception) | `#F6F4EF` or `#E5E7EB` — ivory on dark navy for readability |
+| **Cormorant Garamond** | Page titles, section headings | `#4A402D`                                                   |
+| **Inter**              | All body, UI, forms, checkout | `#151922` (or `#E5E7EB` on dark)                            |
 
 No other fonts. No decorative typefaces.
 
@@ -826,22 +828,27 @@ NOT in the app or PDF).
 ## CRITICAL REMINDERS FROM SOURCE CANON
 
 From PERSONA & TRUST SUMMARY:
+
 > "The client must close the report feeling RELIEF, not guilt."
 
 From VOICE & INFLUENCE DOCTRINE:
+
 > "Direct language increases clarity, resonance, and trust.
 > Premium positioning requires precision — not polite vagueness."
 
 From OPERATING DOCTRINE:
+
 > "Conditional Paths: 'Many with this structure find balance when...'
 > instead of 'You must do X.'"
 
 From DATA MINING PROTOCOL:
+
 > "Astro.com is the interpretive backbone. No reinterpretation without
 > grounding in these texts." — interpreted as: work in the tradition
 > of Pelletier/Greene/Hand/Townley methodologies.
 
 From VISUAL MASTERFILE:
+
 > "If a color is not in this document — it does not exist."
 
 These are canon, not suggestions.

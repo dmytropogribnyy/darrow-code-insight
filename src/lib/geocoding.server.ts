@@ -22,7 +22,12 @@ export async function geocodeCityGeoapify(city: string): Promise<GeocodeResult |
   const data = (await res.json()) as any;
   const hit = data?.results?.[0];
   if (!hit) {
-    console.error("[geocode] Geoapify no results for", city, "raw:", JSON.stringify(data).slice(0, 400));
+    console.error(
+      "[geocode] Geoapify no results for",
+      city,
+      "raw:",
+      JSON.stringify(data).slice(0, 400),
+    );
     return null;
   }
   const lat = typeof hit.lat === "number" ? hit.lat : Number(hit.lat);
@@ -35,8 +40,7 @@ export async function geocodeCityGeoapify(city: string): Promise<GeocodeResult |
     latitude: lat,
     longitude: lon,
     timezone: hit.timezone?.name ?? "UTC",
-    resolved_name:
-      hit.formatted ?? [hit.city, hit.state, hit.country].filter(Boolean).join(", "),
+    resolved_name: hit.formatted ?? [hit.city, hit.state, hit.country].filter(Boolean).join(", "),
     country: hit.country ?? null,
     provider: "geoapify",
   };

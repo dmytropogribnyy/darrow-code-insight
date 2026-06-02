@@ -11,20 +11,14 @@ type Faq = { question: string; answer: ReactNode };
 function SectionLabel({ text }: { text: string }) {
   return (
     <div className="flex items-center justify-center gap-3 mb-5">
-      <span
-        className="h-px w-10 sm:w-12"
-        style={{ backgroundColor: "rgba(212,175,55,0.45)" }}
-      />
+      <span className="h-px w-10 sm:w-12" style={{ backgroundColor: "rgba(212,175,55,0.45)" }} />
       <p
         className="text-[11px] sm:text-[12px] tracking-[0.18em] sm:tracking-[0.2em] uppercase font-semibold"
         style={{ color: "#D4AF37" }}
       >
         {text}
       </p>
-      <span
-        className="h-px w-10 sm:w-12"
-        style={{ backgroundColor: "rgba(212,175,55,0.45)" }}
-      />
+      <span className="h-px w-10 sm:w-12" style={{ backgroundColor: "rgba(212,175,55,0.45)" }} />
     </div>
   );
 }
@@ -44,9 +38,7 @@ function FaqAccordion({
       collapsible
       className="w-full"
       defaultValue={
-        defaultOpenIndex !== undefined
-          ? `${valuePrefix}-${defaultOpenIndex}`
-          : undefined
+        defaultOpenIndex !== undefined ? `${valuePrefix}-${defaultOpenIndex}` : undefined
       }
     >
       {faqs.map((faq, i) => (
@@ -81,21 +73,18 @@ const aboutFaqs: Faq[] = [
     question: "What makes Darrow Code different?",
     answer: (
       <div className="space-y-2.5">
+        <p>Darrow Code is not a generic horoscope.</p>
         <p>
-          Darrow Code is not a generic horoscope.
+          It is a premium AI-powered astrology report built from your real birth data — and, if you
+          add it, your full name for deeper numerology.
         </p>
         <p>
-          It is a premium AI-powered astrology report built from your real birth
-          data — and, if you add it, your full name for deeper numerology.
+          Instead of giving you vague zodiac lines, Darrow Code combines Western astrology, Chinese
+          BaZi / Four Pillars, numerology and timing patterns into one clear reading about you.
         </p>
         <p>
-          Instead of giving you vague zodiac lines, Darrow Code combines Western
-          astrology, Chinese BaZi / Four Pillars, numerology and timing patterns
-          into one clear reading about you.
-        </p>
-        <p>
-          The goal is simple: to help you understand yourself faster — how you
-          think, feel, react, choose, love, work and move through change.
+          The goal is simple: to help you understand yourself faster — how you think, feel, react,
+          choose, love, work and move through change.
         </p>
       </div>
     ),
@@ -104,20 +93,16 @@ const aboutFaqs: Faq[] = [
     question: "What is the CORE Report?",
     answer: (
       <div className="space-y-2.5">
+        <p>CORE is the main personal report about you.</p>
         <p>
-          CORE is the main personal report about you.
+          It gives you a clear astrological summary of your personality, emotional pattern,
+          strengths, repeating life themes and current timing.
         </p>
         <p>
-          It gives you a clear astrological summary of your personality,
-          emotional pattern, strengths, repeating life themes and current timing.
+          Think of it as your private “this is how I work” report — written in clear language, not
+          astrology jargon.
         </p>
-        <p>
-          Think of it as your private “this is how I work” report — written in
-          clear language, not astrology jargon.
-        </p>
-        <p>
-          CORE is the best place to start if you want the full picture first.
-        </p>
+        <p>CORE is the best place to start if you want the full picture first.</p>
       </div>
     ),
   },
@@ -125,40 +110,34 @@ const aboutFaqs: Faq[] = [
     question: "What are the focused chapters?",
     answer: (
       <div className="space-y-2.5">
+        <p>Focused chapters go deeper into one part of your life.</p>
         <p>
-          Focused chapters go deeper into one part of your life.
-        </p>
-        <p>
-          You can add them to CORE, buy only the area you want, or get CORE
-          Complete with all chapters.
+          You can add them to CORE, buy only the area you want, or get CORE Complete with all
+          chapters.
         </p>
         <p className="font-semibold" style={{ color: "#1F1A10" }}>
           Available chapters:
         </p>
         <ul className="space-y-1 list-disc pl-5">
           <li>
-            <strong>LOVE</strong> — your attraction patterns, intimacy style
-            and relationship loops
+            <strong>LOVE</strong> — your attraction patterns, intimacy style and relationship loops
           </li>
           <li>
-            <strong>MONEY</strong> — how you handle value, work, income pressure
-            and financial decisions
+            <strong>MONEY</strong> — how you handle value, work, income pressure and financial
+            decisions
           </li>
           <li>
-            <strong>BODY</strong> — your stress pattern, recovery rhythm and
-            overload signals
+            <strong>BODY</strong> — your stress pattern, recovery rhythm and overload signals
           </li>
           <li>
-            <strong>YEAR</strong> — what this current year is highlighting for
+            <strong>YEAR</strong> — what this current year is highlighting for you
+          </li>
+          <li>
+            <strong>STYLE</strong> — your colors, materials, aesthetic and personal visual signature
+          </li>
+          <li>
+            <strong>PLACE</strong> — what kinds of places, environments and rhythms support or drain
             you
-          </li>
-          <li>
-            <strong>STYLE</strong> — your colors, materials, aesthetic and
-            personal visual signature
-          </li>
-          <li>
-            <strong>PLACE</strong> — what kinds of places, environments and
-            rhythms support or drain you
           </li>
         </ul>
       </div>
@@ -168,24 +147,20 @@ const aboutFaqs: Faq[] = [
     question: "What will I receive?",
     answer: (
       <div className="space-y-2.5">
+        <p>You receive a polished private PDF report delivered by email.</p>
         <p>
-          You receive a polished private PDF report delivered by email.
+          It reads like a personal astrology briefing about you — clear, interesting and easy to
+          understand.
         </p>
         <p>
-          It reads like a personal astrology briefing about you — clear,
-          interesting and easy to understand.
+          Depending on what you choose, your report can include your main personality reading,
+          timing theme, love patterns, money patterns, stress rhythm, style direction and
+          place/environment insights.
         </p>
+        <p>You also get a secure download link. No account is required.</p>
         <p>
-          Depending on what you choose, your report can include your main
-          personality reading, timing theme, love patterns, money patterns,
-          stress rhythm, style direction and place/environment insights.
-        </p>
-        <p>
-          You also get a secure download link. No account is required.
-        </p>
-        <p>
-          Tap <strong>“See a sample”</strong> at the top of the page to preview
-          the format before buying.
+          Tap <strong>“See a sample”</strong> at the top of the page to preview the format before
+          buying.
         </p>
       </div>
     ),
@@ -203,10 +178,9 @@ const commonFaqs: Faq[] = [
     answer: (
       <div className="space-y-3">
         <p>
-          Yes — bundle pricing is applied automatically as soon as you select 2
-          or more Focused Chapters. The more chapters you add, the more you
-          save. Single prices: <strong>CORE Report $4.99</strong>, each Focused
-          Chapter <strong>$2.99</strong>.
+          Yes — bundle pricing is applied automatically as soon as you select 2 or more Focused
+          Chapters. The more chapters you add, the more you save. Single prices:{" "}
+          <strong>CORE Report $4.99</strong>, each Focused Chapter <strong>$2.99</strong>.
         </p>
 
         <div>
@@ -214,11 +188,26 @@ const commonFaqs: Faq[] = [
             Focused Chapters only (no CORE)
           </p>
           <ul className="text-[12.5px] sm:text-[13px] space-y-0.5 font-mono">
-            <li>2 chapters — <strong>$4.99</strong> <span style={{ color: "#8B6914" }}>(save $0.99)</span></li>
-            <li>3 chapters — <strong>$6.99</strong> <span style={{ color: "#8B6914" }}>(save $1.98)</span></li>
-            <li>4 chapters — <strong>$8.99</strong> <span style={{ color: "#8B6914" }}>(save $2.97)</span></li>
-            <li>5 chapters — <strong>$9.99</strong> <span style={{ color: "#8B6914" }}>(save $4.96)</span></li>
-            <li>All 6 chapters — <strong>$10.00</strong> <span style={{ color: "#8B6914" }}>(save $7.94 vs $17.94)</span></li>
+            <li>
+              2 chapters — <strong>$4.99</strong>{" "}
+              <span style={{ color: "#8B6914" }}>(save $0.99)</span>
+            </li>
+            <li>
+              3 chapters — <strong>$6.99</strong>{" "}
+              <span style={{ color: "#8B6914" }}>(save $1.98)</span>
+            </li>
+            <li>
+              4 chapters — <strong>$8.99</strong>{" "}
+              <span style={{ color: "#8B6914" }}>(save $2.97)</span>
+            </li>
+            <li>
+              5 chapters — <strong>$9.99</strong>{" "}
+              <span style={{ color: "#8B6914" }}>(save $4.96)</span>
+            </li>
+            <li>
+              All 6 chapters — <strong>$10.00</strong>{" "}
+              <span style={{ color: "#8B6914" }}>(save $7.94 vs $17.94)</span>
+            </li>
           </ul>
         </div>
 
@@ -227,11 +216,25 @@ const commonFaqs: Faq[] = [
             CORE Report + Focused Chapters
           </p>
           <ul className="text-[12.5px] sm:text-[13px] space-y-0.5 font-mono">
-            <li>CORE + 1 chapter — <strong>$7.98</strong></li>
-            <li>CORE + 2 chapters — <strong>$9.98</strong> <span style={{ color: "#8B6914" }}>(save $0.99)</span></li>
-            <li>CORE + 3 chapters — <strong>$11.98</strong> <span style={{ color: "#8B6914" }}>(save $1.98)</span></li>
-            <li>CORE + 4 chapters — <strong>$13.98</strong> <span style={{ color: "#8B6914" }}>(save $2.97)</span></li>
-            <li>CORE + 5 chapters — <strong>$14.98</strong> <span style={{ color: "#8B6914" }}>(save $4.96)</span></li>
+            <li>
+              CORE + 1 chapter — <strong>$7.98</strong>
+            </li>
+            <li>
+              CORE + 2 chapters — <strong>$9.98</strong>{" "}
+              <span style={{ color: "#8B6914" }}>(save $0.99)</span>
+            </li>
+            <li>
+              CORE + 3 chapters — <strong>$11.98</strong>{" "}
+              <span style={{ color: "#8B6914" }}>(save $1.98)</span>
+            </li>
+            <li>
+              CORE + 4 chapters — <strong>$13.98</strong>{" "}
+              <span style={{ color: "#8B6914" }}>(save $2.97)</span>
+            </li>
+            <li>
+              CORE + 5 chapters — <strong>$14.98</strong>{" "}
+              <span style={{ color: "#8B6914" }}>(save $4.96)</span>
+            </li>
             <li>
               <strong>CORE Complete</strong> (CORE + all 6) — <strong>$14.99</strong>{" "}
               <span style={{ color: "#8B6914" }}>(save $7.94 vs $22.93)</span>
@@ -240,8 +243,8 @@ const commonFaqs: Faq[] = [
         </div>
 
         <p className="text-[12.5px]" style={{ color: "#5C5340" }}>
-          The order summary on the form always shows the exact total and the
-          amount you save before checkout.
+          The order summary on the form always shows the exact total and the amount you save before
+          checkout.
         </p>
       </div>
     ),
@@ -268,11 +271,7 @@ export function FaqBlock() {
     <div className="w-full space-y-8">
       <div>
         <SectionLabel text="About Darrow Code" />
-        <FaqAccordion
-          faqs={aboutFaqs}
-          defaultOpenIndex={0}
-          valuePrefix="about"
-        />
+        <FaqAccordion faqs={aboutFaqs} defaultOpenIndex={0} valuePrefix="about" />
       </div>
 
       <div>

@@ -4,15 +4,32 @@
 import { NUMEROLOGY_MEANINGS, type NumerologyMeaning } from "./numerology-meanings";
 
 const LETTER_VALUES: Record<string, number> = {
-  A: 1, J: 1, S: 1,
-  B: 2, K: 2, T: 2,
-  C: 3, L: 3, U: 3,
-  D: 4, M: 4, V: 4,
-  E: 5, N: 5, W: 5,
-  F: 6, O: 6, X: 6,
-  G: 7, P: 7, Y: 7,
-  H: 8, Q: 8, Z: 8,
-  I: 9, R: 9,
+  A: 1,
+  J: 1,
+  S: 1,
+  B: 2,
+  K: 2,
+  T: 2,
+  C: 3,
+  L: 3,
+  U: 3,
+  D: 4,
+  M: 4,
+  V: 4,
+  E: 5,
+  N: 5,
+  W: 5,
+  F: 6,
+  O: 6,
+  X: 6,
+  G: 7,
+  P: 7,
+  Y: 7,
+  H: 8,
+  Q: 8,
+  Z: 8,
+  I: 9,
+  R: 9,
 };
 
 const VOWELS = new Set(["A", "E", "I", "O", "U"]); // Y = consonant by default
@@ -26,7 +43,9 @@ export function reduceNumber(n: number, opts: ReduceOptions = {}): number {
   let v = Math.abs(Math.trunc(n));
   while (v > 9) {
     if (keep && (v === 11 || v === 22 || v === 33)) return v;
-    v = String(v).split("").reduce((s, d) => s + Number(d), 0);
+    v = String(v)
+      .split("")
+      .reduce((s, d) => s + Number(d), 0);
   }
   return v;
 }
@@ -59,14 +78,15 @@ export function personalYear(dob: string, year = new Date().getUTCFullYear()): P
   // but final personal_year is always reduced to 1-9 for module logic.
   const marker = reduceNumber(raw, { keepMasterNumbers: true });
   const finalPY = reduceNumber(raw, { keepMasterNumbers: false });
-  const personal_year_master_marker = marker === 11 || marker === 22 || marker === 33 ? marker : null;
+  const personal_year_master_marker =
+    marker === 11 || marker === 22 || marker === 33 ? marker : null;
   return { personal_year: finalPY, personal_year_master_marker };
 }
 
 // --- name-based numbers -----------------------------------------------------
 
 export interface NormalizedName {
-  normalized: string;        // A-Z only, uppercase
+  normalized: string; // A-Z only, uppercase
   letters_used: number;
   warning: string | null;
 }
@@ -78,9 +98,10 @@ export function normalizeName(name: string): NormalizedName {
   s = s.toUpperCase();
   // 3) Keep only A-Z
   const normalized = s.replace(/[^A-Z]/g, "");
-  const warning = normalized.length < name.replace(/[^A-Za-z]/g, "").length
-    ? "Some characters were not in the Latin A–Z range and were ignored."
-    : null;
+  const warning =
+    normalized.length < name.replace(/[^A-Za-z]/g, "").length
+      ? "Some characters were not in the Latin A–Z range and were ignored."
+      : null;
   return { normalized, letters_used: normalized.length, warning };
 }
 
@@ -96,7 +117,10 @@ function letterValues(normalized: string, filter: (ch: string) => boolean): numb
 
 function sumOrNull(arr: number[], keepMaster = true): number | null {
   if (arr.length === 0) return null;
-  return reduceNumber(arr.reduce((a, b) => a + b, 0), { keepMasterNumbers: keepMaster });
+  return reduceNumber(
+    arr.reduce((a, b) => a + b, 0),
+    { keepMasterNumbers: keepMaster },
+  );
 }
 
 export function expressionNumber(normalized: string): number | null {
@@ -184,10 +208,7 @@ export function computeNumerology(args: {
 }): NumerologyOutput {
   const life_path = lifePath(args.date_of_birth);
   const birth_day_number = birthDayNumber(args.date_of_birth);
-  const py = personalYear(
-    args.date_of_birth,
-    (args.now ?? new Date()).getUTCFullYear(),
-  );
+  const py = personalYear(args.date_of_birth, (args.now ?? new Date()).getUTCFullYear());
 
   const raw = (args.full_name_for_numerology ?? "").trim();
   if (!raw) {

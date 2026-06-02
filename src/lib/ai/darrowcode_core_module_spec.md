@@ -1,4 +1,5 @@
 # Darrow Code — CORE Module Architecture Spec
+
 # For Loveable: Patch the generate-report edge function with this spec.
 
 ---
@@ -11,6 +12,7 @@ requirements for the CORE module (Cosmic Core Code / UNVEIL).
 Target output: **18–20 PDF pages · 3,000–3,600 words**
 
 Paste this into Loveable with the instruction:
+
 > "Replace the CORE section structure in the AI generation prompt with
 > this spec. The current word targets are too short. Use the section map
 > below as the authoritative guide for what CORE must contain."
@@ -20,6 +22,7 @@ Paste this into Loveable with the instruction:
 ## CORE MODULE — 16-SECTION MAP
 
 ### SECTION 1: cover_tagline
+
 **Word target: 10–20 words**
 Purpose: The single line printed on the cover page below the client name.
 It must feel personal and precise — not generic.
@@ -30,9 +33,11 @@ Format: 1–2 sentences max. No data anchoring required.
 ---
 
 ### SECTION 2: orientation (Introduction)
+
 **Word target: 180–220 words**
 Purpose: Contextualizes what this report is. Sets the reader's expectations.
 Must contain:
+
 - 1 "You are not built for X" statement specific to the client's configuration
 - Clear articulation of what UNVEIL reveals
 - Statement that this is description, not prescription
@@ -44,11 +49,13 @@ the first conversation.
 ---
 
 ### SECTION 3: core_architecture (Core Architecture)
+
 **Word target: 280–340 words**
 Purpose: The primary structural read. The convergence of 2–3 systems
 on the same core pattern.
 
 Must contain:
+
 - SCENARIO LINE: A realistic situation the client would recognize
 - The primary natal configuration (stellium, dominant element, chart shape)
 - Bazi Day Master + strength assessment
@@ -66,11 +73,13 @@ VULNERABILITY... PROTOCOL..."
 ---
 
 ### SECTION 4: battery (The Battery — Emotional Needs & Internal Fuel)
+
 **Word target: 220–260 words**
 Purpose: Explains the client's recharge mechanism. How their energy
 system actually works. What depletes it vs. restores it.
 
 Must contain:
+
 - Moon placement + house + mode
 - Sun-Moon relationship (conjunction, opposition, etc.)
 - The mechanism in plain language (how emotional data processes)
@@ -85,11 +94,13 @@ static from others. It is your literal nervous system reset."
 ---
 
 ### SECTION 5: social_interface (Social Interface — The Filtering Mechanism)
+
 **Word target: 200–240 words**
 Purpose: How the client reads and filters other people. Their natural
 social operating mode. The gap between outward appearance and inner process.
 
 Must contain:
+
 - SCENARIO LINE: entering a new room/meeting
 - Ascendant + ruler description
 - The gap between how they appear (warm, approachable) and what runs behind
@@ -101,11 +112,13 @@ Must contain:
 ---
 
 ### SECTION 6: numerology_code (Numerology Code — Operating Frequencies)
+
 **Word target: 260–300 words**
 Purpose: The numerological architecture. Must feel like a second structural
 confirmation of what the chart already showed — not a separate system.
 
 Must contain:
+
 - Expression number + interpretation (Destiny/outer purpose)
 - Soul Urge number + interpretation (inner motivation, fuel)
 - Personality number + interpretation (first impression signal)
@@ -120,12 +133,14 @@ Must contain:
 ---
 
 ### SECTION 7: cognitive_style (Cognitive Style — How You Actually Think)
+
 **Word target: 200–240 words**
 Purpose: How information enters the client's system, gets processed, and
 becomes output. This is not personality type — it is the specific mechanics
 of their thinking.
 
 Must contain:
+
 - SCENARIO LINE: a decision or problem-solving moment
 - Mercury placement + house
 - How emotional context functions as a prerequisite for cognition
@@ -137,11 +152,13 @@ Must contain:
 ---
 
 ### SECTION 8: drive_and_rhythm (Drive & Rhythm — The Hidden Engine)
+
 **Word target: 200–240 words**
 Purpose: Mars placement — how drive operates, at what tempo, and why it
 is often misread (by the client or by others).
 
 Must contain:
+
 - SCENARIO LINE: a moment of external pressure to "act fast" vs. inner rhythm
 - Mars placement + house + sign
 - The operating tempo (sprint vs. endurance vs. stealth)
@@ -157,11 +174,13 @@ built for short sprints. You are a powerful diesel generator installed in a bunk
 ---
 
 ### SECTION 9: professional_archetype (The Professional Archetype)
+
 **Word target: 220–260 words**
 Purpose: The client's role in professional systems. Not "what job should I do"
 but "what function do I naturally serve" and "what environment is incompatible."
 
 Must contain:
+
 - SCENARIO LINE: being offered a conventional "prestigious" role that feels wrong
 - Saturn placement + house (structural approach to work)
 - MC sign + degree (career orientation)
@@ -174,11 +193,13 @@ Must contain:
 ---
 
 ### SECTION 10: money_and_value (Money & Value Mechanics)
+
 **Word target: 200–240 words**
 Purpose: How the client's relationship to money and value actually operates —
 psychologically and structurally.
 
 Must contain:
+
 - SCENARIO LINE: a financial decision moment
 - 2nd house ruler or planets
 - Pluto or Jupiter in value-relevant houses
@@ -190,11 +211,13 @@ Must contain:
 ---
 
 ### SECTION 11: relationship_baseline (Relationship Baseline)
+
 **Word target: 200–240 words**
 Purpose: The baseline of how the client connects and bonds. Not "what type
 of partner do you need" but "how your intimacy system actually operates."
 
 Must contain:
+
 - SCENARIO LINE: an intimacy or trust moment
 - Venus placement + house + sign
 - 7th house or 8th house relevant factors
@@ -206,11 +229,13 @@ Must contain:
 ---
 
 ### SECTION 12: vitality_baseline (Vitality Baseline — The Nervous System)
+
 **Word target: 180–220 words**
 Purpose: How the physical/nervous system operates and what it specifically
 needs. Not general wellness advice — structural anchoring.
 
 Must contain:
+
 - 6th house planets or rulers
 - Uranus/Neptune 6th house or nervous system indicators
 - Mars sign contribution to physical operating tempo
@@ -225,10 +250,12 @@ professional for any health concerns."
 ---
 
 ### SECTION 13: environment_and_resonance (Environment & Resonance)
+
 **Word target: 180–220 words**
 Purpose: What kinds of spaces and atmospheres recharge vs. deplete the client.
 
 Must contain:
+
 - Water/Fire/Earth/Air dominant element → environmental preference
 - 12th house or Neptune placements (solitude requirement)
 - Venus sign (aesthetic/comfort preferences)
@@ -239,11 +266,13 @@ Must contain:
 ---
 
 ### SECTION 14: shadow_and_friction (The Friction Point — The Primary Loop)
+
 **Word target: 240–280 words**
 Purpose: The primary internal tension or blind spot. The place where the
 client's architecture creates a specific, repeating pattern of friction.
 
 Must contain:
+
 - The specific loop (not a generic shadow description)
 - Named aspect or placement driving the loop
 - How it appears in relationships OR work OR decisions (concrete scenario)
@@ -259,12 +288,14 @@ It [actual response]. The loop..."
 ---
 
 ### SECTION 15: before_after (Before / After — The Shift)
+
 **Word target: 120–160 words**
 Purpose: The experiential shift between not having this understanding
 and having it. Not a promise of results. A description of how lived
 experience changes when the architecture is recognized.
 
 Must contain:
+
 - 2 "Before:" statements describing the pre-recognition state
 - 2 "After:" statements describing the same reality, now legible
 - No promises of outcomes
@@ -284,12 +315,14 @@ than a faster system would."
 ---
 
 ### SECTION 16: executive_summary (Closing — Executive Summary)
+
 **Word target: 280–320 words**
 Purpose: The closing consolidation. A clean, confident summary of the
 entire architecture. Must feel like a satisfying conclusion, not a
 repetition.
 
 Must contain:
+
 - Core Advantage: 1–2 sentences naming the primary structural gift
 - Primary Sensitivity: 1–2 sentences naming the primary vulnerability
   (without shame framing)
@@ -307,11 +340,13 @@ The Core Conclusion: [...]"
 ---
 
 ### SECTION 17: next_step (The Next Level — Soft Bridge)
+
 **Word target: 80–120 words**
 Purpose: The bridge to the next product. MUST NOT feel like a sales pitch.
 Must feel like a natural continuation of the orientation.
 
 Must contain:
+
 - Reference to what UNVEIL has established
 - 1 specific named module or product that addresses the client's most
   active current pressure (derived from the chart — e.g., if money
@@ -323,26 +358,26 @@ Must contain:
 
 ## SUMMARY TABLE
 
-| # | Section | Words | Key Requirement |
-|---|---|---|---|
-| 1 | cover_tagline | 10–20 | Personal, precise, not generic |
-| 2 | orientation | 180–220 | What UNVEIL is, for this person |
-| 3 | core_architecture | 280–340 | Scenario + 2–3 system synthesis |
-| 4 | battery | 220–260 | 3 concrete recharge protocols |
-| 5 | social_interface | 200–240 | Appearance vs. inner scanner gap |
-| 6 | numerology_code | 260–300 | All 4 numbers + central tension |
-| 7 | cognitive_style | 200–240 | Mercury mechanics + decision sequence |
-| 8 | drive_and_rhythm | 200–240 | Mars tempo + physical metaphor |
-| 9 | professional_archetype | 220–260 | Saturn + MC + role frame |
-| 10 | money_and_value | 200–240 | Psychological driver + primary trap |
-| 11 | relationship_baseline | 200–240 | Venus mechanics + intimacy gap |
-| 12 | vitality_baseline | 180–220 | Nervous system + disclaimer |
-| 13 | environment_and_resonance | 180–220 | 2 environment modes |
-| 14 | shadow_and_friction | 240–280 | Named loop + disarming move |
-| 15 | before_after | 120–160 | 2 Before + 2 After (no outcome promises) |
-| 16 | executive_summary | 280–320 | 4-part structured close |
-| 17 | next_step | 80–120 | Soft bridge, 1 module reference |
-| **TOTAL** | | **~3,050–3,700** | |
+| #         | Section                   | Words            | Key Requirement                          |
+| --------- | ------------------------- | ---------------- | ---------------------------------------- |
+| 1         | cover_tagline             | 10–20            | Personal, precise, not generic           |
+| 2         | orientation               | 180–220          | What UNVEIL is, for this person          |
+| 3         | core_architecture         | 280–340          | Scenario + 2–3 system synthesis          |
+| 4         | battery                   | 220–260          | 3 concrete recharge protocols            |
+| 5         | social_interface          | 200–240          | Appearance vs. inner scanner gap         |
+| 6         | numerology_code           | 260–300          | All 4 numbers + central tension          |
+| 7         | cognitive_style           | 200–240          | Mercury mechanics + decision sequence    |
+| 8         | drive_and_rhythm          | 200–240          | Mars tempo + physical metaphor           |
+| 9         | professional_archetype    | 220–260          | Saturn + MC + role frame                 |
+| 10        | money_and_value           | 200–240          | Psychological driver + primary trap      |
+| 11        | relationship_baseline     | 200–240          | Venus mechanics + intimacy gap           |
+| 12        | vitality_baseline         | 180–220          | Nervous system + disclaimer              |
+| 13        | environment_and_resonance | 180–220          | 2 environment modes                      |
+| 14        | shadow_and_friction       | 240–280          | Named loop + disarming move              |
+| 15        | before_after              | 120–160          | 2 Before + 2 After (no outcome promises) |
+| 16        | executive_summary         | 280–320          | 4-part structured close                  |
+| 17        | next_step                 | 80–120           | Soft bridge, 1 module reference          |
+| **TOTAL** |                           | **~3,050–3,700** |                                          |
 
 ---
 

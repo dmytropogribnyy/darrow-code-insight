@@ -27,7 +27,6 @@ function appBaseUrl(): string {
   return u.replace(/\/$/, "");
 }
 
-
 async function pickOrderId(body: any): Promise<string | null> {
   if (typeof body?.order_id === "string" && body.order_id.length > 0) {
     console.log("[dispatcher] explicit dispatch requested", { order_id: body.order_id });
@@ -48,7 +47,10 @@ async function pickOrderId(body: any): Promise<string | null> {
       return j.order_id;
     }
     if (j.status === "processing" && ageMs > STUCK_PROCESSING_MS) {
-      console.log("[dispatcher] picked stuck processing job", { order_id: j.order_id, age_ms: ageMs });
+      console.log("[dispatcher] picked stuck processing job", {
+        order_id: j.order_id,
+        age_ms: ageMs,
+      });
       return j.order_id;
     }
   }
@@ -65,7 +67,13 @@ async function dispatchGeneration(order_id: string): Promise<Response> {
       .eq("order_id", order_id)
       .maybeSingle();
     console.log("[dispatcher] generation dispatch finished", { order_id, status: job?.status });
-    return Response.json({ ok: true, order_id, status: job?.status ?? "unknown", attempt_count: job?.attempt_count ?? null, last_error: job?.last_error ?? null });
+    return Response.json({
+      ok: true,
+      order_id,
+      status: job?.status ?? "unknown",
+      attempt_count: job?.attempt_count ?? null,
+      last_error: job?.last_error ?? null,
+    });
   } catch (e: any) {
     console.error("[dispatcher] generation dispatch failed", { order_id, error: e?.message ?? e });
     return Response.json(
@@ -85,7 +93,11 @@ async function repairPaidOrdersWithoutJobs(): Promise<number> {
     .limit(50);
   let repaired = 0;
   for (const order of orders ?? []) {
-    const { data: job } = await s.from("generation_jobs").select("id").eq("order_id", order.id).maybeSingle();
+    const { data: job } = await s
+      .from("generation_jobs")
+      .select("id")
+      .eq("order_id", order.id)
+      .maybeSingle();
     if (job) continue;
 
     const { data: completeReport } = await s
@@ -100,7 +112,8 @@ async function repairPaidOrdersWithoutJobs(): Promise<number> {
 
     const status = completeReport ? "complete" : "queued";
     const { error } = await s.from("generation_jobs").insert({ order_id: order.id, status });
-    if (error) console.error("[dispatcher] missing-job repair failed", { order_id: order.id, error });
+    if (error)
+      console.error("[dispatcher] missing-job repair failed", { order_id: order.id, error });
     else {
       repaired += 1;
       console.log("[dispatcher] missing generation job repaired", { order_id: order.id, status });
@@ -123,8 +136,16 @@ async function sendOneMissingReadyEmail(): Promise<boolean> {
     .maybeSingle();
   if (!rep) return false;
 
-  const { data: intake } = await s.from("intakes").select("customer_id").eq("id", rep.intake_id).single();
-  const { data: customer } = await s.from("customers").select("email, first_name").eq("id", intake.customer_id).single();
+  const { data: intake } = await s
+    .from("intakes")
+    .select("customer_id")
+    .eq("id", rep.intake_id)
+    .single();
+  const { data: customer } = await s
+    .from("customers")
+    .select("email, first_name")
+    .eq("id", intake.customer_id)
+    .single();
   if (!customer?.email) return false;
 
   const modulesArray: string[] = Array.isArray(rep.modules_array) ? rep.modules_array : [];
@@ -140,7 +161,10 @@ async function sendOneMissingReadyEmail(): Promise<boolean> {
     modules: modulesArray,
   });
   await sendEmail({ to: customer.email, subject, html });
-  await s.from("reports").update({ ready_email_sent_at: new Date().toISOString() }).eq("id", rep.id);
+  await s
+    .from("reports")
+    .update({ ready_email_sent_at: new Date().toISOString() })
+    .eq("id", rep.id);
   console.log("[dispatcher] missing ready email sent", { report_id: rep.id, to: customer.email });
   return true;
 }
@@ -158,29 +182,44 @@ export const Route = createFileRoute("/api/public/jobs/process-generation")({
   server: {
     handlers: {
       POST: async ({ request }) => {
-        if (!process.env.JOB_DISPATCH_SECRET) return new Response("not configured", { status: 500 });
+        if (!process.env.JOB_DISPATCH_SECRET)
+          return new Response("not configured", { status: 500 });
         const auth = checkWorkerAuth(request.headers);
         if (!auth.ok) return unauthorizedResponse(auth);
 
         let body: any = {};
-        try { body = await request.json(); } catch {}
+        try {
+          body = await request.json();
+        } catch {
+          // ignore: request body may be absent or non-JSON
+        }
         await runSweeperHousekeeping();
 
         const order_id = await pickOrderId(body);
-        if (!order_id) return Response.json({ ok: true, picked: null, email_recovery: await sendOneMissingReadyEmail() });
+        if (!order_id)
+          return Response.json({
+            ok: true,
+            picked: null,
+            email_recovery: await sendOneMissingReadyEmail(),
+          });
         return dispatchGeneration(order_id);
       },
       GET: async ({ request }) => {
-        if (!process.env.JOB_DISPATCH_SECRET) return new Response("not configured", { status: 500 });
+        if (!process.env.JOB_DISPATCH_SECRET)
+          return new Response("not configured", { status: 500 });
         const auth = checkWorkerAuth(request.headers);
         if (!auth.ok) return unauthorizedResponse(auth);
 
         await runSweeperHousekeeping();
         const order_id = await pickOrderId({});
-        if (!order_id) return Response.json({ ok: true, picked: null, email_recovery: await sendOneMissingReadyEmail() });
+        if (!order_id)
+          return Response.json({
+            ok: true,
+            picked: null,
+            email_recovery: await sendOneMissingReadyEmail(),
+          });
         return dispatchGeneration(order_id);
       },
     },
   },
 });
-

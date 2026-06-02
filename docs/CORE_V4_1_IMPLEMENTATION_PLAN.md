@@ -1,6 +1,9 @@
 # DARROW CODE — CORE v4.1 IMPLEMENTATION PLAN
+
 # Status: FUTURE IMPLEMENTATION PLAN — NOT AUTHORIZED FOR EXECUTION YET
+
 # Governed by: docs/SOURCE_OF_TRUTH_v4_1.md + docs/DARROW_DOCS_AUDIT_AND_PLAN_v4_1.md
+
 # Created: 2026-05-29
 
 ---
@@ -12,6 +15,7 @@ It maps the approved v4.1 documentation to the actual repository files
 that must change, and defines the safe sequence for making those changes.
 
 Nothing here authorizes any code change. Implementation begins ONLY after:
+
 - the render-fix diagnostic is approved
 - current v3 PDF rendering is visually confirmed stable
 - a single clean v4.1 implementation prompt is prepared separately
@@ -20,16 +24,16 @@ Nothing here authorizes any code change. Implementation begins ONLY after:
 
 ## 2 · SOURCE DOCUMENTS GOVERNING IMPLEMENTATION
 
-| Document | Role in implementation |
-|----------|----------------------|
-| `docs/SOURCE_OF_TRUTH_v4_1.md` | Governing canonical document; locks structure, naming, safety rules |
-| `docs/DARROW_DOCS_AUDIT_AND_PLAN_v4_1.md` | Controlling migration map; migration order (steps 1–7) |
-| `docs/DARROW_CORE_MASTER_PATTERN_v4_1.md` | Canonical CORE structure — 26 pages, 17 keys, section order |
-| `docs/DARROW_CORE_SAMPLE_REPORT_v4_1.md` | **Gold reference** — tone, rhythm, scenario-first voice |
-| `docs/DARROW_REPORT_CONTENT_STANDARD_v4_1.md` | Quality layer — pass/fail rules for each section |
-| `docs/darrowcode_core_module_spec_v4_1.md` | Runtime content map — which data belongs where, callout rules per section |
-| `docs/darrowcode_ai_system_prompt_v4_1.md` | Future prompt source document — to replace active runtime prompt AFTER authorization |
-| `docs/schema_template_patch_v4_1.md` | Schema/template migration planning — conceptual field model and page map |
+| Document                                      | Role in implementation                                                               |
+| --------------------------------------------- | ------------------------------------------------------------------------------------ |
+| `docs/SOURCE_OF_TRUTH_v4_1.md`                | Governing canonical document; locks structure, naming, safety rules                  |
+| `docs/DARROW_DOCS_AUDIT_AND_PLAN_v4_1.md`     | Controlling migration map; migration order (steps 1–7)                               |
+| `docs/DARROW_CORE_MASTER_PATTERN_v4_1.md`     | Canonical CORE structure — 26 pages, 17 keys, section order                          |
+| `docs/DARROW_CORE_SAMPLE_REPORT_v4_1.md`      | **Gold reference** — tone, rhythm, scenario-first voice                              |
+| `docs/DARROW_REPORT_CONTENT_STANDARD_v4_1.md` | Quality layer — pass/fail rules for each section                                     |
+| `docs/darrowcode_core_module_spec_v4_1.md`    | Runtime content map — which data belongs where, callout rules per section            |
+| `docs/darrowcode_ai_system_prompt_v4_1.md`    | Future prompt source document — to replace active runtime prompt AFTER authorization |
+| `docs/schema_template_patch_v4_1.md`          | Schema/template migration planning — conceptual field model and page map             |
 
 **The gold reference for voice and rhythm is `DARROW_CORE_SAMPLE_REPORT_v4_1.md`.**
 No section should read like a dossier. Every section should feel like a calm,
@@ -41,41 +45,41 @@ intelligent human privately recognized the client's pattern.
 
 ### 3.1 Files That Must Change (in order, after authorization)
 
-| File | Change required |
-|------|----------------|
+| File                                        | Change required                                                                                                                                                                             |
+| ------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `src/lib/ai/darrowcode_ai_system_prompt.md` | **Keep intact until migration switch is authorized.** Create a staged v4.1 runtime prompt file alongside it first; switch `system-prompt.ts` only during controlled Phase 1 implementation. |
-| `src/lib/ai/user-prompt.ts` | Update `coreV3Instructions()` for v4.1 word targets (4,350–5,250) and section map (17 v4.1 keys) |
-| `src/lib/ai/schema.ts` | Add `CoreV4Schema`; update `DarrowReportSchema` union; keep `CoreV3Schema` for legacy reports |
-| `src/lib/ai/core-split.server.ts` | Update section partition (A=keys 1–9, B=keys 10–17) for v4.1 key order (operating_mode at #3) |
-| `src/lib/pdf/template.ts` | Rebuild for 26-page layout; render static pages + all structured fields |
-| `src/lib/ai/quality-gate.server.ts` | Update checks for v4.1 rules; upgrade from warn-only to reject on critical violations |
+| `src/lib/ai/user-prompt.ts`                 | Update `coreV3Instructions()` for v4.1 word targets (4,350–5,250) and section map (17 v4.1 keys)                                                                                            |
+| `src/lib/ai/schema.ts`                      | Add `CoreV4Schema`; update `DarrowReportSchema` union; keep `CoreV3Schema` for legacy reports                                                                                               |
+| `src/lib/ai/core-split.server.ts`           | Update section partition (A=keys 1–9, B=keys 10–17) for v4.1 key order (operating_mode at #3)                                                                                               |
+| `src/lib/pdf/template.ts`                   | Rebuild for 26-page layout; render static pages + all structured fields                                                                                                                     |
+| `src/lib/ai/quality-gate.server.ts`         | Update checks for v4.1 rules; upgrade from warn-only to reject on critical violations                                                                                                       |
 
 ### 3.2 Files That Must NOT Change
 
-| File | Reason |
-|------|--------|
-| `src/lib/astro/provider.ts` | Provider interface unchanged |
-| `src/lib/astro/freeastroapi-provider.server.ts` | Provider implementation unchanged |
-| `src/lib/astro/types.ts` | DarrowChartData shape unchanged |
-| `src/lib/astro/numerology.ts` | Numerology calculations unchanged |
-| `src/lib/generation/pipeline.server.ts` | Pipeline orchestration unchanged |
-| `src/routes/api/public/payments/webhook.ts` | Stripe webhook unchanged |
-| `src/routes/api/public/jobs/process-generation.ts` | Job dispatcher unchanged |
-| `src/lib/email/resend.server.ts` | Email delivery unchanged |
-| `src/lib/pdf/apitemplate.server.ts` | APITemplate.io rendering call unchanged |
-| `src/lib/pdf/stamp-page-numbers.server.ts` | Page number stamper unchanged |
-| `src/lib/stripe.server.ts` | Stripe unchanged |
-| All checkout / pricing code | Unchanged |
-| All Supabase Auth / token routes | Unchanged |
-| `.env*` files | Do NOT overwrite |
+| File                                               | Reason                                  |
+| -------------------------------------------------- | --------------------------------------- |
+| `src/lib/astro/provider.ts`                        | Provider interface unchanged            |
+| `src/lib/astro/freeastroapi-provider.server.ts`    | Provider implementation unchanged       |
+| `src/lib/astro/types.ts`                           | DarrowChartData shape unchanged         |
+| `src/lib/astro/numerology.ts`                      | Numerology calculations unchanged       |
+| `src/lib/generation/pipeline.server.ts`            | Pipeline orchestration unchanged        |
+| `src/routes/api/public/payments/webhook.ts`        | Stripe webhook unchanged                |
+| `src/routes/api/public/jobs/process-generation.ts` | Job dispatcher unchanged                |
+| `src/lib/email/resend.server.ts`                   | Email delivery unchanged                |
+| `src/lib/pdf/apitemplate.server.ts`                | APITemplate.io rendering call unchanged |
+| `src/lib/pdf/stamp-page-numbers.server.ts`         | Page number stamper unchanged           |
+| `src/lib/stripe.server.ts`                         | Stripe unchanged                        |
+| All checkout / pricing code                        | Unchanged                               |
+| All Supabase Auth / token routes                   | Unchanged                               |
+| `.env*` files                                      | Do NOT overwrite                        |
 
 ### 3.3 Diagnostic Routes — Use During Testing
 
-| Route | Purpose |
-|-------|---------|
-| `src/routes/api/public/debug/core-v3-run.ts` | Run current CORE diagnostic (pre-migration) |
-| `src/routes/api/public/debug/astro-probe.ts` | Probe astrology data availability |
-| `src/routes/api/public/health/generation-pipeline.ts` | Pipeline health check |
+| Route                                                 | Purpose                                     |
+| ----------------------------------------------------- | ------------------------------------------- |
+| `src/routes/api/public/debug/core-v3-run.ts`          | Run current CORE diagnostic (pre-migration) |
+| `src/routes/api/public/debug/astro-probe.ts`          | Probe astrology data availability           |
+| `src/routes/api/public/health/generation-pipeline.ts` | Pipeline health check                       |
 
 During v4.1 migration: create a new diagnostic route (e.g., `core-v4-run.ts`) to test
 v4.1 generation without touching the production CORE path.
@@ -94,12 +98,14 @@ Phase 1 implementation, after diagnostic generation is approved.
 **Rollback:** revert `system-prompt.ts` import back to v3 file if v4.1 diagnostic fails.
 
 Migration steps:
+
 1. Create `src/lib/ai/darrowcode_ai_system_prompt_v4_1.md` with v4.1 content.
 2. Leave `src/lib/ai/darrowcode_ai_system_prompt.md` (v3) untouched.
 3. Point `system-prompt.ts` import to the v4.1 file only after diagnostic approval.
 4. Keep v3 file as rollback until v4.1 PDF is visually approved in production.
 
 Content changes for v4.1 prompt:
+
 - Replace REQUIRED "your system / the mechanism" language with PREFERRED human-facing openers
 - Update word targets: 4,350–5,250 prose words total
 - Update section map to v4.1 17-key set (see §4.3)
@@ -116,6 +122,7 @@ Content changes for v4.1 prompt:
 **File:** `src/lib/ai/user-prompt.ts`
 
 Changes:
+
 - Update `coreV3Instructions()` → rename to `coreV4Instructions()` or similar
 - Update word targets: 4,350–5,250 total, hard cap ~6,000
 - Update section order to v4.1 (operating_mode at position #3)
@@ -154,6 +161,7 @@ cover_tagline: cover sub-field (NOT a section key)
 ```
 
 Per-section structured field shape (conceptual):
+
 ```
 {
   opening_line: string          // short declarative hook
@@ -167,6 +175,7 @@ Per-section structured field shape (conceptual):
 ```
 
 Special sections:
+
 - `vitality_baseline`: add `disclaimer: string` (verbatim medical soft disclaimer)
 - `before_after`: `before_after_pairs` (exactly 2 Before / 2 After)
 - `executive_summary`: `executive_summary_blocks` (6 labeled blocks)
@@ -174,6 +183,7 @@ Special sections:
 - Cover page: `cover_tagline` sub-field (not a section key)
 
 Validation rules to implement (fail-loud, not warn-only):
+
 - All 17 section keys present
 - No extra/unknown section keys
 - proof_tags ≤ 5 per section
@@ -189,31 +199,32 @@ Validation rules to implement (fail-loud, not warn-only):
 
 26-page layout (from `docs/schema_template_patch_v4_1.md` §12):
 
-| Page | Content |
-|------|---------|
-| 01 | Cover — static title + method line + variable `cover_tagline` + client data |
-| 02 | Personal Orientation System — static |
-| 03 | `orientation` |
-| 04–05 | `core_architecture` |
-| 06 | `operating_mode` |
-| 07 | `battery` |
-| 08 | `social_interface` |
-| 09–10 | `numerology_code` |
-| 11 | `cognitive_style` |
-| 12 | `drive_and_rhythm` |
-| 13–14 | `professional_archetype` |
-| 15 | `money_and_value` |
-| 16 | `relationship_baseline` |
-| 17 | `vitality_baseline` |
-| 18 | `environment_and_resonance` |
-| 19–20 | `shadow_and_friction` |
-| 21 | `before_after` |
-| 22–23 | `executive_summary` |
-| 24 | `next_step` |
-| 25 | Library — static |
-| 26 | Back Cover — static |
+| Page  | Content                                                                     |
+| ----- | --------------------------------------------------------------------------- |
+| 01    | Cover — static title + method line + variable `cover_tagline` + client data |
+| 02    | Personal Orientation System — static                                        |
+| 03    | `orientation`                                                               |
+| 04–05 | `core_architecture`                                                         |
+| 06    | `operating_mode`                                                            |
+| 07    | `battery`                                                                   |
+| 08    | `social_interface`                                                          |
+| 09–10 | `numerology_code`                                                           |
+| 11    | `cognitive_style`                                                           |
+| 12    | `drive_and_rhythm`                                                          |
+| 13–14 | `professional_archetype`                                                    |
+| 15    | `money_and_value`                                                           |
+| 16    | `relationship_baseline`                                                     |
+| 17    | `vitality_baseline`                                                         |
+| 18    | `environment_and_resonance`                                                 |
+| 19–20 | `shadow_and_friction`                                                       |
+| 21    | `before_after`                                                              |
+| 22–23 | `executive_summary`                                                         |
+| 24    | `next_step`                                                                 |
+| 25    | Library — static                                                            |
+| 26    | Back Cover — static                                                         |
 
 Template responsibilities (not AI):
+
 - Section title rendering
 - opening_line styling
 - scenario visual distinction (e.g., indented block)
@@ -229,6 +240,7 @@ Template responsibilities (not AI):
 - All static pages (Cover, Orientation System, Library, Back Cover)
 
 **Library page** replaces old Ecosystem page. Must list:
+
 - CORE Report
 - CORE Complete
 - LOVE / MONEY / BODY / YEAR / STYLE / PLACE
@@ -251,6 +263,7 @@ No city claims, no astrocartography, no rankings in the Library copy.
 **File:** `src/lib/ai/quality-gate.server.ts`
 
 Upgrade from warn-only to blocking on:
+
 - Missing required section key
 - City recommendation in CORE text
 - proof_tags > 5 in any section
@@ -258,6 +271,7 @@ Upgrade from warn-only to blocking on:
 - Product mismatch (old name vs "CORE Report: UNVEIL")
 
 Retain warn-only for:
+
 - Borderline voice (DOSSIER_TONE, RECOGNITION_FIRST) — still useful as signal
 
 ---
@@ -334,6 +348,7 @@ After CORE v4.1 is implemented and visually approved, create one unified add-on
 master pattern at a time — starting from the most commercially important focused chapter.
 
 Each add-on should follow the same principle:
+
 - Product concept standard
 - Master pattern
 - Gold sample
@@ -342,6 +357,7 @@ Each add-on should follow the same principle:
 - Prompt/source/schema planning
 
 Add-ons use unified principles from CORE but have their own section maps and safety rules:
+
 - **LOVE:** Venus, Mars, Moon, 5H, 7H, Descendant data. No synastry in MVP.
   No guaranteed compatibility claims.
 - **MONEY:** 2H, 6H, 8H, 10H, Jupiter, Saturn. No wealth promises, no financial advice.

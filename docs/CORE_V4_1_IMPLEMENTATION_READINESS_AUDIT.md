@@ -1,6 +1,9 @@
 # DARROW CODE — CORE v4.1 IMPLEMENTATION READINESS AUDIT
+
 # Status: AUDIT / PLANNING ONLY — no code changes authorized
+
 # Governed by: docs/SOURCE_OF_TRUTH_v4_1.md + docs/DARROW_DOCS_AUDIT_AND_PLAN_v4_1.md
+
 # Created: 2026-05-29
 
 ---
@@ -21,12 +24,14 @@ This is the ONLY prompt file wired to the runtime. All other `.md` files in
 
 **File:** `src/lib/ai/user-prompt.ts`
 Constructs the per-request user message. Includes:
+
 - Safety rules (birth time, BaZi availability, transit availability)
 - Module data routing (which chart data belongs to which module)
 - `coreV3Instructions()` function — emits CORE v3.1 generation spec inline
 - Chart data as JSON
 
 The `coreV3Instructions()` function hardcodes:
+
 - Word target: **3,800–4,600 prose words**, hard cap 5,000
 - Section count: **17 keys** (v3 set, see §1.3)
 - Structured callout schema (prose + protocols[] + warning_signals[])
@@ -60,6 +65,7 @@ Plus optional top-level fields: `proof_tags`, `module_snapshot`.
 ### 1.4 Current Schema Shape
 
 **File:** `src/lib/ai/schema.ts`
+
 - `DarrowReportSchema` (Zod): top-level object with `client_name`, `generated_modules`,
   `client_snapshot` (9 fields including `recommended_next_module`), `modules`, `closing`
 - `CoreV3Schema`: schema_version "core_v3" + 17 keys + optional extras
@@ -71,18 +77,18 @@ Plus optional top-level fields: `proof_tags`, `module_snapshot`.
 
 ### 1.5 Current Word Targets (v3 runtime)
 
-| Metric | v3 Target |
-|--------|-----------|
-| Total prose | 3,800–4,600 words |
-| Hard cap | 5,000 words |
-| cover_tagline | 15–25 words |
-| orientation | 200–250 words |
-| core_architecture | 300–380 words |
-| battery | 250–300 words |
-| social_interface | 220–260 words |
-| numerology_code | 280–320 words |
-| executive_summary | 300–360 words |
-| next_step | 100–130 words |
+| Metric            | v3 Target         |
+| ----------------- | ----------------- |
+| Total prose       | 3,800–4,600 words |
+| Hard cap          | 5,000 words       |
+| cover_tagline     | 15–25 words       |
+| orientation       | 200–250 words     |
+| core_architecture | 300–380 words     |
+| battery           | 250–300 words     |
+| social_interface  | 220–260 words     |
+| numerology_code   | 280–320 words     |
+| executive_summary | 300–360 words     |
+| next_step         | 100–130 words     |
 
 ### 1.6 Current PDF Page Structure
 
@@ -96,6 +102,7 @@ Plus optional top-level fields: `proof_tags`, `module_snapshot`.
 ### 1.7 Current Quality Gate
 
 **File:** `src/lib/ai/quality-gate.server.ts`
+
 - **Warn-only** — does NOT trigger regeneration
 - Checks for: `LEAD_WITH_PLACEMENT`, `DOSSIER_TONE`, `TECHNICAL_DENSITY`, `RECOGNITION_FIRST`
 - Used only by diagnostic route, not production pipeline
@@ -103,11 +110,13 @@ Plus optional top-level fields: `proof_tags`, `module_snapshot`.
 ### 1.8 Generation Architecture
 
 **Production path:**
+
 - CORE-only → `generateCoreV3Split()` (2 sequential Anthropic calls: sections 1–9, then 10–17)
 - 4+ modules → `generateChunkedReport()` (chunked parallel)
 - 2–3 modules → single call with optional premium model
 
 **Diagnostic path:**
+
 - Route: `src/routes/api/public/debug/core-v3-run.ts`
 - Uses: `src/lib/ai/diagnostic.server.ts` (bypasses Zod superRefine for warn-only length checks)
 
@@ -126,20 +135,20 @@ Plus optional top-level fields: `proof_tags`, `module_snapshot`.
 
 ## 2 · CONFLICTS WITH APPROVED CORE v4.1
 
-| # | Area | Current v3 | v4.1 Required | Risk |
-|---|------|-----------|---------------|------|
-| C1 | Section key: cover_tagline | Key #1 in schema (string field) | Cover sub-field, NOT a body section key | Schema + template migration |
-| C2 | Section key: operating_mode | ABSENT | Key #3 in 17-key set | Schema + prompt + template migration |
-| C3 | Word count | 3,800–4,600 (hard cap 5,000) | 4,350–5,250 | Prompt + quality gate update |
-| C4 | Page count | ~18–22 pages (implied) | Exactly 26 pages | Template rebuild |
-| C5 | Section count | 17 keys (v3 set) | 17 keys (v4.1 set: different members) | Schema + prompt migration |
-| C6 | Section field model | prose + protocols[] + warning_signals[] | Adds: opening_line, scenario, key_insight, proof_tags[], before_after_pairs, executive_summary_blocks, closing_pillars | Schema extension + template |
-| C7 | cross-sell field | client_snapshot.recommended_next_module + closing.recommended_next_module | No direct cross-sell inside body sections | Schema / prompt cleanup |
-| C8 | Product naming | "CORE" / "Darrow Report" | "CORE Report: UNVEIL" / "Cosmic Core Code Method" | Prompt + template static pages |
-| C9 | Library/ecosystem page | Not verified in template | Library page (static, template-rendered) | Template update |
-| C10 | Per-section structured fields | prose-level protocols + warnings | Fully structured: opening_line, scenario, prose, key_insight, callouts | Schema + template + prompt |
-| C11 | No city claims (PLACE in CORE) | User-prompt instructs "never name specific cities" ✅ | Same rule maintained | ✅ Already compliant |
-| C12 | Data safety rules | Present in user-prompt.ts ✅ | Same rules maintained | ✅ Already compliant |
+| #   | Area                           | Current v3                                                                | v4.1 Required                                                                                                          | Risk                                 |
+| --- | ------------------------------ | ------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- | ------------------------------------ |
+| C1  | Section key: cover_tagline     | Key #1 in schema (string field)                                           | Cover sub-field, NOT a body section key                                                                                | Schema + template migration          |
+| C2  | Section key: operating_mode    | ABSENT                                                                    | Key #3 in 17-key set                                                                                                   | Schema + prompt + template migration |
+| C3  | Word count                     | 3,800–4,600 (hard cap 5,000)                                              | 4,350–5,250                                                                                                            | Prompt + quality gate update         |
+| C4  | Page count                     | ~18–22 pages (implied)                                                    | Exactly 26 pages                                                                                                       | Template rebuild                     |
+| C5  | Section count                  | 17 keys (v3 set)                                                          | 17 keys (v4.1 set: different members)                                                                                  | Schema + prompt migration            |
+| C6  | Section field model            | prose + protocols[] + warning_signals[]                                   | Adds: opening_line, scenario, key_insight, proof_tags[], before_after_pairs, executive_summary_blocks, closing_pillars | Schema extension + template          |
+| C7  | cross-sell field               | client_snapshot.recommended_next_module + closing.recommended_next_module | No direct cross-sell inside body sections                                                                              | Schema / prompt cleanup              |
+| C8  | Product naming                 | "CORE" / "Darrow Report"                                                  | "CORE Report: UNVEIL" / "Cosmic Core Code Method"                                                                      | Prompt + template static pages       |
+| C9  | Library/ecosystem page         | Not verified in template                                                  | Library page (static, template-rendered)                                                                               | Template update                      |
+| C10 | Per-section structured fields  | prose-level protocols + warnings                                          | Fully structured: opening_line, scenario, prose, key_insight, callouts                                                 | Schema + template + prompt           |
+| C11 | No city claims (PLACE in CORE) | User-prompt instructs "never name specific cities" ✅                     | Same rule maintained                                                                                                   | ✅ Already compliant                 |
+| C12 | Data safety rules              | Present in user-prompt.ts ✅                                              | Same rules maintained                                                                                                  | ✅ Already compliant                 |
 
 ### Key Naming Conflicts
 
@@ -156,50 +165,50 @@ Plus optional top-level fields: `proof_tags`, `module_snapshot`.
 These `.md` files live alongside the runtime code but are NOT imported by any
 TypeScript file (confirmed by grep). They are documentation-only:
 
-| File | Status | Issue |
-|------|--------|-------|
-| `src/lib/ai/darrowcode_ai_system_prompt.md` | **ACTIVE RUNTIME** | Only file imported by code (`system-prompt.ts`). v3.0 MERGED. |
-| `src/lib/ai/DARROW_REPORT_CONTENT_STANDARD.md` | Old v3 content standard | Superseded by `docs/DARROW_REPORT_CONTENT_STANDARD_v4_1.md` |
-| `src/lib/ai/darrowcode_core_module_spec.md` | Old v3 core spec | 3,000–3,600 words / 18–20 pages — directly conflicts v4.1 targets |
-| `src/lib/ai/darrowcode_addon_modules_spec.md` | v3 add-on spec | Superseded, not yet updated to v4.1; deferred |
-| `src/lib/ai/darrowcode_quality_examples.md` | Old quality examples | May contain old voice examples / "centuries apart" or unsafe phrasing |
+| File                                           | Status                  | Issue                                                                 |
+| ---------------------------------------------- | ----------------------- | --------------------------------------------------------------------- |
+| `src/lib/ai/darrowcode_ai_system_prompt.md`    | **ACTIVE RUNTIME**      | Only file imported by code (`system-prompt.ts`). v3.0 MERGED.         |
+| `src/lib/ai/DARROW_REPORT_CONTENT_STANDARD.md` | Old v3 content standard | Superseded by `docs/DARROW_REPORT_CONTENT_STANDARD_v4_1.md`           |
+| `src/lib/ai/darrowcode_core_module_spec.md`    | Old v3 core spec        | 3,000–3,600 words / 18–20 pages — directly conflicts v4.1 targets     |
+| `src/lib/ai/darrowcode_addon_modules_spec.md`  | v3 add-on spec          | Superseded, not yet updated to v4.1; deferred                         |
+| `src/lib/ai/darrowcode_quality_examples.md`    | Old quality examples    | May contain old voice examples / "centuries apart" or unsafe phrasing |
 
 ### 3.2 In `src/lib/astro/`
 
-| File | Status |
-|------|--------|
+| File                                      | Status                                                                                                                 |
+| ----------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
 | `src/lib/astro/FREEASTROAPI_REFERENCE.md` | Active runtime reference (cited by v3 SOT). Not imported by TS code but referenced as the provider reference document. |
 
 ### 3.3 In `docs/current/`
 
-| File | Status |
-|------|--------|
-| `docs/current/SOURCE_OF_TRUTH.md` | Old v3 SOT. Still accurately describes what is running (v3 runtime) but uses old targets. NOT a source instruction for v4.1. |
+| File                                                | Status                                                                                                                          |
+| --------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| `docs/current/SOURCE_OF_TRUTH.md`                   | Old v3 SOT. Still accurately describes what is running (v3 runtime) but uses old targets. NOT a source instruction for v4.1.    |
 | `docs/current/darrowcode_launch_requirements_v3.md` | Ops parts (APITemplate, Resend, Supabase, DNS) may still be valid. Content targets (18–20 pages / 3,000–3,600 words) are stale. |
-| `docs/current/darrowcode_lovable_prompt_v3.md` | Last v3 Lovable prompt. Reference for current diagnostic only. Archive after render-fix closes. |
+| `docs/current/darrowcode_lovable_prompt_v3.md`      | Last v3 Lovable prompt. Reference for current diagnostic only. Archive after render-fix closes.                                 |
 
 ### 3.4 In `docs/archive/`
 
-| File | Status |
-|------|--------|
+| File                                               | Status                                                           |
+| -------------------------------------------------- | ---------------------------------------------------------------- |
 | `docs/archive/darrowcode_ai_system_prompt_v2.1.md` | History only. Earlier, weaker prompt. Not referenced by runtime. |
-| `docs/archive/darrowcode_lovable_prompt_v1.md` | History only. Original MVP prompt. Not referenced by runtime. |
+| `docs/archive/darrowcode_lovable_prompt_v1.md`     | History only. Original MVP prompt. Not referenced by runtime.    |
 
 ### 3.5 Runtime-Connected vs Documentation-Only
 
-| File | Runtime-connected? | How |
-|------|-------------------|-----|
-| `src/lib/ai/darrowcode_ai_system_prompt.md` | **YES** | Loaded by `system-prompt.ts` via `?raw` import |
-| `src/lib/ai/schema.ts` | **YES** | Imported by anthropic.server.ts, diagnostic.server.ts, core-split.server.ts, template.ts |
-| `src/lib/ai/user-prompt.ts` | **YES** | Imported by pipeline.server.ts |
-| `src/lib/ai/core-split.server.ts` | **YES** | Imported by anthropic.server.ts |
-| `src/lib/ai/quality-gate.server.ts` | **YES** | Imported by diagnostic route |
-| `src/lib/pdf/template.ts` | **YES** | Imported by pipeline.server.ts |
-| `src/lib/astro/FREEASTROAPI_REFERENCE.md` | **NO** | Documentation only, no TS import found |
-| All other `.md` files in `src/lib/ai/` | **NO** | Documentation only, no TS imports |
-| All files in `docs/` | **NO** | Documentation only |
-| All files in `docs/current/` | **NO** | Documentation only |
-| All files in `docs/archive/` | **NO** | Documentation only |
+| File                                        | Runtime-connected? | How                                                                                      |
+| ------------------------------------------- | ------------------ | ---------------------------------------------------------------------------------------- |
+| `src/lib/ai/darrowcode_ai_system_prompt.md` | **YES**            | Loaded by `system-prompt.ts` via `?raw` import                                           |
+| `src/lib/ai/schema.ts`                      | **YES**            | Imported by anthropic.server.ts, diagnostic.server.ts, core-split.server.ts, template.ts |
+| `src/lib/ai/user-prompt.ts`                 | **YES**            | Imported by pipeline.server.ts                                                           |
+| `src/lib/ai/core-split.server.ts`           | **YES**            | Imported by anthropic.server.ts                                                          |
+| `src/lib/ai/quality-gate.server.ts`         | **YES**            | Imported by diagnostic route                                                             |
+| `src/lib/pdf/template.ts`                   | **YES**            | Imported by pipeline.server.ts                                                           |
+| `src/lib/astro/FREEASTROAPI_REFERENCE.md`   | **NO**             | Documentation only, no TS import found                                                   |
+| All other `.md` files in `src/lib/ai/`      | **NO**             | Documentation only, no TS imports                                                        |
+| All files in `docs/`                        | **NO**             | Documentation only                                                                       |
+| All files in `docs/current/`                | **NO**             | Documentation only                                                                       |
+| All files in `docs/archive/`                | **NO**             | Documentation only                                                                       |
 
 ---
 
@@ -284,16 +293,19 @@ After render-fix diagnostic approval:
 ## 6 · RISK RANKING
 
 ### Low risk — documentation changes only
+
 - Archiving old docs in `docs/current/` and `src/lib/ai/*.md` (doc files only, no TS)
 - Adding DEPRECATED headers to old spec files
 - Creating this audit file and companion planning docs
 
 ### Medium risk — prompt / schema planning
+
 - Designing the v4.1 schema shape (no code yet)
 - Planning the section field migration
 - Designing backward-compat adapter approach
 
 ### High risk — runtime / schema / template (NOT AUTHORIZED YET)
+
 - Replacing `darrowcode_ai_system_prompt.md` (active runtime)
 - Modifying `schema.ts` (used by all generation paths)
 - Modifying `user-prompt.ts` (changes all paid reports)
@@ -301,6 +313,7 @@ After render-fix diagnostic approval:
 - Modifying `core-split.server.ts` (changes split generation)
 
 ### Blocked — until render-fix diagnostic approval
+
 - ALL high-risk items above
 - `operating_mode` implementation
 - 26-page template rebuild
@@ -350,9 +363,10 @@ After render-fix diagnostic approval:
 ## 8 · ENV / SECRETS FINDING
 
 **YELLOW FLAG — tracked .env files:**
+
 - `.env`, `.env.development`, `.env.production` are ALL tracked by git (`git ls-files` confirms).
-- Current contents are **public/publishable keys only** (Supabase anon key, Stripe pk_test_*,
-  Stripe pk_live_*). These are designed to be public and are safe to expose.
+- Current contents are **public/publishable keys only** (Supabase anon key, Stripe pk*test*_,
+  Stripe pk*live*_). These are designed to be public and are safe to expose.
 - Real secrets (ANTHROPIC_API_KEY, SUPABASE_SERVICE_ROLE_KEY, STRIPE_SECRET_KEY,
   APITEMPLATE_API_KEY, RESEND_API_KEY, FREEASTROAPI_KEY) were NOT found in tracked files.
   They are presumably set as Cloudflare Workers environment variables.

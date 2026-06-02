@@ -3,17 +3,22 @@
 // by policy (no hallucinated pillars).
 
 import type { AstroProvider } from "./provider";
-import type {
-  DarrowChartData,
-  NatalInput,
-  PlanetPosition,
-  AspectRow,
-} from "./types";
+import type { DarrowChartData, NatalInput, PlanetPosition, AspectRow } from "./types";
 import { computeNumerology } from "@/lib/numerology/numerology";
 
 const SIGNS = [
-  "Aries", "Taurus", "Gemini", "Cancer", "Leo", "Virgo",
-  "Libra", "Scorpio", "Sagittarius", "Capricorn", "Aquarius", "Pisces",
+  "Aries",
+  "Taurus",
+  "Gemini",
+  "Cancer",
+  "Leo",
+  "Virgo",
+  "Libra",
+  "Scorpio",
+  "Sagittarius",
+  "Capricorn",
+  "Aquarius",
+  "Pisces",
 ];
 
 function hashSeed(s: string): number {
@@ -120,8 +125,13 @@ export class MockAstroProvider implements AstroProvider {
         birth_time_source,
       },
       natal: {
-        sun, moon, ascendant, midheaven,
-        planets, houses, aspects,
+        sun,
+        moon,
+        ascendant,
+        midheaven,
+        planets,
+        houses,
+        aspects,
       },
       numerology,
       bazi: {

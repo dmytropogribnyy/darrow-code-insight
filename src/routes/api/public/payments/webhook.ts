@@ -17,10 +17,7 @@ type AnyModule = "CORE" | ModuleCode;
 let _sb: any = null;
 function sb(): any {
   if (!_sb) {
-    _sb = createClient(
-      process.env.SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!,
-    );
+    _sb = createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!);
   }
   return _sb;
 }
@@ -73,9 +70,9 @@ async function handleCheckoutCompleted(session: any) {
 
   if (existingOrder.status !== "complete") {
     await sb()
-    .from("orders")
-    .update({ status: "paid", stripe_session_id: session.id })
-    .eq("id", order_id);
+      .from("orders")
+      .update({ status: "paid", stripe_session_id: session.id })
+      .eq("id", order_id);
     console.log("[webhook] order marked paid", { order_id });
   } else {
     console.log("[webhook] order already complete; not downgrading", { order_id });
@@ -115,12 +112,10 @@ async function handleCheckoutCompleted(session: any) {
       order_id,
       module_code: m,
     }));
-    const { error } = await sb()
-      .from("modules_purchased")
-      .upsert(rows, {
-        onConflict: "customer_id,intake_id,module_code",
-        ignoreDuplicates: true,
-      });
+    const { error } = await sb().from("modules_purchased").upsert(rows, {
+      onConflict: "customer_id,intake_id,module_code",
+      ignoreDuplicates: true,
+    });
     if (error) console.error("[webhook] modules upsert", error);
     else console.log("[webhook] modules recorded", { order_id, modules });
   }
@@ -152,7 +147,9 @@ async function ensureGenerationJob(order_id: string, intake_id: string) {
       .select("module_code")
       .eq("intake_id", intake_id);
     const owned = new Set<string>((ownedRows ?? []).map((r: any) => r.module_code));
-    const reportModules = new Set<string>(Array.isArray(completeReport.modules_array) ? completeReport.modules_array : []);
+    const reportModules = new Set<string>(
+      Array.isArray(completeReport.modules_array) ? completeReport.modules_array : [],
+    );
     const reportAlreadyCoversOwnedModules = Array.from(owned).every((m) => reportModules.has(m));
 
     if (!reportAlreadyCoversOwnedModules) {
@@ -163,14 +160,22 @@ async function ensureGenerationJob(order_id: string, intake_id: string) {
         report_modules: Array.from(reportModules),
       });
     } else {
-    if (existingJob?.status !== "complete") {
-      await s.from("generation_jobs").upsert(
-        { order_id, status: "complete", last_error: null, updated_at: new Date().toISOString() },
-        { onConflict: "order_id" },
-      );
-    }
-    console.log("[webhook] report already complete; job reconciled", { order_id, report_id: completeReport.id });
-    return;
+      if (existingJob?.status !== "complete") {
+        await s.from("generation_jobs").upsert(
+          {
+            order_id,
+            status: "complete",
+            last_error: null,
+            updated_at: new Date().toISOString(),
+          },
+          { onConflict: "order_id" },
+        );
+      }
+      console.log("[webhook] report already complete; job reconciled", {
+        order_id,
+        report_id: completeReport.id,
+      });
+      return;
     }
   }
 
@@ -197,9 +202,7 @@ async function ensureGenerationJob(order_id: string, intake_id: string) {
   }
 }
 
-async function handleEvent(
-  event: { id: string; type: string; data: { object: any } },
-) {
+async function handleEvent(event: { id: string; type: string; data: { object: any } }) {
   console.log("[webhook] event received", { event_id: event.id, type: event.type });
   const { error: eventErr } = await sb()
     .from("stripe_events")

@@ -1,6 +1,9 @@
 # FREEASTROAPI / DARROW CODE — PLACE-READY REFERENCE (v3 runtime baseline)
+
 # Status: REFERENCE DOCUMENTATION ONLY — not a Lovable prompt, not implementation
+
 # Governed by: docs/SOURCE_OF_TRUTH_v4_1.md
+
 # Created: 2026-05-29
 
 ---
@@ -11,6 +14,7 @@ This is a **documentation-only reference file**. It aligns FreeAstroAPI and
 PLACE module rules with the approved v4.1 CORE standard.
 
 It is NOT:
+
 - A Lovable / Claude Code implementation prompt
 - Runtime instructions
 - Schema instructions
@@ -25,15 +29,15 @@ what CORE uses today and what a future PLACE chapter may use.
 
 ## 2 · SOURCE HIERARCHY
 
-| Source | Role |
-|--------|------|
-| `docs/SOURCE_OF_TRUTH_v4_1.md` | Governing document — CORE/PLACE boundary |
-| `docs/DARROW_DOCS_AUDIT_AND_PLAN_v4_1.md` | Migration map |
-| `docs/darrowcode_core_module_spec_v4_1.md` | Per-module data routing |
-| `src/lib/astro/FREEASTROAPI_REFERENCE.md` | Current active provider reference (runtime) |
-| `docs/darrowcode_freeastroapi_lovable_prompt_v2.md` | Historical integration guide (reference only) |
+| Source                                                   | Role                                              |
+| -------------------------------------------------------- | ------------------------------------------------- |
+| `docs/SOURCE_OF_TRUTH_v4_1.md`                           | Governing document — CORE/PLACE boundary          |
+| `docs/DARROW_DOCS_AUDIT_AND_PLAN_v4_1.md`                | Migration map                                     |
+| `docs/darrowcode_core_module_spec_v4_1.md`               | Per-module data routing                           |
+| `src/lib/astro/FREEASTROAPI_REFERENCE.md`                | Current active provider reference (runtime)       |
+| `docs/darrowcode_freeastroapi_lovable_prompt_v2.md`      | Historical integration guide (reference only)     |
 | `docs/FreeAstroAPI_DarrowCode_Integration_Updated_v2.md` | Updated v2 integration reference (reference only) |
-| `docs/freeastroapi.md` | Raw API reference notes (reference only) |
+| `docs/freeastroapi.md`                                   | Raw API reference notes (reference only)          |
 
 The three `docs/FreeAstroAPI*` files are historical/provider references.
 They must NOT be used as source instructions. The new governing rules for
@@ -68,6 +72,7 @@ PLACE data are defined in this file, derived from the approved v4.1 package only
 **Fallback:** `src/lib/astro/mock-provider.server.ts` (dev/test only)
 
 Endpoints currently used for CORE generation:
+
 - Natal chart (planets, aspects, element balance, chart shape)
 - BaZi / Four Pillars (if birth_time_known or date is sufficient)
 - Numerology (Life Path, Birth Day; Expression/Soul Urge/Personality with full name)
@@ -86,6 +91,7 @@ No astrocartography endpoints are currently called anywhere in the codebase.
 > CORE Report: UNVEIL uses **environmental resonance only**.
 
 CORE generates the `environment_and_resonance` section based on:
+
 - Environmental qualities derived from Moon, IC, 4th house placements
 - BaZi favorable elements (if available): climate type, elemental affinity
 - Landscape type: water proximity, density, quiet, nature access, privacy needs
@@ -93,6 +99,7 @@ CORE generates the `environment_and_resonance` section based on:
 - Home-base requirements: stability, anchor points, pace
 
 CORE must NOT:
+
 - Name specific cities or countries
 - Rank "best places to live"
 - Reference astrocartography lines or parans
@@ -109,6 +116,7 @@ implemented now.** Do not call astrocartography globally. Do not add city rankin
 The PLACE focused chapter (add-on, future scope) MAY use astrocartography data, but:
 
 **Requirements — ALL must be true simultaneously:**
+
 1. PLACE module is purchased by the customer
 2. `birth_time_known = true` (accurate birth time required for meaningful astrocartography)
 3. Real astrocartography data returned from FreeAstroAPI (not mocked, not inferred)
@@ -126,13 +134,13 @@ The following FreeAstroAPI endpoints may be used by a future PLACE chapter imple
 They are listed here as a reference map only. No code calls them now. No implementation
 is authorized.
 
-| Endpoint | Purpose | Notes |
-|----------|---------|-------|
-| `POST /api/v1/western/astrocartography/recommendations` | Location resonance recommendations based on natal + birth data | Requires accurate birth time |
-| `POST /api/v1/western/astrocartography/city-check` | Check resonance score for a specific city | Requires birth time |
-| `POST /api/v1/western/astrocartography/relocation` | Relocation chart for a destination city | Requires birth time |
-| `POST /api/v1/western/astrocartography/lines` | Astrocartography planetary lines (which planets are angular where) | Requires birth time |
-| `POST /api/v1/western/astrocartography/parans` | Parans — latitude bands where planetary lines cross | Requires birth time |
+| Endpoint                                                | Purpose                                                            | Notes                        |
+| ------------------------------------------------------- | ------------------------------------------------------------------ | ---------------------------- |
+| `POST /api/v1/western/astrocartography/recommendations` | Location resonance recommendations based on natal + birth data     | Requires accurate birth time |
+| `POST /api/v1/western/astrocartography/city-check`      | Check resonance score for a specific city                          | Requires birth time          |
+| `POST /api/v1/western/astrocartography/relocation`      | Relocation chart for a destination city                            | Requires birth time          |
+| `POST /api/v1/western/astrocartography/lines`           | Astrocartography planetary lines (which planets are angular where) | Requires birth time          |
+| `POST /api/v1/western/astrocartography/parans`          | Parans — latitude bands where planetary lines cross                | Requires birth time          |
 
 These endpoints are not a complete list of all possible FreeAstroAPI endpoints.
 Consult `src/lib/astro/FREEASTROAPI_REFERENCE.md` and `docs/freeastroapi.md` for
@@ -204,11 +212,13 @@ When the PLACE chapter is eventually implemented:
 `birth_time_known = false` affects both CORE and future PLACE:
 
 **CORE (current runtime):**
+
 - No Ascendant, no MC, no house placements, no house rulers
 - No angles-based environmental claims
 - Use: "If your birth time is accurate, your Ascendant may indicate…"
 
 **PLACE (future scope):**
+
 - Astrocartography requires accurate birth time. If `birth_time_known=false`:
   the PLACE chapter must fall back to environmental resonance only.
 - Do not call astrocartography endpoints if birth_time_known=false.
@@ -235,6 +245,7 @@ This rule applies regardless of which FreeAstroAPI endpoint is called.
 ## 12 · ASTRO.COM / ASTRO-SEEK RULE
 
 Astro.com and Astro-Seek are **manual sanity-check tools only**:
+
 - They may be used by developers to manually verify chart calculations.
 - They are never production APIs.
 - They are never scraping targets.
@@ -244,12 +255,12 @@ Astro.com and Astro-Seek are **manual sanity-check tools only**:
 
 ## 13 · RELATION TO EXISTING FREEASTROAPI v2 DOCS
 
-| Existing doc | Relation to this file |
-|--------------|----------------------|
-| `docs/darrowcode_freeastroapi_lovable_prompt_v2.md` | Historical integration guide. Do not use as source instruction. Superseded by this file for PLACE/CORE boundary rules. |
-| `docs/FreeAstroAPI_DarrowCode_Integration_Updated_v2.md` | Updated v2 reference. Historical/reference only. Add DEPRECATED header in Phase 2. |
-| `docs/freeastroapi.md` | Raw API notes. Reference only. |
-| `src/lib/astro/FREEASTROAPI_REFERENCE.md` | Active runtime provider reference. Not superseded — still the authoritative provider implementation doc. |
+| Existing doc                                             | Relation to this file                                                                                                  |
+| -------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| `docs/darrowcode_freeastroapi_lovable_prompt_v2.md`      | Historical integration guide. Do not use as source instruction. Superseded by this file for PLACE/CORE boundary rules. |
+| `docs/FreeAstroAPI_DarrowCode_Integration_Updated_v2.md` | Updated v2 reference. Historical/reference only. Add DEPRECATED header in Phase 2.                                     |
+| `docs/freeastroapi.md`                                   | Raw API notes. Reference only.                                                                                         |
+| `src/lib/astro/FREEASTROAPI_REFERENCE.md`                | Active runtime provider reference. Not superseded — still the authoritative provider implementation doc.               |
 
 This file does NOT replace `src/lib/astro/FREEASTROAPI_REFERENCE.md`. That file remains
 the runtime provider reference. This file adds the CORE/PLACE data boundary rules.
@@ -261,6 +272,7 @@ the runtime provider reference. This file adds the CORE/PLACE data boundary rule
 This file must NOT be pasted into Lovable as an implementation prompt.
 
 When a PLACE chapter implementation is eventually authorized:
+
 1. A separate PLACE master pattern and product concept standard must be created first.
 2. A separate PLACE module spec must be built.
 3. A clean PLACE implementation prompt must be assembled from the approved PLACE
@@ -272,8 +284,8 @@ When a PLACE chapter implementation is eventually authorized:
 
 ## 15 · CHANGELOG
 
-| Version | Change |
-|---------|--------|
+| Version                     | Change                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
+| --------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | v3-place-ready (2026-05-29) | Initial creation. Aligns FreeAstroAPI / PLACE rules with v4.1 CORE standard. Governs CORE/PLACE data boundary: CORE = environmental resonance only; astrocartography = future PLACE-only capability with birth_time_known=true + real data. Documents endpoint map for future reference. Establishes security rules, unknown-birth-time rule, provider/cost rules. Confirms API.docx not found in repo. Notes tracked .env files (yellow flag, public keys only). Not a Lovable prompt. No implementation authorized. |
 
 ---

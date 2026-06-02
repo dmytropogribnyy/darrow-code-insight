@@ -15,10 +15,7 @@ import {
 let _supabase: any = null;
 function admin(): any {
   if (!_supabase) {
-    _supabase = createClient(
-      process.env.SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!,
-    );
+    _supabase = createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!);
   }
   return _supabase;
 }
@@ -57,7 +54,11 @@ export const createCheckout = createServerFn({ method: "POST" })
       first_name: z.string().trim().min(1).max(100),
       email: z.string().trim().email().max(255),
       date_of_birth: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
-      birth_time: z.string().regex(/^\d{2}:\d{2}(:\d{2})?$/).optional().or(z.literal("")),
+      birth_time: z
+        .string()
+        .regex(/^\d{2}:\d{2}(:\d{2})?$/)
+        .optional()
+        .or(z.literal("")),
       birth_city: z.string().trim().min(1).max(255),
       full_name_for_numerology: z.string().trim().max(255).optional().or(z.literal("")),
       modules: z.array(ModuleCodeSchema).max(6).default([]),
@@ -202,7 +203,11 @@ export const createCoreCheckout = createServerFn({ method: "POST" })
       first_name: z.string().trim().min(1).max(100),
       email: z.string().trim().email().max(255),
       date_of_birth: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
-      birth_time: z.string().regex(/^\d{2}:\d{2}(:\d{2})?$/).optional().or(z.literal("")),
+      birth_time: z
+        .string()
+        .regex(/^\d{2}:\d{2}(:\d{2})?$/)
+        .optional()
+        .or(z.literal("")),
       birth_city: z.string().trim().min(1).max(255),
       full_name_for_numerology: z.string().trim().max(255).optional().or(z.literal("")),
       // REQUIRED — must be provided explicitly. Never default to "M".

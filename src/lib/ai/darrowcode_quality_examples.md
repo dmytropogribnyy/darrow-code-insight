@@ -1,5 +1,7 @@
 # Darrow Code — Quality Examples Block
+
 # Append this section to the end of darrowcode_ai_system_prompt_v3_merged.md
+
 # Place it just before the closing ``` of the system prompt block
 
 ═══════════════════════════════════════════════

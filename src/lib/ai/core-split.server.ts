@@ -169,7 +169,9 @@ async function callAnthropicSub({
     });
   } catch (e: any) {
     if (controller.signal.aborted)
-      throw new Error(`Anthropic ${model} (${toolName}) timed out after ${Math.round(MODEL_TIMEOUT_MS / 1000)}s`);
+      throw new Error(
+        `Anthropic ${model} (${toolName}) timed out after ${Math.round(MODEL_TIMEOUT_MS / 1000)}s`,
+      );
     throw e;
   } finally {
     clearTimeout(t);
@@ -181,7 +183,9 @@ async function callAnthropicSub({
     throw err;
   }
   const data = (await res.json()) as any;
-  const tool = (data?.content ?? []).find((b: any) => b?.type === "tool_use" && b?.name === toolName);
+  const tool = (data?.content ?? []).find(
+    (b: any) => b?.type === "tool_use" && b?.name === toolName,
+  );
   if (!tool) throw new Error(`Anthropic returned no tool_use block for ${toolName}`);
   return { input: tool.input, model_used: model, ms: Date.now() - started };
 }
@@ -275,7 +279,12 @@ function buildCallASummary(client_name: string, sectionsA: any): string {
   }
   if (Array.isArray(sectionsA.proof_tags) && sectionsA.proof_tags.length > 0) {
     lines.push("--- proof_tags (Call A) ---");
-    lines.push(sectionsA.proof_tags.slice(0, 12).map((t: any) => `- ${String(t)}`).join("\n"));
+    lines.push(
+      sectionsA.proof_tags
+        .slice(0, 12)
+        .map((t: any) => `- ${String(t)}`)
+        .join("\n"),
+    );
   }
   return lines.join("\n");
 }
@@ -401,7 +410,8 @@ export async function generateCoreV3Split(
         model,
         toolName: TOOL_NAME_B,
         inputSchema: coreSplitBSchema,
-        toolDescription: "Emit CORE v3 sections 10–17 plus client_snapshot and closing, grounded in Call-A context.",
+        toolDescription:
+          "Emit CORE v3 sections 10–17 plus client_snapshot and closing, grounded in Call-A context.",
       },
       fallbackModel,
     );
@@ -424,7 +434,8 @@ export async function generateCoreV3Split(
           model,
           toolName: TOOL_NAME_B,
           inputSchema: coreSplitBSchema,
-          toolDescription: "Emit CORE v3 sections 10–17 plus client_snapshot and closing (no Call-A context — diagnostic only).",
+          toolDescription:
+            "Emit CORE v3 sections 10–17 plus client_snapshot and closing (no Call-A context — diagnostic only).",
         },
         fallbackModel,
       ),
@@ -470,8 +481,12 @@ export async function generateCoreV3Split(
     mode,
     per_call: {
       a: { tool: "emit_darrow_core_a", model: a.model_used, ms: a.ms },
-      b: { tool: "emit_darrow_core_b", model: b.model_used, ms: b.ms, received_call_a_context: bReceivedContext },
+      b: {
+        tool: "emit_darrow_core_b",
+        model: b.model_used,
+        ms: b.ms,
+        received_call_a_context: bReceivedContext,
+      },
     },
   };
 }
-
