@@ -12,7 +12,12 @@
 //   - generateCoreV3SplitDiagnostic() — diagnostic route (warn-only lengths)
 
 import { DARROW_SYSTEM_PROMPT } from "./system-prompt";
-import { coreSectionJsonSchemaFor } from "./schema";
+import {
+  coreSectionJsonSchemaFor,
+  CORE_V4_BODY_SECTION_KEYS,
+  EXECUTIVE_SUMMARY_LABELS,
+  CLOSING_PILLAR_TITLES,
+} from "./schema";
 
 const ANTHROPIC_URL = "https://api.anthropic.com/v1/messages";
 const TOOL_NAME_A = "emit_darrow_core_a";
@@ -489,4 +494,385 @@ export async function generateCoreV3Split(
       },
     },
   };
+}
+
+// ═════════════════════════════════════════════════════════════════════
+// CORE v4.1 — STAGED split generation (NOT active in production).
+//
+// generateCoreV4Split() and the v4 tool schemas below prepare the v4.1
+// split-generation path. They are NOT wired into the production paid pipeline
+// or any active route, and are NOT used until a later authorized phase (B6+),
+// after the v4 diagnostic JSON + PDF are approved. The active production path
+// continues to use generateCoreV3Split() above. system-prompt.ts stays v3.
+//
+// v4 split partition (exact 17-body-key coverage, each key once):
+//   Call A body (9): orientation … professional_archetype  (+ cover_tagline sub-field)
+//   Call B body (8): money_and_value … next_step
+// cover_tagline is a cover sub-field, NOT one of the 17 body keys.
+// v4 has no `closing` object and no `recommended_next_module`.
+// ═════════════════════════════════════════════════════════════════════
+
+const TOOL_NAME_V4_A = "emit_darrow_core_v4_a";
+const TOOL_NAME_V4_B = "emit_darrow_core_v4_b";
+
+// First 9 body keys (positions 1–9 of CORE_V4_BODY_SECTION_KEYS).
+export const CORE_V4_SECTIONS_A = CORE_V4_BODY_SECTION_KEYS.slice(0, 9) as readonly string[];
+// Remaining 8 body keys (positions 10–17).
+export const CORE_V4_SECTIONS_B = CORE_V4_BODY_SECTION_KEYS.slice(9) as readonly string[];
+
+const protocolV4JsonSchema = {
+  type: "object",
+  required: ["title", "body"],
+  properties: { title: { type: "string" }, body: { type: "string" } },
+} as const;
+
+// JSON schema for a regular v4 section. prose required; structured fields optional.
+function coreV4StandardSectionJsonSchema() {
+  return {
+    type: "object",
+    required: ["prose"],
+    properties: {
+      opening_line: { type: "string", maxLength: 120 },
+      scenario: { type: "string" },
+      prose: { type: "string" },
+      key_insight: { type: "string" },
+      protocols: { type: "array", items: protocolV4JsonSchema },
+      warning_signals: { type: "array", items: { type: "string" } },
+      proof_tags: { type: "array", items: { type: "string" }, maxItems: 5 },
+    },
+  } as const;
+}
+
+// Per-key v4 section JSON schema (special shapes for before_after /
+// executive_summary / next_step; all others use the standard shape).
+function coreV4SectionJsonSchemaFor(key: string): any {
+  if (key === "before_after") {
+    return {
+      type: "object",
+      required: ["before_after_pairs"],
+      properties: {
+        opening_line: { type: "string", maxLength: 120 },
+        scenario: { type: "string" },
+        prose: { type: "string" },
+        key_insight: { type: "string" },
+        before_after_pairs: {
+          type: "array",
+          minItems: 2,
+          maxItems: 2,
+          items: {
+            type: "object",
+            required: ["before", "after"],
+            properties: { before: { type: "string" }, after: { type: "string" } },
+          },
+        },
+        proof_tags: { type: "array", items: { type: "string" }, maxItems: 5 },
+      },
+    };
+  }
+  if (key === "executive_summary") {
+    return {
+      type: "object",
+      required: ["executive_summary_blocks"],
+      properties: {
+        opening_line: { type: "string", maxLength: 120 },
+        prose: { type: "string" },
+        key_insight: { type: "string" },
+        executive_summary_blocks: {
+          type: "array",
+          minItems: 6,
+          maxItems: 6,
+          items: {
+            type: "object",
+            required: ["label", "content"],
+            properties: {
+              label: { type: "string", enum: [...EXECUTIVE_SUMMARY_LABELS] },
+              content: { type: "string" },
+            },
+          },
+        },
+        proof_tags: { type: "array", items: { type: "string" }, maxItems: 5 },
+      },
+    };
+  }
+  if (key === "next_step") {
+    return {
+      type: "object",
+      required: ["closing_pillars"],
+      properties: {
+        opening_line: { type: "string", maxLength: 120 },
+        prose: { type: "string" },
+        key_insight: { type: "string" },
+        closing_pillars: {
+          type: "array",
+          minItems: 4,
+          maxItems: 4,
+          items: {
+            type: "object",
+            required: ["title", "prose"],
+            properties: {
+              title: { type: "string", enum: [...CLOSING_PILLAR_TITLES] },
+              prose: { type: "string" },
+            },
+          },
+        },
+        proof_tags: { type: "array", items: { type: "string" }, maxItems: 5 },
+      },
+    };
+  }
+  // vitality_baseline + all other regular sections use the standard shape.
+  // The verbatim disclaimer is template-injected, so it is not requested here.
+  return coreV4StandardSectionJsonSchema();
+}
+
+function sectionV4Props(keys: readonly string[]): Record<string, any> {
+  const out: Record<string, any> = {};
+  for (const k of keys) out[k] = coreV4SectionJsonSchemaFor(k);
+  return out;
+}
+
+const coreV4SplitASchema = {
+  type: "object",
+  required: ["client_name", "cover_tagline", "core_sections_a"],
+  properties: {
+    client_name: { type: "string" },
+    cover_tagline: { type: "string" },
+    core_sections_a: {
+      type: "object",
+      required: ["schema_version", ...CORE_V4_SECTIONS_A],
+      properties: {
+        schema_version: { type: "string", enum: ["core_v4"] },
+        ...sectionV4Props(CORE_V4_SECTIONS_A),
+      },
+    },
+  },
+} as const;
+
+const coreV4SplitBSchema = {
+  type: "object",
+  required: ["core_sections_b"],
+  properties: {
+    core_sections_b: {
+      type: "object",
+      required: [...CORE_V4_SECTIONS_B],
+      properties: sectionV4Props(CORE_V4_SECTIONS_B),
+    },
+  },
+} as const;
+
+// Exported for staging/inspection + tests. These are the v4 tool schemas the
+// future authorized v4 generator will hand to Anthropic.
+export const coreV4ToolSchemas = {
+  toolNameA: TOOL_NAME_V4_A,
+  toolNameB: TOOL_NAME_V4_B,
+  splitASchema: coreV4SplitASchema,
+  splitBSchema: coreV4SplitBSchema,
+} as const;
+
+function sectionV4Present(v: any): boolean {
+  if (v && typeof v === "object") {
+    if (typeof v.prose === "string" && v.prose.trim().length > 0) return true;
+    if (Array.isArray(v.before_after_pairs) && v.before_after_pairs.length > 0) return true;
+    if (Array.isArray(v.executive_summary_blocks) && v.executive_summary_blocks.length > 0)
+      return true;
+    if (Array.isArray(v.closing_pillars) && v.closing_pillars.length > 0) return true;
+  }
+  return false;
+}
+
+function validateCallV4A(aInput: any) {
+  const sectionsA = aInput?.core_sections_a ?? {};
+  if (!aInput?.client_name) throw new Error("[core-split-v4] Call A missing client_name");
+  if (!aInput?.cover_tagline) throw new Error("[core-split-v4] Call A missing cover_tagline");
+  if (!sectionsA.schema_version) {
+    console.warn("[core-split-v4] Call A omitted schema_version; defaulting to core_v4");
+    sectionsA.schema_version = "core_v4";
+  }
+  if (sectionsA.schema_version !== "core_v4")
+    throw new Error(`[core-split-v4] Call A wrong schema_version: ${sectionsA.schema_version}`);
+  for (const k of CORE_V4_SECTIONS_A) {
+    if (!sectionV4Present(sectionsA[k]))
+      throw new Error(`[core-split-v4] Call A missing or empty section: ${k}`);
+  }
+  return sectionsA;
+}
+
+function validateCallV4B(bInput: any) {
+  const sectionsB = bInput?.core_sections_b ?? {};
+  for (const k of CORE_V4_SECTIONS_B) {
+    if (!sectionV4Present(sectionsB[k]))
+      throw new Error(`[core-split-v4] Call B missing or empty section: ${k}`);
+  }
+  return sectionsB;
+}
+
+export interface CoreV4SplitResult {
+  report: any;
+  model_used: string;
+  api_call_count: number;
+  ms_total: number;
+  mode: SplitMode;
+  per_call: {
+    a: { tool: typeof TOOL_NAME_V4_A; model: string; ms: number };
+    b: {
+      tool: typeof TOOL_NAME_V4_B;
+      model: string;
+      ms: number;
+      received_call_a_context: boolean;
+    };
+  };
+}
+
+// STAGED v4 split generator. Mirrors the v3 two-call structure but emits the
+// v4 contract (cover_tagline sub-field + 17 body keys, no closing, no
+// recommended_next_module). Not called by production until B6+ authorization.
+export async function generateCoreV4Split(
+  userPrompt: string,
+  model: string,
+  fallbackModel?: string,
+  opts: GenerateCoreV3SplitOptions = {},
+): Promise<CoreV4SplitResult> {
+  const mode: SplitMode = opts.mode ?? "sequential";
+  const started = Date.now();
+  console.log(`[core-split-v4] starting ${mode} split CORE v4 generation`, { model });
+
+  let a: SubCallResult;
+  let b: SubCallResult;
+  let bReceivedContext = false;
+
+  if (mode === "sequential") {
+    a = await callSubWithFallback(
+      {
+        userPrompt: `${userPrompt}\n${suffixV4A()}`,
+        model,
+        toolName: TOOL_NAME_V4_A,
+        inputSchema: coreV4SplitASchema,
+        toolDescription: "Emit CORE v4 cover_tagline + body sections 1–9 plus client_name.",
+      },
+      fallbackModel,
+    );
+    const sectionsA = validateCallV4A(a.input);
+    const summary = buildCallASummary(a.input.client_name, sectionsA);
+    bReceivedContext = true;
+    b = await callSubWithFallback(
+      {
+        userPrompt: `${userPrompt}\n${suffixV4B(summary)}`,
+        model,
+        toolName: TOOL_NAME_V4_B,
+        inputSchema: coreV4SplitBSchema,
+        toolDescription: "Emit CORE v4 body sections 10–17, grounded in Call-A context.",
+      },
+      fallbackModel,
+    );
+  } else {
+    const both = await Promise.all([
+      callSubWithFallback(
+        {
+          userPrompt: `${userPrompt}\n${suffixV4A()}`,
+          model,
+          toolName: TOOL_NAME_V4_A,
+          inputSchema: coreV4SplitASchema,
+          toolDescription: "Emit CORE v4 cover_tagline + body sections 1–9 plus client_name.",
+        },
+        fallbackModel,
+      ),
+      callSubWithFallback(
+        {
+          userPrompt: `${userPrompt}\n${suffixV4B()}`,
+          model,
+          toolName: TOOL_NAME_V4_B,
+          inputSchema: coreV4SplitBSchema,
+          toolDescription:
+            "Emit CORE v4 body sections 10–17 (no Call-A context — diagnostic only).",
+        },
+        fallbackModel,
+      ),
+    ]);
+    a = both[0];
+    b = both[1];
+    validateCallV4A(a.input);
+  }
+
+  const sectionsA = a.input.core_sections_a ?? {};
+  const sectionsB = validateCallV4B(b.input);
+
+  const coreModule = {
+    schema_version: "core_v4" as const,
+    cover_tagline: a.input.cover_tagline,
+    ...Object.fromEntries(CORE_V4_SECTIONS_A.map((k) => [k, sectionsA[k]])),
+    ...Object.fromEntries(CORE_V4_SECTIONS_B.map((k) => [k, sectionsB[k]])),
+  };
+
+  const merged = {
+    client_name: a.input.client_name,
+    generated_modules: ["CORE"],
+    modules: { CORE: coreModule },
+  };
+
+  const usedModels = Array.from(new Set([a.model_used, b.model_used]));
+  console.log("[core-split-v4] merged report built", {
+    mode,
+    model_used: usedModels.join("+"),
+    ms_total: Date.now() - started,
+  });
+
+  return {
+    report: merged,
+    model_used: usedModels.join("+"),
+    api_call_count: 2,
+    ms_total: Date.now() - started,
+    mode,
+    per_call: {
+      a: { tool: TOOL_NAME_V4_A, model: a.model_used, ms: a.ms },
+      b: {
+        tool: TOOL_NAME_V4_B,
+        model: b.model_used,
+        ms: b.ms,
+        received_call_a_context: bReceivedContext,
+      },
+    },
+  };
+}
+
+function suffixV4A(): string {
+  return [
+    "",
+    "SPLIT GENERATION — CALL A (CORE v4.1: cover_tagline + body sections 1–9).",
+    `Return the tool payload \`${TOOL_NAME_V4_A}\` with:`,
+    "  - client_name",
+    "  - cover_tagline (15–30 words, a single string — cover sub-field, NOT a body key)",
+    "  - core_sections_a containing schema_version='core_v4' and EXACTLY these 9 body sections:",
+    `      ${CORE_V4_SECTIONS_A.join(", ")}`,
+    "Do NOT return any other CORE sections — they will be generated in Call B.",
+    "Do NOT emit a closing object or recommended_next_module.",
+    "Each regular section is an object { opening_line?, scenario?, prose, key_insight?,",
+    "protocols?:[{title,body}], warning_signals?:[string], proof_tags?:[string ≤5] }.",
+    "operating_mode is required at position 3.",
+  ].join("\n");
+}
+
+function suffixV4B(callASummary?: string): string {
+  const base = [
+    "",
+    "SPLIT GENERATION — CALL B (CORE v4.1: body sections 10–17).",
+    `Return the tool payload \`${TOOL_NAME_V4_B}\` with:`,
+    "  - core_sections_b containing EXACTLY these 8 body sections:",
+    `      ${CORE_V4_SECTIONS_B.join(", ")}`,
+    "Do NOT emit a closing object, client_snapshot, or recommended_next_module.",
+    "",
+    "SPECIAL SHAPES:",
+    "  before_after → { before_after_pairs: EXACTLY 2 × {before, after} }.",
+    "  executive_summary → { executive_summary_blocks: EXACTLY 6 × {label, content} }",
+    "    with locked labels in order: YOUR CORE ADVANTAGE, YOUR PRIMARY SENSITIVITY,",
+    "    YOUR DECISION FORMULA, THE CORE CONCLUSION, CURRENT CYCLE, THE NEXT LEVEL.",
+    "  next_step → { closing_pillars: EXACTLY 4 × {title, prose} } with locked titles",
+    "    in order: TRUST THE SIGNAL, BUILD THE BASE, RESPECT THE CYCLE, HONOR THE SPACE.",
+    "  vitality_baseline → standard object; do NOT generate the disclaimer (template injects it).",
+  ];
+  if (callASummary) {
+    base.push("");
+    base.push("============ CALL-A CONTEXT (READ FIRST) ============");
+    base.push(callASummary);
+    base.push("=====================================================");
+  }
+  return base.join("\n");
 }

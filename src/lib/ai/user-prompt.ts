@@ -205,3 +205,128 @@ export function buildUserPrompt(args: BuildUserPromptArgs): string {
     "Write the Darrow report now by calling emit_darrow_report.",
   ].join("\n");
 }
+
+// ─────────────────────────────────────────────────────────────
+// CORE v4.1 — STAGED user-prompt builder (NOT active in production).
+//
+// coreV4Instructions() / buildCoreV4UserPrompt() prepare the v4.1 generation
+// spec. They are NOT wired into the production paid path (buildUserPrompt above
+// stays v3) and are NOT used by any active route. They become live only in a
+// later authorized phase (B6+), after the v4 diagnostic JSON + PDF are approved.
+// ─────────────────────────────────────────────────────────────
+
+// CORE-only data routing for v4 (CORE uses Natal + BaZi + numerology only).
+function coreV4DataRouting(): string {
+  return [
+    "CORE v4.1 DATA ROUTING — CORE uses only the layers below:",
+    "- Natal chart: planets by sign, aspects, element balance. Houses / Ascendant /",
+    "  MC / IC / Descendant only when birth_time_known = true.",
+    "- BaZi: Day Master + element balance + pillar interactions, only when",
+    "  bazi.available = true. Cross-system convergence (natal + BaZi pointing at the",
+    "  same pattern) is the highest-value use.",
+    "- Numerology: Life Path + Personal Year always; Expression / Soul Urge /",
+    "  Personality only when full_name_for_numerology is available.",
+    "- No astrocartography, no city claims, no relocation — environmental resonance only.",
+    "- No external ephemeris, no Astro.com / Astrodienst / Swiss Ephemeris source use.",
+  ].join("\n");
+}
+
+export function coreV4Instructions(): string {
+  return [
+    "═══════════════════════════════════════════════",
+    "CORE v4.1 GENERATION — CORE Report: UNVEIL (Cosmic Core Code Method)",
+    "═══════════════════════════════════════════════",
+    "",
+    'Emit the CORE module with schema_version: "core_v4".',
+    "Total target: 4,350–5,250 generated words. Hard cap ~6,000 — exceeding it",
+    "fails the brief. The goal is depth and recognition, not length.",
+    "",
+    "Voice: private, premium, recognition-first. The client should close thinking",
+    '"this explains me" — never "that was impressive astrology". Lead with lived',
+    "experience; technical data only confirms, quietly, after the human pattern is clear.",
+    "",
+    "GENERATE EXACTLY THESE 17 BODY KEYS, in this order:",
+    "  1. orientation",
+    "  2. core_architecture",
+    "  3. operating_mode          (required — position 3)",
+    "  4. battery",
+    "  5. social_interface",
+    "  6. numerology_code",
+    "  7. cognitive_style",
+    "  8. drive_and_rhythm",
+    "  9. professional_archetype",
+    " 10. money_and_value",
+    " 11. relationship_baseline",
+    " 12. vitality_baseline",
+    " 13. environment_and_resonance",
+    " 14. shadow_and_friction",
+    " 15. before_after",
+    " 16. executive_summary",
+    " 17. next_step",
+    "Plus the cover sub-field: cover_tagline (15–30 words, a single string).",
+    "",
+    "DO NOT add, remove, merge, rename, or reorder sections.",
+    "DO NOT emit a v3-style closing object. There is no closing object in v4.",
+    "DO NOT emit any next-module recommendation or cross-sell field anywhere.",
+    "DO NOT emit an identity_card body key (the template assembles the identity card).",
+    "cover_tagline is a cover sub-field, NOT one of the 17 body keys.",
+    "",
+    "PER-SECTION STRUCTURED FIELDS (regular sections):",
+    "  { opening_line?, scenario?, prose, key_insight?, protocols?, warning_signals?, proof_tags? }",
+    "  - opening_line: short declarative hook, max 120 characters.",
+    "  - prose: required body paragraphs (2–4 sentence paragraphs, breathing room).",
+    "  - protocols: [{title, body}] where the section calls for them.",
+    "  - warning_signals: [string] where the section calls for them.",
+    "  - proof_tags: max 5, real available data only, at the very end.",
+    "",
+    "SPECIAL SECTION SHAPES:",
+    "  - before_after → before_after_pairs: EXACTLY 2 pairs of { before, after }.",
+    "    Perception shift only — no outcome promises.",
+    "  - executive_summary → executive_summary_blocks: EXACTLY 6 blocks of",
+    "    { label, content } with these locked labels in order:",
+    "      YOUR CORE ADVANTAGE, YOUR PRIMARY SENSITIVITY, YOUR DECISION FORMULA,",
+    "      THE CORE CONCLUSION, CURRENT CYCLE, THE NEXT LEVEL.",
+    "  - next_step → closing_pillars: EXACTLY 4 pillars of { title, prose } with",
+    "    these locked titles in order:",
+    "      TRUST THE SIGNAL, BUILD THE BASE, RESPECT THE CYCLE, HONOR THE SPACE.",
+    "  - vitality_baseline → DO NOT generate the disclaimer. The template injects the",
+    "    verbatim medical disclaimer. Write only prose, 1 protocol, 1 warning_signal.",
+    "",
+    "SCENARIO-FIRST: never open a section with placements/houses/signs/aspects/",
+    "numbers/BaZi terms. Open with a recognizable lived moment; data confirms after.",
+    "",
+    "SYMBOLIC IDENTITY: weave sign / Moon / Ascendant (if available) / element /",
+    "numerology / BaZi / archetype through the sections, each explained, never a bare",
+    "list. Supportive colors / stones / symbolic allies are GATED — do NOT generate",
+    "specific color/stone/ally correspondences (curated dictionary not yet approved).",
+    "",
+    "SAFETY: no wealth promises; no medical claims; no deterministic prediction; no",
+    "lucky/healing/protection claims; no specific cities; no direct body cross-sell.",
+    "",
+    "Per-section word target applies to the prose field only.",
+  ].join("\n");
+}
+
+// Assemble the full CORE v4.1 user prompt for a single client.
+// STAGED — not used by production. Reuses the shared data-safety rules.
+export function buildCoreV4UserPrompt(args: BuildUserPromptArgs): string {
+  return [
+    `Customer first name: ${args.first_name ?? "(not provided)"}`,
+    `Date of birth: ${args.date_of_birth}`,
+    `Birth city: ${args.birth_city ?? "(not provided)"}`,
+    "Module: CORE (CORE Report: UNVEIL — v4.1)",
+    "",
+    safetyRules(args.chart),
+    "",
+    coreV4DataRouting(),
+    "",
+    coreV4Instructions(),
+    "",
+    "DarrowChartData (canonical inputs — do not invent placements outside this):",
+    "```json",
+    JSON.stringify(args.chart, null, 2),
+    "```",
+    "",
+    "Write the CORE v4.1 report now.",
+  ].join("\n");
+}
