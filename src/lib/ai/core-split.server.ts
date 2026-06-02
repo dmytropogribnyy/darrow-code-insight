@@ -17,6 +17,7 @@ import {
   CORE_V4_BODY_SECTION_KEYS,
   EXECUTIVE_SUMMARY_LABELS,
   CLOSING_PILLAR_TITLES,
+  CoreV4Schema,
 } from "./schema";
 
 const ANTHROPIC_URL = "https://api.anthropic.com/v1/messages";
@@ -661,6 +662,13 @@ const coreV4SplitBSchema = {
 
 // Exported for staging/inspection + tests. These are the v4 tool schemas the
 // future authorized v4 generator will hand to Anthropic.
+//
+// ⚠️  The Anthropic tool schema is a first-pass shape guard only. It enforces
+// field presence, basic types, and enum membership, but it cannot enforce
+// z.tuple exact positional order (e.g. executive_summary_blocks must be in
+// the precise label sequence, closing_pillars must use exact title order).
+// CoreV4Schema.safeParse() is therefore run on the merged CORE module after
+// both API calls complete — it is the authoritative final contract validator.
 export const coreV4ToolSchemas = {
   toolNameA: TOOL_NAME_V4_A,
   toolNameB: TOOL_NAME_V4_B,
@@ -801,6 +809,22 @@ export async function generateCoreV4Split(
     ...Object.fromEntries(CORE_V4_SECTIONS_A.map((k) => [k, sectionsA[k]])),
     ...Object.fromEntries(CORE_V4_SECTIONS_B.map((k) => [k, sectionsB[k]])),
   };
+
+  // Final contract validation: CoreV4Schema enforces exact tuple label/title
+  // order, strict top-level keys, proof_tags ≤ 5, and all special shapes.
+  // The Anthropic tool schema is only a first-pass guard — this is the truth.
+  // Fail loud; do NOT coerce or silently accept a malformed module.
+  const v4Validation = CoreV4Schema.safeParse(coreModule);
+  if (!v4Validation.success) {
+    const detail = v4Validation.error.issues
+      .slice(0, 5)
+      .map((i) => `${i.path.join(".")}: ${i.message}`)
+      .join("; ");
+    console.error("[core-split-v4] merged CORE module failed CoreV4Schema validation", {
+      issues: detail,
+    });
+    throw new Error(`[core-split-v4] merged CORE module failed CoreV4Schema validation: ${detail}`);
+  }
 
   const merged = {
     client_name: a.input.client_name,

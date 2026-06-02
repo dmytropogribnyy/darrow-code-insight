@@ -298,3 +298,147 @@ describe("B2 — v3 split + diagnostic unchanged", () => {
     expect(CORE_V3_KEYS).toContain("cover_tagline");
   });
 });
+
+// ── 7 · CoreV4Schema validation in evaluateCoreV4Structure (B2.1) ─────────────
+
+// Minimal valid CoreV4 CORE module fixture used across B2.1 tests.
+const VALID_V4_CORE = {
+  schema_version: "core_v4" as const,
+  cover_tagline: "Your personal architecture, decoded.",
+  orientation: { prose: "orientation prose" },
+  core_architecture: { prose: "core architecture prose" },
+  operating_mode: { prose: "operating mode prose" },
+  battery: { prose: "battery prose" },
+  social_interface: { prose: "social interface prose" },
+  numerology_code: { prose: "numerology code prose" },
+  cognitive_style: { prose: "cognitive style prose" },
+  drive_and_rhythm: { prose: "drive and rhythm prose" },
+  professional_archetype: { prose: "professional archetype prose" },
+  money_and_value: { prose: "money and value prose" },
+  relationship_baseline: { prose: "relationship baseline prose" },
+  vitality_baseline: { prose: "vitality baseline prose" },
+  environment_and_resonance: { prose: "environment and resonance prose" },
+  shadow_and_friction: { prose: "shadow and friction prose" },
+  before_after: {
+    before_after_pairs: [
+      { before: "Before first", after: "After first" },
+      { before: "Before second", after: "After second" },
+    ],
+  },
+  executive_summary: {
+    executive_summary_blocks: [
+      { label: "YOUR CORE ADVANTAGE" as const, content: "advantage content" },
+      { label: "YOUR PRIMARY SENSITIVITY" as const, content: "sensitivity content" },
+      { label: "YOUR DECISION FORMULA" as const, content: "formula content" },
+      { label: "THE CORE CONCLUSION" as const, content: "conclusion content" },
+      { label: "CURRENT CYCLE" as const, content: "cycle content" },
+      { label: "THE NEXT LEVEL" as const, content: "next level content" },
+    ],
+  },
+  next_step: {
+    closing_pillars: [
+      { title: "TRUST THE SIGNAL" as const, prose: "trust prose" },
+      { title: "BUILD THE BASE" as const, prose: "build prose" },
+      { title: "RESPECT THE CYCLE" as const, prose: "respect prose" },
+      { title: "HONOR THE SPACE" as const, prose: "honor prose" },
+    ],
+  },
+};
+
+function makeV4Report(coreOverride?: Record<string, unknown>) {
+  return {
+    generated_modules: ["CORE"],
+    modules: { CORE: { ...VALID_V4_CORE, ...coreOverride } },
+  };
+}
+
+describe("B2.1 — evaluateCoreV4Structure CoreV4Schema validation", () => {
+  it("passes (no SCHEMA_VALIDATION_FAILED) for a valid CoreV4-shaped report", () => {
+    const issues = evaluateCoreV4Structure(makeV4Report());
+    expect(issues.some((i) => i.code === "SCHEMA_VALIDATION_FAILED")).toBe(false);
+    expect(issues).toHaveLength(0);
+  });
+
+  it("fails when executive_summary_blocks use duplicate valid labels", () => {
+    const issues = evaluateCoreV4Structure(
+      makeV4Report({
+        executive_summary: {
+          executive_summary_blocks: [
+            { label: "YOUR CORE ADVANTAGE", content: "c" },
+            { label: "YOUR CORE ADVANTAGE", content: "c" }, // duplicate at position 1
+            { label: "YOUR DECISION FORMULA", content: "c" },
+            { label: "THE CORE CONCLUSION", content: "c" },
+            { label: "CURRENT CYCLE", content: "c" },
+            { label: "THE NEXT LEVEL", content: "c" },
+          ],
+        },
+      }),
+    );
+    expect(issues.some((i) => i.code === "SCHEMA_VALIDATION_FAILED")).toBe(true);
+  });
+
+  it("fails when executive_summary_blocks use valid labels in wrong order", () => {
+    const issues = evaluateCoreV4Structure(
+      makeV4Report({
+        executive_summary: {
+          executive_summary_blocks: [
+            { label: "YOUR PRIMARY SENSITIVITY", content: "c" }, // wrong at position 0
+            { label: "YOUR CORE ADVANTAGE", content: "c" }, // wrong at position 1
+            { label: "YOUR DECISION FORMULA", content: "c" },
+            { label: "THE CORE CONCLUSION", content: "c" },
+            { label: "CURRENT CYCLE", content: "c" },
+            { label: "THE NEXT LEVEL", content: "c" },
+          ],
+        },
+      }),
+    );
+    expect(issues.some((i) => i.code === "SCHEMA_VALIDATION_FAILED")).toBe(true);
+  });
+
+  it("fails when closing_pillars use duplicate valid titles", () => {
+    const issues = evaluateCoreV4Structure(
+      makeV4Report({
+        next_step: {
+          closing_pillars: [
+            { title: "TRUST THE SIGNAL", prose: "p" },
+            { title: "TRUST THE SIGNAL", prose: "p" }, // duplicate at position 1
+            { title: "RESPECT THE CYCLE", prose: "p" },
+            { title: "HONOR THE SPACE", prose: "p" },
+          ],
+        },
+      }),
+    );
+    expect(issues.some((i) => i.code === "SCHEMA_VALIDATION_FAILED")).toBe(true);
+  });
+
+  it("fails when closing_pillars use valid titles in wrong order", () => {
+    const issues = evaluateCoreV4Structure(
+      makeV4Report({
+        next_step: {
+          closing_pillars: [
+            { title: "BUILD THE BASE", prose: "p" }, // wrong at position 0
+            { title: "TRUST THE SIGNAL", prose: "p" }, // wrong at position 1
+            { title: "RESPECT THE CYCLE", prose: "p" },
+            { title: "HONOR THE SPACE", prose: "p" },
+          ],
+        },
+      }),
+    );
+    expect(issues.some((i) => i.code === "SCHEMA_VALIDATION_FAILED")).toBe(true);
+  });
+
+  it("fails when recommended_next_module appears inside CORE (strict mode)", () => {
+    // CoreV4Schema uses .strict() — unknown top-level keys are rejected.
+    const issues = evaluateCoreV4Structure(
+      makeV4Report({ recommended_next_module: "LOVE" } as any),
+    );
+    expect(issues.some((i) => i.code === "SCHEMA_VALIDATION_FAILED")).toBe(true);
+  });
+
+  it("fails when a v3-style closing object appears inside CORE (strict mode)", () => {
+    const issues = evaluateCoreV4Structure(
+      makeV4Report({ closing: { executive_summary: "...", recommended_next_module: "LOVE" } }),
+    );
+    expect(issues.some((i) => i.code === "SCHEMA_VALIDATION_FAILED")).toBe(true);
+  });
+});

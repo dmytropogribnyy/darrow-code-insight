@@ -5,7 +5,12 @@
 // Used ONLY by /api/public/debug/core-v3-run. Production paid pipeline
 // still uses generateDarrowReport() with strict validation.
 
-import { darrowReportJsonSchema, getCoreSectionProse, CORE_V4_BODY_SECTION_KEYS } from "./schema";
+import {
+  darrowReportJsonSchema,
+  getCoreSectionProse,
+  CORE_V4_BODY_SECTION_KEYS,
+  CoreV4Schema,
+} from "./schema";
 import { DARROW_SYSTEM_PROMPT } from "./system-prompt";
 
 const ANTHROPIC_URL = "https://api.anthropic.com/v1/messages";
@@ -85,7 +90,8 @@ export interface StructuralIssue {
     | "EMPTY_SECTION"
     | "MISSING_CLIENT_SNAPSHOT"
     | "MISSING_GENERATED_MODULES"
-    | "INVALID_JSON";
+    | "INVALID_JSON"
+    | "SCHEMA_VALIDATION_FAILED";
   detail?: string;
 }
 
@@ -282,6 +288,11 @@ export function evaluateCoreV4Lengths(coreMod: any): LengthDiag[] {
 // v4 structural check. Recognizes schema_version "core_v4", the 17 body keys,
 // and cover_tagline as a required cover sub-field. Does not require the v3
 // closing / client_snapshot report shape.
+//
+// Final step: CoreV4Schema.safeParse validates exact contracts (z.tuple order,
+// strict top-level, max proof_tags, etc.) that the manual key checks above
+// cannot express. A SCHEMA_VALIDATION_FAILED issue is added if Zod rejects the
+// CORE module — the Anthropic tool schema is only a first-pass shape guard.
 export function evaluateCoreV4Structure(report: any): StructuralIssue[] {
   const issues: StructuralIssue[] = [];
   if (!report || typeof report !== "object") {
@@ -307,6 +318,16 @@ export function evaluateCoreV4Structure(report: any): StructuralIssue[] {
       const text = getCoreV4SectionText(core[k]);
       if (!text || text.trim().length === 0) issues.push({ code: "EMPTY_SECTION", detail: k });
     }
+  }
+  // Final contract check: validate exact Zod constraints (tuple label/title
+  // order, strict top-level keys, proof_tags ≤ 5, etc.).
+  const v4Parse = CoreV4Schema.safeParse(core);
+  if (!v4Parse.success) {
+    const detail = v4Parse.error.issues
+      .slice(0, 3)
+      .map((i) => `${i.path.join(".")}: ${i.message}`)
+      .join("; ");
+    issues.push({ code: "SCHEMA_VALIDATION_FAILED", detail });
   }
   return issues;
 }
