@@ -137,6 +137,16 @@ describe("PDF layout contract — PROOF_EVIDENCE_STYLE (active: proof inside cal
   it("PROOF_EVIDENCE_STYLE has word-wrap safety (prevents overflow from long technical strings)", () => {
     expect(PROOF_EVIDENCE_STYLE).toContain("overflow-wrap:break-word");
   });
+
+  it("PROOF_EVIDENCE_STYLE has padding-right to reserve page-number zone (stamp ≈ 44mm from right edge)", () => {
+    // Stamp left edge ≈ 44mm from right (14mm right margin + ~30mm text width at 9pt).
+    // padding-right on proof keeps text clear of this zone.
+    // 20mm section padding + 5mm box padding + proof padding-right must exceed 44mm.
+    const match = PROOF_EVIDENCE_STYLE.match(/padding-right:(\d+)mm/);
+    expect(match).not.toBeNull();
+    const paddingRight = parseInt(match![1], 10);
+    expect(paddingRight).toBeGreaterThanOrEqual(10);
+  });
 });
 
 describe("PDF layout contract — warning+proof attachment (layout-foundation-3)", () => {

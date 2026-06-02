@@ -315,8 +315,11 @@ export const PROOF_STYLE =
 // so no page-break properties are needed here — the outer callout handles containment.
 // This replaces standalone trailing proof rendering to prevent proof-only pages and
 // footer/proof collisions caused by proof landing near the stamped page-number zone.
+// padding-right:12mm reserves the bottom-right zone for the stamped page number.
+// Stamp left edge ≈ 44mm from right page edge; with 20mm section padding + 5mm box
+// padding + 12mm here, proof text stops ≈ 37mm from the right page edge — clear of stamp.
 export const PROOF_EVIDENCE_STYLE =
-  "font-family:Arial,Helvetica,sans-serif;color:#9CA3AF;font-size:8pt;font-style:italic;margin-top:8pt;padding-top:4pt;border-top:0.5pt solid #E5E7EB;overflow-wrap:break-word;word-wrap:break-word;";
+  "font-family:Arial,Helvetica,sans-serif;color:#9CA3AF;font-size:8pt;font-style:italic;margin-top:8pt;padding-top:4pt;padding-right:12mm;border-top:0.5pt solid #E5E7EB;overflow-wrap:break-word;word-wrap:break-word;";
 
 // ── Layout contract (layout-foundation-3) ──────────────────────────────────
 //
