@@ -22,6 +22,7 @@ import { Route as ApiPublicJobsResendReadyEmailRouteImport } from './routes/api/
 import { Route as ApiPublicJobsProcessGenerationRouteImport } from './routes/api/public/jobs/process-generation'
 import { Route as ApiPublicHealthGenerationPipelineRouteImport } from './routes/api/public/health/generation-pipeline'
 import { Route as ApiPublicDebugCoreV3RunRouteImport } from './routes/api/public/debug/core-v3-run'
+import { Route as ApiPublicDebugCoreV4RunRouteImport } from './routes/api/public/debug/core-v4-run'
 import { Route as ApiPublicDebugBuildStatusRouteImport } from './routes/api/public/debug/build-status'
 import { Route as ApiPublicDebugBuildMarkerRouteImport } from './routes/api/public/debug/build-marker'
 import { Route as ApiPublicDebugAstroProbeRouteImport } from './routes/api/public/debug/astro-probe'
@@ -95,6 +96,11 @@ const ApiPublicDebugCoreV3RunRoute = ApiPublicDebugCoreV3RunRouteImport.update({
   path: '/api/public/debug/core-v3-run',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicDebugCoreV4RunRoute = ApiPublicDebugCoreV4RunRouteImport.update({
+  id: '/api/public/debug/core-v4-run',
+  path: '/api/public/debug/core-v4-run',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicDebugBuildStatusRoute =
   ApiPublicDebugBuildStatusRouteImport.update({
     id: '/api/public/debug/build-status',
@@ -127,6 +133,7 @@ export interface FileRoutesByFullPath {
   '/api/public/debug/build-marker': typeof ApiPublicDebugBuildMarkerRoute
   '/api/public/debug/build-status': typeof ApiPublicDebugBuildStatusRoute
   '/api/public/debug/core-v3-run': typeof ApiPublicDebugCoreV3RunRoute
+  '/api/public/debug/core-v4-run': typeof ApiPublicDebugCoreV4RunRoute
   '/api/public/health/generation-pipeline': typeof ApiPublicHealthGenerationPipelineRoute
   '/api/public/jobs/process-generation': typeof ApiPublicJobsProcessGenerationRoute
   '/api/public/jobs/resend-ready-email': typeof ApiPublicJobsResendReadyEmailRoute
@@ -145,6 +152,7 @@ export interface FileRoutesByTo {
   '/api/public/debug/build-marker': typeof ApiPublicDebugBuildMarkerRoute
   '/api/public/debug/build-status': typeof ApiPublicDebugBuildStatusRoute
   '/api/public/debug/core-v3-run': typeof ApiPublicDebugCoreV3RunRoute
+  '/api/public/debug/core-v4-run': typeof ApiPublicDebugCoreV4RunRoute
   '/api/public/health/generation-pipeline': typeof ApiPublicHealthGenerationPipelineRoute
   '/api/public/jobs/process-generation': typeof ApiPublicJobsProcessGenerationRoute
   '/api/public/jobs/resend-ready-email': typeof ApiPublicJobsResendReadyEmailRoute
@@ -164,6 +172,7 @@ export interface FileRoutesById {
   '/api/public/debug/build-marker': typeof ApiPublicDebugBuildMarkerRoute
   '/api/public/debug/build-status': typeof ApiPublicDebugBuildStatusRoute
   '/api/public/debug/core-v3-run': typeof ApiPublicDebugCoreV3RunRoute
+  '/api/public/debug/core-v4-run': typeof ApiPublicDebugCoreV4RunRoute
   '/api/public/health/generation-pipeline': typeof ApiPublicHealthGenerationPipelineRoute
   '/api/public/jobs/process-generation': typeof ApiPublicJobsProcessGenerationRoute
   '/api/public/jobs/resend-ready-email': typeof ApiPublicJobsResendReadyEmailRoute
@@ -184,6 +193,7 @@ export interface FileRouteTypes {
     | '/api/public/debug/build-marker'
     | '/api/public/debug/build-status'
     | '/api/public/debug/core-v3-run'
+    | '/api/public/debug/core-v4-run'
     | '/api/public/health/generation-pipeline'
     | '/api/public/jobs/process-generation'
     | '/api/public/jobs/resend-ready-email'
@@ -202,6 +212,7 @@ export interface FileRouteTypes {
     | '/api/public/debug/build-marker'
     | '/api/public/debug/build-status'
     | '/api/public/debug/core-v3-run'
+    | '/api/public/debug/core-v4-run'
     | '/api/public/health/generation-pipeline'
     | '/api/public/jobs/process-generation'
     | '/api/public/jobs/resend-ready-email'
@@ -220,6 +231,7 @@ export interface FileRouteTypes {
     | '/api/public/debug/build-marker'
     | '/api/public/debug/build-status'
     | '/api/public/debug/core-v3-run'
+    | '/api/public/debug/core-v4-run'
     | '/api/public/health/generation-pipeline'
     | '/api/public/jobs/process-generation'
     | '/api/public/jobs/resend-ready-email'
@@ -239,6 +251,7 @@ export interface RootRouteChildren {
   ApiPublicDebugBuildMarkerRoute: typeof ApiPublicDebugBuildMarkerRoute
   ApiPublicDebugBuildStatusRoute: typeof ApiPublicDebugBuildStatusRoute
   ApiPublicDebugCoreV3RunRoute: typeof ApiPublicDebugCoreV3RunRoute
+  ApiPublicDebugCoreV4RunRoute: typeof ApiPublicDebugCoreV4RunRoute
   ApiPublicHealthGenerationPipelineRoute: typeof ApiPublicHealthGenerationPipelineRoute
   ApiPublicJobsProcessGenerationRoute: typeof ApiPublicJobsProcessGenerationRoute
   ApiPublicJobsResendReadyEmailRoute: typeof ApiPublicJobsResendReadyEmailRoute
@@ -338,6 +351,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicDebugCoreV3RunRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/debug/core-v4-run': {
+      id: '/api/public/debug/core-v4-run'
+      path: '/api/public/debug/core-v4-run'
+      fullPath: '/api/public/debug/core-v4-run'
+      preLoaderRoute: typeof ApiPublicDebugCoreV4RunRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/debug/build-status': {
       id: '/api/public/debug/build-status'
       path: '/api/public/debug/build-status'
@@ -375,6 +395,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicDebugBuildMarkerRoute: ApiPublicDebugBuildMarkerRoute,
   ApiPublicDebugBuildStatusRoute: ApiPublicDebugBuildStatusRoute,
   ApiPublicDebugCoreV3RunRoute: ApiPublicDebugCoreV3RunRoute,
+  ApiPublicDebugCoreV4RunRoute: ApiPublicDebugCoreV4RunRoute,
   ApiPublicHealthGenerationPipelineRoute:
     ApiPublicHealthGenerationPipelineRoute,
   ApiPublicJobsProcessGenerationRoute: ApiPublicJobsProcessGenerationRoute,
