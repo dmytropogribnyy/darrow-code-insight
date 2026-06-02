@@ -32,3 +32,11 @@ Each entry:
 - General background research that does not result in direct extraction does not require an entry.
 - If a source requires attribution in production output, note that here and apply it.
 - Copyrighted text must never appear in Darrow Code knowledge files — log only if used as conceptual background.
+
+---
+
+## INTERNAL PHASE NOTES
+
+| Date | Phase | Note |
+|---|---|---|
+| 2026-06-02 | KB1-A | KBSYS0 skeleton inspected. SOURCE_PACK_IMPORT_MANIFEST_v1.md created. Nine source-pack candidates listed. No source packs imported. No runtime changes. |
