@@ -48,6 +48,19 @@ Not allowed:
 
 All files are curated Darrow rule docs · docs-only · not active in runtime.
 
+## KB2-PLACE rule docs (2026-06-02)
+
+| File | Layer | Gate |
+|---|---|---|
+| `ASTROGEO_PLACE_RULES_v1.md` | AstroGeo core principles, place emphasis types, PLACE/CORE boundary | blocked for CORE runtime · future PLACE add-on |
+| `ASTROGEO_PLANETARY_LINE_RULES_v1.md` | 10 planetary lines + angles (ASC/MC/IC/DSC) | conditional (exact birth time) · future PLACE only |
+| `RELOCATION_CHART_RULES_v1.md` | Relocated chart — definition, inputs, what changes/does not change | conditional (exact birth time + coordinates) · future PLACE only |
+| `PLACE_ADDON_BOUNDARY_POLICY_v1.md` | CORE vs PLACE boundary, practical reality check, forbidden claims | policy doc |
+| `PLACE_USE_CASE_ARCHETYPES_v1.md` | 12 use-case buckets with illustrative place examples | reference doc · PLACE add-on only |
+| `CORE_PLACE_ARCHETYPE_POLICY_v1.md` | How CORE may include 1–3 illustrative place archetypes — no maps/lines/rankings | policy doc · CORE soft resonance only |
+
+All files are curated Darrow rule docs · docs-only · not active in runtime.
+
 ## Future rule docs (planned)
 
 ```text
