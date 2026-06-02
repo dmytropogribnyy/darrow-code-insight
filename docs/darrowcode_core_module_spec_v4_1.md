@@ -108,20 +108,56 @@ payload. (This is the reconciliation that keeps the count at exactly 17.)
 
 ---
 
-## 6 · OPERATING_MODE MIGRATION WARNING
+## 6 · OPERATING_MODE MIGRATION STATUS
 
-⚠️ `operating_mode` (Page 06) is part of the CORE v4.1 standard, but it is a
-**schema/template migration**.
+✅ **Render-fix approved (2026-06-02).** The migration gate is now open.
 
-- Do NOT implement it in Loveable until the render-fix diagnostic is approved.
-- For now it exists in this spec, in the master pattern, and in the gold sample
-  only — as part of the intended v4.1 output, not the live pipeline.
-- When the migration proceeds, it is added to the v4.1 generated key set as
-  `operating_mode`, with its own callout-capable structure. Until then, the live
-  pipeline runs the pre-migration key set.
+`operating_mode` (Page 06) may be implemented in the B1–B4 implementation
+phases. It is added to the v4.1 generated key set as `operating_mode` with
+its own callout-capable structure.
 
-This warning is binding. Adding `operating_mode` to runtime before diagnostic
-approval is out of scope.
+Implementation sequence:
+- B1 (schema): add `operating_mode` to `CoreV4Schema` at key position #3
+- B2 (prompt): add `operating_mode` section instructions to `coreV4Instructions()`
+- B3 (split): add `operating_mode` to `CORE_V4_SECTIONS_A` at index 2 (replacing `cover_tagline`)
+- B4 (template): add `operating_mode` render block at page 06 position
+
+---
+
+## 6A · PERSONAL ORIENTATION SYSTEM — IDENTITY CARD PAYLOAD (B0 addition)
+
+**Decision (B0, 2026-06-02):** The symbolic identity card surface is the
+**Personal Orientation System page (page 02)** — a static / template-rendered page.
+
+The 17-key body structure remains locked. No new generated body key is added.
+
+**What the template renders on page 02:**
+
+STATIC boilerplate (always the same):
+- "PERSONAL ORIENTATION SYSTEM" heading
+- "Clarity before action. Orientation over prediction."
+- Interpretive framework disclaimer
+
+VARIABLE symbolic identity payload (extracted by template from generated data + input):
+- Client name + birth data
+- Sun sign + Moon sign (or element label if birth_time unknown)
+- Ascendant if `birth_time_known=true`
+- Life Path number
+- BaZi Day Master + dominant element (if BaZi data available)
+- Professional archetype name (if `professional_archetype` section generated it)
+- Dominant element label
+
+This payload is assembled by the **template renderer** from existing structured
+field data of the generated sections and client input. It is NOT a new AI-generated
+section. The AI generates section fields; the template extracts summary indicators.
+
+**Implementation note for B4:** No new schema key needed. The template reads:
+- `input.sun_sign`, `input.moon_sign`, `input.ascendant` (from chart data)
+- `input.bazi_day_master`, `input.dominant_element` (from chart data)
+- `sections.professional_archetype.archetype_name` (from generated section)
+- `input.life_path` (from numerology calculation)
+
+See `SYMBOLIC_IDENTITY_STANDARD.md` in `docs/knowledge/` for full scope rules.
 
 ---
 
@@ -130,7 +166,7 @@ approval is out of scope.
 | Page  | Section key                 | Display title               | Type                     | Word target | AI-generated? | Template-rendered? | Notes                                                                                   |
 | ----- | --------------------------- | --------------------------- | ------------------------ | ----------- | ------------- | ------------------ | --------------------------------------------------------------------------------------- |
 | 01    | (cover)                     | CORE Report: UNVEIL         | STATIC + cover sub-field | —           | tagline only  | yes                | Title + method line static; `cover_tagline` + client data are variable cover sub-fields |
-| 02    | (orientation_system)        | Personal Orientation System | STATIC                   | —           | no            | yes                | Brand/method + interpretive framework boilerplate                                       |
+| 02    | (orientation_system)        | Personal Orientation System | STATIC + variable payload | —           | no (template extracts) | yes | Boilerplate + symbolic identity card payload (see §6A); Sun/Moon/ASC/LP/DM/archetype |
 | 03    | `orientation`               | Introduction                | VARIABLE                 | 220–270     | yes           | yes                | Sets reading mode; no product mentions                                                  |
 | 04–05 | `core_architecture`         | Core Architecture           | VARIABLE                 | 380–460     | yes           | yes                | Primary structural read; spans 2 pages                                                  |
 | 06    | `operating_mode`            | Operating Mode              | VARIABLE                 | 260–310     | yes ⚠️        | yes                | Migration — not in live pipeline yet                                                    |
@@ -146,8 +182,8 @@ approval is out of scope.
 | 18    | `environment_and_resonance` | Environment & Resonance     | VARIABLE                 | 210–250     | yes           | yes                | Environmental resonance only, no cities                                                 |
 | 19–20 | `shadow_and_friction`       | Shadow & Friction           | VARIABLE                 | 340–400     | yes           | yes                | Spans 2 pages; disarming protocol + warning                                             |
 | 21    | `before_after`              | Before / After              | VARIABLE                 | 160–200     | yes           | yes                | Exactly 2 Before / 2 After                                                              |
-| 22–23 | `executive_summary`         | Executive Summary           | VARIABLE                 | 340–400     | yes           | yes                | Spans 2 pages; 6-part structure                                                         |
-| 24    | `next_step`                 | Closing                     | SEMI-STATIC + VARIABLE   | 130–160     | yes           | yes                | 4 pillars frame fixed, conclusions variable                                             |
+| 22–23 | `executive_summary`         | Executive Summary           | VARIABLE                 | 340–400     | yes           | yes                | 6 locked labels: YOUR CORE ADVANTAGE / YOUR PRIMARY SENSITIVITY / YOUR DECISION FORMULA / THE CORE CONCLUSION / CURRENT CYCLE / THE NEXT LEVEL |
+| 24    | `next_step`                 | Closing                     | SEMI-STATIC + VARIABLE   | 130–160     | yes           | yes                | 4 locked pillar titles: TRUST THE SIGNAL / BUILD THE BASE / RESPECT THE CYCLE / HONOR THE SPACE |
 | 25    | (library)                   | The Darrow Code Library     | STATIC                   | —           | no            | yes                | Optional deeper lenses; current storefront                                              |
 | 26    | (back_cover)                | Back Cover                  | STATIC                   | —           | no            | yes                | Brand mark + URL                                                                        |
 

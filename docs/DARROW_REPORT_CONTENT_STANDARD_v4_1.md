@@ -346,13 +346,46 @@ the focused chapters when those are written later:
   No medical claims, no diagnosis, no healing claims. Carry the disclaimer.
 - **YEAR:** orientation, timing climate, pressure themes only. No deterministic
   prediction of events.
-- **STYLE:** aesthetic signature, colors, materials. No lucky / healing /
-  protection claims about any color or material.
+- **STYLE:** aesthetic signature, colors, materials for the focused chapter's
+  full visual/aesthetic scope. No lucky / healing / protection claims about
+  any color or material.
 - **PLACE / environment_and_resonance:** environmental resonance only in CORE.
   Specific cities belong only to the PLACE focused chapter, with real
   astrocartography/relocation data (see §18).
 - **LOVE / relationship_baseline:** relationship and intimacy patterns. No
   guaranteed attraction or compatibility promises.
+
+### 17A · CORE SYMBOLIC ANCHOR LAYER (B0 addition)
+
+CORE may include **brief symbolic anchors** — supportive colors, stones, and
+symbolic allies — **when supported by a curated Darrow Code rules dict** in
+`docs/knowledge/COLORS_STONES_SYMBOLIC_ALLIES_v1.md`.
+
+This is distinct from the STYLE focused chapter's deeper visual identity work.
+
+CORE symbolic anchors must:
+- Be brief (1–2 anchors per type, not an extended palette)
+- Be explained as psychological or structural mirrors
+- Be derived from the client's natal, BaZi, or numerology profile
+- Pass the no-claims rule: no lucky, healing, protection, or attraction claims
+- Be governed by the curated dict before appearing in production output
+
+Allowed framing in CORE:
+- "Supportive color: deep blue — as a symbolic anchor for emotional coherence
+  and quiet authority"
+- "A stone that mirrors the same steady, grounded quality: [name] — for its
+  association with depth and clarity, not for any protective claim"
+
+Not allowed anywhere (CORE or STYLE):
+- "Brings luck"
+- "Heals"
+- "Protects from"
+- "Attracts"
+- "Manifests"
+
+The curated dict in `docs/knowledge/` must exist and be approved before
+any color/stone/ally is generated in production. Without the dict, omit
+this layer silently — do not substitute generic lists.
 
 ---
 
@@ -432,6 +465,51 @@ The AI emits content; the template controls the visual look. This keeps every
 client's report visually consistent and prevents layout drift. (The structured-
 field mechanics live in the schema/template implementation file, created later —
 not here.)
+
+---
+
+## 20A · READING EXPERIENCE REQUIREMENTS (B0 addition)
+
+CORE and future add-on reports must be:
+
+- **Rich** — multiple data layers woven into a coherent reading, not a thin profile
+- **Readable** — human-readable by a non-astrologer without explanation
+- **Emotionally recognizable** — the client thinks "yes, that is exactly it"
+- **Varied** — different section rhythms, metaphors, and structural approaches
+- **Premium** — depth, precision, and care visible on every page
+- **Astrologically informed** — real data confirms the human read
+- **Psychologically insightful** — names the lived experience with accuracy
+- **Less technical** — technical terminology as quiet confirmation, never as the main content
+- **Recognizably Darrow Code** — not generic astrology, not a classic report clone
+
+### What to avoid (reading experience failure modes)
+
+- Generic horoscope language ("Cancers tend to feel deeply...")
+- Dry astro dumps (listing placements as content)
+- Long uninterrupted walls of text
+- Random esoteric lists without explanation (bare labels: "Color: blue")
+- Copying tone or phrasing from classic Liz Greene-style reports
+- Shallow motivational writing ("you have unlimited potential")
+- Repetitive section formulas (every section starting and ending the same way)
+- Excessive "system architecture" abstraction ("your mechanism," "your factory settings")
+- Fear-based or shame-based framing of any pattern
+
+### Section variety requirement
+
+Each section should use the full available rhythm — not just prose with a
+protocol bolted on. Where the section spec allows it, include:
+- A recognition-first opening scene
+- A clear pattern name or typology
+- What this looks like in real life
+- Key strength
+- Hidden risk or shadow
+- Practical direction
+- Protocol (behavioral, specific)
+- Warning signal (observable, non-judgmental)
+- Proof tags (quiet, at the end)
+
+Variety means: not every section uses all of these, and no two sections should
+feel like they used the same formula. The gold sample shows the range.
 
 ---
 

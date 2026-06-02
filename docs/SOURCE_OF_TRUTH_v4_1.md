@@ -44,6 +44,52 @@ implementation. No other file may be used as a source instruction.
 
 ---
 
+## 2A · KNOWLEDGE BASE PACKAGE (B0 addition)
+
+The `docs/knowledge/` directory is part of the canonical documentation package
+from B0 onward:
+
+| File | Role |
+|---|---|
+| `SOURCE_POLICY.md` | Governs all knowledge base source and content rules |
+| `KNOWLEDGE_SOURCE_MATRIX_v1.md` | Approved data layers and their scope |
+| `SYMBOLIC_IDENTITY_STANDARD.md` | Symbolic identity layer scope; identity card placement |
+| `SOURCE_LOG.md` | Tracks external reference materials used |
+| `COLORS_STONES_SYMBOLIC_ALLIES_v1.md` | Policy stub — dict pending KBv1 phase |
+| `ARCHETYPE_LIBRARY_v1.md` | Partial stub — Gray Cardinal confirmed; full library pending |
+| `NUMEROLOGY_RULES_v1.md` | Calculation layer active; interpretation dict pending |
+| `ASTRO_INTERPRETATION_RULES_v1.md` | Data layer active; dict pending |
+| `BAZI_INTERPRETATION_RULES_v1.md` | Data layer active; dict pending |
+
+---
+
+## 2B · PRIORITY RULE (B0 addition)
+
+The latest user-approved product direction has **priority over older or
+incomplete wording** in the existing v4.1 docs. This applies specifically to:
+
+- Richer CORE reading experience
+- Symbolic identity layer (colors, stones, symbolic allies, identity card)
+- Name / numerology / birth-code interpretation
+- Zodiac / Moon / Ascendant / planet / element / archetype indicators
+- More varied, readable, and engaging report structure
+- Stronger Darrow Code product feel
+
+If the current v4.1 docs do not fully encode a latest product decision, that
+decision is first applied via a docs-only B0 patch — then implemented in code.
+
+**The following guardrails are NOT overridden by product direction:**
+- CORE only for now — no add-ons yet
+- FreeAstroAPI remains current provider
+- No Astro.com / Astrodienst / Swiss Ephemeris / external PDF ephemeris in repo
+- No copyrighted source copying or paraphrasing
+- No payment / Stripe / email / auth / customer mutation changes
+- Backward compatibility with v3 reports maintained
+- No stored v3 report mutation
+- No production switch before v4 diagnostic visual approval
+
+---
+
 ## 3 · PRODUCT IDENTITY LOCK
 
 - **Customer-facing name:** CORE Report: UNVEIL
@@ -108,29 +154,34 @@ copy.
 
 ## 6 · CURRENT RUNTIME STATUS
 
-- Current production / runtime remains **v3 / diagnostic** until the render-fix
-  diagnostic is approved.
-- The v4.1 docs are the **approved future standard — not live runtime.**
-- No prompt swap.
-- No schema migration.
-- No `operating_mode` implementation.
-- No template migration.
-- No Loveable implementation prompt exists yet.
-
-v4.1 is approved on paper. Nothing about v4.1 is running in production.
+- **Render-fix approved** (2026-06-02, build marker `core-v3-1-layout-foundation-2026-06-02-2`).
+- **B0 docs patch complete** (2026-06-02): reading experience standard encoded,
+  symbolic identity layer defined, identity card placement decided (POS page 02),
+  locked labels extracted from gold sample, `docs/knowledge/` policy layer created,
+  legacy `docs/current/` archived.
+- **v4.1 migration phases B1–B4 are now authorized** (schema → prompt → diagnostic
+  route → template). Each phase gates the next.
+- Current production / runtime remains **v3** until v4 diagnostic PDF is visually
+  approved.
+- **No production switch yet.** Pipeline.server.ts stays on v3 until B8 approval.
+- No prompt swap in production runtime until B6 (after v4 JSON diagnostic passes).
+- No template migration in production until B5 complete and visual PDF approved.
 
 ---
 
 ## 7 · MIGRATION GATE
 
-Implementation may begin only after ALL of:
+| Condition | Status |
+|---|---|
+| Render-fix diagnostic approved | ✅ **2026-06-02** (build marker `core-v3-1-layout-foundation-2026-06-02-2`) |
+| v3 PDF rendering visually stable | ✅ **2026-06-02** (visual inspection approved) |
+| Backward-compatibility path defined | ✅ **2026-06-02** (PRE-B decision note: `CoreV3Schema` unchanged, `schema_version` discriminant, no v3→v4 coercion, no stored report mutation) |
+| B0 docs patch complete | ✅ **2026-06-02** (reading experience, symbolic identity, locked labels, knowledge policy) |
+| Implementation phases B1–B4 | ✅ **AUTHORIZED** — begin in order |
+| Production switch (B8) | ⏳ **GATED** — awaits visual approval of v4 diagnostic PDF |
 
-- the render-fix diagnostic is approved
-- current v3 PDF rendering is visually stable
-- a backward-compatibility path is defined
-- a clean Loveable implementation prompt is created separately
-
-Until every gate condition is met, no implementation is authorized.
+Implementation phases B1–B4 may now proceed in sequence.
+Production switch to v4 remains gated on explicit visual approval after B7.
 
 ---
 

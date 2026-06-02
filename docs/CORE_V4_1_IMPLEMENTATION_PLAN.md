@@ -10,15 +10,33 @@
 
 ## 1 · PURPOSE
 
-This is a **concrete future implementation plan**, not implementation.
+This is a **concrete implementation plan**, authorized for execution from B1 onward.
 It maps the approved v4.1 documentation to the actual repository files
 that must change, and defines the safe sequence for making those changes.
 
-Nothing here authorizes any code change. Implementation begins ONLY after:
+### 1A · GATE STATUS (B0 — 2026-06-02)
 
-- the render-fix diagnostic is approved
-- current v3 PDF rendering is visually confirmed stable
-- a single clean v4.1 implementation prompt is prepared separately
+| Gate | Status |
+|---|---|
+| Render-fix diagnostic approved | ✅ **2026-06-02** (build marker `core-v3-1-layout-foundation-2026-06-02-2`) |
+| v3 PDF rendering visually stable | ✅ **2026-06-02** |
+| Backward-compatibility path defined | ✅ **2026-06-02** (PRE-B decision note) |
+| B0 docs patch complete | ✅ **2026-06-02** — reading experience, symbolic identity, locked labels, knowledge policy |
+| **Implementation phases B1–B4** | ✅ **AUTHORIZED** |
+| Production switch (B8) | ⏳ **GATED** — awaits visual approval of v4 diagnostic PDF |
+
+### 1B · APPROVED IMPLEMENTATION SEQUENCE
+
+| Phase | Content | Commit scope |
+|---|---|---|
+| B1 | Schema only (`schema.ts`) | `CoreV4Schema` added, `CoreV3Schema` unchanged |
+| B2 | Prompt + split (`user-prompt.ts`, `core-split.server.ts`, `diagnostic.server.ts`, `darrowcode_ai_system_prompt_v4_1.md` staged in src/) | Prompt files only; runtime prompt still v3 |
+| B3 | Diagnostic route (`core-v4-run.ts`) | New route file only; non-mutating |
+| B4 | Template v4 (`template.ts`) | v4 render path added; v3 path untouched |
+| B5 | Quality gate + tests | `quality-gate.server.ts` + test files |
+| B6 | System prompt switch (diagnostic) | `system-prompt.ts` import → v4 prompt; v4 JSON generation |
+| B7 | Visual diagnostic | Render-only; user visual approval of all 26 pages |
+| B8 | Production switch (after B7 approval) | `pipeline.server.ts` + `build-marker.ts` |
 
 ---
 
@@ -174,12 +192,31 @@ Per-section structured field shape (conceptual):
 }
 ```
 
-Special sections:
+Special sections (locked from gold sample — B0):
 
-- `vitality_baseline`: add `disclaimer: string` (verbatim medical soft disclaimer)
+- `vitality_baseline`: add `disclaimer: string` — verbatim fixed text:
+  `"This is interpretive orientation, not medical advice. Consult a qualified healthcare professional for any health concerns."`
+  Template injects this as a static constant; AI does not generate it.
+
 - `before_after`: `before_after_pairs` (exactly 2 Before / 2 After)
-- `executive_summary`: `executive_summary_blocks` (6 labeled blocks)
-- `next_step`: `closing_pillars` (4 pillars, frame fixed / conclusions variable)
+  Shape: `[{ before: string, after: string }, { before: string, after: string }]`
+
+- `executive_summary`: `executive_summary_blocks` — exactly 6 blocks with these locked labels:
+  1. `YOUR CORE ADVANTAGE`
+  2. `YOUR PRIMARY SENSITIVITY`
+  3. `YOUR DECISION FORMULA`
+  4. `THE CORE CONCLUSION`
+  5. `CURRENT CYCLE`
+  6. `THE NEXT LEVEL`
+  Shape: `[{ label: string, content: string }]` × 6 (labels fixed; content AI-generated)
+
+- `next_step`: `closing_pillars` — exactly 4 pillars with these locked titles:
+  1. `TRUST THE SIGNAL`
+  2. `BUILD THE BASE`
+  3. `RESPECT THE CYCLE`
+  4. `HONOR THE SPACE`
+  Shape: `[{ title: string, prose: string }]` × 4 (titles fixed; prose AI-generated)
+
 - Cover page: `cover_tagline` sub-field (not a section key)
 
 Validation rules to implement (fail-loud, not warn-only):
@@ -202,7 +239,7 @@ Validation rules to implement (fail-loud, not warn-only):
 | Page  | Content                                                                     |
 | ----- | --------------------------------------------------------------------------- |
 | 01    | Cover — static title + method line + variable `cover_tagline` + client data |
-| 02    | Personal Orientation System — static                                        |
+| 02    | Personal Orientation System — static + symbolic identity card payload (see §6A of module spec) |
 | 03    | `orientation`                                                               |
 | 04–05 | `core_architecture`                                                         |
 | 06    | `operating_mode`                                                            |

@@ -46,13 +46,13 @@ this package, the package wins.
 
 No schema or template changes may begin until ALL of the following are true:
 
-- the render-fix diagnostic is approved
-- current v3 rendering is confirmed stable
-- a separate v4.1 Loveable implementation prompt is prepared
-- a backward-compatibility path for existing v3 reports is defined
+- the render-fix diagnostic is approved ✅ **APPROVED** (build marker `core-v3-1-layout-foundation-2026-06-02-2`, 2026-06-02)
+- current v3 rendering is confirmed stable ✅ **CONFIRMED** (visual inspection approved)
+- a backward-compatibility path for existing v3 reports is defined ✅ **DEFINED** (PRE-B decision note 2026-06-02: `CoreV3Schema` unchanged, `schema_version` discriminant `"core_v3" | "core_v4"`, v3 legacy render path)
+- a separate v4.1 Claude Code implementation prompt is prepared — ⏳ **PENDING** (B1–B4 implementation may begin; production switch awaits visual approval of v4 diagnostic PDF)
 
-Until every gate condition is met, this document remains planning only. Nothing
-here authorizes a change to schema, template, or runtime.
+Implementation phases B1–B4 are now authorized. Production switch (B8) remains
+gated on visual approval of the v4 diagnostic PDF (see `CORE_V4_1_IMPLEMENTATION_PLAN.md`).
 
 ---
 
@@ -140,6 +140,46 @@ Conceptual fields only — no code, no types, no validation syntax.
 Which sections carry protocols/warnings is defined in the module spec (§8 there)
 and the AI prompt (§19 there). This document records the conceptual shape only;
 exact field types and minimums are decided during implementation.
+
+---
+
+## 7A · LOCKED LABELS (B0 — extracted from gold sample)
+
+The following labels are locked from `DARROW_CORE_SAMPLE_REPORT_v4_1.md` and
+must be used exactly as specified. Do not invent alternative labels.
+
+### `executive_summary_blocks` — 6 canonical labels (locked)
+
+1. `YOUR CORE ADVANTAGE`
+2. `YOUR PRIMARY SENSITIVITY`
+3. `YOUR DECISION FORMULA`
+4. `THE CORE CONCLUSION`
+5. `CURRENT CYCLE`
+6. `THE NEXT LEVEL`
+
+Template renders these as section sub-headers within pages 22–23.
+The AI generates the prose content for each block; labels are fixed constants.
+
+### `closing_pillars` — 4 canonical titles (locked)
+
+1. `TRUST THE SIGNAL`
+2. `BUILD THE BASE`
+3. `RESPECT THE CYCLE`
+4. `HONOR THE SPACE`
+
+Template renders these as named pillars within page 24.
+The AI generates the prose content for each pillar; titles are fixed constants.
+
+### `vitality_baseline` — verbatim disclaimer (locked)
+
+Exact text (do not vary):
+
+> This is interpretive orientation, not medical advice. Consult a qualified
+> healthcare professional for any health concerns.
+
+This text is a **static constant** injected by the template renderer or system
+prompt. The AI does not generate the disclaimer — it is fixed text.
+The template renders it in muted styling after the section prose on page 17.
 
 ---
 

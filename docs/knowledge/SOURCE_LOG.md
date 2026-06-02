@@ -1,0 +1,34 @@
+# DARROW CODE — SOURCE LOG
+
+# Status: ACTIVE · maintained continuously
+
+# Purpose: Track external reference materials used in knowledge base development
+
+---
+
+## FORMAT
+
+Each entry:
+| Date | Source | Used for | License / access type | Notes |
+|---|---|---|---|---|
+
+---
+
+## LOG ENTRIES
+
+| Date | Source | Used for | License / access type | Notes |
+|---|---|---|---|---|
+| 2026-06-02 | FreeAstroAPI (freeastroapi.com) | Current production data provider — Western natal + BaZi calculations | Contracted API subscription | API key in CF Workers env only |
+| 2026-06-02 | IANA Time Zone Database | Future birth-time timezone resolution reference | Public domain | Not yet implemented |
+| 2026-06-02 | General astrological tradition | Conceptual background for interpretation rules | General knowledge / public domain concepts | No specific text copied |
+| 2026-06-02 | General numerological tradition | Conceptual background for LP/Expr/Soul Urge interpretation rules | General knowledge / public domain concepts | No specific text copied |
+| 2026-06-02 | General BaZi tradition | Conceptual background for Day Master / element interpretation rules | General knowledge / public domain concepts | No specific text copied |
+
+---
+
+## NOTES
+
+- Entries are added when external material informs specific knowledge-base rule development.
+- General background research that does not result in direct extraction does not require an entry.
+- If a source requires attribution in production output, note that here and apply it.
+- Copyrighted text must never appear in Darrow Code knowledge files — log only if used as conceptual background.
