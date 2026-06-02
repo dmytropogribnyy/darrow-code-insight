@@ -80,12 +80,20 @@ Spiritual / retreat context belongs under PLACE / BODY / YEAR as appropriate.
 
 ### 4.2 CORE Complete
 
-**Current / approved concept:**
-> "CORE Report + all 6 Focused Chapters in one reading."
+**Recommended concept:**
+> "CORE Report + all 6 Focused Chapters, delivered separately."
 
-**Supporting copy options:**
-> "The full Darrow reading: your complete symbolic profile."
-> "Every layer in one document."
+**Acceptable alternatives:**
+> "Your full Darrow set: CORE + 6 separate Focused Chapters."
+> "Everything included: CORE plus LOVE, MONEY, BODY, YEAR, STYLE, and PLACE as separate readings."
+> "The complete Darrow reading set, delivered as individual reports."
+
+**Deprecated / removed:**
+- ~~"in one reading"~~ — misleading; implies a single merged document
+- ~~"Every layer in one document."~~ — incorrect; chapters are separate reports
+
+**Delivery clarification:**
+CORE Complete is a bundle of separate reports/readings. Each chapter (LOVE, MONEY, BODY, YEAR, STYLE, PLACE) is delivered as its own focused document — not merged into a single reading. If a later explicit production phase decides to offer a merged format as an alternative, that requires a separate implementation decision.
 
 **Status:** bundle product — recommended as the primary high-value offering.
 
