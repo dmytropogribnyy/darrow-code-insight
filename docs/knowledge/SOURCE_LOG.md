@@ -42,3 +42,4 @@ Each entry:
 | 2026-06-02 | KB1-A | KBSYS0 skeleton inspected. SOURCE_PACK_IMPORT_MANIFEST_v1.md created. Nine source-pack candidates listed. No source packs imported. No runtime changes. |
 | 2026-06-02 | KB1-B | 9 canonical source-pack files imported into docs/knowledge/source_packs/. All marked research-only / not active in runtime. Superseded v0_1 files not imported. No curated rules created. No runtime changes. |
 | 2026-06-02 | KB2-A | 6 curated Darrow rule docs created in docs/knowledge/rules/ from approved source packs (Western Zodiac + Houses addenda + master pack). Original Darrow Code language. No gated layers added. No source packs edited. No runtime changes. |
+| 2026-06-02 | KB1-C | DARROW_ASTROGEO_PLACE_SOURCE_ADDENDUM_v0_1.md imported as research-only source pack. AstroGeo/astrocartography registered as future PLACE add-on. Not active in CORE runtime. No rules or mapping created. No runtime changes. |

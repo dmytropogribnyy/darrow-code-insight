@@ -45,6 +45,12 @@ They must not be used directly as:
 All files are research/source-pack only · not active in runtime.
 Superseded files not imported: v0_1 of core pack and names addendum.
 
+## KB1-C imported file (2026-06-02)
+
+| File | Layer | Gate |
+|---|---|---|
+| `DARROW_ASTROGEO_PLACE_SOURCE_ADDENDUM_v0_1.md` | AstroGeo / Astrocartography / Relocation / PLACE | blocked for CORE · future PLACE add-on only |
+
 ## Required file header for every source pack
 
 Every imported source pack must preserve or include:
