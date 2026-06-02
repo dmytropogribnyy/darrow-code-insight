@@ -2,11 +2,18 @@
 // Uses the create-pdf-from-html endpoint so we own the HTML template.
 // Retries transient failures (5xx, 429, 408, network/timeouts, and the
 // generic 400 "Internal error unable to generate PDF") with exponential
-// backoff: 0s → 2s → 5s, 3 attempts total. After a successful render the
-// PDF is post-processed via pdf-lib to stamp page numbers on body pages
-// (skipping the full-bleed cover and closing).
+// backoff: 0s → 2s → 5s, 3 attempts total. After a successful render:
+//
+//   APITemplate output
+//   → pruneBlankPages()   (remove blank overflow-tail pages before stamping)
+//   → stampPageNumbers()  (stamp only real pages)
+//
+// Blank pages are detected by scanning each page's content stream for
+// text-showing operators (Tj/TJ). Background paint-only pages (Chromium
+// overflow tails) have 0 text operators and are removed.
 
 import { stampPageNumbers } from "./stamp-page-numbers.server";
+import { pruneBlankPages, validatePrunedLayout } from "./prune-blank-pages.server";
 
 const APITEMPLATE_URL = "https://rest.apitemplate.io/v2/create-pdf-from-html";
 const APITEMPLATE_TIMEOUT_MS = 150 * 1000;
@@ -41,7 +48,16 @@ function isTransientStatus(status: number, body: string): boolean {
   return false;
 }
 
-async function attemptRender(html: string, apiKey: string): Promise<{ pdf?: Uint8Array; transient: boolean; error?: string; status?: number; body?: string }> {
+async function attemptRender(
+  html: string,
+  apiKey: string,
+): Promise<{
+  pdf?: Uint8Array;
+  transient: boolean;
+  error?: string;
+  status?: number;
+  body?: string;
+}> {
   let res: Response;
   try {
     // Zero APITemplate margins — we own the layout end-to-end in HTML so the
@@ -70,16 +86,30 @@ async function attemptRender(html: string, apiKey: string): Promise<{ pdf?: Uint
 
   if (!res.ok) {
     const body = await res.text();
-    return { transient: isTransientStatus(res.status, body), status: res.status, body, error: `APITemplate ${res.status}: ${body.slice(0, 400)}` };
+    return {
+      transient: isTransientStatus(res.status, body),
+      status: res.status,
+      body,
+      error: `APITemplate ${res.status}: ${body.slice(0, 400)}`,
+    };
   }
 
   const data = (await res.json()) as any;
   const url = data?.download_url;
-  if (!url) return { transient: true, error: `APITemplate: missing download_url (${JSON.stringify(data).slice(0, 200)})` };
+  if (!url)
+    return {
+      transient: true,
+      error: `APITemplate: missing download_url (${JSON.stringify(data).slice(0, 200)})`,
+    };
 
   try {
     const pdfRes = await fetchWithTimeout(url);
-    if (!pdfRes.ok) return { transient: pdfRes.status >= 500, status: pdfRes.status, error: `APITemplate PDF fetch failed: ${pdfRes.status}` };
+    if (!pdfRes.ok)
+      return {
+        transient: pdfRes.status >= 500,
+        status: pdfRes.status,
+        error: `APITemplate PDF fetch failed: ${pdfRes.status}`,
+      };
     return { pdf: new Uint8Array(await pdfRes.arrayBuffer()), transient: false };
   } catch (e: any) {
     return { transient: true, error: e?.message ?? String(e) };
@@ -90,7 +120,10 @@ function sleep(ms: number): Promise<void> {
   return new Promise((r) => setTimeout(r, ms));
 }
 
-export async function renderHtmlToPdf(html: string, diag: RenderDiagnostics = {}): Promise<Uint8Array> {
+export async function renderHtmlToPdf(
+  html: string,
+  diag: RenderDiagnostics = {},
+): Promise<Uint8Array> {
   const apiKey = process.env.APITEMPLATE_API_KEY;
   if (!apiKey) throw new Error("APITEMPLATE_API_KEY is not configured");
 
@@ -105,16 +138,51 @@ export async function renderHtmlToPdf(html: string, diag: RenderDiagnostics = {}
     if (result.pdf) {
       if (attempt > 1) {
         console.log("[apitemplate] render succeeded after retry", {
-          attempt, order_id: diag.order_id, report_id: diag.report_id, modules: diag.modules, html_bytes: htmlBytes,
+          attempt,
+          order_id: diag.order_id,
+          report_id: diag.report_id,
+          modules: diag.modules,
+          html_bytes: htmlBytes,
         });
       }
+
+      // Step 1: prune blank overflow pages before stamping so page numbers
+      // are never applied to empty tail pages.
+      let pdfForStamp = result.pdf;
       try {
-        return await stampPageNumbers(result.pdf);
+        const {
+          pdf: pruned,
+          removedPageNumbers,
+          originalPageCount,
+        } = await pruneBlankPages(result.pdf);
+        const finalPageCount = originalPageCount - removedPageNumbers.length;
+        const pruneWarnings = validatePrunedLayout(removedPageNumbers, finalPageCount);
+        for (const w of pruneWarnings) {
+          if (w.level === "warn") {
+            console.warn(w.message, { order_id: diag.order_id, report_id: diag.report_id });
+          } else {
+            console.log(w.message, { order_id: diag.order_id, report_id: diag.report_id });
+          }
+        }
+        pdfForStamp = pruned;
+      } catch (pruneErr: any) {
+        console.error("[pdf] pruneBlankPages failed — stamping without prune", {
+          error: String(pruneErr?.message ?? pruneErr),
+          order_id: diag.order_id,
+          report_id: diag.report_id,
+        });
+      }
+
+      // Step 2: stamp page numbers on the pruned PDF.
+      try {
+        return await stampPageNumbers(pdfForStamp);
       } catch (e: any) {
         console.error("[apitemplate] page-number stamping failed; returning unstamped PDF", {
-          error: String(e?.message ?? e), order_id: diag.order_id, report_id: diag.report_id,
+          error: String(e?.message ?? e),
+          order_id: diag.order_id,
+          report_id: diag.report_id,
         });
-        return result.pdf;
+        return pdfForStamp;
       }
     }
 

@@ -3,7 +3,7 @@
 
 import { createFileRoute } from "@tanstack/react-router";
 
-export const BUILD_MARKER = "core-v3-1-layout-foundation-2026-05-31-3";
+export const BUILD_MARKER = "core-v3-1-layout-foundation-2026-06-02-1";
 
 export const Route = createFileRoute("/api/public/debug/build-marker")({
   server: {
@@ -60,6 +60,8 @@ export const Route = createFileRoute("/api/public/debug/build-marker")({
               "no break-inside:avoid at section level; break-inside:avoid on individual callout blocks only",
             proof_placement:
               "embedded inside last callout (warning > protocol > standalone); never a standalone trailing div",
+            blank_page_prune:
+              "pdf-lib text-operator scan (Tj/TJ) before stampPageNumbers; node:zlib FlateDecode; minGlyphs=3; cover+closing protected",
             overflow_protection: "global box-sizing + overflow-wrap:break-word",
           },
           quality_gate: {
