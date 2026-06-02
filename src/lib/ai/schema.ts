@@ -254,31 +254,35 @@ const CoreV4BeforeAfterSchema = z.object({
   proof_tags: z.array(z.string()).max(5).optional(),
 });
 
-// executive_summary — 6 labeled blocks (labels locked, locked 2026-06-02).
-const CoreV4ExecutiveSummaryBlockSchema = z.object({
-  label: executiveSummaryLabelEnum,
-  content: z.string().min(1),
-});
-
+// executive_summary — 6 labeled blocks in exact locked order (gold sample, 2026-06-02).
+// z.tuple enforces exact label at each position: no duplicates, no reordering.
 const CoreV4ExecutiveSummarySchema = z.object({
   opening_line: z.string().max(120).optional(),
   prose: z.string().optional(),
   key_insight: z.string().optional(),
-  executive_summary_blocks: z.array(CoreV4ExecutiveSummaryBlockSchema).length(6),
+  executive_summary_blocks: z.tuple([
+    z.object({ label: z.literal("YOUR CORE ADVANTAGE"), content: z.string().min(1) }),
+    z.object({ label: z.literal("YOUR PRIMARY SENSITIVITY"), content: z.string().min(1) }),
+    z.object({ label: z.literal("YOUR DECISION FORMULA"), content: z.string().min(1) }),
+    z.object({ label: z.literal("THE CORE CONCLUSION"), content: z.string().min(1) }),
+    z.object({ label: z.literal("CURRENT CYCLE"), content: z.string().min(1) }),
+    z.object({ label: z.literal("THE NEXT LEVEL"), content: z.string().min(1) }),
+  ]),
   proof_tags: z.array(z.string()).max(5).optional(),
 });
 
-// next_step — 4 closing pillars (titles locked, locked 2026-06-02).
-const CoreV4ClosingPillarSchema = z.object({
-  title: closingPillarTitleEnum,
-  prose: z.string().min(1),
-});
-
+// next_step — 4 closing pillars in exact locked order (gold sample, 2026-06-02).
+// z.tuple enforces exact title at each position: no duplicates, no reordering.
 const CoreV4NextStepSchema = z.object({
   opening_line: z.string().max(120).optional(),
   prose: z.string().optional(),
   key_insight: z.string().optional(),
-  closing_pillars: z.array(CoreV4ClosingPillarSchema).length(4),
+  closing_pillars: z.tuple([
+    z.object({ title: z.literal("TRUST THE SIGNAL"), prose: z.string().min(1) }),
+    z.object({ title: z.literal("BUILD THE BASE"), prose: z.string().min(1) }),
+    z.object({ title: z.literal("RESPECT THE CYCLE"), prose: z.string().min(1) }),
+    z.object({ title: z.literal("HONOR THE SPACE"), prose: z.string().min(1) }),
+  ]),
   proof_tags: z.array(z.string()).max(5).optional(),
 });
 

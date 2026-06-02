@@ -492,3 +492,133 @@ describe("CoreV4Schema — opening_line max 120 chars", () => {
     expect(CoreV4Schema.safeParse(fixture).success).toBe(false);
   });
 });
+
+// ── B1.1 hardening — executive_summary_blocks exact order ────────────────────
+
+describe("CoreV4Schema — executive_summary_blocks exact label order (B1.1)", () => {
+  it("exact labels in exact order passes", () => {
+    const fixture = {
+      ...V4_FIXTURE,
+      executive_summary: {
+        executive_summary_blocks: [
+          { label: "YOUR CORE ADVANTAGE", content: "advantage content" },
+          { label: "YOUR PRIMARY SENSITIVITY", content: "sensitivity content" },
+          { label: "YOUR DECISION FORMULA", content: "formula content" },
+          { label: "THE CORE CONCLUSION", content: "conclusion content" },
+          { label: "CURRENT CYCLE", content: "cycle content" },
+          { label: "THE NEXT LEVEL", content: "next level content" },
+        ],
+      },
+    };
+    expect(CoreV4Schema.safeParse(fixture).success).toBe(true);
+  });
+
+  it("duplicate valid labels (YOUR CORE ADVANTAGE at positions 0 and 1) fails", () => {
+    const fixture = {
+      ...V4_FIXTURE,
+      executive_summary: {
+        executive_summary_blocks: [
+          { label: "YOUR CORE ADVANTAGE", content: "..." },
+          { label: "YOUR CORE ADVANTAGE", content: "..." }, // duplicate; position 1 expects YOUR PRIMARY SENSITIVITY
+          { label: "YOUR DECISION FORMULA", content: "..." },
+          { label: "THE CORE CONCLUSION", content: "..." },
+          { label: "CURRENT CYCLE", content: "..." },
+          { label: "THE NEXT LEVEL", content: "..." },
+        ],
+      },
+    };
+    expect(CoreV4Schema.safeParse(fixture).success).toBe(false);
+  });
+
+  it("all valid labels but wrong order (positions 0 and 1 swapped) fails", () => {
+    const fixture = {
+      ...V4_FIXTURE,
+      executive_summary: {
+        executive_summary_blocks: [
+          { label: "YOUR PRIMARY SENSITIVITY", content: "..." }, // wrong at position 0
+          { label: "YOUR CORE ADVANTAGE", content: "..." }, // wrong at position 1
+          { label: "YOUR DECISION FORMULA", content: "..." },
+          { label: "THE CORE CONCLUSION", content: "..." },
+          { label: "CURRENT CYCLE", content: "..." },
+          { label: "THE NEXT LEVEL", content: "..." },
+        ],
+      },
+    };
+    expect(CoreV4Schema.safeParse(fixture).success).toBe(false);
+  });
+});
+
+// ── B1.1 hardening — closing_pillars exact order ─────────────────────────────
+
+describe("CoreV4Schema — closing_pillars exact title order (B1.1)", () => {
+  it("exact titles in exact order passes", () => {
+    const fixture = {
+      ...V4_FIXTURE,
+      next_step: {
+        closing_pillars: [
+          { title: "TRUST THE SIGNAL", prose: "Trust the signal prose." },
+          { title: "BUILD THE BASE", prose: "Build the base prose." },
+          { title: "RESPECT THE CYCLE", prose: "Respect the cycle prose." },
+          { title: "HONOR THE SPACE", prose: "Honor the space prose." },
+        ],
+      },
+    };
+    expect(CoreV4Schema.safeParse(fixture).success).toBe(true);
+  });
+
+  it("duplicate valid titles (TRUST THE SIGNAL at positions 0 and 1) fails", () => {
+    const fixture = {
+      ...V4_FIXTURE,
+      next_step: {
+        closing_pillars: [
+          { title: "TRUST THE SIGNAL", prose: "..." },
+          { title: "TRUST THE SIGNAL", prose: "..." }, // duplicate; position 1 expects BUILD THE BASE
+          { title: "RESPECT THE CYCLE", prose: "..." },
+          { title: "HONOR THE SPACE", prose: "..." },
+        ],
+      },
+    };
+    expect(CoreV4Schema.safeParse(fixture).success).toBe(false);
+  });
+
+  it("all valid titles but wrong order (positions 0 and 1 swapped) fails", () => {
+    const fixture = {
+      ...V4_FIXTURE,
+      next_step: {
+        closing_pillars: [
+          { title: "BUILD THE BASE", prose: "..." }, // wrong at position 0
+          { title: "TRUST THE SIGNAL", prose: "..." }, // wrong at position 1
+          { title: "RESPECT THE CYCLE", prose: "..." },
+          { title: "HONOR THE SPACE", prose: "..." },
+        ],
+      },
+    };
+    expect(CoreV4Schema.safeParse(fixture).success).toBe(false);
+  });
+});
+
+// ── B1.1 hardening — CORE_V4_BODY_SECTION_KEYS exact order ──────────────────
+
+describe("CORE_V4_BODY_SECTION_KEYS — exact order contract (B1.1)", () => {
+  it("equals the locked 17-key array in exact order", () => {
+    expect([...CORE_V4_BODY_SECTION_KEYS]).toEqual([
+      "orientation",
+      "core_architecture",
+      "operating_mode",
+      "battery",
+      "social_interface",
+      "numerology_code",
+      "cognitive_style",
+      "drive_and_rhythm",
+      "professional_archetype",
+      "money_and_value",
+      "relationship_baseline",
+      "vitality_baseline",
+      "environment_and_resonance",
+      "shadow_and_friction",
+      "before_after",
+      "executive_summary",
+      "next_step",
+    ]);
+  });
+});
