@@ -4,11 +4,11 @@ export type Selectable = "CORE" | ModuleCode;
 
 const CHAPTER_META: Record<ModuleCode, { title: string; desc: string }> = {
   LOVE: { title: "LOVE", desc: "Who you attract — and why it keeps happening" },
-  MONEY: { title: "MONEY", desc: "Your real wealth pattern & income mechanism" },
+  MONEY: { title: "MONEY", desc: "Your wealth, work & business mechanism" },
   BODY: { title: "BODY", desc: "Your stress signature & recovery rhythm" },
-  YEAR: { title: "YEAR", desc: "What this year will demand of you" },
+  YEAR: { title: "YEAR", desc: "Your year pattern, pressure & opportunity" },
   STYLE: { title: "STYLE", desc: "Your colors, aesthetic & personal signature" },
-  PLACE: { title: "PLACE", desc: "Where you'll thrive — and where to avoid" },
+  PLACE: { title: "PLACE", desc: "Where you thrive — and where you lose energy" },
 };
 
 interface Props {
@@ -161,7 +161,7 @@ export function ProductSelector({
               </span>
             </div>
             <p className="text-[13px] leading-relaxed mt-1" style={{ color: "#2A2418" }}>
-              CORE Report + all 6 Focused Chapters in one reading.
+              CORE Report + all 6 Focused Chapters, delivered separately.
             </p>
           </div>
           <span

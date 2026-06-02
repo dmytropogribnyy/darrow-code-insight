@@ -20,11 +20,11 @@ export const Route = createFileRoute("/result/$reportToken")({
 
 const ADDONS: { code: ModuleCode; title: string; desc: string }[] = [
   { code: "LOVE", title: "LOVE", desc: "Who you attract — and why it keeps happening" },
-  { code: "MONEY", title: "MONEY", desc: "Your real wealth pattern & income mechanism" },
+  { code: "MONEY", title: "MONEY", desc: "Your wealth, work & business mechanism" },
   { code: "BODY", title: "BODY", desc: "Your stress signature & recovery rhythm" },
-  { code: "YEAR", title: "YEAR", desc: "What this year will demand of you" },
+  { code: "YEAR", title: "YEAR", desc: "Your year pattern, pressure & opportunity" },
   { code: "STYLE", title: "STYLE", desc: "Your colors, aesthetic & personal signature" },
-  { code: "PLACE", title: "PLACE", desc: "Where you'll thrive — and where to avoid" },
+  { code: "PLACE", title: "PLACE", desc: "Where you thrive — and where you lose energy" },
 ];
 
 const MODULE_LABEL: Record<string, string> = {
