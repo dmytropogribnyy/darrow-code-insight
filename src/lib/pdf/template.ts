@@ -166,7 +166,7 @@ function renderCoreChapter(
           ? `
         <div class="proof-tags">
           <div class="block-label">Anchored in</div>
-          <ul>${core.proof_tags.map((t) => `<li>${escape(t)}</li>`).join("")}</ul>
+          <ul>${core.proof_tags.map((t: string) => `<li>${escape(t)}</li>`).join("")}</ul>
         </div>`
           : ""
       }
@@ -180,7 +180,7 @@ function renderAddon(code: string, mod: DarrowModule, clientName: string): strin
   const styleSwatches =
     code === "STYLE" && mod.color_palette?.length
       ? `<div class="palette">${mod.color_palette
-          .map((hex, i) => {
+          .map((hex: string, i: number) => {
             const name = mod.color_names?.[i] ?? "";
             return `<div class="swatch"><span style="background:${escape(hex)}"></span><div>${escape(hex)}${name ? ` · ${escape(name)}` : ""}</div></div>`;
           })
@@ -1260,7 +1260,7 @@ export function renderReportHtml(
       ? renderCoreChapter(core, report.client_snapshot, report.closing)
       : renderSnapshotOnly(report.client_snapshot)
   }
-  ${addonCodes.map((c) => (report.modules[c] ? renderAddon(c, report.modules[c] as any, clientName) : "")).join("")}
+  ${addonCodes.map((c: string) => (report.modules[c] ? renderAddon(c, report.modules[c] as any, clientName) : "")).join("")}
   ${renderCrossSell(generated, symbolSmall)}
 </body></html>`;
 }
