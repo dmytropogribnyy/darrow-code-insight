@@ -395,11 +395,6 @@ function safePara(s: string): string {
     .join("\n");
 }
 
-function safeSection(title: string, body: string, opts: { breakBefore?: boolean } = {}): string {
-  const breakBefore = opts.breakBefore !== false ? BODY_PAGE_BREAK_BEFORE : "";
-  return `<section style="${BODY_PAGE_STYLE}${breakBefore}"><div style="${HEADING_KEEP_STYLE}"><div style="${safeBrandStyle}">Darrow Code</div><h2 style="${safeH2Style}">${escape(title)}</h2></div>${body}</section>`;
-}
-
 function renderProseBlocks(text: string): { html: string; proof: string } {
   if (!text) return { html: "", proof: "" };
   const trimmed = text.trim();
@@ -481,6 +476,487 @@ function v3Section(title: string, field: unknown): string {
   // Render order (invariant): heading+firstPara → rest prose → protocols → warnings
   // Proof is embedded in the last callout above; no standalone trailing proof div.
   return `<section style="${BODY_PAGE_STYLE}${BODY_PAGE_BREAK_BEFORE}">${headerBlock}${restHtml}${protocolsHtml}${warningsHtml}${standaloneProof}</section>`;
+}
+
+// ─────────────────────────────────────────────────────────────
+// CORE v4.1 render-only helpers (B4 diagnostic).
+//
+// These functions correctly handle the v4 section shapes:
+//   • Standard: { opening_line?, scenario?, prose, key_insight?,
+//                 protocols?, warning_signals?, proof_tags? }
+//   • before_after: { before_after_pairs: [{before, after}] }
+//   • executive_summary: { executive_summary_blocks: [{label, content}] }
+//   • next_step: { closing_pillars: [{title, prose}] }
+//
+// All use the same layout invariants as v3 (BODY_PAGE_STYLE,
+// BODY_PAGE_BREAK_BEFORE, proof-in-last-callout, etc.).
+// Do NOT call AI generation, Stripe, email, or Supabase.
+// ─────────────────────────────────────────────────────────────
+
+const V4_SECTION_TITLES: Record<string, string> = {
+  orientation: "Orientation",
+  core_architecture: "Core Architecture",
+  operating_mode: "Operating Mode",
+  battery: "The Battery",
+  social_interface: "Social Interface",
+  numerology_code: "Numerology Code",
+  cognitive_style: "Cognitive Style",
+  drive_and_rhythm: "Drive & Rhythm",
+  professional_archetype: "Professional Archetype",
+  money_and_value: "Money & Value",
+  relationship_baseline: "Relationship Baseline",
+  vitality_baseline: "Vitality Baseline",
+  environment_and_resonance: "Environment & Resonance",
+  shadow_and_friction: "Shadow & Friction",
+  before_after: "Before / After",
+  executive_summary: "Executive Summary",
+  next_step: "Next Step",
+};
+
+const V4_BODY_KEYS: readonly string[] = [
+  "orientation",
+  "core_architecture",
+  "operating_mode",
+  "battery",
+  "social_interface",
+  "numerology_code",
+  "cognitive_style",
+  "drive_and_rhythm",
+  "professional_archetype",
+  "money_and_value",
+  "relationship_baseline",
+  "vitality_baseline",
+  "environment_and_resonance",
+  "shadow_and_friction",
+  "before_after",
+  "executive_summary",
+  "next_step",
+];
+
+const openingLineStyle =
+  "font-family:Georgia,'Times New Roman',serif;font-style:italic;color:#4A402D;font-size:13pt;" +
+  "line-height:1.5;margin:0 0 10pt;overflow-wrap:break-word;word-wrap:break-word;";
+const keyInsightStyle =
+  "font-family:Georgia,'Times New Roman',serif;font-style:italic;color:#4A402D;font-size:11.5pt;" +
+  "line-height:1.5;margin:12pt 0 0;padding:8pt 14pt;border-left:3pt solid #D4AF37;" +
+  "background:#FBF6E5;-webkit-print-color-adjust:exact;print-color-adjust:exact;" +
+  "page-break-inside:avoid;break-inside:avoid;overflow-wrap:break-word;word-wrap:break-word;";
+
+// v4 standard section: prose + optional opening_line / scenario / key_insight
+// + protocols + warning_signals + proof_tags.
+function v4StandardSection(
+  title: string,
+  field: unknown,
+  opts: { extraHtml?: string } = {},
+): string {
+  if (!field || typeof field !== "object") return "";
+  const f = field as any;
+  const prose: string = typeof f.prose === "string" ? f.prose : "";
+  const openingLine: string = typeof f.opening_line === "string" ? f.opening_line.trim() : "";
+  const scenario: string = typeof f.scenario === "string" ? f.scenario.trim() : "";
+  const keyInsight: string = typeof f.key_insight === "string" ? f.key_insight.trim() : "";
+  const protocols: Array<{ title: string; body: string }> = Array.isArray(f.protocols)
+    ? (f.protocols as any[]).filter((p) => p?.title && p?.body)
+    : [];
+  const warnings: string[] = Array.isArray(f.warning_signals)
+    ? (f.warning_signals as any[]).filter(Boolean)
+    : [];
+  const proofTags: string[] = Array.isArray(f.proof_tags)
+    ? (f.proof_tags as any[]).filter(Boolean)
+    : [];
+
+  const { html: proseHtml, proof: proofFromProse } = renderProseBlocks(prose);
+  const proof = proofTags.length > 0 ? proofTags.join(" · ") : proofFromProse;
+
+  const hasWarnings = warnings.length > 0;
+  const hasProtocols = protocols.length > 0;
+  const hasKeyInsight = !!keyInsight;
+
+  const proofForWarning = hasWarnings ? proof : "";
+  const proofForProtocol = !hasWarnings && hasProtocols ? proof : "";
+  const proofInKeyInsight = !hasWarnings && !hasProtocols && hasKeyInsight ? proof : "";
+  const standaloneProof =
+    !hasWarnings && !hasProtocols && !hasKeyInsight && proof
+      ? `<div style="${PROOF_EVIDENCE_STYLE}">${escape(proof)}</div>`
+      : "";
+
+  const firstParaMatch = proseHtml.match(/^<p [^>]*>[\s\S]*?<\/p>/);
+  const firstPara = firstParaMatch ? firstParaMatch[0] : "";
+  const restHtml = firstParaMatch ? proseHtml.slice(firstParaMatch[0].length) : proseHtml;
+
+  const headerBlock =
+    `<div style="${HEADING_KEEP_STYLE}">` +
+    `<div style="${safeBrandStyle}">Darrow Code</div>` +
+    `<h2 style="${safeH2Style}">${escape(title)}</h2>` +
+    (openingLine ? `<p style="${openingLineStyle}">${escape(openingLine)}</p>` : "") +
+    firstPara +
+    `</div>`;
+
+  const scenarioHtml = scenario ? safePara(scenario) : "";
+
+  const keyInsightWithProof = hasKeyInsight
+    ? `<div style="${keyInsightStyle}">${escape(keyInsight)}${
+        proofInKeyInsight
+          ? `<div style="${PROOF_EVIDENCE_STYLE}">${escape(proofInKeyInsight)}</div>`
+          : ""
+      }</div>`
+    : "";
+
+  const protocolsHtml = renderProtocolBlocks(protocols, proofForProtocol);
+  const warningsHtml = renderWarningBlocks(warnings, proofForWarning);
+
+  return (
+    `<section style="${BODY_PAGE_STYLE}${BODY_PAGE_BREAK_BEFORE}">` +
+    headerBlock +
+    restHtml +
+    scenarioHtml +
+    keyInsightWithProof +
+    protocolsHtml +
+    warningsHtml +
+    standaloneProof +
+    (opts.extraHtml ?? "") +
+    `</section>`
+  );
+}
+
+// v4 before_after: 2 before/after pairs with labelled boxes.
+function v4BeforeAfterSection(field: unknown): string {
+  if (!field || typeof field !== "object") return "";
+  const f = field as any;
+  const pairs: Array<{ before: string; after: string }> = Array.isArray(f.before_after_pairs)
+    ? (f.before_after_pairs as any[]).filter((p) => p?.before && p?.after)
+    : [];
+  const openingLine: string = typeof f.opening_line === "string" ? f.opening_line.trim() : "";
+  const prose: string = typeof f.prose === "string" ? f.prose.trim() : "";
+  const keyInsight: string = typeof f.key_insight === "string" ? f.key_insight.trim() : "";
+  const proofTags: string[] = Array.isArray(f.proof_tags)
+    ? (f.proof_tags as any[]).filter(Boolean)
+    : [];
+  const proof = proofTags.join(" · ");
+
+  const beforeLabelSt =
+    "font-family:Arial,Helvetica,sans-serif;color:#9CA3AF;font-size:9pt;" +
+    "letter-spacing:2pt;text-transform:uppercase;margin-bottom:5pt;";
+  const afterLabelSt =
+    "font-family:Arial,Helvetica,sans-serif;color:#A8841F;font-size:9pt;" +
+    "letter-spacing:2pt;text-transform:uppercase;margin-bottom:5pt;";
+  const pairBoxSt =
+    "padding:10pt 14pt;page-break-inside:avoid;break-inside:avoid;" +
+    "overflow-wrap:break-word;word-wrap:break-word;";
+  const afterBoxSt =
+    pairBoxSt +
+    "border-left:3pt solid #D4AF37;background:#FBF6E5;" +
+    "-webkit-print-color-adjust:exact;print-color-adjust:exact;";
+
+  const pairsHtml = pairs
+    .map(
+      (p) =>
+        `<div style="margin:14pt 0;page-break-inside:avoid;break-inside:avoid;">` +
+        `<div style="${pairBoxSt}border:0.5pt solid #D4AF37;">` +
+        `<div style="${beforeLabelSt}">Before</div>` +
+        `<p style="${safePStyle}margin:0;">${escape(p.before)}</p>` +
+        `</div>` +
+        `<div style="${afterBoxSt}">` +
+        `<div style="${afterLabelSt}">After</div>` +
+        `<p style="${safePStyle}margin:0;">${escape(p.after)}</p>` +
+        `</div>` +
+        `</div>`,
+    )
+    .join("");
+
+  const lastPairProof =
+    pairs.length > 0 && proof && !keyInsight
+      ? `<div style="${PROOF_EVIDENCE_STYLE}">${escape(proof)}</div>`
+      : "";
+  const keyInsightHtml = keyInsight
+    ? `<div style="${keyInsightStyle}">${escape(keyInsight)}${
+        proof ? `<div style="${PROOF_EVIDENCE_STYLE}">${escape(proof)}</div>` : ""
+      }</div>`
+    : "";
+  const standaloneProof =
+    !pairs.length && !keyInsight && proof
+      ? `<div style="${PROOF_EVIDENCE_STYLE}">${escape(proof)}</div>`
+      : "";
+
+  const headerBlock =
+    `<div style="${HEADING_KEEP_STYLE}">` +
+    `<div style="${safeBrandStyle}">Darrow Code</div>` +
+    `<h2 style="${safeH2Style}">Before / After</h2>` +
+    (openingLine ? `<p style="${openingLineStyle}">${escape(openingLine)}</p>` : "") +
+    (prose
+      ? `<p style="${safePStyle}page-break-before:avoid;break-before:avoid;">${escape(prose)}</p>`
+      : "") +
+    `</div>`;
+
+  return (
+    `<section style="${BODY_PAGE_STYLE}${BODY_PAGE_BREAK_BEFORE}">` +
+    headerBlock +
+    pairsHtml +
+    lastPairProof +
+    keyInsightHtml +
+    standaloneProof +
+    `</section>`
+  );
+}
+
+// v4 executive_summary: 6 labeled gold blocks.
+function v4ExecutiveSummarySection(field: unknown): string {
+  if (!field || typeof field !== "object") return "";
+  const f = field as any;
+  const blocks: Array<{ label: string; content: string }> = Array.isArray(
+    f.executive_summary_blocks,
+  )
+    ? (f.executive_summary_blocks as any[]).filter((b) => b?.label && b?.content)
+    : [];
+  const openingLine: string = typeof f.opening_line === "string" ? f.opening_line.trim() : "";
+  const prose: string = typeof f.prose === "string" ? f.prose.trim() : "";
+  const keyInsight: string = typeof f.key_insight === "string" ? f.key_insight.trim() : "";
+  const proofTags: string[] = Array.isArray(f.proof_tags)
+    ? (f.proof_tags as any[]).filter(Boolean)
+    : [];
+  const proof = proofTags.join(" · ");
+
+  const blockBoxSt =
+    "margin:10pt 0;padding:10pt 14pt;border-left:3pt solid #D4AF37;background:#FBF6E5;" +
+    "-webkit-print-color-adjust:exact;print-color-adjust:exact;" +
+    "page-break-inside:avoid;break-inside:avoid;overflow-wrap:break-word;word-wrap:break-word;";
+  const blockLabelSt =
+    "font-family:Arial,Helvetica,sans-serif;color:#A8841F;font-size:9pt;" +
+    "letter-spacing:2pt;text-transform:uppercase;margin-bottom:5pt;";
+
+  const blocksHtml = blocks
+    .map((b, i) => {
+      const isLast = i === blocks.length - 1;
+      const evidenceHtml =
+        isLast && proof ? `<div style="${PROOF_EVIDENCE_STYLE}">${escape(proof)}</div>` : "";
+      return (
+        `<div style="${blockBoxSt}">` +
+        `<div style="${blockLabelSt}">${escape(b.label)}</div>` +
+        `<p style="${safePStyle}margin:0;">${escape(b.content)}</p>` +
+        evidenceHtml +
+        `</div>`
+      );
+    })
+    .join("");
+
+  const keyInsightHtml = keyInsight
+    ? `<div style="${keyInsightStyle}">${escape(keyInsight)}</div>`
+    : "";
+  const standaloneProof =
+    !blocks.length && !keyInsight && proof
+      ? `<div style="${PROOF_EVIDENCE_STYLE}">${escape(proof)}</div>`
+      : "";
+
+  const headerBlock =
+    `<div style="${HEADING_KEEP_STYLE}">` +
+    `<div style="${safeBrandStyle}">Darrow Code</div>` +
+    `<h2 style="${safeH2Style}">Executive Summary</h2>` +
+    (openingLine ? `<p style="${openingLineStyle}">${escape(openingLine)}</p>` : "") +
+    (prose
+      ? `<p style="${safePStyle}page-break-before:avoid;break-before:avoid;">${escape(prose)}</p>`
+      : "") +
+    `</div>`;
+
+  return (
+    `<section style="${BODY_PAGE_STYLE}${BODY_PAGE_BREAK_BEFORE}">` +
+    headerBlock +
+    blocksHtml +
+    keyInsightHtml +
+    standaloneProof +
+    `</section>`
+  );
+}
+
+// v4 next_step: 4 closing pillars with gold title + prose.
+function v4NextStepSection(field: unknown): string {
+  if (!field || typeof field !== "object") return "";
+  const f = field as any;
+  const pillars: Array<{ title: string; prose: string }> = Array.isArray(f.closing_pillars)
+    ? (f.closing_pillars as any[]).filter((p) => p?.title && p?.prose)
+    : [];
+  const openingLine: string = typeof f.opening_line === "string" ? f.opening_line.trim() : "";
+  const prose: string = typeof f.prose === "string" ? f.prose.trim() : "";
+  const keyInsight: string = typeof f.key_insight === "string" ? f.key_insight.trim() : "";
+  const proofTags: string[] = Array.isArray(f.proof_tags)
+    ? (f.proof_tags as any[]).filter(Boolean)
+    : [];
+  const proof = proofTags.join(" · ");
+
+  const pillarTitleSt =
+    "font-family:Georgia,'Times New Roman',serif;color:#D4AF37;font-size:11pt;" +
+    "letter-spacing:2pt;text-transform:uppercase;margin-bottom:6pt;" +
+    "-webkit-print-color-adjust:exact;print-color-adjust:exact;";
+  const pillarBoxSt =
+    "margin:12pt 0;padding:12pt 14pt;border-top:0.5pt solid #D4AF37;" +
+    "page-break-inside:avoid;break-inside:avoid;" +
+    "-webkit-print-color-adjust:exact;print-color-adjust:exact;" +
+    "overflow-wrap:break-word;word-wrap:break-word;";
+
+  const pillarsHtml = pillars
+    .map((p, i) => {
+      const isLast = i === pillars.length - 1;
+      const evidenceHtml =
+        isLast && proof ? `<div style="${PROOF_EVIDENCE_STYLE}">${escape(proof)}</div>` : "";
+      return (
+        `<div style="${pillarBoxSt}">` +
+        `<div style="${pillarTitleSt}">${escape(p.title)}</div>` +
+        `<p style="${safePStyle}margin:0;">${escape(p.prose)}</p>` +
+        evidenceHtml +
+        `</div>`
+      );
+    })
+    .join("");
+
+  const keyInsightHtml = keyInsight
+    ? `<div style="${keyInsightStyle}">${escape(keyInsight)}</div>`
+    : "";
+  const standaloneProof =
+    !pillars.length && !keyInsight && proof
+      ? `<div style="${PROOF_EVIDENCE_STYLE}">${escape(proof)}</div>`
+      : "";
+
+  const headerBlock =
+    `<div style="${HEADING_KEEP_STYLE}">` +
+    `<div style="${safeBrandStyle}">Darrow Code</div>` +
+    `<h2 style="${safeH2Style}">Next Step</h2>` +
+    (openingLine ? `<p style="${openingLineStyle}">${escape(openingLine)}</p>` : "") +
+    (prose
+      ? `<p style="${safePStyle}page-break-before:avoid;break-before:avoid;">${escape(prose)}</p>`
+      : "") +
+    `</div>`;
+
+  return (
+    `<section style="${BODY_PAGE_STYLE}${BODY_PAGE_BREAK_BEFORE}">` +
+    headerBlock +
+    pillarsHtml +
+    keyInsightHtml +
+    standaloneProof +
+    `</section>`
+  );
+}
+
+// Renders a v4.1 CORE module to a complete standalone HTML document.
+// Does NOT call AI generation, Stripe, email, or Supabase.
+// Used by the /api/public/debug/core-v4-render diagnostic route.
+export function renderCoreV4HtmlSafe(core: unknown, clientName: string): string {
+  const c = core as any;
+  const name = escape((clientName || "you").trim());
+  const tagline = typeof c?.cover_tagline === "string" ? escape(c.cover_tagline.trim()) : "";
+
+  const fullDark =
+    "width:210mm;height:297mm;padding:0 30mm;background:#0A0F1E;color:#F6F4EF;" +
+    "-webkit-print-color-adjust:exact;print-color-adjust:exact;" +
+    "box-sizing:border-box;text-align:center;display:block;overflow:hidden;" +
+    "page-break-after:always;break-after:page;";
+  const goldMark =
+    `<div style="width:36pt;height:36pt;margin:0 auto 28pt;transform:rotate(45deg);` +
+    `background:#D4AF37;-webkit-print-color-adjust:exact;print-color-adjust:exact;"></div>`;
+
+  const sects: string[] = [];
+
+  // Cover page
+  sects.push(
+    `<section style="${fullDark}padding-top:80mm;">` +
+      goldMark +
+      `<div style="font-family:Arial,Helvetica,sans-serif;color:#D4AF37;font-size:11pt;` +
+      `letter-spacing:6pt;text-transform:uppercase;margin-bottom:36pt;` +
+      `-webkit-print-color-adjust:exact;print-color-adjust:exact;">Darrow Code</div>` +
+      `<h1 style="font-family:Georgia,'Times New Roman',serif;color:#D4AF37;font-size:34pt;` +
+      `font-weight:400;line-height:1.2;margin:0 0 18pt;` +
+      `-webkit-print-color-adjust:exact;print-color-adjust:exact;">The Personal Architecture Report</h1>` +
+      `<div style="width:60pt;height:1pt;background:#D4AF37;margin:24pt auto;` +
+      `-webkit-print-color-adjust:exact;print-color-adjust:exact;"></div>` +
+      `<div style="font-family:Arial,Helvetica,sans-serif;color:#9CA3AF;font-size:10pt;` +
+      `letter-spacing:3pt;text-transform:uppercase;margin-bottom:10pt;">Prepared for</div>` +
+      `<div style="font-family:Georgia,'Times New Roman',serif;color:#F6F4EF;font-size:22pt;">${name}</div>` +
+      (tagline
+        ? `<p style="font-family:Georgia,'Times New Roman',serif;font-style:italic;color:#E5E7EB;` +
+          `font-size:13pt;margin:36pt auto 0;max-width:120mm;line-height:1.5;` +
+          `overflow-wrap:break-word;word-wrap:break-word;">${tagline}</p>`
+        : "") +
+      `</section>`,
+  );
+
+  // Method & Orientation page (no page-break-before — follows cover naturally)
+  sects.push(
+    `<section style="${BODY_PAGE_STYLE}">` +
+      `<div style="${HEADING_KEEP_STYLE}">` +
+      `<div style="${safeBrandStyle}">Darrow Code</div>` +
+      `<h2 style="${safeH2Style}">Method &amp; Orientation</h2>` +
+      `<p style="font-family:Georgia,'Times New Roman',serif;font-style:italic;color:#4A402D;` +
+      `font-size:13pt;line-height:1.5;margin:0 0 14pt;overflow-wrap:break-word;word-wrap:break-word;">` +
+      `Clarity before action. Orientation over prediction.</p>` +
+      `</div>` +
+      `<p style="${safePStyle}">This report is a private orientation map built from your birth data and name. ` +
+      `It brings Western astrology, Chinese BaZi, numerology and pattern psychology into one clear reading ` +
+      `— not to tell you what will happen, but to help you recognize how your system works.</p>` +
+      `<p style="${safePStyle}">Read it for recognition, not instruction. When a line feels familiar, pause. ` +
+      `Familiarity is data.</p>` +
+      `<p style="${safePStyle}color:#6B6B6B;font-size:10pt;font-style:italic;margin-top:18pt;">` +
+      `This is not medical, legal, financial or psychiatric advice. It does not replace your judgment. ` +
+      `It gives language to patterns you may have felt for years.</p>` +
+      `</section>`,
+  );
+
+  // 17 body sections in v4 order
+  for (const key of V4_BODY_KEYS) {
+    const field = c?.[key];
+    if (!field) continue;
+    if (key === "before_after") {
+      sects.push(v4BeforeAfterSection(field));
+    } else if (key === "executive_summary") {
+      sects.push(v4ExecutiveSummarySection(field));
+    } else if (key === "next_step") {
+      sects.push(v4NextStepSection(field));
+    } else if (key === "vitality_baseline") {
+      const disclaimer =
+        typeof (field as any)?.disclaimer === "string" ? (field as any).disclaimer.trim() : "";
+      const extraHtml = disclaimer
+        ? `<p style="${safePStyle}color:#6B6B6B;font-size:10pt;font-style:italic;margin-top:14pt;">` +
+          `${escape(disclaimer)}</p>`
+        : "";
+      sects.push(v4StandardSection(V4_SECTION_TITLES[key] ?? key, field, { extraHtml }));
+    } else {
+      sects.push(v4StandardSection(V4_SECTION_TITLES[key] ?? key, field));
+    }
+  }
+
+  // Closing page — no page-break-after (prevents trailing blank page)
+  const closingStyle =
+    "width:210mm;height:297mm;padding:0 30mm;background:#0A0F1E;color:#F6F4EF;" +
+    "-webkit-print-color-adjust:exact;print-color-adjust:exact;" +
+    "box-sizing:border-box;text-align:center;" +
+    "display:flex;flex-direction:column;justify-content:center;align-items:center;" +
+    "overflow:hidden;page-break-before:always;break-before:page;" +
+    "page-break-after:auto;break-after:auto;";
+  sects.push(
+    `<section style="${closingStyle}">` +
+      goldMark +
+      `<div style="font-family:Arial,Helvetica,sans-serif;color:#D4AF37;font-size:11pt;` +
+      `letter-spacing:6pt;text-transform:uppercase;margin-bottom:28pt;` +
+      `-webkit-print-color-adjust:exact;print-color-adjust:exact;">Darrow Code</div>` +
+      `<p style="font-family:Georgia,'Times New Roman',serif;font-style:italic;font-size:15pt;` +
+      `color:#E5E7EB;margin:0 auto;max-width:120mm;line-height:1.5;` +
+      `overflow-wrap:break-word;word-wrap:break-word;">More than a horoscope. Your private birth code.</p>` +
+      `</section>`,
+  );
+
+  const globalCss = `
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; background: #FAF7F2; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    body { font-family: Arial, Helvetica, sans-serif; color: #151922; overflow-wrap: break-word; word-wrap: break-word; }
+    p, h1, h2, h3, div { overflow-wrap: break-word; word-wrap: break-word; }
+    img { max-width: 100%; height: auto; }
+    section { max-width: 210mm; }
+  `;
+
+  return (
+    `<!doctype html><html lang="en"><head><meta charset="utf-8"/>` +
+    `<title>Darrow Code — v4.1 Diagnostic — ${name}</title>` +
+    `<style>${globalCss}</style></head><body>` +
+    sects.join("\n") +
+    `</body></html>`
+  );
 }
 
 export function renderReportHtmlSafe(
@@ -566,21 +1042,30 @@ export function renderReportHtmlSafe(
     sections.push(v3Section("Executive Summary", core.executive_summary));
     sections.push(v3Section("Next Step", core.next_step));
   } else if (core) {
-    sections.push(
-      safeSection(
-        "Opening",
-        safePara(String(core.opening ?? "")) + safePara(String(core.architecture ?? "")),
-      ),
-      safeSection("Mechanic", safePara(String(core.mechanic ?? ""))),
-      safeSection("Timing", safePara(String(core.timing ?? ""))),
-      safeSection("Protocols", safePara(String(core.protocols ?? ""))),
-      safeSection("Warning Signal", safePara(String(core.shadow ?? ""))),
-      safeSection("Before / After", safePara(String(core.before_after ?? ""))),
-      safeSection(
-        "Next Step",
-        safePara(String(core.next ?? "")) + safePara(report.closing.executive_summary),
-      ),
-    );
+    // Non-v3 core (e.g. schema_version "core_v4"): route to v4-aware section helpers.
+    // The previous fallback used wrong v4 field names (opening/architecture/mechanic)
+    // that do not exist in the v4 schema. This fix routes v4 data correctly without
+    // changing the v3 path above. Does not affect production v3 reports.
+    for (const key of V4_BODY_KEYS) {
+      const field = core?.[key];
+      if (!field) continue;
+      if (key === "before_after") {
+        sections.push(v4BeforeAfterSection(field));
+      } else if (key === "executive_summary") {
+        sections.push(v4ExecutiveSummarySection(field));
+      } else if (key === "next_step") {
+        sections.push(v4NextStepSection(field));
+      } else if (key === "vitality_baseline") {
+        const disclaimer =
+          typeof (field as any)?.disclaimer === "string" ? (field as any).disclaimer.trim() : "";
+        const extraHtml = disclaimer
+          ? `<p style="${safePStyle}color:#6B6B6B;font-size:10pt;font-style:italic;margin-top:14pt;">${escape(disclaimer)}</p>`
+          : "";
+        sections.push(v4StandardSection(V4_SECTION_TITLES[key] ?? key, field, { extraHtml }));
+      } else {
+        sections.push(v4StandardSection(V4_SECTION_TITLES[key] ?? key, field));
+      }
+    }
   }
 
   // ── Closing — full dark bleed, content vertically centred via flex,

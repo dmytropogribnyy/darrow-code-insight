@@ -1,4 +1,4 @@
-/* eslint-disable */
+﻿/* eslint-disable */
 
 // @ts-nocheck
 
@@ -22,6 +22,7 @@ import { Route as ApiPublicJobsResendReadyEmailRouteImport } from './routes/api/
 import { Route as ApiPublicJobsProcessGenerationRouteImport } from './routes/api/public/jobs/process-generation'
 import { Route as ApiPublicHealthGenerationPipelineRouteImport } from './routes/api/public/health/generation-pipeline'
 import { Route as ApiPublicDebugCoreV4RunRouteImport } from './routes/api/public/debug/core-v4-run'
+import { Route as ApiPublicDebugCoreV4RenderRouteImport } from './routes/api/public/debug/core-v4-render'
 import { Route as ApiPublicDebugCoreV3RunRouteImport } from './routes/api/public/debug/core-v3-run'
 import { Route as ApiPublicDebugBuildStatusRouteImport } from './routes/api/public/debug/build-status'
 import { Route as ApiPublicDebugBuildMarkerRouteImport } from './routes/api/public/debug/build-marker'
@@ -96,6 +97,11 @@ const ApiPublicDebugCoreV4RunRoute = ApiPublicDebugCoreV4RunRouteImport.update({
   path: '/api/public/debug/core-v4-run',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicDebugCoreV4RenderRoute = ApiPublicDebugCoreV4RenderRouteImport.update({
+  id: '/api/public/debug/core-v4-render',
+  path: '/api/public/debug/core-v4-render',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicDebugCoreV3RunRoute = ApiPublicDebugCoreV3RunRouteImport.update({
   id: '/api/public/debug/core-v3-run',
   path: '/api/public/debug/core-v3-run',
@@ -134,6 +140,7 @@ export interface FileRoutesByFullPath {
   '/api/public/debug/build-status': typeof ApiPublicDebugBuildStatusRoute
   '/api/public/debug/core-v3-run': typeof ApiPublicDebugCoreV3RunRoute
   '/api/public/debug/core-v4-run': typeof ApiPublicDebugCoreV4RunRoute
+  '/api/public/debug/core-v4-render': typeof ApiPublicDebugCoreV4RenderRoute
   '/api/public/health/generation-pipeline': typeof ApiPublicHealthGenerationPipelineRoute
   '/api/public/jobs/process-generation': typeof ApiPublicJobsProcessGenerationRoute
   '/api/public/jobs/resend-ready-email': typeof ApiPublicJobsResendReadyEmailRoute
@@ -153,6 +160,7 @@ export interface FileRoutesByTo {
   '/api/public/debug/build-status': typeof ApiPublicDebugBuildStatusRoute
   '/api/public/debug/core-v3-run': typeof ApiPublicDebugCoreV3RunRoute
   '/api/public/debug/core-v4-run': typeof ApiPublicDebugCoreV4RunRoute
+  '/api/public/debug/core-v4-render': typeof ApiPublicDebugCoreV4RenderRoute
   '/api/public/health/generation-pipeline': typeof ApiPublicHealthGenerationPipelineRoute
   '/api/public/jobs/process-generation': typeof ApiPublicJobsProcessGenerationRoute
   '/api/public/jobs/resend-ready-email': typeof ApiPublicJobsResendReadyEmailRoute
@@ -173,6 +181,7 @@ export interface FileRoutesById {
   '/api/public/debug/build-status': typeof ApiPublicDebugBuildStatusRoute
   '/api/public/debug/core-v3-run': typeof ApiPublicDebugCoreV3RunRoute
   '/api/public/debug/core-v4-run': typeof ApiPublicDebugCoreV4RunRoute
+  '/api/public/debug/core-v4-render': typeof ApiPublicDebugCoreV4RenderRoute
   '/api/public/health/generation-pipeline': typeof ApiPublicHealthGenerationPipelineRoute
   '/api/public/jobs/process-generation': typeof ApiPublicJobsProcessGenerationRoute
   '/api/public/jobs/resend-ready-email': typeof ApiPublicJobsResendReadyEmailRoute
@@ -194,6 +203,7 @@ export interface FileRouteTypes {
     | '/api/public/debug/build-status'
     | '/api/public/debug/core-v3-run'
     | '/api/public/debug/core-v4-run'
+    | '/api/public/debug/core-v4-render'
     | '/api/public/health/generation-pipeline'
     | '/api/public/jobs/process-generation'
     | '/api/public/jobs/resend-ready-email'
@@ -213,6 +223,7 @@ export interface FileRouteTypes {
     | '/api/public/debug/build-status'
     | '/api/public/debug/core-v3-run'
     | '/api/public/debug/core-v4-run'
+    | '/api/public/debug/core-v4-render'
     | '/api/public/health/generation-pipeline'
     | '/api/public/jobs/process-generation'
     | '/api/public/jobs/resend-ready-email'
@@ -232,6 +243,7 @@ export interface FileRouteTypes {
     | '/api/public/debug/build-status'
     | '/api/public/debug/core-v3-run'
     | '/api/public/debug/core-v4-run'
+    | '/api/public/debug/core-v4-render'
     | '/api/public/health/generation-pipeline'
     | '/api/public/jobs/process-generation'
     | '/api/public/jobs/resend-ready-email'
@@ -252,6 +264,7 @@ export interface RootRouteChildren {
   ApiPublicDebugBuildStatusRoute: typeof ApiPublicDebugBuildStatusRoute
   ApiPublicDebugCoreV3RunRoute: typeof ApiPublicDebugCoreV3RunRoute
   ApiPublicDebugCoreV4RunRoute: typeof ApiPublicDebugCoreV4RunRoute
+  ApiPublicDebugCoreV4RenderRoute: typeof ApiPublicDebugCoreV4RenderRoute
   ApiPublicHealthGenerationPipelineRoute: typeof ApiPublicHealthGenerationPipelineRoute
   ApiPublicJobsProcessGenerationRoute: typeof ApiPublicJobsProcessGenerationRoute
   ApiPublicJobsResendReadyEmailRoute: typeof ApiPublicJobsResendReadyEmailRoute
@@ -351,6 +364,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicDebugCoreV4RunRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/debug/core-v4-render': {
+      id: '/api/public/debug/core-v4-render'
+      path: '/api/public/debug/core-v4-render'
+      fullPath: '/api/public/debug/core-v4-render'
+      preLoaderRoute: typeof ApiPublicDebugCoreV4RenderRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/debug/core-v3-run': {
       id: '/api/public/debug/core-v3-run'
       path: '/api/public/debug/core-v3-run'
@@ -396,6 +416,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicDebugBuildStatusRoute: ApiPublicDebugBuildStatusRoute,
   ApiPublicDebugCoreV3RunRoute: ApiPublicDebugCoreV3RunRoute,
   ApiPublicDebugCoreV4RunRoute: ApiPublicDebugCoreV4RunRoute,
+  ApiPublicDebugCoreV4RenderRoute: ApiPublicDebugCoreV4RenderRoute,
   ApiPublicHealthGenerationPipelineRoute:
     ApiPublicHealthGenerationPipelineRoute,
   ApiPublicJobsProcessGenerationRoute: ApiPublicJobsProcessGenerationRoute,

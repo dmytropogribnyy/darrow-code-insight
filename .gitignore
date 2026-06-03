@@ -1,3 +1,6 @@
+# Diagnostic / local artifact output (not committed)
+outputs/
+
 # Logs
 logs
 *.log
