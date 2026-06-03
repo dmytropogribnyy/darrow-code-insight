@@ -22,15 +22,23 @@ const FIXTURE_CORE_V4 = {
   },
 
   core_architecture: {
+    opening_line:
+      "Most people carry a quiet argument inside them — head, heart and body each saying something different. You are mostly spared it: when something is right for you, all of you agrees; when it is not, all of you knows.",
     prose:
-      "The structural layer of how you function is built around a central tension: between depth and speed. You are capable of both, but not simultaneously — and most systems you encounter are designed for people who are comfortable living in the shallower register by default.\n\nYour architecture is not built for shallow. It is built for thoroughness, for convergence, for the moment when a pattern becomes undeniable because enough signals have aligned. This gives you a kind of reliability that is rare: you do not change your mind on flimsy evidence, and you do not miss important signals because you were moving too fast.",
+      "You are in a meeting. The numbers add up. The argument is clean and everyone is nodding. But you already feel it — a small wrongness in the room, a gap between what is being said and what is actually going on. You cannot point to it yet. The feeling comes first. The explanation, if it ever comes, arrives much later.\n\nThis is not a sixth sense, and it is not anxiety. It is simply how you take the world in. Where some people think their way to a conclusion, you feel your way there in the first few seconds, and the rest is just catching up. By the time you have formed a sentence about a person, you have already decided whether you trust them.\n\nAstrology names this with three placements stacked in the same sign — Sun, Moon, and rising all in Cancer. You do not need those words to recognize the result. You are the same person in private and in public. You cannot perform a version of yourself you do not feel. When you try, it shows on your face before you have said a word.\n\nA second symbolic system, read in a completely different way, points at the same thing. Your Day Master in Chinese astrology is Gui Water — the deepest, most interior form of the Water element — and it sits at its peak strength. Two separate systems, one conclusion: a nature built for depth, for reading what is beneath the surface, for processing the world slowly and thoroughly rather than quickly and on the surface.\n\nThere is a cost, and it is worth saying plainly. You do not have thick skin. A tense or dishonest room does not just annoy you — it gets in the way of your thinking. You are at your sharpest in honest company and your most scattered in false company. The room you are standing in shapes what you can reach inside yourself.\n\nThis is why the environment you choose is not a small decision for you — it is one of the most important ones you make.",
     protocols: [
       {
-        title: "Signal Before Action",
-        body: "Before responding to any significant demand, pause for one breath and ask: what is the actual signal here? Not what the person says, not what the situation looks like — what is the actual signal?",
+        title: "Read the Room First",
+        body: "Before you prepare for anything that matters, take a moment with the space and the people in it. Does this feel honest? When the answer is clearly no, treat that as real information, not a mood to ignore. Strategy has limits when the environment is dishonest — which means choosing the right rooms is one of your quiet strengths, not a luxury.",
       },
     ],
-    proof_tags: ["Saturn dominant", "Earth element emphasis"],
+    proof_tags: [
+      "Sun conjunct ASC 0°43'",
+      "Moon conjunct ASC 7°13'",
+      "Gui Water DM Peak",
+      "Water Dominant 59%",
+      "Cancer Stellium",
+    ],
   },
 
   operating_mode: {
@@ -42,13 +50,25 @@ const FIXTURE_CORE_V4 = {
   },
 
   battery: {
+    opening_line:
+      "You do not recharge the way most people are told to. Rest alone does not quite do it for you.",
     prose:
-      "What restores you is not rest in the conventional sense — it is the experience of completion. When a significant piece of work reaches a genuine conclusion, there is a restoration that happens in the system that is more thorough than sleep alone can provide.\n\nThe maintenance practice is to create more genuine completions in your life, not more rest periods. Understand the difference between appropriate incompleteness (things that are genuinely in-progress) and chronic incompleteness (things that have stalled and are bleeding energy).",
-    warning_signals: [
-      "Chronic overpreparation as a form of avoidance.",
-      "Treating rest as the primary restoration strategy when completion is actually what is needed.",
+      "By evening, you may not be tired from the work itself. You are tired from everything that came with it — the tone of a conversation, a tension nobody named, an unfinished look someone gave you, the emotional weather of the whole room. You carry it home without meaning to. You absorbed it all day, and most of it never got filtered at the door.\n\nThis is just how you are built, and it is not a problem to fix. Your Moon sits in Cancer, right beside your Sun, which means what you need in order to feel safe and who you are at your core are the same thing. But anything this finely tuned needs proper maintenance. When you skip it, the input piles up quietly — and then everything starts to feel louder and heavier than it should.\n\nThree things reliably clear what ordinary rest does not. The first is water: a long shower, a swim, the sea, even standing out in the rain seems to wash off whatever you picked up from other people, and the harder the day, the more it matters. The second is real silence — no screens, no talking — because you never quite switch off between conversations, so genuine quiet is how you find your way back to neutral; twenty honest minutes can do more than a whole evening of half-distraction. The third is a home that holds you: when your space is calm and in order you settle easily, and when it is chaotic there is a low background hum of stress no matter how well you think you are handling it.",
+    protocols: [
+      {
+        title: "Recharge on Purpose",
+        body: "Treat water, real silence, and an ordered home as maintenance, not luxury. After a heavy day, reach for one deliberately rather than pushing straight into the next thing — these reset what rest alone leaves behind.",
+      },
     ],
-    proof_tags: ["Moon–Saturn completion need", "4th-house restoration axis"],
+    warning_signals: [
+      "When little things start landing too hard — when you are sharp over something minor, or carrying a heaviness you cannot trace to anything — that is usually not your mood. It is your battery asking for a reset. Pushing through with willpower rarely helps; stepping back almost always does.",
+    ],
+    proof_tags: [
+      "Moon conjunct ASC 7°13' Cancer",
+      "Sun conjunct Moon Cancer",
+      "Water Dominant 59%",
+      "Bundle Shape",
+    ],
   },
 
   social_interface: {
@@ -119,8 +139,7 @@ const FIXTURE_CORE_V4 = {
     prose:
       "The primary shadow in this pattern is the tendency to over-prepare as a form of avoidance. When something feels important and you are not confident in your readiness, you will prepare more rather than begin. This is adaptive up to a point — genuine preparation produces genuine confidence — but past that point it becomes a way of not having to find out whether you are actually ready.\n\nThe friction point in relationships is a related pattern: you expect the people around you to maintain the same standard of follow-through that you hold yourself to, and when they do not, the disappointment is disproportionate to the actual cost of the failure. This is not about being demanding — it is about the way your system calculates trust.",
     warning_signals: [
-      "Over-preparation as avoidance of the actual moment of commitment.",
-      "Holding others to standards you have not explicitly communicated.",
+      "Over-preparation as avoidance of the actual moment of commitment — and, alongside it, holding others to standards you have never explicitly communicated.",
     ],
     proof_tags: ["Saturn over-preparation signature", "12th-house avoidance pull"],
   },
@@ -145,40 +164,39 @@ const FIXTURE_CORE_V4 = {
   },
 
   executive_summary: {
-    opening_line: "The essential architecture, compressed.",
+    opening_line: "The whole architecture, in one view.",
     executive_summary_blocks: [
       {
         label: "YOUR CORE ADVANTAGE" as const,
         content:
-          "You produce reliable depth in situations that require it. When others are working at the surface, you are finding the actual structure beneath. This is not common.",
+          "You are a stabilizer of complexity. You sense hidden tension early and build steady, trustworthy structures where others get overwhelmed. Your strength is depth, coherence, and a quiet authority that does not need to announce itself.",
       },
       {
         label: "YOUR PRIMARY SENSITIVITY" as const,
         content:
-          "The system requires meaning as fuel. When the work does not have genuine consequence, your architecture underperforms — not from lack of effort but from lack of the signal it runs on.",
+          "What drains you is environment, not difficulty. Aggressive pace, visual noise, and dishonest rooms overload you faster than any hard problem. This is not a weakness to fix — it is a requirement to respect.",
       },
       {
         label: "YOUR DECISION FORMULA" as const,
         content:
-          "Gather quietly, hold until the pattern becomes undeniable, then decide with the full authority of what you have accumulated. Do not force the timeline; do not extend it past the point of clarity.",
+          "Your body is often your earliest signal. Clarity usually arrives after the feeling speaks, not before. If the signal does not feel safe, logic may struggle to override it. Pause, read the signal, then verify.",
       },
       {
         label: "THE CORE CONCLUSION" as const,
         content:
-          "You are built for significance, not volume. The pattern produces its best results when the stakes are real, the time is sufficient, and the environment allows depth. Protect these conditions.",
+          "You are not built to win sprints. You are built to create foundations that last — and your value lives in depth, reliability, and the long arc.",
       },
       {
         label: "CURRENT CYCLE" as const,
         content:
-          "The current cycle is consolidation before a significant expansion. The structural work you are doing now will be the foundation for what comes next. This is not a plateau; it is load-bearing time.",
+          "You are mid-shift in your yearly rhythm — moving from a foundation phase into a more open, expansive one around mid-year. The wider climate is asking your structures to prove they are real: the steady, well-built parts of your life will hold and reward you now, and the parts held together loosely will ask to be reinforced. This is a year that favors building on solid ground and then allowing room to move — in that order.",
       },
       {
         label: "THE NEXT LEVEL" as const,
         content:
-          "Operating from genuine choice rather than accumulated obligation. The architecture is capable of this; the practice is learning to distinguish between the two in real time.",
+          "This document has mapped how you are built — your baseline, your operating conditions, the patterns you have always sensed but never quite named. That foundation is complete on its own. If a particular pressure is loudest for you right now, there is a focused chapter that goes deeper there. But there is nothing you need to buy to make this whole. You already have the base.",
       },
     ],
-    proof_tags: ["whole-chart synthesis", "BaZi Day Master + Life Path convergence"],
   },
 
   next_step: {
@@ -212,21 +230,21 @@ const FIXTURE_CORE_V4 = {
 // Client Snapshot fixture — deterministic, non-real data for visual QA.
 // Mirrors the v3 client_snapshot shape so the same snapshot page design renders.
 const FIXTURE_CLIENT_SNAPSHOT = {
-  pattern_name: "The Structural Architect",
+  pattern_name: "Deep Water Architect",
   core_pattern:
-    "A builder of reliable systems in uncertain terrain. Moves slowly by design, lands with authority.",
+    "Sun, Moon and rising stacked in Cancer, with a Gui Water Day Master at peak strength — a system built for depth, emotional precision, and reading what is beneath the surface before the mind has framed it. The interior is the instrument.",
   unique_signature:
-    "You bring depth where others bring speed. In environments that reward thoroughness, you are the one others quietly defer to — not because of status, but because your read is consistently more accurate than theirs.",
+    "You are the same person in private and in public; you cannot perform a self you do not feel. The depth that makes your read accurate is the same depth that makes a false or tense room genuinely hard to think in.",
   primary_strength:
-    "Structural clarity under ambiguity — you find the load-bearing constraints others skip.",
+    "Fast, accurate reading of people and atmospheres — you register the tension in a room long before it is named, and you build steady structure where others get overwhelmed.",
   pressure_point:
-    "Over-preparation as avoidance — the loop of more research before the first real move.",
+    "You absorb the emotional weather around you and carry it home unfiltered; without maintenance the input piles up and everything starts to feel louder and heavier than it should.",
   best_operating_rhythm:
-    "Long cycles: build quietly, produce in concentrated bursts, recover genuinely.",
+    "Slow to start, hard to stop — a heavy engine, not a fast one. Depth and immersion on one thing at a time, with genuine recovery between cycles.",
   current_timing_theme:
-    "Consolidation phase. The structural work you are doing now will carry the next expansion.",
+    "Mid-shift in the yearly rhythm: a foundation phase moving into a more open, expansive one around mid-year. Build on solid ground first, then allow room to move.",
   practical_focus:
-    "Protect depth-conditions: uninterrupted time, real stakes, reliable daily rhythm. These are not luxuries.",
+    "Protect the environment and the rhythm before optimizing strategy. Choose honest rooms, real silence, and a home that holds you — these are maintenance, not luxury.",
 };
 
 describe("B4.1 — v4.1 HTML artifact generation", () => {

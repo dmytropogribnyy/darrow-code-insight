@@ -445,6 +445,62 @@ they were **reverted**:
 
 ---
 
+## B4.1-R — Representative section enrichment
+
+**Date:** 2026-06-03
+
+### Root cause (confirmed): fixture-only
+
+A full trace of `renderCoreV4HtmlSafe` / `v4StandardSection` / `renderProseBlocks`
+confirmed the renderer does **not** truncate, slice, summarise, or drop content. Every
+`slice` only separates the first paragraph to keep it with the heading; all prose blocks
+render and paginate naturally (sections carry no `break-inside:avoid`). The compression
+was entirely the **fixture**: ~100 words/section vs the baseline's ~400–500.
+
+> If real production CORE content were passed, the renderer would preserve it in full.
+
+### What was enriched (4 representative sections only)
+
+To prove the renderer handles baseline-density Darrow content, **4** sections were
+enriched using the canonical internal sample **`docs/DARROW_CORE_SAMPLE_REPORT_v4_1.md`**
+(the "GOLD REFERENCE" Dmitry sample behind `render-only-2026-06-02T09-20-00-731Z.pdf`):
+
+1. **Client Snapshot** — "Deep Water Architect" archetype + richer core pattern / unique signature + 5 labelled bullets.
+2. **Core Architecture** — opening_line + 5 paragraphs + `PROTOCOL · Read the Room First` + specific anchors (`Sun conjunct ASC 0°43' · Moon conjunct ASC 7°13' · Gui Water DM Peak · Water Dominant 59% · Cancer Stellium`). Spans 2 pages — pagination verified.
+3. **The Battery** — longer prose + one protocol + one warning + specific anchors.
+4. **Executive Summary** — canonical 6-block synthesis (no proof tags, matching the baseline).
+
+The remaining **13** sections keep their thin placeholder prose and generic anchors
+(`Saturn`/`Earth`/`Capricorn` frame), which are **inconsistent** with the canonical
+Cancer/Gui-Water frame of the 4 enriched sections. **Aligning all 17 to one chart and
+to baseline density is B5** — not done here.
+
+### Repeated-label rule (fixture presentation only)
+
+To avoid identical stacked block labels on one page (the "schema-fields-dumped" look),
+applied at the **fixture** level (renderer untouched — it is shared with production v3):
+- Battery folds the baseline's three "Recharge" protocols into prose + **one** protocol block.
+- `shadow_and_friction` trimmed from two warning blocks to one.
+- Result: across the whole document, no page stacks two identical `PROTOCOL` or `Warning Signal` labels.
+
+### Artifact (B4.1-R enriched)
+
+| Property | Value |
+|---|---|
+| Path | `outputs/pdf-v4.1-core-diagnostic.pdf` |
+| Pages | 23 (enriched Core Architecture + Battery paginate across pages) |
+| Size | ~154 KB |
+| Browser headers/footers | None |
+| Blank pages | None |
+| Content | No truncation/summarisation/dropping — renderer preserves full input |
+| Proof anchors | Visible thin grey per-section evidence line; now specific in enriched sections |
+| Footer numbering | `Darrow Code · NN` (pages 2..22) |
+
+Source `render-only-2026-06-02T09-20-00-731Z.pdf` is the **primary internal Darrow
+baseline**; `phe.pdf` remains a generic external benchmark only. Neither is committed.
+
+---
+
 ## B5 — CORE Content Pattern Calibration (planning)
 
 B4.1-R is intentionally limited to the diagnostic renderer + fixture. The real
