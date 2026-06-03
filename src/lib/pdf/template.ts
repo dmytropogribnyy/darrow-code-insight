@@ -320,41 +320,6 @@ export const PROOF_STYLE =
 // padding + 12mm here, proof text stops ≈ 37mm from the right page edge — clear of stamp.
 export const PROOF_EVIDENCE_STYLE =
   "font-family:Arial,Helvetica,sans-serif;color:#9CA3AF;font-size:8pt;font-style:italic;margin-top:8pt;padding-top:4pt;padding-right:12mm;border-top:0.5pt solid #E5E7EB;overflow-wrap:break-word;word-wrap:break-word;";
-// Visible standalone reference-anchor block (B4.1-R). Used when a section has
-// proof_tags but no warning/protocol/key_insight to embed them in. Unlike the
-// 8pt grey PROOF_EVIDENCE_STYLE (which looks like accidental footer text), this
-// renders a labelled "ANCHORED IN" strip with the tags as legible chips so the
-// "this is based on real calculated data" signal is actually noticeable.
-export const PROOF_STANDALONE_STYLE =
-  "margin:14pt 0 0;padding:9pt 0 0;border-top:0.5pt solid #D4AF37;" +
-  "-webkit-print-color-adjust:exact;print-color-adjust:exact;" +
-  "page-break-inside:avoid;break-inside:avoid;overflow-wrap:break-word;word-wrap:break-word;";
-const PROOF_STANDALONE_LABEL =
-  "font-family:Arial,Helvetica,sans-serif;color:#A8841F;font-size:8.5pt;" +
-  "letter-spacing:2pt;text-transform:uppercase;margin-bottom:6pt;";
-const PROOF_CHIP_STYLE =
-  "display:inline-block;font-family:Arial,Helvetica,sans-serif;color:#6B6B6B;font-size:9pt;" +
-  "padding:3pt 9pt;margin:0 6pt 6pt 0;border:0.5pt solid #D4AF37;border-radius:2pt;" +
-  "background:#FBF6E5;-webkit-print-color-adjust:exact;print-color-adjust:exact;" +
-  "overflow-wrap:break-word;word-wrap:break-word;";
-
-// Renders a visible "ANCHORED IN" reference strip from proof tags.
-// proof is a " · "-joined string (as built by v4 helpers); split back to chips.
-function renderProofAnchorStrip(proof: string): string {
-  if (!proof) return "";
-  const tags = proof
-    .split(/\s*·\s*/)
-    .map((t) => t.trim())
-    .filter(Boolean);
-  if (!tags.length) return "";
-  const chips = tags.map((t) => `<span style="${PROOF_CHIP_STYLE}">${escape(t)}</span>`).join("");
-  return (
-    `<div style="${PROOF_STANDALONE_STYLE}">` +
-    `<div style="${PROOF_STANDALONE_LABEL}">Anchored in</div>` +
-    chips +
-    `</div>`
-  );
-}
 
 // ── Layout contract (layout-foundation-3) ──────────────────────────────────
 //
@@ -610,10 +575,10 @@ function v4StandardSection(
   const proofForWarning = hasWarnings ? proof : "";
   const proofForProtocol = !hasWarnings && hasProtocols ? proof : "";
   const proofInKeyInsight = !hasWarnings && !hasProtocols && hasKeyInsight ? proof : "";
-  // B4.1-R: when proof has nowhere to embed, render a VISIBLE anchored-in strip
-  // (chips) instead of the near-invisible 8pt grey footer line.
   const standaloneProof =
-    !hasWarnings && !hasProtocols && !hasKeyInsight && proof ? renderProofAnchorStrip(proof) : "";
+    !hasWarnings && !hasProtocols && !hasKeyInsight && proof
+      ? `<div style="${PROOF_EVIDENCE_STYLE}">${escape(proof)}</div>`
+      : "";
 
   const firstParaMatch = proseHtml.match(/^<p [^>]*>[\s\S]*?<\/p>/);
   const firstPara = firstParaMatch ? firstParaMatch[0] : "";
@@ -883,18 +848,6 @@ interface V4ClientSnapshot {
   practical_focus: string;
 }
 
-// Optional DIAGNOSTIC-ONLY reference/data appendix for the v4.1 renderer (B4.1-R).
-// This is a render-only structure — it is NOT part of the production CoreV4 schema
-// and is never produced by AI generation. Used to test the "based on real
-// calculated data" report feeling without copying any reference report. All fields
-// optional; the page renders only the groups actually supplied.
-interface DiagnosticAnchors {
-  birth_data?: Array<{ label: string; value: string }>;
-  systems?: string[];
-  anchors?: Array<{ label: string; value: string }>;
-  disclaimer?: string;
-}
-
 // Renders a v4.1 CORE module to a complete standalone HTML document.
 // Does NOT call AI generation, Stripe, email, or Supabase.
 // Used by the /api/public/debug/core-v4-render diagnostic route.
@@ -902,7 +855,6 @@ export function renderCoreV4HtmlSafe(
   core: unknown,
   clientName: string,
   clientSnapshot?: V4ClientSnapshot,
-  diagnosticAnchors?: DiagnosticAnchors,
 ): string {
   const c = core as any;
   const name = escape((clientName || "you").trim());
@@ -1013,67 +965,6 @@ export function renderCoreV4HtmlSafe(
       sects.push(v4StandardSection(V4_SECTION_TITLES[key] ?? key, field, { extraHtml }));
     } else {
       sects.push(v4StandardSection(V4_SECTION_TITLES[key] ?? key, field));
-    }
-  }
-
-  // Diagnostic-only "Data & Reference Anchors" appendix (B4.1-R).
-  // Render-only; never produced by AI or production schema. Renders only the
-  // groups actually supplied so the page is never an empty stub.
-  if (diagnosticAnchors) {
-    const da = diagnosticAnchors;
-    const hasBirth = Array.isArray(da.birth_data) && da.birth_data.length > 0;
-    const hasSystems = Array.isArray(da.systems) && da.systems.length > 0;
-    const hasAnchors = Array.isArray(da.anchors) && da.anchors.length > 0;
-    if (hasBirth || hasSystems || hasAnchors) {
-      const groupLabelSt =
-        "font-family:Arial,Helvetica,sans-serif;color:#A8841F;font-size:9pt;" +
-        "letter-spacing:2pt;text-transform:uppercase;margin:16pt 0 8pt;";
-      const dataRowSt =
-        "display:grid;grid-template-columns:55mm 1fr;gap:8pt;margin-bottom:6pt;" +
-        "page-break-inside:avoid;break-inside:avoid;";
-      const dataKeySt = "font-family:Arial,Helvetica,sans-serif;color:#6B6B6B;font-size:10pt;";
-      const dataValSt = `${safePStyle}margin:0;`;
-
-      const renderRows = (rows: Array<{ label: string; value: string }>) =>
-        rows
-          .map(
-            (r) =>
-              `<div style="${dataRowSt}">` +
-              `<div style="${dataKeySt}">${escape(r.label)}</div>` +
-              `<div style="${dataValSt}">${escape(r.value)}</div>` +
-              `</div>`,
-          )
-          .join("");
-
-      const birthHtml = hasBirth
-        ? `<div style="${groupLabelSt}">Birth Data Used</div>${renderRows(da.birth_data!)}`
-        : "";
-      const systemsHtml = hasSystems
-        ? `<div style="${groupLabelSt}">Systems Used</div>` +
-          da.systems!.map((s) => `<span style="${PROOF_CHIP_STYLE}">${escape(s)}</span>`).join("")
-        : "";
-      const anchorsHtml = hasAnchors
-        ? `<div style="${groupLabelSt}">Example Diagnostic Anchors</div>${renderRows(da.anchors!)}`
-        : "";
-      const disclaimerHtml = da.disclaimer
-        ? `<p style="${safePStyle}color:#6B6B6B;font-size:10pt;font-style:italic;margin-top:18pt;">` +
-          `${escape(da.disclaimer)}</p>`
-        : "";
-
-      const appendixHtml =
-        `<div style="${HEADING_KEEP_STYLE}">` +
-        `<div style="${safeBrandStyle}">Darrow Code</div>` +
-        `<h2 style="${safeH2Style}">Data &amp; Reference Anchors</h2>` +
-        `<p style="${openingLineStyle}">The orientation in this report is anchored in ` +
-        `calculated reference points, not generic description.</p>` +
-        `</div>` +
-        birthHtml +
-        systemsHtml +
-        anchorsHtml +
-        disclaimerHtml;
-      sects.push(
-        `<section style="${BODY_PAGE_STYLE}${BODY_PAGE_BREAK_BEFORE}">${appendixHtml}</section>`,
-      );
     }
   }
 

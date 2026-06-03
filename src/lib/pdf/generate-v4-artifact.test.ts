@@ -229,45 +229,10 @@ const FIXTURE_CLIENT_SNAPSHOT = {
     "Protect depth-conditions: uninterrupted time, real stakes, reliable daily rhythm. These are not luxuries.",
 };
 
-// Diagnostic-only "Data & Reference Anchors" appendix fixture (B4.1-R).
-// Deterministic, non-real sample data. NOT part of the production CoreV4 schema
-// and never produced by AI. Demonstrates the "based on real calculated data"
-// report feeling. Does not copy any reference report's wording or table format.
-const FIXTURE_DIAGNOSTIC_ANCHORS = {
-  birth_data: [
-    { label: "Name", value: "Diagnostic Client (sample)" },
-    { label: "Date", value: "12 March 1988" },
-    { label: "Time", value: "08:45 (local)" },
-    { label: "Place", value: "Sample City (sample coordinates)" },
-    { label: "House system", value: "Placidus" },
-  ],
-  systems: [
-    "Western Astrology",
-    "Chinese BaZi / Four Pillars",
-    "Numerology",
-    "Pattern Psychology",
-    "AI synthesis",
-  ],
-  anchors: [
-    { label: "Sun / Moon / Ascendant", value: "Pisces Sun · Capricorn Moon · Virgo Ascendant" },
-    { label: "BaZi Day Master", value: "Yang Earth (sample)" },
-    { label: "Life Path number", value: "4 — structure & disciplined building" },
-    { label: "Expression / Soul Urge", value: "7 / 9 (sample)" },
-    { label: "Primary timing anchor", value: "Saturn consolidation cycle (sample)" },
-  ],
-  disclaimer:
-    "Reference anchors are used for interpretive orientation. This is not medical, legal or financial advice.",
-};
-
 describe("B4.1 — v4.1 HTML artifact generation", () => {
   it("writes outputs/pdf-v4.1-core-diagnostic.html for visual review", () => {
     mkdirSync("outputs", { recursive: true });
-    const html = renderCoreV4HtmlSafe(
-      FIXTURE_CORE_V4,
-      "Dmitry",
-      FIXTURE_CLIENT_SNAPSHOT,
-      FIXTURE_DIAGNOSTIC_ANCHORS,
-    );
+    const html = renderCoreV4HtmlSafe(FIXTURE_CORE_V4, "Dmitry", FIXTURE_CLIENT_SNAPSHOT);
     writeFileSync("outputs/pdf-v4.1-core-diagnostic.html", html, "utf8");
     console.log(
       `\n✓ outputs/pdf-v4.1-core-diagnostic.html (${html.length.toLocaleString()} bytes)`,

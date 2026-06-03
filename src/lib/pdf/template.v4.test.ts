@@ -14,12 +14,7 @@
 
 import { readFileSync } from "node:fs";
 import { describe, it, expect } from "vitest";
-import {
-  renderCoreV4HtmlSafe,
-  BODY_PAGE_STYLE,
-  BODY_PAGE_BREAK_BEFORE,
-  PROOF_STANDALONE_STYLE,
-} from "./template";
+import { renderCoreV4HtmlSafe, BODY_PAGE_STYLE, BODY_PAGE_BREAK_BEFORE } from "./template";
 
 // ── Fixture: minimal but complete CoreV4 object ──────────────────────────────
 
@@ -428,89 +423,41 @@ describe("B4.1 — renderCoreV4HtmlSafe: blank-page prevention (closing page)", 
   });
 });
 
-describe("B4.1-R — visible proof/reference anchors", () => {
-  it("PROOF_STANDALONE_STYLE is visible (gold top border, not invisible footer text)", () => {
-    expect(PROOF_STANDALONE_STYLE).toContain("#D4AF37");
-    expect(PROOF_STANDALONE_STYLE).not.toContain("font-size:8pt");
-  });
-
-  it("renders an 'Anchored in' strip for a section with proof_tags but no callouts", () => {
+describe("B4.1-R — per-section proof anchors (Darrow baseline style)", () => {
+  // The primary Darrow baseline (render-only-2026-06-02) renders proof anchors
+  // as a thin grey evidence line at the tail of each section — NOT as chips, and
+  // NOT as a separate data-appendix page. These guards lock that behaviour in.
+  it("renders proof_tags as a tail evidence line when a section has no callouts", () => {
     const fixture = {
       schema_version: "core_v4" as const,
-      cover_tagline: "Sample.",
       orientation: {
         prose: "Orientation prose without callouts.",
-        proof_tags: ["Mercury–Saturn structural emphasis", "Earth grand-trine calibration"],
+        proof_tags: ["Sun Cancer 1H", "Gui Water Day Master"],
       },
     };
     const out = renderCoreV4HtmlSafe(fixture, "Alex");
-    expect(out).toContain("Anchored in");
-    expect(out).toContain("Mercury–Saturn structural emphasis");
-    expect(out).toContain("Earth grand-trine calibration");
+    expect(out).toContain("Sun Cancer 1H");
+    expect(out).toContain("Gui Water Day Master");
+    // joined with the Darrow middot separator, not chip markup
+    expect(out).toContain("Sun Cancer 1H · Gui Water Day Master");
   });
 
-  it("anchored-in chips use a bordered chip style (not raw text)", () => {
+  it("does NOT render an ANCHORED IN chip strip (phe.pdf-style treatment was reverted)", () => {
     const fixture = {
       schema_version: "core_v4" as const,
       orientation: { prose: "P.", proof_tags: ["Saturn dominant"] },
     };
     const out = renderCoreV4HtmlSafe(fixture, "Alex");
-    const idx = out.indexOf("Saturn dominant");
-    const around = out.slice(Math.max(0, idx - 200), idx);
-    expect(around).toContain("border");
-  });
-});
-
-describe("B4.1-R — Data & Reference Anchors appendix (diagnostic-only)", () => {
-  const fixture = {
-    schema_version: "core_v4" as const,
-    orientation: { prose: "Orientation prose." },
-  };
-  const anchors = {
-    birth_data: [
-      { label: "Name", value: "Diagnostic Client (sample)" },
-      { label: "Date", value: "12 March 1988" },
-    ],
-    systems: ["Western Astrology", "Chinese BaZi / Four Pillars", "Numerology"],
-    anchors: [
-      { label: "Sun / Moon / Ascendant", value: "Pisces Sun · Capricorn Moon · Virgo Ascendant" },
-      { label: "Life Path number", value: "4 — structure & disciplined building" },
-    ],
-    disclaimer:
-      "Reference anchors are used for interpretive orientation. This is not medical, legal or financial advice.",
-  };
-
-  it("renders the appendix when diagnosticAnchors is provided", () => {
-    const out = renderCoreV4HtmlSafe(fixture, "Alex", undefined, anchors);
-    expect(out).toContain("Data &amp; Reference Anchors");
-    expect(out).toContain("Birth Data Used");
-    expect(out).toContain("Systems Used");
-    expect(out).toContain("Example Diagnostic Anchors");
+    expect(out).not.toContain("Anchored in");
   });
 
-  it("renders the systems and anchor values", () => {
-    const out = renderCoreV4HtmlSafe(fixture, "Alex", undefined, anchors);
-    expect(out).toContain("Chinese BaZi / Four Pillars");
-    expect(out).toContain("Pisces Sun");
-    expect(out).toContain("Life Path number");
-  });
-
-  it("renders the diagnostic disclaimer (not medical/legal/financial)", () => {
-    const out = renderCoreV4HtmlSafe(fixture, "Alex", undefined, anchors);
-    expect(out).toContain("not medical, legal or financial advice");
-  });
-
-  it("does NOT render the appendix when diagnosticAnchors is omitted", () => {
+  it("does NOT render a Data & Reference Anchors appendix page (not in the Darrow baseline)", () => {
+    const fixture = {
+      schema_version: "core_v4" as const,
+      orientation: { prose: "Orientation prose." },
+    };
     const out = renderCoreV4HtmlSafe(fixture, "Alex");
     expect(out).not.toContain("Data &amp; Reference Anchors");
-  });
-
-  it("appendix appears before the closing page (not after)", () => {
-    const out = renderCoreV4HtmlSafe(fixture, "Alex", undefined, anchors);
-    const appendixIdx = out.indexOf("Data &amp; Reference Anchors");
-    const closingIdx = out.lastIndexOf("More than a horoscope");
-    expect(appendixIdx).toBeGreaterThan(0);
-    expect(appendixIdx).toBeLessThan(closingIdx);
   });
 });
 
