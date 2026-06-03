@@ -373,6 +373,95 @@ Open `outputs/pdf-v4.1-core-diagnostic.pdf` (not the HTML) for final visual chec
 
 ---
 
+---
+
+## B4.1 Reference Comparison — phe.pdf
+
+**Date:** 2026-06-03
+**Phase:** B4.1-R — diagnostic baseline calibration against a stronger reference report.
+
+A third-party psychological astrology report (`phe.pdf`) was used as a **density /
+completeness / professional-feel benchmark only**. It was **not** committed, **not**
+persisted to Supabase, **not** used in production, and **none of its text, structure,
+or design was copied**. It is referenced here solely to describe the quality gap.
+
+### What phe.pdf does better
+
+- Dense, professional finished-report feeling (~4× the text of the current v4.1 diagnostic for a similar page count).
+- A Contents / section map up front.
+- Rich multi-paragraph sections — each chapter is several full paragraphs.
+- Many named subheadings inside each chapter (e.g. one chapter carries 8 distinct subsections).
+- A visible "Astrological Data Used for the Analysis" appendix (planets, houses, aspects) that signals the reading is based on real calculated data.
+- Strong page economy — pages are consistently filled.
+
+### What the current v4.1 diagnostic lacked (before this patch)
+
+- Too little content per section (often 1–3 paragraphs / ~150 words).
+- Sparse proof anchors — `proof_tags` populated in only 2 of 17 sections.
+- No equivalent of a "data used for analysis" appendix.
+- Repetitive callout/box style — every section reused the same gold box treatment.
+- Not enough section-level visual variation.
+- Not enough perceived analytical depth / "based on real calculated data" feeling.
+
+### Updated diagnosis
+
+This is **not only** a weak-fixture problem. It is **also** a CORE content-pattern
+requirement that belongs to **B5**. B4.1-R improves the diagnostic fixture and adds
+renderer support (visible anchors + a diagnostic data appendix) so the layout can be
+tested at realistic density — but the real production content calibration (section
+depth, subsection strategy, per-section proof pattern) is deferred to B5.
+
+> **phe.pdf is a benchmark only, not a copy source.**
+
+### What B4.1-R changed (small, diagnostic-only)
+
+| Change | Where |
+|---|---|
+| `PROOF_STANDALONE_STYLE` + `renderProofAnchorStrip` — visible "ANCHORED IN" chip strip replacing the near-invisible 8pt grey proof line | `src/lib/pdf/template.ts` |
+| `DiagnosticAnchors` interface + optional 4th param to `renderCoreV4HtmlSafe` + "Data & Reference Anchors" appendix page (render-only) | `src/lib/pdf/template.ts` |
+| `proof_tags` added to all standard sections (no prose rewrite) | `src/lib/pdf/generate-v4-artifact.test.ts` |
+| `FIXTURE_DIAGNOSTIC_ANCHORS` sample (birth data, systems, anchors, disclaimer) | `src/lib/pdf/generate-v4-artifact.test.ts` |
+| 8 new tests (anchor strip + appendix) | `src/lib/pdf/template.v4.test.ts` |
+
+The "Data & Reference Anchors" page is **diagnostic-only**: it is not part of the
+production CoreV4 schema, never produced by AI, and uses clearly-labelled sample data.
+
+### Updated artifact (B4.1-R)
+
+| Property | Value |
+|---|---|
+| Path | `outputs/pdf-v4.1-core-diagnostic.pdf` |
+| Pages | 22 (added the Data & Reference Anchors appendix) |
+| Size | ~156 KB |
+| Browser headers/footers | None |
+| Blank pages | None |
+| Proof anchors | Visible in every applicable section + appendix |
+| Footer numbering | `Darrow Code · NN` (pages 2..21) |
+
+---
+
+## B5 — CORE Content Pattern Calibration (planning)
+
+B4.1-R is intentionally limited to the diagnostic renderer + fixture. The real
+production-quality work is **B5**, which must address:
+
+- **Production CORE text depth** — calibrate the actual generated section length, not just the fixture.
+- **Minimum section density** — define a floor (e.g. target word range) per section type.
+- **Subsection strategy** — allow longer chapters to carry named subsections (closer to phe.pdf's structure, without copying it).
+- **Proof / reference anchors in every section** — make `proof_tags` (or equivalent) a required, populated field in production output.
+- **Data appendix / reference page** — decide whether a real "Data & Reference Anchors" page enters the production schema, sourced from genuine calculated inputs.
+- **Reduced repetition** — vary visual + structural treatment so sections do not all look identical.
+- **Stronger human-readable recognition effect** — prioritise the "this is clearly about me" feeling.
+
+B5 hard constraints (unchanged):
+
+- No overpromising.
+- No medical / legal / financial claims.
+- No copying from reference reports (phe.pdf or any other).
+- B5 is where `system-prompt.ts` / AI prompt changes happen — **not** before.
+
+---
+
 ## 10. Next recommended steps
 
 **A) Inspect generated HTML artifact**

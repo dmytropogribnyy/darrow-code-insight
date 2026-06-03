@@ -18,6 +18,7 @@ const FIXTURE_CORE_V4 = {
     opening_line: "You have always operated with a distinct internal compass.",
     prose:
       "You have always operated with a distinct internal compass — a quiet but reliable sense of what the situation actually requires, beneath the noise of what people say it requires. This is not stubbornness. It is calibration. You read the field before you act in it, and that gap — between perception and response — is where your best thinking lives.\n\nThe risk in this pattern is that the calibration becomes slower than the situation demands. When you are under pressure, the internal compass can feel like a liability rather than an asset. It is not. The problem is usually that the environment has shortened the available time for your natural process, and you have not yet built a way to run the process faster without running it shallowly.",
+    proof_tags: ["Mercury–Saturn structural emphasis", "Earth grand-trine calibration"],
   },
 
   core_architecture: {
@@ -37,6 +38,7 @@ const FIXTURE_CORE_V4 = {
       "Your default processing style is sequential and depth-first. You enter a problem through one door and follow it until you have found what you need, then you surface and address the next thread. This is extremely effective for complex problems and less effective when you need to manage multiple light threads simultaneously.\n\nIn practice, this means your performance is most reliable when you are allowed to work on one thing deeply before moving to the next, and least reliable when you are required to context-switch repeatedly without completing any single thread.",
     key_insight:
       "You are most effective in environments that match your depth — not because you cannot adapt, but because your architecture produces its best results at full depth.",
+    proof_tags: ["Mercury in earth sign", "3rd-house depth-first wiring"],
   },
 
   battery: {
@@ -46,26 +48,31 @@ const FIXTURE_CORE_V4 = {
       "Chronic overpreparation as a form of avoidance.",
       "Treating rest as the primary restoration strategy when completion is actually what is needed.",
     ],
+    proof_tags: ["Moon–Saturn completion need", "4th-house restoration axis"],
   },
 
   social_interface: {
     prose:
       "Your social interface is precise and selective. You are capable of warmth and genuine connection, but you do not distribute it indiscriminately — you offer it to people who have demonstrated they will use it well. This is not coldness. It is a form of respect: you do not pretend to be closer to someone than you actually are.\n\nThe people who earn consistent access to your inner world receive something rare. Most people in your life experience the social interface — competent, warm, professionally reliable — without realising there is a more private layer beneath it.",
+    proof_tags: ["Venus selective placement", "7th-house boundary signature"],
   },
 
   numerology_code: {
     prose:
       "The numerological layer of your pattern amplifies the structural themes already present in the natal chart. Your Life Path carries the quality of depth-seeking combined with the discipline to see things through — not as a personality trait but as an operating requirement. This number teaches through the experience of sustained effort, which is why the most significant achievements in your life tend to follow periods of concentrated, often invisible, work.\n\nThe Birthday Number adds a specific gift for translation: the ability to take complex systems and render them legible to people who need to use them without needing to understand all of their internal mechanics.",
+    proof_tags: ["Life Path 4 discipline", "Birthday Number translation gift"],
   },
 
   cognitive_style: {
     prose:
       "You think in structures. Not necessarily in visual diagrams or formal frameworks — but in relationships between elements, hierarchies of importance, sequences that make inherent sense. When a situation does not have an underlying structure, you either find one or you feel uncertain about how to proceed.\n\nThis cognitive preference produces reliable thinking when the situation has real structure, and appropriate caution when it does not. The caution is correct — structureless situations are often genuinely ambiguous, and your discomfort with them is a more accurate response than the confidence of people who are comfortable proceeding without adequate structure.",
+    proof_tags: ["Mercury–Saturn structured cognition", "fixed-mode pattern bias"],
   },
 
   drive_and_rhythm: {
     prose:
       "Your drive is most active when oriented toward something with genuine consequence. You do not perform well in environments where the work does not actually matter — not because you are lazy, but because your system requires meaning as fuel. The moment you cannot see the real consequence of the work, your effort drops to maintenance-level.\n\nYour rhythm is long-cycle. You build up over weeks and months, produce in concentrated bursts, and then need genuine recovery before the next cycle begins. This is not inefficiency — it is the operating pattern of a system that is built for significant output, not continuous output.",
+    proof_tags: ["Mars long-cycle placement", "fixed-sign endurance"],
   },
 
   professional_archetype: {
@@ -83,11 +90,13 @@ const FIXTURE_CORE_V4 = {
   money_and_value: {
     prose:
       "Your relationship with resources is conservative in the best sense: you value what you have built, you are reluctant to spend what took significant effort to accumulate, and you make financial decisions slowly. This is a protective function that has served you well — and occasionally costs you opportunities that required faster decision-making.\n\nThe development edge in this area is distinguishing between the slow decision that is actually appropriate caution and the slow decision that is avoidance of a commitment whose outcome is uncertain. Both feel like the same thing from the inside.",
+    proof_tags: ["2nd-house conservation", "Saturn resource caution"],
   },
 
   relationship_baseline: {
     prose:
       "Your relational baseline is loyalty-first. Once you have decided that someone is worth your investment, you remain invested through conditions that would cause others to withdraw. This is a genuine asset and a genuine vulnerability: the asset is that the people who earn your loyalty receive something rare; the vulnerability is that you may remain loyal past the point where the relationship is actually serving either of you.\n\nThe practice is periodic honesty about whether the loyalty is still generating something real, or whether it has become habit and history without current substance.",
+    proof_tags: ["Venus–Saturn loyalty bind", "fixed-sign attachment"],
   },
 
   vitality_baseline: {
@@ -95,6 +104,7 @@ const FIXTURE_CORE_V4 = {
       "Your physical system runs on rhythm. When your daily patterns are consistent, your vitality is high and your recovery is fast. When those patterns are disrupted — whether by travel, intense work periods, or social obligation — your recovery takes longer than most people expect, including you.\n\nThe maintenance practice is not adding supplements or optimizing sleep metrics. It is protecting the rhythmic patterns that your system uses as its foundation. When you violate those patterns for good reasons, build in explicit recovery time — not compressed, not adjacent to the next demand, but actual unstructured space.",
     disclaimer:
       "This is interpretive orientation, not medical advice. Consult a qualified healthcare professional for any health concerns.",
+    proof_tags: ["6th-house rhythm dependence", "Earth-element recovery cycle"],
   },
 
   environment_and_resonance: {
@@ -102,6 +112,7 @@ const FIXTURE_CORE_V4 = {
       "Environments that support you have three qualities: reliable structure, genuine stakes, and enough quiet to allow depth. The opposite — chaotic structure, low-consequence work, constant noise — produces a specific kind of fatigue that is different from ordinary tiredness. It is the fatigue of a system that cannot run its natural process because the environment does not provide the conditions for it.\n\nThis means that one of the most productive investments you can make is in the quality of your working environment — not its prestige or its size, but its ability to provide the three qualities your system requires.",
     scenario:
       "Think of a well-designed workshop: tools in known places, a project that actually matters, enough uninterrupted time to work through a problem properly. That is the environment your architecture understands.",
+    proof_tags: ["4th-house environment sensitivity", "Earth-element grounding"],
   },
 
   shadow_and_friction: {
@@ -111,6 +122,7 @@ const FIXTURE_CORE_V4 = {
       "Over-preparation as avoidance of the actual moment of commitment.",
       "Holding others to standards you have not explicitly communicated.",
     ],
+    proof_tags: ["Saturn over-preparation signature", "12th-house avoidance pull"],
   },
 
   before_after: {
@@ -129,6 +141,7 @@ const FIXTURE_CORE_V4 = {
           "Communicating standards explicitly and creating the conditions for others to meet them. The expectation becomes a shared reference point rather than a private measuring stick.",
       },
     ],
+    proof_tags: ["Saturn maturation arc", "progressed-Moon timing"],
   },
 
   executive_summary: {
@@ -165,6 +178,7 @@ const FIXTURE_CORE_V4 = {
           "Operating from genuine choice rather than accumulated obligation. The architecture is capable of this; the practice is learning to distinguish between the two in real time.",
       },
     ],
+    proof_tags: ["whole-chart synthesis", "BaZi Day Master + Life Path convergence"],
   },
 
   next_step: {
@@ -191,6 +205,7 @@ const FIXTURE_CORE_V4 = {
           "Protect the conditions that allow depth: uninterrupted time, real stakes, reliable rhythm. These are not luxuries. They are operating requirements. The architecture cannot produce its best work without them.",
       },
     ],
+    proof_tags: ["current Saturn cycle", "consolidation-phase timing"],
   },
 };
 
@@ -214,10 +229,45 @@ const FIXTURE_CLIENT_SNAPSHOT = {
     "Protect depth-conditions: uninterrupted time, real stakes, reliable daily rhythm. These are not luxuries.",
 };
 
+// Diagnostic-only "Data & Reference Anchors" appendix fixture (B4.1-R).
+// Deterministic, non-real sample data. NOT part of the production CoreV4 schema
+// and never produced by AI. Demonstrates the "based on real calculated data"
+// report feeling. Does not copy any reference report's wording or table format.
+const FIXTURE_DIAGNOSTIC_ANCHORS = {
+  birth_data: [
+    { label: "Name", value: "Diagnostic Client (sample)" },
+    { label: "Date", value: "12 March 1988" },
+    { label: "Time", value: "08:45 (local)" },
+    { label: "Place", value: "Sample City (sample coordinates)" },
+    { label: "House system", value: "Placidus" },
+  ],
+  systems: [
+    "Western Astrology",
+    "Chinese BaZi / Four Pillars",
+    "Numerology",
+    "Pattern Psychology",
+    "AI synthesis",
+  ],
+  anchors: [
+    { label: "Sun / Moon / Ascendant", value: "Pisces Sun · Capricorn Moon · Virgo Ascendant" },
+    { label: "BaZi Day Master", value: "Yang Earth (sample)" },
+    { label: "Life Path number", value: "4 — structure & disciplined building" },
+    { label: "Expression / Soul Urge", value: "7 / 9 (sample)" },
+    { label: "Primary timing anchor", value: "Saturn consolidation cycle (sample)" },
+  ],
+  disclaimer:
+    "Reference anchors are used for interpretive orientation. This is not medical, legal or financial advice.",
+};
+
 describe("B4.1 — v4.1 HTML artifact generation", () => {
   it("writes outputs/pdf-v4.1-core-diagnostic.html for visual review", () => {
     mkdirSync("outputs", { recursive: true });
-    const html = renderCoreV4HtmlSafe(FIXTURE_CORE_V4, "Dmitry", FIXTURE_CLIENT_SNAPSHOT);
+    const html = renderCoreV4HtmlSafe(
+      FIXTURE_CORE_V4,
+      "Dmitry",
+      FIXTURE_CLIENT_SNAPSHOT,
+      FIXTURE_DIAGNOSTIC_ANCHORS,
+    );
     writeFileSync("outputs/pdf-v4.1-core-diagnostic.html", html, "utf8");
     console.log(
       `\n✓ outputs/pdf-v4.1-core-diagnostic.html (${html.length.toLocaleString()} bytes)`,
