@@ -12,17 +12,23 @@ type Selectable = "CORE" | ModuleCode;
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Darrow Code Astro Report — Your private AI astrology PDF" },
+      { title: "AI Astrology Report & Birth Code PDF | Darrow Code" },
       {
         name: "description",
         content:
-          "More than a horoscope. Less than a consultation. A private AI-powered astrology PDF built from your birth data — Western, Bazi, numerology and pattern psychology.",
+          "More than a horoscope. Private AI-powered astrology reports from your birth data — CORE, Love, Money, Body, Year, Style and Place PDF insights.",
       },
-      { property: "og:title", content: "Darrow Code Astro Report" },
+      { property: "og:title", content: "Darrow Code — AI Astrology Report & Birth Code PDF" },
       {
         property: "og:description",
         content:
-          "Your private AI-powered astrology report — built from your birth data and decoded through the Darrow Code Method.",
+          "More than a horoscope. Private AI-powered astrology reports from your birth data — CORE, Love, Money, Body, Year, Style and Place PDF insights.",
+      },
+      { name: "twitter:title", content: "Darrow Code — AI Astrology Report & Birth Code PDF" },
+      {
+        name: "twitter:description",
+        content:
+          "More than a horoscope. Private AI-powered astrology reports from your birth data — CORE, Love, Money, Body, Year, Style and Place PDF insights.",
       },
     ],
   }),

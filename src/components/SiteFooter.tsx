@@ -19,6 +19,43 @@ export function SiteFooter() {
           <br />
           Not medical, legal or financial advice.
         </p>
+        <div className="mt-6">
+          <p
+            className="text-[10px] sm:text-[11px] uppercase tracking-[0.18em] mb-3"
+            style={{ color: "#4A402D" }}
+          >
+            Follow Darrow Code
+          </p>
+          <div
+            className="flex justify-center gap-6 text-[13px] sm:text-[14px]"
+            style={{ color: "#151922" }}
+          >
+            <a
+              href="https://www.tiktok.com/@darrowcode"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-medium hover:text-gold hover:underline underline-offset-4 decoration-gold/40 transition-colors"
+            >
+              TikTok
+            </a>
+            <a
+              href="https://www.instagram.com/darrowcode"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-medium hover:text-gold hover:underline underline-offset-4 decoration-gold/40 transition-colors"
+            >
+              Instagram
+            </a>
+            <a
+              href="https://www.youtube.com/@darrowcode"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-medium hover:text-gold hover:underline underline-offset-4 decoration-gold/40 transition-colors"
+            >
+              YouTube
+            </a>
+          </div>
+        </div>
         <div
           className="mt-6 flex justify-center gap-7 text-[13px] sm:text-[14px]"
           style={{ color: "#151922" }}
@@ -42,6 +79,9 @@ export function SiteFooter() {
             Contact
           </Link>
         </div>
+        <p className="mt-5 text-[11px]" style={{ color: "#9A8F80" }}>
+          &copy; Darrow Code
+        </p>
       </div>
     </footer>
   );
