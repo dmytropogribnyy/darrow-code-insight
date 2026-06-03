@@ -21,8 +21,8 @@ import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/publi
 import { Route as ApiPublicJobsResendReadyEmailRouteImport } from './routes/api/public/jobs/resend-ready-email'
 import { Route as ApiPublicJobsProcessGenerationRouteImport } from './routes/api/public/jobs/process-generation'
 import { Route as ApiPublicHealthGenerationPipelineRouteImport } from './routes/api/public/health/generation-pipeline'
-import { Route as ApiPublicDebugCoreV3RunRouteImport } from './routes/api/public/debug/core-v3-run'
 import { Route as ApiPublicDebugCoreV4RunRouteImport } from './routes/api/public/debug/core-v4-run'
+import { Route as ApiPublicDebugCoreV3RunRouteImport } from './routes/api/public/debug/core-v3-run'
 import { Route as ApiPublicDebugBuildStatusRouteImport } from './routes/api/public/debug/build-status'
 import { Route as ApiPublicDebugBuildMarkerRouteImport } from './routes/api/public/debug/build-marker'
 import { Route as ApiPublicDebugAstroProbeRouteImport } from './routes/api/public/debug/astro-probe'
@@ -91,14 +91,14 @@ const ApiPublicHealthGenerationPipelineRoute =
     path: '/api/public/health/generation-pipeline',
     getParentRoute: () => rootRouteImport,
   } as any)
-const ApiPublicDebugCoreV3RunRoute = ApiPublicDebugCoreV3RunRouteImport.update({
-  id: '/api/public/debug/core-v3-run',
-  path: '/api/public/debug/core-v3-run',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const ApiPublicDebugCoreV4RunRoute = ApiPublicDebugCoreV4RunRouteImport.update({
   id: '/api/public/debug/core-v4-run',
   path: '/api/public/debug/core-v4-run',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicDebugCoreV3RunRoute = ApiPublicDebugCoreV3RunRouteImport.update({
+  id: '/api/public/debug/core-v3-run',
+  path: '/api/public/debug/core-v3-run',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiPublicDebugBuildStatusRoute =
@@ -344,18 +344,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicHealthGenerationPipelineRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/public/debug/core-v3-run': {
-      id: '/api/public/debug/core-v3-run'
-      path: '/api/public/debug/core-v3-run'
-      fullPath: '/api/public/debug/core-v3-run'
-      preLoaderRoute: typeof ApiPublicDebugCoreV3RunRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/api/public/debug/core-v4-run': {
       id: '/api/public/debug/core-v4-run'
       path: '/api/public/debug/core-v4-run'
       fullPath: '/api/public/debug/core-v4-run'
       preLoaderRoute: typeof ApiPublicDebugCoreV4RunRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/debug/core-v3-run': {
+      id: '/api/public/debug/core-v3-run'
+      path: '/api/public/debug/core-v3-run'
+      fullPath: '/api/public/debug/core-v3-run'
+      preLoaderRoute: typeof ApiPublicDebugCoreV3RunRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/public/debug/build-status': {
@@ -405,3 +405,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
