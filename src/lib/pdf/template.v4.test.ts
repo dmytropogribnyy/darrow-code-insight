@@ -352,6 +352,77 @@ describe("B4 — renderCoreV4HtmlSafe: layout invariants", () => {
   });
 });
 
+describe("B4.1 — renderCoreV4HtmlSafe: @page CSS for Puppeteer/headless rendering", () => {
+  it("includes @page rule with A4 size and zero margin (required for preferCSSPageSize:true)", () => {
+    expect(html).toContain("@page");
+    expect(html).toContain("size: A4");
+    expect(html).toContain("margin: 0");
+  });
+});
+
+describe("B4.1 — renderCoreV4HtmlSafe: client snapshot page (optional)", () => {
+  const snapshot = {
+    pattern_name: "The Structural Architect",
+    core_pattern: "A builder of reliable systems in uncertain terrain.",
+    unique_signature: "You bring depth where others bring speed.",
+    primary_strength: "Structural clarity under ambiguity.",
+    pressure_point: "Over-preparation as avoidance.",
+    best_operating_rhythm: "Long cycles: build, produce, recover.",
+    current_timing_theme: "Consolidation phase.",
+    practical_focus: "Protect depth-conditions.",
+  };
+  const htmlWithSnap = renderCoreV4HtmlSafe(FIXTURE_CORE_V4, "Alex", snapshot);
+
+  it("renders Client Snapshot heading when clientSnapshot is provided", () => {
+    expect(htmlWithSnap).toContain("Client Snapshot");
+  });
+
+  it("renders pattern_name in snapshot page", () => {
+    expect(htmlWithSnap).toContain("The Structural Architect");
+  });
+
+  it("renders core_pattern in snapshot page", () => {
+    expect(htmlWithSnap).toContain("A builder of reliable systems in uncertain terrain");
+  });
+
+  it("renders Primary Strength label", () => {
+    expect(htmlWithSnap).toContain("Primary Strength");
+  });
+
+  it("renders Pressure Point label", () => {
+    expect(htmlWithSnap).toContain("Pressure Point");
+  });
+
+  it("does NOT render Client Snapshot when no snapshot is provided (base fixture)", () => {
+    expect(html).not.toContain("Client Snapshot");
+  });
+
+  it("snapshot page uses BODY_PAGE_BREAK_BEFORE (page-break-before:always)", () => {
+    const snapIdx = htmlWithSnap.indexOf("Client Snapshot");
+    const before = htmlWithSnap.slice(Math.max(0, snapIdx - 600), snapIdx);
+    expect(before).toContain("page-break-before:always");
+  });
+});
+
+describe("B4.1 — renderCoreV4HtmlSafe: blank-page prevention (closing page)", () => {
+  it("closing page uses page-break-after:auto (not always) — no trailing blank page", () => {
+    // Find the last occurrence of the closing page style block
+    const closingIdx = html.lastIndexOf("More than a horoscope");
+    const closingSection = html.slice(Math.max(0, closingIdx - 1200), closingIdx + 100);
+    // Must have auto, must NOT have always on break-after in the same section
+    expect(closingSection).toContain("page-break-after:auto");
+    expect(closingSection).not.toContain("page-break-after:always");
+  });
+
+  it("HTML has exactly one page-break-after:always (only the cover)", () => {
+    // cover has page-break-after:always; body sections use only page-break-before:always;
+    // closing uses page-break-after:auto. This validates the cover is the only after:always.
+    const matches = html.match(/page-break-after:always/g);
+    expect(matches).not.toBeNull();
+    expect(matches!.length).toBe(1);
+  });
+});
+
 describe("B4 — renderCoreV4HtmlSafe: v3 isolation (source-level)", () => {
   // Verify the renderer file does NOT import production pipeline functions
   const templateSrc = readFileSync(new URL("./template.ts", import.meta.url), "utf8");

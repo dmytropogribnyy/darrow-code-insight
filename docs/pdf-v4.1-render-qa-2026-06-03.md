@@ -199,6 +199,180 @@ Open `outputs/pdf-v4.1-core-diagnostic.html` in a browser (Chrome/Edge recommend
 
 ---
 
+---
+
+## B4.1 — Visual Regression Patch
+
+**Date:** 2026-06-03
+**Phase:** B4.1 — PDF v4.1 Visual Regression Patch
+
+---
+
+### B4.1.1 — What was wrong with the B4 artifact
+
+| Issue | Root Cause |
+|---|---|
+| Browser date/time header at top | PDF was generated via Chrome Ctrl+P → Save as PDF, not via APITemplate or Puppeteer |
+| Document title header at top | Same — Chrome interactive print adds title header by default |
+| `file:///...` path at footer | Chrome interactive print footer |
+| Browser page counter `2/22` | Chrome interactive print footer |
+| Blank page 2 | Chrome's interactive print uses ~12.7mm top/bottom margins → printable area ~271mm. Cover section is `height:297mm` — taller than Chrome's printable area → Chromium double-breaks → blank page 2 |
+| Blank/near-empty final page | Same margin issue on closing page |
+| No `@page` CSS rule | Without `@page { size: A4; margin: 0 }`, Puppeteer/headless Chromium cannot reliably use `preferCSSPageSize: true` |
+| No Client Snapshot page | `renderCoreV4HtmlSafe` did not accept a snapshot argument; fixture had no snapshot data |
+
+**Summary:** The B4 PDF was a manual browser-print artifact, not a headless-rendered PDF. It was never passed through the correct render path (APITemplate or Puppeteer with zero margins + `displayHeaderFooter: false`).
+
+---
+
+### B4.1.2 — What was fixed
+
+| Fix | Files changed |
+|---|---|
+| Added `@page { size: A4; margin: 0 }` to `globalCss` in `renderCoreV4HtmlSafe` | `src/lib/pdf/template.ts` |
+| Added optional `clientSnapshot` parameter to `renderCoreV4HtmlSafe` | `src/lib/pdf/template.ts` |
+| Added Client Snapshot page rendering (matches v3 snapshot design) | `src/lib/pdf/template.ts` |
+| Added `V4ClientSnapshot` interface | `src/lib/pdf/template.ts` |
+| Updated fixture: client name → "Dmitry", added `FIXTURE_CLIENT_SNAPSHOT` | `src/lib/pdf/generate-v4-artifact.test.ts` |
+| Updated artifact generator to pass snapshot to renderer | `src/lib/pdf/generate-v4-artifact.test.ts` |
+| Created Puppeteer-based PDF generator script | `scripts/generate-v4-pdf.mjs` |
+| Added `generate:html` and `generate:pdf` npm scripts | `package.json` |
+| Added 10 new B4.1 tests (snapshot, @page, blank-page guard) | `src/lib/pdf/template.v4.test.ts` |
+| Installed `puppeteer-core` as devDependency | `package.json` |
+
+---
+
+### B4.1.3 — How the new PDF was generated
+
+**Step 1 — Generate HTML:**
+```bash
+npx vitest run src/lib/pdf/generate-v4-artifact.test.ts
+# or: npm run generate:html
+```
+Output: `outputs/pdf-v4.1-core-diagnostic.html`
+
+**Step 2 — Generate PDF:**
+```bash
+node scripts/generate-v4-pdf.mjs
+# or: npm run generate:pdf
+```
+Output: `outputs/pdf-v4.1-core-diagnostic.pdf`
+
+The PDF generator uses:
+- `puppeteer-core` pointing to system Chrome (`C:\Program Files\Google\Chrome\Application\chrome.exe`)
+- `page.setContent(html)` — no `file://` URL in the PDF
+- `page.pdf({ printBackground: true, displayHeaderFooter: false, preferCSSPageSize: true, margin: {0} })`
+- `pdf-lib` to stamp `Darrow Code · NN` on pages 2..N-1 after print
+
+---
+
+### B4.1.4 — B4.1 artifact summary
+
+| Property | Value |
+|---|---|
+| Path | `outputs/pdf-v4.1-core-diagnostic.pdf` |
+| Size | 134.6 KB |
+| Pages | 21 |
+| Browser date/time header | **NONE** (`displayHeaderFooter: false`) |
+| Browser title header | **NONE** |
+| `file:///` footer | **NONE** (`setContent` not file path) |
+| Browser page counter | **NONE** |
+| Page 1 | Cover (dark, gold) |
+| Page 2 | Method & Orientation (content page, not blank) |
+| Page 3 | Client Snapshot |
+| Pages 4–19 | 17 body sections (Orientation through Next Step) |
+| Page 20 | Closing pillar (Next Step continued or closing section) |
+| Page 21 | Closing dark page |
+| Trailing blank page | **NONE** |
+| Footer stamps | `Darrow Code · NN` on pages 2..20 |
+
+---
+
+### B4.1.5 — Visual baseline comparison
+
+| Dimension | Old reference PDF (render-only-2026-06-02) | Rejected B4 PDF | New B4.1 PDF |
+|---|---|---|---|
+| Browser headers/footers | None | ❌ Present | ✅ None |
+| Date/time at top | None | ❌ Present | ✅ None |
+| File path at bottom | None | ❌ Present | ✅ None |
+| Browser page counter | None | ❌ Present | ✅ None |
+| Page 2 | Method & Orientation (content) | ❌ Blank | ✅ Method & Orientation |
+| Client Snapshot | Page 3 (present) | ❌ Missing | ✅ Page 3 (present) |
+| Darrow footer numbering | `Darrow Code · NN` | ❌ Browser counter | ✅ `Darrow Code · NN` |
+| Cover | Full-bleed dark | Distorted by margins | ✅ Full-bleed dark |
+| Closing page | Full-bleed dark | Distorted + extra blank | ✅ Full-bleed dark |
+| Trailing blank | None | ❌ Present | ✅ None |
+| Content density | Rich | Degraded by blank pages | ✅ Restored |
+| Generation path | APITemplate (server) | ❌ Chrome Ctrl+P | ✅ Puppeteer (local) |
+
+**Note:** The reference PDF was used as a visual baseline only. It was not committed and no personal content was copied from it.
+
+---
+
+### B4.1.6 — Guardrail confirmations
+
+| Guardrail | Status |
+|---|---|
+| v3 production path (`renderReportHtmlSafe` v3 branch) | ✅ Untouched |
+| `system-prompt.ts` | ✅ Untouched |
+| `generateDarrowReport` production pipeline | ✅ Untouched |
+| Stripe / checkout / prices | ✅ Untouched |
+| Email sending / Resend | ✅ Untouched |
+| Supabase schema / migrations / RLS | ✅ Untouched |
+| Token / download routes | ✅ Untouched |
+| AI generation (Anthropic calls) | ✅ Not called |
+| SEO metadata / footer / favicon / brand assets | ✅ Untouched |
+| Production NOT switched to v4.1 | ✅ Confirmed |
+| Reference PDF committed | ✅ NOT committed |
+| Diagnostic PDF persisted to Supabase | ✅ NOT persisted |
+
+---
+
+### B4.1.7 — Test results
+
+| Command | Result |
+|---|---|
+| `npx tsc --noEmit` | ✅ Clean (0 errors) |
+| `npx vitest run` (all 8 test files) | ✅ 258/258 passed (+10 new B4.1 tests) |
+| `npx vitest run src/lib/pdf/` | ✅ 115/115 passed |
+| `npm run generate:html` | ✅ HTML artifact generated |
+| `npm run generate:pdf` | ✅ PDF generated (21 pages, 134.6 KB) |
+| `npm run build` | ❌ Node.js 20.12.2 < required 20.19+ (pre-existing, unrelated) |
+
+---
+
+### B4.1.8 — Known limitations
+
+- `npm run build` still fails due to Node.js 20.12.2 vs required 20.19+ (pre-existing)
+- The Puppeteer script requires system Chrome; if Chrome is not at the expected path, set `CHROME_PATH` env var
+- PDF page number stamps are applied locally (not via APITemplate); visual result is identical to production stamping
+- The `outputs/` directory is gitignored — artifacts must be regenerated locally
+- No page count validation after prune (the local script does not run `pruneBlankPages` — APITemplate's production path handles that server-side; locally the HTML produces no blank overflow pages with zero-margin Puppeteer rendering)
+
+---
+
+### B4.1.9 — Next visual QA checklist
+
+Open `outputs/pdf-v4.1-core-diagnostic.pdf` (not the HTML) for final visual check.
+
+- [ ] No date/time or file path visible on any page
+- [ ] No browser page counter visible on any page
+- [ ] Page 1: dark cover, gold diamond, "The Personal Architecture Report", "Prepared for Dmitry"
+- [ ] Page 2: Method & Orientation — content page, not blank
+- [ ] Page 3: Client Snapshot — pattern name, core pattern, 5 bullet labels
+- [ ] Pages 4+: 17 body sections with correct headings
+- [ ] Footer stamp `Darrow Code · NN` visible bottom-right on pages 2..20
+- [ ] No stamp on page 1 (cover) or page 21 (closing)
+- [ ] Page 21: dark closing page, gold diamond, italic tagline
+- [ ] No blank page after page 21
+- [ ] Protocol boxes visible (gold left border)
+- [ ] Warning Signal boxes visible (grey left border)
+- [ ] Before/After pairs visible with labels
+- [ ] Executive Summary: 6 gold-bordered blocks
+- [ ] Next Step: 4 titled pillar blocks
+
+---
+
 ## 10. Next recommended steps
 
 **A) Inspect generated HTML artifact**

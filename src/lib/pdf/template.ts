@@ -835,10 +835,27 @@ function v4NextStepSection(field: unknown): string {
   );
 }
 
+// Optional client snapshot for the v4.1 diagnostic renderer.
+// Mirrors the v3 client_snapshot shape so the same snapshot page design works.
+interface V4ClientSnapshot {
+  pattern_name: string;
+  core_pattern: string;
+  unique_signature: string;
+  primary_strength: string;
+  pressure_point: string;
+  best_operating_rhythm: string;
+  current_timing_theme: string;
+  practical_focus: string;
+}
+
 // Renders a v4.1 CORE module to a complete standalone HTML document.
 // Does NOT call AI generation, Stripe, email, or Supabase.
 // Used by the /api/public/debug/core-v4-render diagnostic route.
-export function renderCoreV4HtmlSafe(core: unknown, clientName: string): string {
+export function renderCoreV4HtmlSafe(
+  core: unknown,
+  clientName: string,
+  clientSnapshot?: V4ClientSnapshot,
+): string {
   const c = core as any;
   const name = escape((clientName || "you").trim());
   const tagline = typeof c?.cover_tagline === "string" ? escape(c.cover_tagline.trim()) : "";
@@ -898,6 +915,36 @@ export function renderCoreV4HtmlSafe(core: unknown, clientName: string): string 
       `</section>`,
   );
 
+  // Client Snapshot page (optional) — mirrors v3 snapshot design using inline styles.
+  // Positioned after Method & Orientation so page 3 carries the snapshot.
+  if (clientSnapshot) {
+    const snap = clientSnapshot;
+    const snapBullet = (label: string, body: string) =>
+      `<div style="margin:0 0 10pt;page-break-inside:avoid;break-inside:avoid;">` +
+      `<div style="font-family:Arial,Helvetica,sans-serif;color:#A8841F;font-size:9pt;letter-spacing:2pt;text-transform:uppercase;margin-bottom:3pt;">${escape(label)}</div>` +
+      `<p style="${safePStyle}margin:0;">${escape(body)}</p>` +
+      `</div>`;
+    const snapshotHtml =
+      `<div style="${HEADING_KEEP_STYLE}">` +
+      `<div style="${safeBrandStyle}">Darrow Code</div>` +
+      `<h2 style="${safeH2Style}">Client Snapshot</h2>` +
+      `<h3 style="font-family:Georgia,'Times New Roman',serif;color:#D4AF37;font-size:22pt;font-weight:400;margin:0 0 12pt;-webkit-print-color-adjust:exact;print-color-adjust:exact;overflow-wrap:break-word;word-wrap:break-word;">${escape(snap.pattern_name)}</h3>` +
+      `<p style="font-family:Georgia,'Times New Roman',serif;font-size:13pt;color:#4A402D;font-style:italic;line-height:1.55;margin:0 0 14pt;overflow-wrap:break-word;word-wrap:break-word;">${escape(snap.core_pattern)}</p>` +
+      `</div>` +
+      `<p style="${safePStyle}">${escape(snap.unique_signature)}</p>` +
+      `<div style="margin-top:14pt;border-top:0.5pt solid #D4AF37;padding-top:12pt;-webkit-print-color-adjust:exact;print-color-adjust:exact;">` +
+      snapBullet("Primary Strength", snap.primary_strength) +
+      snapBullet("Pressure Point", snap.pressure_point) +
+      snapBullet("Best Rhythm", snap.best_operating_rhythm) +
+      snapBullet("Current Timing", snap.current_timing_theme) +
+      snapBullet("Practical Focus", snap.practical_focus) +
+      `</div>` +
+      `<div style="${PROOF_STYLE}">Proof anchors drawn from your natal chart, BaZi pillars and numerology code (see sections that follow).</div>`;
+    sects.push(
+      `<section style="${BODY_PAGE_STYLE}${BODY_PAGE_BREAK_BEFORE}">${snapshotHtml}</section>`,
+    );
+  }
+
   // 17 body sections in v4 order
   for (const key of V4_BODY_KEYS) {
     const field = c?.[key];
@@ -941,7 +988,11 @@ export function renderCoreV4HtmlSafe(core: unknown, clientName: string): string 
       `</section>`,
   );
 
+  // @page rule: sets A4 size with zero margins so Puppeteer/headless Chromium
+  // (with preferCSSPageSize:true, margin:{0}) renders each 210mm×297mm section
+  // as one exact page — no browser margins, no header/footer zone offset.
   const globalCss = `
+    @page { size: A4; margin: 0; }
     * { box-sizing: border-box; }
     html, body { margin: 0; padding: 0; background: #FAF7F2; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
     body { font-family: Arial, Helvetica, sans-serif; color: #151922; overflow-wrap: break-word; word-wrap: break-word; }

@@ -1,9 +1,9 @@
-// B4 diagnostic artifact generator.
+// B4.1 diagnostic artifact generator.
 // Run standalone: npx vitest run src/lib/pdf/generate-v4-artifact.test.ts
 // Output: outputs/pdf-v4.1-core-diagnostic.html
 //
 // Writes a complete v4.1 CORE HTML document using a realistic fixture.
-// Open in browser for visual QA. Send to render_pdf route for PDF.
+// Open in browser for visual QA. For PDF, run: node scripts/generate-v4-pdf.mjs
 // NOT run as part of the standard test suite (skipped in CI).
 
 import { writeFileSync, mkdirSync } from "node:fs";
@@ -194,17 +194,36 @@ const FIXTURE_CORE_V4 = {
   },
 };
 
-describe("B4 — v4.1 HTML artifact generation", () => {
+// Client Snapshot fixture — deterministic, non-real data for visual QA.
+// Mirrors the v3 client_snapshot shape so the same snapshot page design renders.
+const FIXTURE_CLIENT_SNAPSHOT = {
+  pattern_name: "The Structural Architect",
+  core_pattern:
+    "A builder of reliable systems in uncertain terrain. Moves slowly by design, lands with authority.",
+  unique_signature:
+    "You bring depth where others bring speed. In environments that reward thoroughness, you are the one others quietly defer to — not because of status, but because your read is consistently more accurate than theirs.",
+  primary_strength:
+    "Structural clarity under ambiguity — you find the load-bearing constraints others skip.",
+  pressure_point:
+    "Over-preparation as avoidance — the loop of more research before the first real move.",
+  best_operating_rhythm:
+    "Long cycles: build quietly, produce in concentrated bursts, recover genuinely.",
+  current_timing_theme:
+    "Consolidation phase. The structural work you are doing now will carry the next expansion.",
+  practical_focus:
+    "Protect depth-conditions: uninterrupted time, real stakes, reliable daily rhythm. These are not luxuries.",
+};
+
+describe("B4.1 — v4.1 HTML artifact generation", () => {
   it("writes outputs/pdf-v4.1-core-diagnostic.html for visual review", () => {
     mkdirSync("outputs", { recursive: true });
-    const html = renderCoreV4HtmlSafe(FIXTURE_CORE_V4, "Alex");
+    const html = renderCoreV4HtmlSafe(FIXTURE_CORE_V4, "Dmitry", FIXTURE_CLIENT_SNAPSHOT);
     writeFileSync("outputs/pdf-v4.1-core-diagnostic.html", html, "utf8");
     console.log(
       `\n✓ outputs/pdf-v4.1-core-diagnostic.html (${html.length.toLocaleString()} bytes)`,
     );
     console.log("  Open in a browser to visually review the v4.1 layout.");
-    console.log("  For PDF: POST /api/public/debug/core-v4-render");
-    console.log('  { mode: "render_pdf", core_json: <your v4 data>, client_name: "Alex" }');
-    console.log("  Authorization: Bearer <JOB_DISPATCH_SECRET>");
+    console.log("  For PDF: node scripts/generate-v4-pdf.mjs");
+    console.log("  (requires outputs/pdf-v4.1-core-diagnostic.html to exist first)");
   });
 });
