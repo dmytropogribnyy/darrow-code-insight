@@ -191,24 +191,34 @@ const commonFaqs: Faq[] = [
           </p>
           <ul className="text-[12.5px] sm:text-[13px] space-y-0.5 font-mono">
             <li>
-              2 chapters — <strong>$4.99</strong>{" "}
-              <span style={{ color: "#8B6914" }}>(save $0.99)</span>
+              2 chapters &mdash; <strong>$4.99</strong>{" "}
+              <span style={{ color: "#8B6914" }}>
+                (regular separate price $5.98 &middot; you save $0.99)
+              </span>
             </li>
             <li>
-              3 chapters — <strong>$6.99</strong>{" "}
-              <span style={{ color: "#8B6914" }}>(save $1.98)</span>
+              3 chapters &mdash; <strong>$6.99</strong>{" "}
+              <span style={{ color: "#8B6914" }}>
+                (regular separate price $8.97 &middot; you save $1.98)
+              </span>
             </li>
             <li>
-              4 chapters — <strong>$8.99</strong>{" "}
-              <span style={{ color: "#8B6914" }}>(save $2.97)</span>
+              4 chapters &mdash; <strong>$8.99</strong>{" "}
+              <span style={{ color: "#8B6914" }}>
+                (regular separate price $11.96 &middot; you save $2.97)
+              </span>
             </li>
             <li>
-              5 chapters — <strong>$9.99</strong>{" "}
-              <span style={{ color: "#8B6914" }}>(save $4.96)</span>
+              5 chapters &mdash; <strong>$9.99</strong>{" "}
+              <span style={{ color: "#8B6914" }}>
+                (regular separate price $14.95 &middot; you save $4.96)
+              </span>
             </li>
             <li>
-              All 6 chapters — <strong>$10.00</strong>{" "}
-              <span style={{ color: "#8B6914" }}>(save $7.94 vs $17.94)</span>
+              All 6 chapters &mdash; <strong>$10.00</strong>{" "}
+              <span style={{ color: "#8B6914" }}>
+                (regular separate price $17.94 &middot; you save $7.94)
+              </span>
             </li>
           </ul>
         </div>
@@ -219,27 +229,37 @@ const commonFaqs: Faq[] = [
           </p>
           <ul className="text-[12.5px] sm:text-[13px] space-y-0.5 font-mono">
             <li>
-              CORE + 1 chapter — <strong>$7.98</strong>
+              CORE + 1 chapter &mdash; <strong>$7.98</strong>
             </li>
             <li>
-              CORE + 2 chapters — <strong>$9.98</strong>{" "}
-              <span style={{ color: "#8B6914" }}>(save $0.99)</span>
+              CORE + 2 chapters &mdash; <strong>$9.98</strong>{" "}
+              <span style={{ color: "#8B6914" }}>
+                (regular separate price $10.97 &middot; you save $0.99)
+              </span>
             </li>
             <li>
-              CORE + 3 chapters — <strong>$11.98</strong>{" "}
-              <span style={{ color: "#8B6914" }}>(save $1.98)</span>
+              CORE + 3 chapters &mdash; <strong>$11.98</strong>{" "}
+              <span style={{ color: "#8B6914" }}>
+                (regular separate price $13.96 &middot; you save $1.98)
+              </span>
             </li>
             <li>
-              CORE + 4 chapters — <strong>$13.98</strong>{" "}
-              <span style={{ color: "#8B6914" }}>(save $2.97)</span>
+              CORE + 4 chapters &mdash; <strong>$13.98</strong>{" "}
+              <span style={{ color: "#8B6914" }}>
+                (regular separate price $16.95 &middot; you save $2.97)
+              </span>
             </li>
             <li>
-              CORE + 5 chapters — <strong>$14.98</strong>{" "}
-              <span style={{ color: "#8B6914" }}>(save $4.96)</span>
+              CORE + 5 chapters &mdash; <strong>$14.98</strong>{" "}
+              <span style={{ color: "#8B6914" }}>
+                (regular separate price $19.94 &middot; you save $4.96)
+              </span>
             </li>
             <li>
-              <strong>CORE Complete</strong> (CORE + all 6) — <strong>$14.99</strong>{" "}
-              <span style={{ color: "#8B6914" }}>(save $7.94 vs $22.93)</span>
+              <strong>CORE Complete</strong> (CORE + all 6) &mdash; <strong>$14.99</strong>{" "}
+              <span style={{ color: "#8B6914" }}>
+                (regular separate price $22.93 &middot; you save $7.94)
+              </span>
             </li>
           </ul>
         </div>
