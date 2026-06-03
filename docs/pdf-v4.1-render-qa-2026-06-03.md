@@ -524,6 +524,79 @@ B5 hard constraints (unchanged):
 
 ---
 
+## B5.0 — Knowledge/Docs Audit + Full Diagnostic Fixture Alignment
+
+**Date:** 2026-06-03
+
+### Knowledge / docs audit — completed (no blockers)
+
+Audited the canonical v4.1 package and knowledge base. The source of truth is
+**coherent**: `SOURCE_OF_TRUTH_v4_1.md` (+ `DARROW_DOCS_AUDIT_AND_PLAN`) governs;
+`MASTER_PATTERN` + `module_spec` define structure; `CONTENT_STANDARD` is the quality
+layer; `SAMPLE_REPORT` is the gold text; `schema_template_patch` (future planning)
+confirms the renderer's field model + locked labels. The committed render-only PDF is
+an internal **visual/density baseline only**, not the structural authority.
+
+### Source-of-truth map + content contract — created
+
+- `docs/core-v4.1-source-of-truth-map.md` — canonical/reference/legacy classification,
+  per-concern authority table, **conflicts + resolutions**, and a **Data Layer /
+  FreeAstroAPI Availability Map** (Western / BaZi / numerology availability, POS
+  identity payload, future/deferred, must-not-use, proof-anchor + birth-time rules).
+- `docs/core-content-pattern-v4.1.md` — concise operational content contract
+  (structure, per-section density, anchor rules, block rules, voice, safety, locked
+  labels, B5.1 note).
+
+### All 17 diagnostic sections aligned — completed
+
+`src/lib/pdf/generate-v4-artifact.test.ts` was rewritten so **all 17 generated CORE
+sections** follow **one coherent chart** (the canonical gold-sample Dmitry frame:
+Cancer Sun/Moon/Mercury/rising · Gui Water Day Master · Bundle shape). The previous
+mixed rich/thin hybrid (4 rich Cancer sections + 13 thin generic Saturn/Earth
+placeholders) is gone. Text is transcribed from the internal gold sample
+`DARROW_CORE_SAMPLE_REPORT_v4_1.md` (safe internal diagnostic data).
+
+Conflicts resolved (see source-of-truth map §7): gold MD (Cancer ASC) wins over
+render-only PDF (Gemini ASC) as text authority; Client Snapshot = POS identity-card
+payload (supplied metadata, **not** an 18th key); Battery folds 3 recharge protocols
+into prose + 1 block per the repeated-label rule.
+
+### Artifact (B5.0)
+
+| Property | Value |
+|---|---|
+| Path | `outputs/pdf-v4.1-core-diagnostic.pdf` |
+| Pages | 25 |
+| Size | ~185 KB |
+| Rendered words (incl. snapshot/method/closing) | ~5,860 |
+| Browser headers/footers | None |
+| Blank pages | None |
+| Truncation / dropped content | None (renderer preserves full input) |
+| Proof anchors | Visible, specific, one coherent chart; ≤5 per section |
+| Repeated identical labels stacked on a page | None (each section ≤1 protocol; 3 warnings across 3 separate sections) |
+| Footer numbering | `Darrow Code · NN` (pages 2..24) |
+
+### Scope confirmations
+
+- Renderer **untouched** (it was confirmed not the bottleneck in B4.1-R).
+- Production remains **v3**, untouched. Not switched to v4.1.
+- `system-prompt.ts`, AI prompts, Stripe, checkout, prices, email, Supabase, token
+  routes, SEO/footer/favicon — **untouched**.
+- `operating_mode` remains migration-gated for production; included in the
+  **diagnostic** fixture only, consistent with the gold sample.
+- Reference PDFs not modified. No FreeAstroAPI call, no provider/runtime change.
+
+### Known limitations / next
+
+- The diagnostic represents the **full-quality case** (`birth_time_known=true`, full
+  name, BaZi available). Production must drop house/angle anchors when birth time is
+  unknown (rule recorded in the data-layer map §9.6–9.7).
+- The diagnostic renders the 17 generated sections + Cover + Method/Orientation +
+  Closing (~25pp); the full 26-page production layout (static Library + Back Cover
+  pages) is a later **template** phase, not B5.0.
+
+---
+
 ## 10. Next recommended steps
 
 **A) Inspect generated HTML artifact**
