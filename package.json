@@ -12,7 +12,8 @@
     "format": "prettier --write .",
     "test": "vitest run",
     "generate:html": "npx vitest run src/lib/pdf/generate-v4-artifact.test.ts",
-    "generate:pdf": "node scripts/generate-v4-pdf.mjs"
+    "generate:pdf": "node scripts/generate-v4-pdf.mjs",
+    "diagnostic:core-v4": "npx vitest run src/lib/ai/diagnostics/run-core-v4-diagnostic.test.ts --disable-console-intercept"
   },
   "dependencies": {
     "@cloudflare/vite-plugin": "^1.25.5",

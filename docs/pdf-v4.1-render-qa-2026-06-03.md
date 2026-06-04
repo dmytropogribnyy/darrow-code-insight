@@ -6,6 +6,20 @@
 
 ---
 
+## B5.2 — manual CORE v4 JSON diagnostic CLI (2026-06-04)
+
+- Added a manual, local CLI (`npm run diagnostic:core-v4`) that runs the **existing
+  staged** v4 path end-to-end: `generateCoreV4Split` → `CoreV4Schema` +
+  `evaluateCoreV4Structure` + `evaluateCoreV4Lengths` → `renderCoreV4HtmlSafe` (+ the
+  single PDF engine). Plan-only by default; real AI needs `CORE_V4_APPROVE_AI=1`.
+- Runs under Vitest (no new dependency); env "flags". See
+  `docs/b5.2-core-v4-manual-json-diagnostic.md`.
+- **No route added. No production switch.** `pipeline.server.ts` / `system-prompt.ts`
+  untouched; production stays v3; no FreeAstroAPI / Supabase / email / Stripe; no real
+  AI call made in this phase.
+
+---
+
 ## B5.1 — staged v4 AI prompt hardening (2026-06-04)
 
 - B5.0 diagnostic visual baseline is **accepted**.
