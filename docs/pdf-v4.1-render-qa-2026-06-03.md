@@ -6,6 +6,18 @@
 
 ---
 
+## B5.1 — staged v4 AI prompt hardening (2026-06-04)
+
+- B5.0 diagnostic visual baseline is **accepted**.
+- B5.1 audits + hardens the **staged** v4 prompt/generation contract: battery now emits
+  1 protocol block (3 methods in prose), an editorial "no stacked identical labels" rule
+  was added, and Before/After is described as 2 paired transformations rendered in
+  sequence (not grouped). See `docs/b5.1-core-v4-ai-prompt-hardening.md`.
+- **No production switch.** `pipeline.server.ts` and `system-prompt.ts` untouched; active
+  prompt stays v3; no `CORE_SCHEMA_VERSION` selector; no AI/FreeAstroAPI call.
+
+---
+
 ## B5.0-AFTER — Before/After pair order + artifact freshness (2026-06-04)
 
 - **Stale-artifact risk identified.** A previously opened PDF (`… — Alex`, 22 pp, old

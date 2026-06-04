@@ -485,3 +485,91 @@ describe("B2.2 — staged v4 split uses darrowcode_ai_system_prompt_v4_1.md", ()
     expect(systemPromptSrc).not.toContain("darrowcode_ai_system_prompt_v4_1");
   });
 });
+
+// ── 9 · B5.1 — prompt reconciliation with accepted B5.0 visual rules ──────────
+
+describe("B5.1 — battery emits one protocol block, not three", () => {
+  it("battery spec asks for 1 protocol block (methods woven into prose)", () => {
+    expect(promptMd).toContain("1 protocol block");
+    expect(promptMd).toMatch(/3 recharge methods\s+woven/i);
+  });
+
+  it("battery spec no longer requests 3 separate recharge protocols", () => {
+    expect(promptMd).not.toMatch(/3 recharge protocols/i);
+  });
+
+  it("prompt forbids stacking identical block labels (editorial rule)", () => {
+    expect(promptMd).toMatch(/do not stack multiple identical block labels/i);
+    expect(promptMd).toMatch(/at most\b.*one\b.*protocol block/i);
+  });
+});
+
+describe("B5.1 — before/after expects two paired transformations (not grouped)", () => {
+  it("describes 2 paired transformations rendered in sequence", () => {
+    expect(promptMd).toMatch(/2 paired transformations/i);
+    expect(promptMd).toMatch(/Before → After, then Before → After/);
+  });
+
+  it("does not use the grouped '2 Before / 2 After' phrasing", () => {
+    expect(promptMd).not.toMatch(/2 Before \/ 2 After/);
+  });
+
+  it("before_after section spec marks pairs as rendered in sequence, not grouped", () => {
+    expect(promptMd).toMatch(/rendered Before → After in sequence, not\s+grouped/i);
+  });
+});
+
+describe("B5.1 — data availability + safety gates present in staged prompt", () => {
+  it("gates house/angle/Ascendant claims on birth_time_known", () => {
+    expect(promptMd).toContain("birth_time_known");
+    expect(promptMd).toMatch(/no houses, angles, Ascendant/i);
+  });
+
+  it("bans invented or estimated placements (proof-tag invention ban)", () => {
+    expect(promptMd).toMatch(/no invented or estimated placements/i);
+  });
+
+  it("gates BaZi and name numerology on availability", () => {
+    expect(promptMd).toMatch(/BaZi (is )?unavailable/i);
+    expect(promptMd).toMatch(/full_name_for_numerology[^A-Za-z]+absent/i);
+  });
+
+  it("forbids medical / legal / financial advice", () => {
+    expect(promptMd).toMatch(/no medical, financial, or legal advice/i);
+  });
+
+  it("forbids lucky / healing / protection claims", () => {
+    expect(promptMd).toMatch(/no lucky \/ healing \/ protection/i);
+  });
+
+  it("forbids specific cities / astrocartography in CORE", () => {
+    expect(promptMd).toMatch(/no specific cities/i);
+    expect(promptMd).toContain("astrocartography");
+  });
+});
+
+// ── 10 · B5.1 — production paid pipeline remains v3 (no v4 wiring) ─────────────
+
+const pipelineSrc = readFileSync(
+  new URL("../generation/pipeline.server.ts", import.meta.url),
+  "utf8",
+);
+
+describe("B5.1 — production pipeline.server.ts is not wired to v4", () => {
+  it("pipeline does NOT import or call generateCoreV4Split", () => {
+    expect(pipelineSrc).not.toContain("generateCoreV4Split");
+  });
+
+  it("pipeline does NOT reference the staged v4.1 prompt", () => {
+    expect(pipelineSrc).not.toContain("darrowcode_ai_system_prompt_v4_1");
+    expect(pipelineSrc).not.toContain("DARROW_V4_SYSTEM_PROMPT");
+  });
+
+  it("pipeline still authoritatively checks for core_v3", () => {
+    expect(pipelineSrc).toContain("core_v3");
+  });
+
+  it("no CORE_SCHEMA_VERSION production env selector was added", () => {
+    expect(pipelineSrc).not.toContain("CORE_SCHEMA_VERSION");
+  });
+});

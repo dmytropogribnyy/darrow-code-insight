@@ -286,12 +286,20 @@ grounded in this client's actual pattern · never generic. Descriptive need-lang
 Warning signals: observable · non-judgmental · practical · written as the early cue
 before the problem fully lands · never pathologizing or shaming.
 
+Do not stack multiple identical block labels in one section (e.g. three `PROTOCOL`
+boxes, or two `Warning Signal` boxes). Emit **at most one** protocol block per section
+unless a second is genuinely distinct and necessary; fold any additional guidance into
+prose so the page reads as editorial, not schema-dumped.
+
 ---
 
 ## 15 · BEFORE / AFTER RULES
 
-Exactly **2 Before / 2 After** pairs. **Perception shift only** — the reality stays,
-the legibility changes. No outcome promises ("you struggle → you succeed" is banned).
+Exactly **2 paired transformations** — two `{ before, after }` pairs. Each pair is one
+before and its matching after. The template renders them **in sequence**
+(Before → After, then Before → After), so write two distinct paired shifts — not a
+batch of befores followed by a batch of afters. **Perception shift only** — the reality
+stays, the legibility changes. No outcome promises ("you struggle → you succeed" is banned).
 
 ---
 
@@ -317,7 +325,8 @@ Follow the section writing order and scenario-first rule throughout.
   "centuries apart" claims.
 - **operating_mode** (260–310) — how energy concentrates and moves; scenario, prose,
   1 protocol, proof_tags. Specialist-vs-generalist framing, human not mechanical.
-- **battery** (290–340) — recharge mechanism; prose, 3 recharge protocols, 1
+- **battery** (290–340) — recharge mechanism; prose with the **3 recharge methods
+  woven into it**, **1 protocol block** (not three separate PROTOCOL boxes), 1
   warning_signal, proof_tags. "Concrete reset ritual," not "literal reset."
 - **social_interface** (230–270) — appearance vs inner read; scenario, prose, 1
   protocol, proof_tags. Soften if birth_time_known = false (Ascendant).
@@ -340,8 +349,9 @@ Follow the section writing order and scenario-first rule throughout.
   prose, 1 protocol, proof_tags. Environmental resonance only — no cities.
 - **shadow_and_friction** (340–400) — 2 scenarios, named shadow + named loop,
   disarming protocol, warning_signal, proof_tags. Non-pathologizing.
-- **before_after** (160–200) — `before_after_pairs`: exactly 2 Before / 2 After.
-  Perception shift, no outcome promise.
+- **before_after** (160–200) — `before_after_pairs`: exactly 2 `{ before, after }`
+  pairs, each a paired transformation (rendered Before → After in sequence, not
+  grouped). Perception shift, no outcome promise.
 - **executive_summary** (340–400) — `executive_summary_blocks`: the 6 locked blocks
   in order. Decision Formula nuanced ("pause, read the signal, then verify"). Current
   Cycle = orientation only. The Next Level soft, no pricing.
