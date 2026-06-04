@@ -648,30 +648,29 @@ function v4BeforeAfterSection(field: unknown): string {
     "border-left:3pt solid #D4AF37;background:#FBF6E5;" +
     "-webkit-print-color-adjust:exact;print-color-adjust:exact;";
 
-  // Grouped layout (Darrow baseline): all "Before" framings first, then all
-  // "After" reframings — reads as a single editorial arc rather than repeated
-  // Before/After/Before/After pairs stacked on the page.
-  const beforeBoxes = pairs
+  // Pair order: each before_after_pair renders as one visual unit —
+  // Before immediately followed by its After — so the page reads as two paired
+  // transformations (Before→After, Before→After), not all Befores then all Afters.
+  // A subtle "Pattern N" eyebrow makes the pairing explicit without visual noise.
+  const patternLabelSt =
+    "font-family:Arial,Helvetica,sans-serif;color:#A8841F;font-size:8.5pt;" +
+    "letter-spacing:3pt;text-transform:uppercase;margin:0 0 6pt;";
+  const pairsHtml = pairs
     .map(
-      (p) =>
-        `<div style="${pairBoxSt}border:0.5pt solid #D4AF37;margin-bottom:10pt;">` +
+      (p, i) =>
+        `<div style="margin:16pt 0 0;page-break-inside:avoid;break-inside:avoid;">` +
+        (pairs.length > 1 ? `<div style="${patternLabelSt}">Pattern ${i + 1}</div>` : "") +
+        `<div style="${pairBoxSt}border:0.5pt solid #D4AF37;margin-bottom:8pt;">` +
         `<div style="${beforeLabelSt}">Before</div>` +
         `<p style="${safePStyle}margin:0;">${escape(p.before)}</p>` +
-        `</div>`,
-    )
-    .join("");
-  const afterBoxes = pairs
-    .map(
-      (p) =>
-        `<div style="${afterBoxSt}margin-bottom:10pt;">` +
+        `</div>` +
+        `<div style="${afterBoxSt}">` +
         `<div style="${afterLabelSt}">After</div>` +
         `<p style="${safePStyle}margin:0;">${escape(p.after)}</p>` +
+        `</div>` +
         `</div>`,
     )
     .join("");
-  const pairsHtml = beforeBoxes
-    ? `<div style="margin:14pt 0;">${beforeBoxes}${afterBoxes}</div>`
-    : "";
 
   const lastPairProof =
     pairs.length > 0 && proof && !keyInsight

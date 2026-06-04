@@ -6,6 +6,26 @@
 
 ---
 
+## B5.0-AFTER — Before/After pair order + artifact freshness (2026-06-04)
+
+- **Stale-artifact risk identified.** A previously opened PDF (`… — Alex`, 22 pp, old
+  "Preparing extensively …" text) was an external/old copy, **not** the repo's
+  `outputs/pdf-v4.1-core-diagnostic.pdf`. The repo artifact was already fresh
+  (Dmitry frame, regenerated from HEAD). Always regenerate from current HEAD —
+  `npm run generate:html` then `node scripts/generate-v4-pdf.mjs` — before inspecting.
+- **Before/After layout corrected.** The earlier grouped order (all Before, then all
+  After = B/B/A/A) was reverted to **pair order**: each `before_after_pair` renders as
+  one unit — `Before → After`, then the next `Before → After`. A subtle `Pattern N`
+  eyebrow makes the pairing explicit without visual noise. Change is in
+  `v4BeforeAfterSection` only (v4 render path).
+- Renderer change is v4-only; **production v3 path untouched**; `system-prompt.ts`,
+  AI prompts, Stripe, checkout, email, Supabase, token routes, SEO/footer/favicon
+  all untouched; production not switched to v4.1.
+- Fresh artifact: 21 pp, ~180 KB, no browser headers/footers, no blank pages,
+  `Darrow Code · NN` footer. Tests 120/120; `tsc --noEmit` clean.
+
+---
+
 ## 1. What the v4.1 render-only path does
 
 `renderCoreV4HtmlSafe(core, clientName)` — a new exported function in `src/lib/pdf/template.ts` that:

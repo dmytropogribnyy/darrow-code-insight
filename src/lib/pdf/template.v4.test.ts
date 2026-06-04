@@ -264,6 +264,24 @@ describe("B4 — renderCoreV4HtmlSafe: before_after special structure", () => {
     expect(html).toContain("Before");
     expect(html).toContain("After");
   });
+
+  it("renders pairs in sequence: BEFORE → AFTER → BEFORE → AFTER (not grouped)", () => {
+    // Pair 1 before/after, then pair 2 before/after. The first pair's AFTER must
+    // appear BEFORE the second pair's BEFORE — otherwise it is grouped B/B/A/A.
+    const b1 = html.indexOf("reacting before the full picture arrives"); // pair 1 before
+    const a1 = html.indexOf("pausing long enough for clarity"); // pair 1 after
+    const b2 = html.indexOf("mistaking speed for efficiency"); // pair 2 before
+    const a2 = html.indexOf("trusting that depth produces better results"); // pair 2 after
+    expect(b1).toBeGreaterThan(-1);
+    expect(a1).toBeGreaterThan(b1);
+    expect(b2).toBeGreaterThan(a1); // pair-1 AFTER before pair-2 BEFORE (regression guard)
+    expect(a2).toBeGreaterThan(b2);
+  });
+
+  it("labels each pair with a subtle Pattern N eyebrow when multiple pairs exist", () => {
+    expect(html).toContain("Pattern 1");
+    expect(html).toContain("Pattern 2");
+  });
 });
 
 describe("B4 — renderCoreV4HtmlSafe: executive_summary special structure", () => {
