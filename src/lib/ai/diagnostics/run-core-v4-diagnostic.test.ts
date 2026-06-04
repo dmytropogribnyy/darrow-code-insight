@@ -20,6 +20,7 @@ import { join } from "node:path";
 import { spawnSync } from "node:child_process";
 import { describe, it, expect } from "vitest";
 
+import { readFileSync } from "node:fs";
 import {
   parseDiagnosticOptionsFromEnv,
   buildPlan,
@@ -27,6 +28,7 @@ import {
   runCoreV4Validation,
   formatValidationReport,
   buildCoreV4DiagnosticClientSnapshot,
+  extractCoreModule,
 } from "./core-v4-diagnostic";
 import { buildCoreV4DiagnosticInput } from "@/lib/ai/fixtures/core-v4-diagnostic-input";
 import { generateCoreV4Split } from "@/lib/ai/core-split.server";
@@ -34,11 +36,52 @@ import { renderCoreV4HtmlSafe } from "@/lib/pdf/template";
 
 const options = parseDiagnosticOptionsFromEnv(process.env);
 
+// Renders HTML (and optionally PDF) for a CORE module — shared by the approved
+// generation path and the no-AI re-render path. Returns the written paths.
+function renderArtifacts(core: any, clientName: string): { htmlPath?: string; pdfPath?: string } {
+  if (!options.renderHtml && !options.renderPdf) return {};
+  const snapshot = buildCoreV4DiagnosticClientSnapshot(clientName, core);
+  const html = renderCoreV4HtmlSafe(core, clientName, snapshot);
+  const htmlPath = join(options.outDir, "core-v4-diagnostic.html");
+  writeFileSync(htmlPath, html, "utf8");
+  if (options.renderPdf) {
+    // Reuse the single existing PDF engine via env in/out overrides.
+    const pdfPath = join(options.outDir, "core-v4-diagnostic.pdf");
+    const r = spawnSync("node", ["scripts/generate-v4-pdf.mjs"], {
+      stdio: "inherit",
+      env: { ...process.env, CORE_V4_PDF_IN: htmlPath, CORE_V4_PDF_OUT: pdfPath },
+    });
+    expect(r.status).toBe(0);
+    return { htmlPath, pdfPath };
+  }
+  return { htmlPath };
+}
+
 describe("CORE v4 manual diagnostic CLI", () => {
   it("prints the run plan", () => {
     // eslint-disable-next-line no-console
     console.log("\n" + buildPlan(options) + "\n");
     expect(options.mode).toMatch(/^(sequential|parallel)$/);
+  });
+
+  // Re-render path: render HTML/PDF from an EXISTING report/core JSON, no AI call.
+  //   CORE_V4_FROM_JSON=<path> CORE_V4_RENDER=html,pdf npm run diagnostic:core-v4
+  it.runIf(!!options.fromJson)("re-render from existing JSON (no AI call)", () => {
+    mkdirSync(options.outDir, { recursive: true });
+    const loaded = JSON.parse(readFileSync(options.fromJson as string, "utf8"));
+    const core = extractCoreModule(loaded);
+    const validation = runCoreV4Validation(core);
+    // eslint-disable-next-line no-console
+    console.log("\n" + formatValidationReport(validation) + "\n");
+    writeFileSync(
+      join(options.outDir, "core-v4-diagnostic.validation.json"),
+      JSON.stringify(validation, null, 2),
+      "utf8",
+    );
+    const paths = renderArtifacts(core, "Dmitry");
+    // eslint-disable-next-line no-console
+    console.log("re-rendered:", paths);
+    expect(validation.schemaPass).toBe(true);
   });
 
   // Plan-only is the default. When NOT approved, assert nothing was triggered.
@@ -85,23 +128,7 @@ describe("CORE v4 manual diagnostic CLI", () => {
         "utf8",
       );
 
-      if (options.renderHtml || options.renderPdf) {
-        const snapshot = buildCoreV4DiagnosticClientSnapshot(input.clientName, core);
-        const html = renderCoreV4HtmlSafe(core, input.clientName, snapshot);
-        const htmlPath = join(options.outDir, "core-v4-diagnostic.html");
-        writeFileSync(htmlPath, html, "utf8");
-
-        if (options.renderPdf) {
-          // Reuse the single existing PDF engine (scripts/generate-v4-pdf.mjs)
-          // via env in/out overrides — no second PDF engine is created.
-          const pdfPath = join(options.outDir, "core-v4-diagnostic.pdf");
-          const r = spawnSync("node", ["scripts/generate-v4-pdf.mjs"], {
-            stdio: "inherit",
-            env: { ...process.env, CORE_V4_PDF_IN: htmlPath, CORE_V4_PDF_OUT: pdfPath },
-          });
-          expect(r.status).toBe(0);
-        }
-      }
+      renderArtifacts(core, input.clientName);
 
       expect(validation.schemaPass).toBe(true);
     },

@@ -14,6 +14,7 @@ import {
   MissingApiKeyError,
   runCoreV4Validation,
   buildCoreV4DiagnosticClientSnapshot,
+  extractCoreModule,
   CORE_V4_DIAGNOSTIC_DEFAULT_MODEL,
   CORE_V4_DIAGNOSTIC_DEFAULT_OUT_DIR,
 } from "./core-v4-diagnostic";
@@ -150,6 +151,20 @@ describe("B5.2 — runCoreV4Validation uses the staged v4 contract", () => {
     });
     expect(v.schemaPass).toBe(false);
     expect(v.checks.beforeAfterPairs).toBe(1);
+  });
+});
+
+describe("B5.2 — extractCoreModule (re-render-from-JSON path, no AI)", () => {
+  it("returns modules.CORE from a full report", () => {
+    expect(extractCoreModule({ modules: { CORE: VALID_V4_CORE } })).toBe(VALID_V4_CORE);
+  });
+  it("returns a bare core module unchanged", () => {
+    expect(extractCoreModule(VALID_V4_CORE)).toBe(VALID_V4_CORE);
+  });
+  it("fromJson option is parsed from CORE_V4_FROM_JSON env", () => {
+    const o = parseDiagnosticOptionsFromEnv({ CORE_V4_FROM_JSON: "outputs/x.json" });
+    expect(o.fromJson).toBe("outputs/x.json");
+    expect(o.approveAiCall).toBe(false); // re-render needs no AI approval
   });
 });
 

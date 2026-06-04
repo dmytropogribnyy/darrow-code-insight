@@ -286,10 +286,20 @@ grounded in this client's actual pattern · never generic. Descriptive need-lang
 Warning signals: observable · non-judgmental · practical · written as the early cue
 before the problem fully lands · never pathologizing or shaming.
 
+`warning_signals` should usually be **0–1 per section** (the single strongest early
+cue). If more than one is genuinely needed, keep each one short — the template renders
+multiple signals as a single combined "WARNING SIGNALS" block, so do not write them as
+separate dramatic call-outs. Never emit three or more.
+
 Do not stack multiple identical block labels in one section (e.g. three `PROTOCOL`
 boxes, or two `Warning Signal` boxes). Emit **at most one** protocol block per section
 unless a second is genuinely distinct and necessary; fold any additional guidance into
 prose so the page reads as editorial, not schema-dumped.
+
+**No medical / clinical wording in any block or prose.** Do not name conditions or use
+diagnostic language — no "depression", "anxiety disorder", "diagnosis", "clinical",
+"therapy", "trauma" as a clinical claim. Frame body/energy signals interpretively, e.g.
+"a signal to reduce input, not to force more output" rather than "this is not depression".
 
 ---
 

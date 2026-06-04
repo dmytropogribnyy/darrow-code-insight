@@ -32,6 +32,8 @@ export interface DiagnosticOptions {
   outDir: string;
   renderHtml: boolean;
   renderPdf: boolean;
+  /** Path to an existing report/core JSON to re-render WITHOUT any AI call. */
+  fromJson?: string;
 }
 
 // Env-driven options (the CLI runs under Vitest, which has no argv flags, so the
@@ -55,7 +57,15 @@ export function parseDiagnosticOptionsFromEnv(
     outDir: env.CORE_V4_OUT_DIR?.trim() || CORE_V4_DIAGNOSTIC_DEFAULT_OUT_DIR,
     renderHtml: render.includes("html") || render.includes("all"),
     renderPdf: render.includes("pdf") || render.includes("all"),
+    fromJson: env.CORE_V4_FROM_JSON?.trim() || undefined,
   };
+}
+
+// Accepts either a full report ({ modules: { CORE } }) or a bare CORE module and
+// returns the CORE module. Used by the re-render-from-JSON path (no AI).
+export function extractCoreModule(loaded: any): any {
+  if (loaded?.modules?.CORE) return loaded.modules.CORE;
+  return loaded;
 }
 
 export function buildPlan(options: DiagnosticOptions): string {

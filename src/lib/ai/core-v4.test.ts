@@ -555,6 +555,27 @@ const pipelineSrc = readFileSync(
   "utf8",
 );
 
+describe("B5.2 — staged prompt: warning count + non-medical wording", () => {
+  it("guides warning_signals to usually 0–1 per section", () => {
+    expect(promptMd).toMatch(/0[–-]1 per section/i);
+    expect(promptMd).toMatch(/never emit three or more/i);
+  });
+
+  it("describes the combined WARNING SIGNALS block behaviour", () => {
+    expect(promptMd).toMatch(/combined "?WARNING SIGNALS"? block/i);
+  });
+
+  it("bans medical / clinical / diagnostic wording", () => {
+    expect(promptMd).toMatch(/no medical \/ clinical wording/i);
+    expect(promptMd).toMatch(/depression/i); // named as a banned term
+    expect(promptMd).toMatch(/diagnos/i);
+  });
+
+  it("gives the preferred non-medical framing example", () => {
+    expect(promptMd).toMatch(/reduce input, not to force more output/i);
+  });
+});
+
 describe("B5.1 — production pipeline.server.ts is not wired to v4", () => {
   it("pipeline does NOT import or call generateCoreV4Split", () => {
     expect(pipelineSrc).not.toContain("generateCoreV4Split");

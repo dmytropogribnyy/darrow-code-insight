@@ -449,6 +449,70 @@ function renderWarningBlocks(warnings: string[], proof = ""): string {
     .join("\n");
 }
 
+// ── v4-only callout rendering (B5.2 PDF polish) ─────────────────────────────
+// v4 sections combine multiple protocols/warnings into ONE labelled block
+// (PROTOCOLS / WARNING SIGNALS) instead of stacking N identical-label boxes, and
+// keep break-inside:avoid (label+body never split across a page) WITHOUT
+// page-break-before:avoid (so a block that cannot fit relocates whole, instead of
+// being force-split). The v3 renderers above are intentionally left untouched.
+
+// Same as BODY_PAGE_STYLE but clones the section padding across page breaks, so
+// content carried onto a continuation page is not glued to the top edge.
+export const BODY_PAGE_STYLE_V4 =
+  BODY_PAGE_STYLE + "-webkit-box-decoration-break:clone;box-decoration-break:clone;";
+
+const PROTOCOL_BOX_V4 =
+  "border-left:3pt solid #D4AF37;padding:9pt 14pt;margin:12pt 0;background:#FBF6E5;" +
+  "-webkit-print-color-adjust:exact;print-color-adjust:exact;" +
+  "page-break-inside:avoid;break-inside:avoid;overflow-wrap:break-word;word-wrap:break-word;";
+const WARNING_BOX_V4 =
+  "border-left:3pt solid #9CA3AF;padding:9pt 14pt;margin:12pt 0;background:#F2F2F0;" +
+  "-webkit-print-color-adjust:exact;print-color-adjust:exact;" +
+  "page-break-inside:avoid;break-inside:avoid;overflow-wrap:break-word;word-wrap:break-word;";
+const CALLOUT_ITEM_STYLE = `${safePStyle}margin:0 0 8pt;`;
+
+// 0 → ""; 1 → single "Warning Signal" box; ≥2 → ONE "Warning Signals" block
+// with numbered items (never N stacked identical labels).
+function renderV4Warnings(warnings: string[], proof = ""): string {
+  if (!warnings.length) return "";
+  const evidence = proof ? `<div style="${PROOF_EVIDENCE_STYLE}">${escape(proof)}</div>` : "";
+  if (warnings.length === 1) {
+    return (
+      `<div style="${WARNING_BOX_V4}"><div style="${WARNING_LABEL}">Warning Signal</div>` +
+      `<div style="${safePStyle}">${escape(warnings[0]).replace(/\n/g, "<br/>")}</div>${evidence}</div>`
+    );
+  }
+  const items = warnings
+    .map(
+      (w, i) =>
+        `<p style="${CALLOUT_ITEM_STYLE}"><strong>${i + 1}.</strong> ${escape(w).replace(/\n/g, "<br/>")}</p>`,
+    )
+    .join("");
+  return `<div style="${WARNING_BOX_V4}"><div style="${WARNING_LABEL}">Warning Signals</div>${items}${evidence}</div>`;
+}
+
+// 0 → ""; 1 → single "PROTOCOL · Title" box; ≥2 → ONE "PROTOCOLS" block with each
+// titled sub-item (never N stacked identical PROTOCOL labels).
+function renderV4Protocols(protocols: Array<{ title: string; body: string }>, proof = ""): string {
+  if (!protocols.length) return "";
+  const evidence = proof ? `<div style="${PROOF_EVIDENCE_STYLE}">${escape(proof)}</div>` : "";
+  if (protocols.length === 1) {
+    const p = protocols[0];
+    return (
+      `<div style="${PROTOCOL_BOX_V4}"><div style="${PROTOCOL_LABEL}">PROTOCOL · ${escape(p.title)}</div>` +
+      `<div style="${safePStyle}">${escape(p.body).replace(/\n/g, "<br/>")}</div>${evidence}</div>`
+    );
+  }
+  const items = protocols
+    .map(
+      (p) =>
+        `<div style="margin:0 0 10pt;"><div style="${PROTOCOL_LABEL}">${escape(p.title)}</div>` +
+        `<div style="${safePStyle}">${escape(p.body).replace(/\n/g, "<br/>")}</div></div>`,
+    )
+    .join("");
+  return `<div style="${PROTOCOL_BOX_V4}"><div style="${PROTOCOL_LABEL}">PROTOCOLS</div>${items}${evidence}</div>`;
+}
+
 function v3Section(title: string, field: unknown): string {
   const prose = getCoreSectionProse(field);
   const { html, proof } = renderProseBlocks(prose);
@@ -602,11 +666,11 @@ function v4StandardSection(
       }</div>`
     : "";
 
-  const protocolsHtml = renderProtocolBlocks(protocols, proofForProtocol);
-  const warningsHtml = renderWarningBlocks(warnings, proofForWarning);
+  const protocolsHtml = renderV4Protocols(protocols, proofForProtocol);
+  const warningsHtml = renderV4Warnings(warnings, proofForWarning);
 
   return (
-    `<section style="${BODY_PAGE_STYLE}${BODY_PAGE_BREAK_BEFORE}">` +
+    `<section style="${BODY_PAGE_STYLE_V4}${BODY_PAGE_BREAK_BEFORE}">` +
     headerBlock +
     restHtml +
     scenarioHtml +
@@ -697,7 +761,7 @@ function v4BeforeAfterSection(field: unknown): string {
     `</div>`;
 
   return (
-    `<section style="${BODY_PAGE_STYLE}${BODY_PAGE_BREAK_BEFORE}">` +
+    `<section style="${BODY_PAGE_STYLE_V4}${BODY_PAGE_BREAK_BEFORE}">` +
     headerBlock +
     pairsHtml +
     lastPairProof +
@@ -766,7 +830,7 @@ function v4ExecutiveSummarySection(field: unknown): string {
     `</div>`;
 
   return (
-    `<section style="${BODY_PAGE_STYLE}${BODY_PAGE_BREAK_BEFORE}">` +
+    `<section style="${BODY_PAGE_STYLE_V4}${BODY_PAGE_BREAK_BEFORE}">` +
     headerBlock +
     blocksHtml +
     keyInsightHtml +
@@ -834,7 +898,7 @@ function v4NextStepSection(field: unknown): string {
     `</div>`;
 
   return (
-    `<section style="${BODY_PAGE_STYLE}${BODY_PAGE_BREAK_BEFORE}">` +
+    `<section style="${BODY_PAGE_STYLE_V4}${BODY_PAGE_BREAK_BEFORE}">` +
     headerBlock +
     pillarsHtml +
     keyInsightHtml +
@@ -949,7 +1013,7 @@ export function renderCoreV4HtmlSafe(
       `</div>` +
       `<div style="${PROOF_STYLE}">Proof anchors drawn from your natal chart, BaZi pillars and numerology code (see sections that follow).</div>`;
     sects.push(
-      `<section style="${BODY_PAGE_STYLE}${BODY_PAGE_BREAK_BEFORE}">${snapshotHtml}</section>`,
+      `<section style="${BODY_PAGE_STYLE_V4}${BODY_PAGE_BREAK_BEFORE}">${snapshotHtml}</section>`,
     );
   }
 

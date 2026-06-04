@@ -14,7 +14,12 @@
 
 import { readFileSync } from "node:fs";
 import { describe, it, expect } from "vitest";
-import { renderCoreV4HtmlSafe, BODY_PAGE_STYLE, BODY_PAGE_BREAK_BEFORE } from "./template";
+import {
+  renderCoreV4HtmlSafe,
+  BODY_PAGE_STYLE,
+  BODY_PAGE_BREAK_BEFORE,
+  BODY_PAGE_STYLE_V4,
+} from "./template";
 
 // ── Fixture: minimal but complete CoreV4 object ──────────────────────────────
 
@@ -476,6 +481,58 @@ describe("B4.1-R — per-section proof anchors (Darrow baseline style)", () => {
     };
     const out = renderCoreV4HtmlSafe(fixture, "Alex");
     expect(out).not.toContain("Data &amp; Reference Anchors");
+  });
+});
+
+describe("B5.2 — v4 warning normalization + page-break safety", () => {
+  const multiWarn = renderCoreV4HtmlSafe(
+    {
+      schema_version: "core_v4" as const,
+      cover_tagline: "x",
+      battery: {
+        prose: "battery prose",
+        warning_signals: ["First signal here.", "Second signal here.", "Third signal here."],
+      },
+    },
+    "Alex",
+  );
+  const oneWarn = renderCoreV4HtmlSafe(
+    {
+      schema_version: "core_v4" as const,
+      cover_tagline: "x",
+      battery: { prose: "p", warning_signals: ["only one signal"] },
+    },
+    "Alex",
+  );
+
+  it("renders multiple warning_signals as ONE combined 'Warning Signals' block", () => {
+    expect(multiWarn).toContain(">Warning Signals<");
+    // never N stacked singular 'Warning Signal' labels
+    expect((multiWarn.match(/>Warning Signal</g) || []).length).toBe(0);
+    expect(multiWarn).toContain("First signal here.");
+    expect(multiWarn).toContain("Second signal here.");
+    expect(multiWarn).toContain("Third signal here.");
+  });
+
+  it("renders a single warning as a singular 'Warning Signal' block", () => {
+    expect(oneWarn).toContain(">Warning Signal<");
+    expect(oneWarn).not.toContain(">Warning Signals<");
+  });
+
+  it("v4 section style clones padding across page breaks (continuation top spacing)", () => {
+    expect(BODY_PAGE_STYLE_V4).toContain("box-decoration-break:clone");
+    expect(multiWarn).toContain("box-decoration-break:clone");
+  });
+
+  it("combined warning block carries break-inside protection (label+body never split)", () => {
+    const idx = multiWarn.indexOf(">Warning Signals<");
+    const around = multiWarn.slice(Math.max(0, idx - 400), idx);
+    expect(around).toContain("break-inside:avoid");
+    expect(around).toContain("page-break-inside:avoid");
+  });
+
+  it("v3 section style is NOT changed (no clone) — production renderer untouched", () => {
+    expect(BODY_PAGE_STYLE).not.toContain("box-decoration-break");
   });
 });
 
