@@ -648,21 +648,30 @@ function v4BeforeAfterSection(field: unknown): string {
     "border-left:3pt solid #D4AF37;background:#FBF6E5;" +
     "-webkit-print-color-adjust:exact;print-color-adjust:exact;";
 
-  const pairsHtml = pairs
+  // Grouped layout (Darrow baseline): all "Before" framings first, then all
+  // "After" reframings — reads as a single editorial arc rather than repeated
+  // Before/After/Before/After pairs stacked on the page.
+  const beforeBoxes = pairs
     .map(
       (p) =>
-        `<div style="margin:14pt 0;page-break-inside:avoid;break-inside:avoid;">` +
-        `<div style="${pairBoxSt}border:0.5pt solid #D4AF37;">` +
+        `<div style="${pairBoxSt}border:0.5pt solid #D4AF37;margin-bottom:10pt;">` +
         `<div style="${beforeLabelSt}">Before</div>` +
         `<p style="${safePStyle}margin:0;">${escape(p.before)}</p>` +
-        `</div>` +
-        `<div style="${afterBoxSt}">` +
-        `<div style="${afterLabelSt}">After</div>` +
-        `<p style="${safePStyle}margin:0;">${escape(p.after)}</p>` +
-        `</div>` +
         `</div>`,
     )
     .join("");
+  const afterBoxes = pairs
+    .map(
+      (p) =>
+        `<div style="${afterBoxSt}margin-bottom:10pt;">` +
+        `<div style="${afterLabelSt}">After</div>` +
+        `<p style="${safePStyle}margin:0;">${escape(p.after)}</p>` +
+        `</div>`,
+    )
+    .join("");
+  const pairsHtml = beforeBoxes
+    ? `<div style="margin:14pt 0;">${beforeBoxes}${afterBoxes}</div>`
+    : "";
 
   const lastPairProof =
     pairs.length > 0 && proof && !keyInsight
