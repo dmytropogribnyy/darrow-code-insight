@@ -144,19 +144,25 @@ function LandingPage() {
           </p>
 
           {/* Quote box */}
-          <div className="mt-8 sm:mt-9 max-w-[520px] mx-auto text-left bg-white/[0.05] border-l-[3px] border-gold pl-6 pr-5 py-5 sm:py-6 rounded-r-[8px]">
-            <p
-              className="font-serif italic text-paper leading-[1.55]"
-              style={{ fontSize: "clamp(18px, 2vw, 20px)" }}
+          <figure className="mt-8 sm:mt-9 max-w-[560px] mx-auto text-left bg-white/[0.06] border-l-[3px] border-gold pl-7 pr-6 py-6 sm:py-7 rounded-r-[10px]">
+            <blockquote
+              className="font-serif text-paper leading-[1.6]"
+              style={{ fontSize: "clamp(19px, 2.1vw, 22px)" }}
             >
-              "One astrology tradition shows part of the picture.
+              <span className="text-gold/70 mr-1 align-[-0.1em] text-[1.4em] leading-none font-serif">
+                “
+              </span>
+              One astrology tradition shows part of the picture.
               <br />
-              <span className="not-italic font-medium text-gold">
+              <span className="font-semibold text-gold">
                 Darrow Code reads the full pattern.
               </span>
-              "
-            </p>
-          </div>
+              <span className="text-gold/70 ml-1 align-[-0.1em] text-[1.4em] leading-none font-serif">
+                ”
+              </span>
+            </blockquote>
+          </figure>
+
 
 
           {/* Method line */}
