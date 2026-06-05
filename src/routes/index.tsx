@@ -121,8 +121,11 @@ function LandingPage() {
 
           {/* Tagline */}
           <p
-            className="font-serif italic mt-5 text-gold leading-[1.3]"
-            style={{ fontSize: "clamp(18px, 2.6vw, 22px)" }}
+            className="font-serif italic mt-6 leading-[1.4] tracking-[0.005em]"
+            style={{
+              fontSize: "clamp(20px, 2.8vw, 26px)",
+              color: "#E6C35A",
+            }}
           >
             More than a horoscope.
             <br />
@@ -141,13 +144,20 @@ function LandingPage() {
           </p>
 
           {/* Quote box */}
-          <div className="mt-7 sm:mt-8 max-w-[480px] mx-auto text-left bg-white/[0.04] border-l-2 border-gold/80 pl-5 pr-4 py-4 rounded-r-[6px]">
-            <p className="font-serif italic text-light-grey text-[17px] sm:text-[18px] leading-[1.5]">
+          <div className="mt-8 sm:mt-9 max-w-[520px] mx-auto text-left bg-white/[0.05] border-l-[3px] border-gold pl-6 pr-5 py-5 sm:py-6 rounded-r-[8px]">
+            <p
+              className="font-serif italic text-paper leading-[1.55]"
+              style={{ fontSize: "clamp(18px, 2vw, 20px)" }}
+            >
               "One astrology tradition shows part of the picture.
               <br />
-              <span className="not-italic text-gold">Darrow Code reads the full pattern.</span>"
+              <span className="not-italic font-medium text-gold">
+                Darrow Code reads the full pattern.
+              </span>
+              "
             </p>
           </div>
+
 
           {/* Method line */}
           <p
