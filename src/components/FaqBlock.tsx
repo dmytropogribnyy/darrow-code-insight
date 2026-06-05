@@ -286,6 +286,16 @@ const commonFaqs: Faq[] = [
     answer:
       "Absolutely. Once generated, your report is delivered as a multi-page PDF. If you choose a bundle, each Focused Chapter is delivered as its own PDF. You can download, print, or share them however you like. They are yours forever with no subscription required.",
   },
+  {
+    question: "Is payment secure?",
+    answer:
+      "Yes. Payments are processed securely by Stripe. Darrow Code does not store your full card details.",
+  },
+  {
+    question: "What if something goes wrong with my report?",
+    answer:
+      "If a technical issue prevents your report from being generated or delivered, contact us with your report reference or the email used at checkout. We’ll check the order and re-generate or re-deliver the purchased report at no additional charge.",
+  },
 ];
 
 export function FaqBlock() {
