@@ -4,7 +4,7 @@
 
 @custom-variant dark (&:is(.dark *));
 
-@import url("https://fonts.googleapis.com/css2?family=Cormorant+SC:wght@400;500&family=Cormorant+Garamond:wght@400;500;600&family=Inter:wght@400;500;600&display=swap");
+/* Fonts are loaded via <link> tags in src/routes/__root.tsx (Lightning CSS cannot resolve remote @import). */
 
 /*
  * Darrow Code design tokens — LOCKED palette.
