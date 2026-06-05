@@ -50,6 +50,7 @@ interface AddonModulePayload {
 
 const COVER = `width:210mm;height:297mm;padding:0 30mm;background:#0A0F1E;color:#F6F4EF;-webkit-print-color-adjust:exact;print-color-adjust:exact;box-sizing:border-box;text-align:center;display:flex;flex-direction:column;justify-content:center;align-items:center;overflow:hidden;page-break-after:always;break-after:page;`;
 const BODY_PAGE = `width:210mm;min-height:297mm;padding:24mm 26mm;background:#FAF7F2;color:#151922;box-sizing:border-box;page-break-before:always;break-before:page;`;
+const CLOSING = `width:210mm;height:297mm;padding:0 30mm;background:#0A0F1E;color:#F6F4EF;-webkit-print-color-adjust:exact;print-color-adjust:exact;box-sizing:border-box;text-align:center;display:flex;flex-direction:column;justify-content:center;align-items:center;overflow:hidden;page-break-before:always;break-before:page;page-break-after:auto;break-after:auto;`;
 const GOLD_MARK = `<div style="width:34pt;height:34pt;margin:0 auto 26pt;transform:rotate(45deg);background:#D4AF37;-webkit-print-color-adjust:exact;print-color-adjust:exact;"></div>`;
 const BRAND = `font-family:Arial,Helvetica,sans-serif;color:#D4AF37;font-size:11pt;letter-spacing:6pt;text-transform:uppercase;`;
 const H2 = `font-family:Georgia,'Times New Roman',serif;color:#4A402D;font-size:20pt;font-weight:400;margin:0 0 12pt;`;
@@ -84,6 +85,22 @@ function renderSection(title: string, sec: AddonSection): string {
   return `<section style="${BODY_PAGE}">${parts.join("\n")}</section>`;
 }
 
+// Warm dark closing/integration page (sample DNA: a calm integration note, not a sell).
+function renderClosing(sec: AddonSection): string {
+  const body = escape(sec.prose || sec.scenario || sec.opening_line || "");
+  const insight = sec.key_insight ? escape(sec.key_insight) : "";
+  return (
+    `<section style="${CLOSING}">${GOLD_MARK}` +
+    `<div style="${BRAND}margin-bottom:24pt;">Darrow Code</div>` +
+    `<h2 style="font-family:Georgia,'Times New Roman',serif;color:#D4AF37;font-size:22pt;font-weight:400;margin:0 0 16pt;">Integration</h2>` +
+    `<p style="font-family:Georgia,'Times New Roman',serif;font-style:italic;color:#E5E7EB;font-size:14pt;margin:0 auto;max-width:120mm;line-height:1.6;">${body}</p>` +
+    (insight
+      ? `<p style="font-family:Georgia,'Times New Roman',serif;color:#F6F4EF;font-size:13pt;margin:18pt auto 0;max-width:120mm;line-height:1.55;">${insight}</p>`
+      : "") +
+    `</section>`
+  );
+}
+
 export function renderAddonModuleHtmlSafe(
   module: ModuleCode,
   payload: AddonModulePayload,
@@ -109,12 +126,17 @@ export function renderAddonModuleHtmlSafe(
       `</section>`,
   );
 
-  // Sections (in contract order; only render keys that have content)
+  // Sections (in contract order; only render keys that have content).
+  // closing_integration renders as a warm dark closing page (sample DNA).
   let rendered = 0;
   for (const k of keys) {
     const sec = sections[k];
     if (!sec || !(sec.prose || sec.scenario || sec.opening_line)) continue;
-    out.push(renderSection(humanize(k), sec));
+    if (k === "closing_integration") {
+      out.push(renderClosing(sec));
+    } else {
+      out.push(renderSection(humanize(k), sec));
+    }
     rendered++;
   }
   if (rendered === 0) {

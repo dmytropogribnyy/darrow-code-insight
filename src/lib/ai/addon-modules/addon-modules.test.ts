@@ -83,7 +83,7 @@ describe("buildAddonModulePrompt — consumes the material packet, not raw chart
     const prompt = buildAddonModulePrompt("LOVE", ctx, { first_name: "Alex" });
     expect(prompt).toMatch(/Venus in Taurus/); // an allowed anchor candidate
     expect(prompt).toMatch(/Japanese astrology/); // forbidden-claims list
-    expect(prompt).toMatch(/attraction_pattern/); // section structure
+    expect(prompt).toMatch(/relational_archetype/); // section structure (sample DNA)
     // Must NOT embed a raw DarrowChartData JSON dump.
     expect(prompt).not.toMatch(/"natal"\s*:/);
     expect(prompt).not.toMatch(/"schema_version"\s*:\s*"1\.0"/);

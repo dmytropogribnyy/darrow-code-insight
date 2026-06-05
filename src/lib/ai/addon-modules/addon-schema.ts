@@ -20,37 +20,68 @@ export const AddonSectionSchema = z
   })
   .strict();
 
-// Section keys per add-on module (from the contracts in module-content-contracts.md).
+// Section keys per add-on module. Structure DNA from the old Darrow samples
+// (orientation -> single archetype -> domain sections -> closing integration), kept
+// strictly within module-content-contracts.md + the do-not-claim registry.
+// See docs/reference/addon-samples/ADDON_SAMPLE_SYNTHESIS.md.
 export const ADDON_SECTION_KEYS: Record<ModuleCode, string[]> = {
+  // DYAD CODE (solo) — fortress/sanctuary; NO synastry/compatibility.
   LOVE: [
-    "attraction_pattern",
+    "orientation",
+    "relational_archetype",
+    "love_style",
     "emotional_needs",
-    "intimacy_style",
     "conflict_loop",
-    "relational_blind_spot",
+    "intimacy_protocol",
+    "closing_integration",
   ],
+  // Vector Code — System Architect; NO investment/income advice.
   MONEY: [
-    "earning_pattern",
-    "value_and_work_style",
+    "orientation",
+    "authority_archetype",
+    "income_engine",
+    "value_and_leverage",
     "money_friction",
-    "risk_and_decision",
-    "discipline_structure",
+    "negotiation_protocol",
+    "closing_integration",
   ],
-  BODY: ["stress_pattern", "energy_leakage", "overload_signals", "recovery_style"],
+  // VITAL CODE — capacity vs motivation, battery; NON-medical.
+  BODY: [
+    "orientation",
+    "capacity_archetype",
+    "energy_battery",
+    "stress_pressure_valve",
+    "recovery_and_sleep",
+    "practical_protocol",
+    "closing_integration",
+  ],
+  // Solar Architect — terrain/weather map; NO guaranteed predictions.
   YEAR: [
-    "yearly_theme",
-    "pressure_windows",
-    "opportunity_windows",
-    "seasonal_focus",
-    "decision_rhythm",
+    "orientation",
+    "annual_theme",
+    "timing_phases",
+    "green_and_pressure_zones",
+    "domain_timing",
+    "strategic_summary",
+    "closing_integration",
   ],
-  STYLE: ["aesthetic_identity", "visibility", "texture_material", "presentation_pattern"],
+  // Aesthetics Code — visual signature/interface; colors/stones GATED.
+  STYLE: [
+    "orientation",
+    "aesthetic_archetype",
+    "material_and_texture",
+    "silhouette_and_presence",
+    "presentation_interface",
+    "closing_integration",
+  ],
+  // Place Code — spatial alignment; NO astrocartography / city names.
   PLACE: [
-    "environment_pattern",
+    "orientation",
+    "environment_archetype",
     "what_regulates",
     "what_drains",
-    "home_workspace_fit",
-    "relocation_reflection",
+    "space_protocol",
+    "closing_integration",
   ],
 };
 
