@@ -25,6 +25,19 @@ The summary shows: client name · product · `report_ref`, email, modules, **pay
 **generation status**, **PDF exists**, **download link active**, **email sent (+ when)**,
 **attempt count**, **last error**, Stripe session, and a **recommended action**.
 
+### Applying the `report_ref` migration & local verification
+
+The migration `supabase/migrations/20260605193000_report_ref_support.sql` is applied by the
+**Supabase / Lovable deploy pipeline** — this repo has **no linked Supabase CLI**, so do not
+force a CLI `db push`. After deploy, confirm in the Supabase dashboard: `reports.report_ref`
+column, unique index `reports_report_ref_key`, function `set_report_ref()` + trigger
+`trg_set_report_ref`, and that any existing rows are backfilled (`DC-YYYYMMDD-####`).
+
+To run `support:report` **locally** you also need **`SUPABASE_SERVICE_ROLE_KEY`** in
+`.env.local` (service-role secret; `SUPABASE_URL` already ships in the tracked `.env`).
+Without it the CLI prints usage and a real lookup fails fast with
+`SUPABASE_SERVICE_ROLE_KEY is required`. Never commit this key.
+
 ### Recommended-action logic
 
 | Facts | Action |
