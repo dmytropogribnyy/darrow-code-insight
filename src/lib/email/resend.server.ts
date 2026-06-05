@@ -30,7 +30,7 @@ export async function sendEmail(args: SendEmailArgs): Promise<{ id?: string }> {
       to: Array.isArray(args.to) ? args.to : [args.to],
       subject: args.subject,
       html: args.html,
-      reply_to: args.reply_to,
+      reply_to: args.reply_to ?? process.env.EMAIL_REPLY_TO,
     }),
   });
   if (!res.ok) {
