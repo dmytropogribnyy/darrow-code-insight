@@ -19,8 +19,8 @@ function ContactPage() {
         </h1>
         <p className="mt-6 text-[14px] text-charcoal leading-relaxed">
           For questions, refunds on failed generations, or data deletion requests, email us at{" "}
-          <a className="text-gold underline underline-offset-4" href="mailto:hello@darrowcode.com">
-            hello@darrowcode.com
+          <a className="text-gold underline underline-offset-4" href="mailto:thedarrowcode@gmail.com">
+            thedarrowcode@gmail.com
           </a>
           .
         </p>
