@@ -31,7 +31,7 @@ export function SiteHeader({ onDark = false }: { onDark?: boolean }) {
             style={{ fontSize: "clamp(14px, 1.4vw, 16px)", letterSpacing: "0.04em" }}
           >
             <span className="hidden md:inline">
-              Launch drop · Your birth code, decoded for less than coffee
+              Launch drop · Your birth code, decoded for less than a latte
             </span>
             <span className="md:hidden text-gold/90">Birth code decoded</span>
           </span>

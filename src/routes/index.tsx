@@ -231,6 +231,21 @@ function LandingPage() {
               </li>
             </ul>
 
+            {/* Primary hero CTA — scrolls to product selector / intake */}
+            <div className="mt-7 sm:mt-8 flex justify-center">
+              <button
+                type="button"
+                onClick={() =>
+                  selectorRef.current?.scrollIntoView({ behavior: "smooth", block: "start" })
+                }
+                className="inline-flex items-center justify-center font-sans font-semibold rounded-full px-7 py-3.5 sm:px-8 sm:py-4 bg-gold text-navy hover:bg-[#E6C35A] transition-colors duration-200 shadow-[0_8px_24px_-10px_rgba(212,175,55,0.55)]"
+                style={{ fontSize: "clamp(15px, 1.4vw, 16.5px)", letterSpacing: "0.02em" }}
+                aria-label="Scroll to choose your report and enter birth data"
+              >
+                Unlock My Birth Code <span className="ml-2">→</span>
+              </button>
+            </div>
+
 
           </div>
         </div>
