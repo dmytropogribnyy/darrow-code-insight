@@ -195,6 +195,19 @@ function LandingPage() {
                 </span>
               ))}
             </div>
+            {/* Price line — all tiers visible */}
+            <p
+              className="mt-4 sm:mt-5 text-center font-sans text-light-grey/85 leading-relaxed"
+              style={{ fontSize: "clamp(12.5px, 1.15vw, 14px)" }}
+            >
+              <span className="text-gold font-semibold">CORE $4.99</span>
+              <span className="text-[#6B6B6B] mx-2">·</span>
+              <span className="whitespace-nowrap">Focused chapters $2.99</span>
+              <span className="text-[#6B6B6B] mx-2">·</span>
+              <span className="text-gold font-semibold whitespace-nowrap">
+                CORE Complete $14.99
+              </span>
+            </p>
           </div>
         </div>
 
