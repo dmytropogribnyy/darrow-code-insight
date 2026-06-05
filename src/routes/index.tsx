@@ -175,7 +175,7 @@ function LandingPage() {
 
           {/* Focused chapters teaser */}
           <div className="mt-6 sm:mt-8 max-w-[560px] mx-auto">
-            <p className="text-center font-sans text-[15px] sm:text-[16px] md:text-[17px] text-light-grey leading-[1.6]">
+            <p className="text-center font-sans text-[16px] sm:text-[17px] md:text-[18px] text-light-grey leading-[1.65]">
               Start with{" "}
               <button
                 type="button"
@@ -185,7 +185,9 @@ function LandingPage() {
               >
                 CORE
               </button>
-              , add focused chapters, or get{" "}
+              . Add the chapters you want.
+              <br />
+              Or unlock{" "}
               <button
                 type="button"
                 onClick={() => jumpToChapter("COMPLETE")}
@@ -194,9 +196,9 @@ function LandingPage() {
               >
                 CORE Complete
               </button>
-              :
+              .
             </p>
-            <div className="mt-3 flex flex-wrap justify-center gap-x-3 gap-y-1.5">
+            <div className="mt-4 flex flex-wrap justify-center gap-x-3 gap-y-1.5">
               {["LOVE", "MONEY", "BODY", "YEAR", "STYLE", "PLACE"].map((m, i) => (
                 <span key={m} className="flex items-center gap-x-3">
                   <button
@@ -218,12 +220,13 @@ function LandingPage() {
             >
               <span className="text-gold font-semibold">CORE $4.99</span>
               <span className="text-[#6B6B6B] mx-2.5">·</span>
-              <span className="whitespace-nowrap">Focused chapters $2.99</span>
+              <span className="whitespace-nowrap">Chapters $2.99 each</span>
               <span className="text-[#6B6B6B] mx-2.5">·</span>
               <span className="text-gold font-semibold whitespace-nowrap">
                 CORE Complete $14.99
               </span>
             </p>
+
           </div>
         </div>
 
