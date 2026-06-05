@@ -12,8 +12,10 @@ import { summarizeAvailability } from "./availability";
 import type { AuditModule } from "./synthetic-cases";
 
 export type MaterialStatus =
-  | "implemented_verified" // deterministic + tested in code
-  | "implemented_unverified" // code path exists, real provider data not yet verified (DATA-AUDIT-1)
+  | "implemented_verified" // deterministic + tested in code (e.g. numerology)
+  | "implemented_unverified" // live provider data: availability VERIFIED via the 2026-06-06
+  //                            approved run, but no deterministic *coded* interpretive dictionary
+  //                            (interpretation comes from the AI + prompt rules)
   | "doc_only_planned" // exists only as a docs/knowledge policy file, not wired to code/prompts
   | "not_implemented" // no source at all
   | "do_not_claim"; // must NOT be presented publicly / in reports yet
@@ -44,7 +46,7 @@ export const MATERIAL_CATEGORIES: MaterialCategory[] = [
     label: "Natal placements/aspects",
     status: "implemented_unverified",
     source: "FreeAstroAPI /natal (provider)",
-    note: "Critical endpoint; real field reliability pending DATA-AUDIT-1.",
+    note: "Verified 2026-06-06: 14 planets, houses (birth-time), aspects, stelliums, dignity, confidence.",
   },
   {
     key: "houses_angles",
@@ -86,7 +88,7 @@ export const MATERIAL_CATEGORIES: MaterialCategory[] = [
     label: "Transits",
     status: "implemented_unverified",
     source: "FreeAstroAPI /transits",
-    note: "Graceful; YEAR primary; density unverified.",
+    note: "Verified 2026-06-06: 42-49 aspects, 18-21 high-priority slow-movers — ample for YEAR.",
   },
   {
     key: "solar_return",

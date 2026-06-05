@@ -1,15 +1,27 @@
 # Material Assembly Readiness
 
-**Phase:** DATA-AUDIT-1 (docs + diagnostic tooling) · **Updated:** 2026-06-06 · **Run mode:** plan-only
+**Phase:** DATA-AUDIT-1 (docs + diagnostic tooling) · **Updated:** 2026-06-06 · **Run mode:** approved run executed ✅
 
 Can the system, for **every new paid report**, reliably assemble the full material pack
 (raw data + derived data + interpretive dictionaries + availability flags + fallbacks +
 safety constraints) **without inventing unsupported material**? This doc answers that.
 
-> **Status of this audit:** the FreeAstroAPI availability run is **plan-only** — `FREEASTROAPI_KEY`
-> is not available locally, so no approved provider run was executed. Field reliability marked
-> *unverified* stays unverified until an approved run:
-> `FREEASTROAPI_AUDIT_APPROVE=1 ASTRO_PROVIDER=freeastroapi npm run audit:freeastroapi`.
+> **Status of this audit:** an **approved FreeAstroAPI run was executed on 2026-06-06** against
+> 5 synthetic cases (A–E). **All endpoints returned rich, reliable data** and every availability
+> rule held. The provider **data layer is verified**. The remaining gap is the **material /
+> interpretive-dictionary layer** (below), not the raw data.
+>
+> **Verified availability (synthetic cases A–E):**
+> - natal: 14 planets, 12 houses (birth-time), ASC/MC/angles, 26–30 aspects, **stelliums +
+>   dignity + confidence present**.
+> - numerology: Life Path/Birth Day/Personal Year always; name numerology only with full name (Case C off).
+> - bazi: day_master, pillars, elements%, professional, current_luck_cycle, 5–10 stars, 2–6
+>   interactions — and `available:false`/`missing_bazi_sex` when sex omitted (Case D).
+> - transits: 42–49 aspects, 18–21 high-priority slow-movers. solar_return: 11 planets, angles,
+>   25 natal aspects, **angularity present**. bazi_flow: annual + **12 monthly pillars**.
+> - gating verified: no birth time → houses=0, hour pillar `low`/unused, flow `reduced` (Case B).
+>
+> Re-run anytime: `FREEASTROAPI_AUDIT_APPROVE=1 ASTRO_PROVIDER=freeastroapi npm run audit:freeastroapi`.
 
 > ⚠️ **Headline finding:** the only **coded** interpretive dictionary is
 > `src/lib/numerology/numerology-meanings.ts`. All other interpretation
@@ -23,8 +35,8 @@ safety constraints) **without inventing unsupported material**? This doc answers
 ## 1 · What material exists today
 
 - **Deterministic provider data** (FreeAstroAPI): natal, houses/angles (birth-time gated),
-  aspects, transits, solar_return, moon_phase, bazi, bazi_flow — *code path exists, real-field
-  reliability unverified*.
+  aspects, transits, solar_return, moon_phase, bazi, bazi_flow — **verified reliable via the
+  2026-06-06 approved run** (all endpoints returned the expected structured fields).
 - **Derived/computed (internal):** Life Path, Birth Day Number, Personal Year, name numerology
   (when full name present) + their meanings (`numerology-meanings.ts`) — *implemented + verified*.
 - **Availability flags:** `birth_time_source`, `bazi.available`, `hour_pillar_*`,

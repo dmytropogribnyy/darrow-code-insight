@@ -193,25 +193,28 @@ Legend: ✅ primary · ➕ supporting · ⛔ gated-off when unavailable.
 
 ## DATA-AUDIT-1 results summary
 
-**Run mode: plan-only** — no approved FreeAstroAPI run executed (`FREEASTROAPI_KEY` not
-available locally). To verify on real data:
-`FREEASTROAPI_AUDIT_APPROVE=1 ASTRO_PROVIDER=freeastroapi npm run audit:freeastroapi`
-(synthetic inputs only; writes sanitized summaries to gitignored `outputs/freeastroapi-audit/`).
+**Run mode: APPROVED run executed 2026-06-06** — `npm run audit:freeastroapi` with
+`FREEASTROAPI_AUDIT_APPROVE=1 ASTRO_PROVIDER=freeastroapi` against 5 synthetic cases (A–E).
+All endpoints succeeded; sanitized matrix in gitignored `outputs/freeastroapi-audit/`.
 
-- **Confirmed reliable (deterministic, in code):** internal numerology — Life Path, Birth Day,
-  Personal Year, name numerology + meanings (`numerology.ts`, `numerology-meanings.ts`).
+- **Confirmed reliable — provider (now VERIFIED, all cases):** natal (14 planets, 12 houses
+  with birth time, ASC/MC/`angles_details`, 26–30 aspects, **`stelliums` + `dignity` +
+  `confidence` present**); bazi (`day_master`, `pillars`, `elements.percentages`,
+  `professional`, `current_luck_cycle`, 5–10 `stars`, 2–6 `interactions`); transits (42–49
+  aspects, 18–21 `high_priority`); solar_return (11 planets, `angles_details`, 25 natal
+  aspects, **`angularity` present**); moon_phase (phase/zodiac/forecast); bazi_flow
+  (`annual_pillar` + **12 `monthly_pillars`**, interactions, stars).
+- **Confirmed reliable — internal:** numerology Life Path / Birth Day / Personal Year always;
+  name numerology + meanings only with full name (`numerology.ts`, `numerology-meanings.ts`).
+- **Gating VERIFIED on real data:** no birth time → houses=0, ASC/MC absent,
+  `hour_pillar_confidence=low` / not used, bazi_flow `time_confidence=reduced` (Case B); no full
+  name → name numerology + expression/soul_urge/personality off (Case C); missing `bazi_sex` →
+  `bazi.available=false` + `missing_bazi_sex`, bazi_flow off (Case D); southern hemisphere stable (Case E).
 - **Confirmed unavailable by design:** astrocartography/city guidance, Japanese astrology,
   compatibility/synastry — **not implemented**, must not be claimed. Colors/stones — doc-only +
   **gated off** in the v4 prompt → do not claim.
-- **Still uncertain (unverified provider fields):** natal `stelliums`/`angles_details`/`dignity`/
-  `confidence`; bazi `professional`/`elements.percentages`/`current_luck_cycle`/`stars`/`interactions`;
-  solar_return `angularity`/`angles_details`; transits `high_priority` density; bazi_flow
-  `annual_pillar`/`monthly_pillars` vs `usable:false`. All gated as `implemented_unverified`.
-- **Per-module impact:** house-based layers (LOVE 5/7H, MONEY 2/6/8/10H, BODY 6H, PLACE IC/4H,
-  STYLE ASC) suppress without birth time; BaZi layers suppress when `bazi.available=false`
-  (incl. missing `bazi_sex`); YEAR degrades to Personal Year only when transits + solar return
-  are both unavailable. Encoded in `moduleImpact()`.
-- **Material assembly readiness:** only numerology has a coded interpretive dictionary; all other
+- **Material assembly readiness:** the **raw-data layer is verified**; the gap is the
+  **interpretive-dictionary layer** — only numerology has a coded dictionary; all other
   interpretation is AI-from-training + prompt rules, or doc-only in `docs/knowledge/`. See
   **[`material-assembly-readiness.md`](material-assembly-readiness.md)**.
 

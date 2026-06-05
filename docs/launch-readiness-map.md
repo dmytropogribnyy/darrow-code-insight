@@ -117,11 +117,13 @@ Each still needs:
   numerology when no full name, Personal-Year mismatch.
 - **Not yet done:** full positive placement-matching (asserting every generated placement
   matches the chart) and all-module data validation.
-- FreeAstroAPI output must be **verified on real data** before final production claims and
-  proof anchors.
+- FreeAstroAPI output **verified on real data (2026-06-06 approved run, cases A–E)** — all
+  endpoints returned rich structured fields; availability gating held. `FREEASTROAPI_KEY` +
+  `ASTRO_PROVIDER=freeastroapi` confirmed set in Lovable (production).
 
-Status: 🟡 used in production; availability audit pending.
-→ tracked as **DATA-AUDIT-1** (provider field availability) + **ANCHOR-AUDIT-1** (all-module proof/data validation).
+Status: 🟢 provider/data layer verified. Remaining gap = interpretive-dictionary layer
+(only numerology is coded) + per-module anchor validation.
+→ **DATA-AUDIT-1 provider run DONE**; **ANCHOR-AUDIT-1** (all-module proof/data validation) still open.
 
 ---
 
@@ -168,11 +170,11 @@ Status: 🟡 visibility yes; one-command recovery actions no.
 - Verify FreeAstroAPI / provider output on real diagnostic data.
 
 **Material assembly (P0 for full-module launch):**
-- The only **coded** interpretive dictionary is `numerology-meanings.ts`; all other
-  interpretation is AI-from-training + prompt rules (or doc-only in `docs/knowledge/`). All
-  modules must **not** be claimed final until material packs + provider availability +
-  module contracts are complete. DATA-AUDIT-1 ran **plan-only** (no `FREEASTROAPI_KEY` locally);
-  an approved run is still required. See [`material-assembly-readiness.md`](material-assembly-readiness.md).
+- Provider/raw-data layer is **verified** (DATA-AUDIT-1 approved run, 2026-06-06). The remaining
+  blocker is the **interpretive-dictionary layer**: the only **coded** dictionary is
+  `numerology-meanings.ts`; all other interpretation is AI-from-training + prompt rules (or
+  doc-only in `docs/knowledge/`). All modules must **not** be claimed final until material packs +
+  module contracts are complete. See [`material-assembly-readiness.md`](material-assembly-readiness.md).
 
 **P1 — needed soon after / for quality:**
 - Add-on module content calibration (LOVE/MONEY/BODY/YEAR/STYLE/PLACE).
@@ -199,9 +201,10 @@ Status: 🟡 visibility yes; one-command recovery actions no.
 - **BUNDLE-B** — separate report units / one PDF per module *(mandatory for launch)*.
 - **BUNDLE-C** — bundle email + download/result page with multiple report links *(mandatory)*.
 - **BUNDLE-D** — per-report support regenerate/resend.
-- **DATA-AUDIT-1** — FreeAstroAPI / provider availability + material assembly audit. Tooling +
-  docs done (`npm run audit:freeastroapi`, [`material-assembly-readiness.md`](material-assembly-readiness.md));
-  **approved provider run still pending** (needs `FREEASTROAPI_KEY`).
+- ✅ **DATA-AUDIT-1** — FreeAstroAPI / provider availability verified via approved run
+  (2026-06-06, cases A–E); tooling + docs done (`npm run audit:freeastroapi`,
+  [`material-assembly-readiness.md`](material-assembly-readiness.md)). Remaining = interpretive
+  dictionaries + per-module contracts (MODULE-PATTERN-1) + per-module validation (ANCHOR-AUDIT-1).
 - **MODULE-PATTERN-1** — content contracts for LOVE / MONEY / BODY / YEAR / STYLE / PLACE
   (source-of-truth map, prompt/schema pattern, data-availability rules, safety wording).
 - **MODULE-DIAG-1** — real generation + visual PDF QA for all add-on modules.
