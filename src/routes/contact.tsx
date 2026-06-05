@@ -1,6 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useState } from "react";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
+
+const CONTACT_EMAIL = "thedarrowcode@gmail.com";
 
 export const Route = createFileRoute("/contact")({
   head: () => ({
@@ -10,6 +13,29 @@ export const Route = createFileRoute("/contact")({
 });
 
 function ContactPage() {
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = async () => {
+    try {
+      if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(CONTACT_EMAIL);
+      } else {
+        const ta = document.createElement("textarea");
+        ta.value = CONTACT_EMAIL;
+        ta.style.position = "fixed";
+        ta.style.opacity = "0";
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand("copy");
+        document.body.removeChild(ta);
+      }
+      setCopied(true);
+      window.setTimeout(() => setCopied(false), 1800);
+    } catch {
+      // no-op; mailto link remains usable
+    }
+  };
+
   return (
     <div className="min-h-screen flex flex-col bg-paper">
       <SiteHeader onDark />
