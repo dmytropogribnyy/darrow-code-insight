@@ -246,7 +246,7 @@ export function IntakeForm({
                 type="button"
                 onClick={() => setForm((f) => ({ ...f, bazi_sex: opt }))}
                 aria-pressed={selected}
-                className="flex-1 rounded-[10px] px-3 py-2.5 text-[14px] font-medium border transition-colors"
+                className="flex-1 rounded-[10px] px-3 py-3 text-[15px] font-medium border transition-colors"
                 style={{
                   borderColor: selected ? "#D4AF37" : "rgba(74,64,45,0.25)",
                   backgroundColor: selected ? "rgba(212,175,55,0.10)" : "transparent",
@@ -258,7 +258,7 @@ export function IntakeForm({
             );
           })}
         </div>
-        <p className="mt-1.5 text-[11.5px] sm:text-[12px]" style={{ color: "#4A402D" }}>
+        <p className="mt-2 text-[13px] sm:text-[13.5px] leading-relaxed" style={{ color: "#4A402D" }}>
           Used only for the traditional BaZi calculation. Not shown in your report.
         </p>
       </div>
