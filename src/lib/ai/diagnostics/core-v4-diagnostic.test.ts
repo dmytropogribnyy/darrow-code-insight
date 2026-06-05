@@ -15,6 +15,7 @@ import {
   runCoreV4Validation,
   buildCoreV4DiagnosticClientSnapshot,
   extractCoreModule,
+  loadLocalEnv,
   CORE_V4_DIAGNOSTIC_DEFAULT_MODEL,
   CORE_V4_DIAGNOSTIC_DEFAULT_OUT_DIR,
 } from "./core-v4-diagnostic";
@@ -151,6 +152,34 @@ describe("B5.2 — runCoreV4Validation uses the staged v4 contract", () => {
     });
     expect(v.schemaPass).toBe(false);
     expect(v.checks.beforeAfterPairs).toBe(1);
+  });
+});
+
+describe("B5.3-S — loadLocalEnv (local .env.local convenience)", () => {
+  it("loads KEY=VALUE pairs into a target env, skipping comments/blank", () => {
+    const env: Record<string, string | undefined> = {};
+    const names = loadLocalEnv(
+      "# comment\nANTHROPIC_API_KEY=abc123\n\nCORE_V4_MODEL=claude-sonnet-4-6\n",
+      env,
+    );
+    expect(names.sort()).toEqual(["ANTHROPIC_API_KEY", "CORE_V4_MODEL"]);
+    expect(env.ANTHROPIC_API_KEY).toBe("abc123");
+    expect(env.CORE_V4_MODEL).toBe("claude-sonnet-4-6");
+  });
+
+  it("does NOT override values already set (shell wins)", () => {
+    const env: Record<string, string | undefined> = { ANTHROPIC_API_KEY: "from-shell" };
+    const names = loadLocalEnv("ANTHROPIC_API_KEY=from-file", env);
+    expect(names).toEqual([]);
+    expect(env.ANTHROPIC_API_KEY).toBe("from-shell");
+  });
+
+  it("strips surrounding quotes and ignores empty values", () => {
+    const env: Record<string, string | undefined> = {};
+    loadLocalEnv('A="quoted"\nB=\nC=plain', env);
+    expect(env.A).toBe("quoted");
+    expect(env.B).toBeUndefined();
+    expect(env.C).toBe("plain");
   });
 });
 

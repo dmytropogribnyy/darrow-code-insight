@@ -21,6 +21,7 @@ import { spawnSync } from "node:child_process";
 import { describe, it, expect } from "vitest";
 
 import { readFileSync } from "node:fs";
+import { existsSync } from "node:fs";
 import {
   parseDiagnosticOptionsFromEnv,
   buildPlan,
@@ -29,7 +30,21 @@ import {
   formatValidationReport,
   buildCoreV4DiagnosticClientSnapshot,
   extractCoreModule,
+  loadLocalEnv,
 } from "./core-v4-diagnostic";
+
+// Local convenience: pull ANTHROPIC_API_KEY / CORE_V4_* from gitignored .env.local
+// (then .env) into process.env if not already set. Shell-provided values win.
+// Never logs values. No effect in production (this is a manual CLI run under Vitest).
+for (const f of [".env.local", ".env"]) {
+  if (existsSync(f)) {
+    const names = loadLocalEnv(readFileSync(f, "utf8"));
+    if (names.length) {
+      // eslint-disable-next-line no-console
+      console.log(`[diagnostic] loaded ${names.length} var(s) from ${f}: ${names.join(", ")}`);
+    }
+  }
+}
 import { buildCoreV4DiagnosticInput } from "@/lib/ai/fixtures/core-v4-diagnostic-input";
 import { deriveAnchorAvailability } from "./core-v4-anchors";
 import { generateCoreV4Split } from "@/lib/ai/core-split.server";

@@ -27,6 +27,34 @@ import {
 export const CORE_V4_DIAGNOSTIC_DEFAULT_MODEL = "claude-sonnet-4-6";
 export const CORE_V4_DIAGNOSTIC_DEFAULT_OUT_DIR = "outputs/core-v4-diagnostic";
 
+// Local-only convenience: load KEY=VALUE pairs from a gitignored env file
+// (e.g. .env.local) into `env` WITHOUT overriding values already set (shell wins).
+// Never logs values. Used so the diagnostic CLI can pick up ANTHROPIC_API_KEY /
+// CORE_V4_* from .env.local. Returns the names loaded (not the values).
+export function loadLocalEnv(
+  text: string,
+  env: Record<string, string | undefined> = process.env,
+): string[] {
+  const loaded: string[] = [];
+  for (const raw of text.split(/\r?\n/)) {
+    const line = raw.trim();
+    if (!line || line.startsWith("#")) continue;
+    const eq = line.indexOf("=");
+    if (eq <= 0) continue;
+    const key = line.slice(0, eq).trim();
+    let val = line.slice(eq + 1).trim();
+    if ((val.startsWith('"') && val.endsWith('"')) || (val.startsWith("'") && val.endsWith("'"))) {
+      val = val.slice(1, -1);
+    }
+    if (!key || val === "") continue;
+    if (env[key] === undefined || env[key] === "") {
+      env[key] = val;
+      loaded.push(key);
+    }
+  }
+  return loaded;
+}
+
 export interface DiagnosticOptions {
   /** Real Anthropic call enabled. Default false (plan-only). */
   approveAiCall: boolean;
