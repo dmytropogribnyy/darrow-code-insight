@@ -16,6 +16,7 @@
 | [`bundle-separate-reports-plan.md`](bundle-separate-reports-plan.md) | Bundles must deliver **separate** PDFs per module (current arch = one combined PDF); BUNDLE-B/C/D plan |
 | [`support-runbook-report-recovery.md`](support-runbook-report-recovery.md) | Find an order/report and recover it (resend/regenerate/refund); `npm run support:report` |
 | [`local-secrets.md`](local-secrets.md) | Local `.env.local` + production secret checklist (never committed) |
+| [`data-source-map-by-module.md`](data-source-map-by-module.md) | Raw data / FreeAstroAPI source contract per module (CORE + LOVE/MONEY/BODY/YEAR/STYLE/PLACE); availability rules; gaps |
 | [`core-v4.1-readiness-status.md`](core-v4.1-readiness-status.md) | CORE v4.1 phase status, what works, what's not production, run commands |
 | `darrow-companion-custom-question-roadmap.md` | **TODO (not yet written)** — Darrow Companion / custom-question feature, future / feature-gated |
 
