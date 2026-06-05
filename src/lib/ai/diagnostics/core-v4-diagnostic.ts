@@ -17,6 +17,12 @@ import {
   evaluateCoreV4Lengths,
   CORE_V4_KEYS,
 } from "@/lib/ai/diagnostic.server";
+import {
+  validateAnchors,
+  formatAnchorReport,
+  type AnchorAvailability,
+  type AnchorValidationResult,
+} from "./core-v4-anchors";
 
 export const CORE_V4_DIAGNOSTIC_DEFAULT_MODEL = "claude-sonnet-4-6";
 export const CORE_V4_DIAGNOSTIC_DEFAULT_OUT_DIR = "outputs/core-v4-diagnostic";
@@ -128,10 +134,17 @@ export interface CoreV4ValidationResult {
     missingSections: string[];
     underTargetSections: string[];
   };
+  /** Anchor / data-availability validation (present only when availability supplied). */
+  anchors?: AnchorValidationResult;
 }
 
-// Runs the full staged validation stack against a generated CORE module.
-export function runCoreV4Validation(coreModule: any): CoreV4ValidationResult {
+// Runs the full staged validation stack against a generated CORE module. When
+// `availability` is supplied (derived from the run's input chart), anchor /
+// data-availability validation is included.
+export function runCoreV4Validation(
+  coreModule: any,
+  availability?: AnchorAvailability,
+): CoreV4ValidationResult {
   const parsed = CoreV4Schema.safeParse(coreModule);
   const schemaIssues = parsed.success
     ? []
@@ -163,6 +176,8 @@ export function runCoreV4Validation(coreModule: any): CoreV4ValidationResult {
     .filter((d) => d.status === "WARN_UNDER_TARGET")
     .map((d) => d.section);
 
+  const anchors = availability ? validateAnchors(coreModule, availability) : undefined;
+
   return {
     schemaPass: parsed.success,
     schemaIssues,
@@ -178,6 +193,7 @@ export function runCoreV4Validation(coreModule: any): CoreV4ValidationResult {
       missingSections,
       underTargetSections,
     },
+    anchors,
   };
 }
 
@@ -193,7 +209,12 @@ export function formatValidationReport(v: CoreV4ValidationResult): string {
     `  proof_tags ≤ 5:         ${ok(v.checks.proofTagsMaxOk)}`,
     `  missing sections:       ${v.checks.missingSections.length === 0 ? "none" : v.checks.missingSections.join(", ")}`,
     `  under word target:      ${v.checks.underTargetSections.length === 0 ? "none" : v.checks.underTargetSections.join(", ")}`,
+    `  anchor validation:      ${v.anchors ? (v.anchors.pass ? "PASS" : `FAIL (${v.anchors.violations.length} violation${v.anchors.violations.length === 1 ? "" : "s"})`) : "not run (no availability)"}`,
   ];
+  if (v.anchors && !v.anchors.pass) {
+    lines.push("");
+    lines.push(formatAnchorReport(v.anchors));
+  }
   if (v.schemaIssues.length > 0) {
     lines.push("  schema issues:");
     for (const s of v.schemaIssues.slice(0, 8)) lines.push(`    - ${s}`);

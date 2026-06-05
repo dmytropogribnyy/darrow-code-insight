@@ -31,6 +31,7 @@ import {
   extractCoreModule,
 } from "./core-v4-diagnostic";
 import { buildCoreV4DiagnosticInput } from "@/lib/ai/fixtures/core-v4-diagnostic-input";
+import { deriveAnchorAvailability } from "./core-v4-anchors";
 import { generateCoreV4Split } from "@/lib/ai/core-split.server";
 import { renderCoreV4HtmlSafe } from "@/lib/pdf/template";
 
@@ -66,11 +67,15 @@ describe("CORE v4 manual diagnostic CLI", () => {
 
   // Re-render path: render HTML/PDF from an EXISTING report/core JSON, no AI call.
   //   CORE_V4_FROM_JSON=<path> CORE_V4_RENDER=html,pdf npm run diagnostic:core-v4
-  it.runIf(!!options.fromJson)("re-render from existing JSON (no AI call)", () => {
+  it.runIf(!!options.fromJson)("re-render from existing JSON (no AI call)", async () => {
     mkdirSync(options.outDir, { recursive: true });
     const loaded = JSON.parse(readFileSync(options.fromJson as string, "utf8"));
     const core = extractCoreModule(loaded);
-    const validation = runCoreV4Validation(core);
+    // Anchor availability is derived from the deterministic diagnostic input
+    // (same MockAstroProvider chart the run used) — no AI call.
+    const input = await buildCoreV4DiagnosticInput();
+    const availability = deriveAnchorAvailability(input.chart, input.natalInput);
+    const validation = runCoreV4Validation(core, availability);
     // eslint-disable-next-line no-console
     console.log("\n" + formatValidationReport(validation) + "\n");
     writeFileSync(
@@ -107,7 +112,8 @@ describe("CORE v4 manual diagnostic CLI", () => {
       const core = result.report?.modules?.CORE;
       expect(core).toBeTruthy();
 
-      const validation = runCoreV4Validation(core);
+      const availability = deriveAnchorAvailability(input.chart, input.natalInput);
+      const validation = runCoreV4Validation(core, availability);
       // eslint-disable-next-line no-console
       console.log("\n" + formatValidationReport(validation) + "\n");
 
@@ -130,7 +136,10 @@ describe("CORE v4 manual diagnostic CLI", () => {
 
       renderArtifacts(core, input.clientName);
 
+      // Fail loudly: a real diagnostic must not be accepted on schema alone if its
+      // factual anchors violate the input chart's data availability.
       expect(validation.schemaPass).toBe(true);
+      expect(validation.anchors?.pass).toBe(true);
     },
     600_000,
   );

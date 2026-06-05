@@ -110,59 +110,63 @@ target stands; current real output (32 pp) needs B6 content calibration to reach
 - No callout label/body split across pages. ✅ (`break-inside:avoid`)
 - No browser headers/footers, no blank pages, Darrow footer numbering. ✅
 - No medical/clinical wording (`depression`, `diagnosis`, `clinical`, `therapy`) — staged prompt bans it; **content already generated before `d64c63f` may still contain it until regenerated.**
-- **⚠ Anchor / data-availability validation — NOT IMPLEMENTED (required gate before production).** See §9.
+- **Anchor / data-availability validation — IMPLEMENTED (B5.3-A).** See §9.
 - Human content-quality review.
 
 ---
 
-## 9 · ⚠ Open gate — Anchor & data-availability validation (B5.3-A, NOT done)
+## 9 · Anchor & data-availability validation (B5.3-A — IMPLEMENTED)
 
-**Gap.** `runCoreV4Validation` checks schema, structure, section lengths, proof-tag
-count, before_after count, and label order. It does **NOT** validate that the generated
-**proof anchors** are real and consistent with the input chart. Today nothing catches a
-model that invents placements or emits anchors for unavailable layers.
+`src/lib/ai/diagnostics/core-v4-anchors.ts` + integration in `runCoreV4Validation`.
+Validates generated anchors/section text against the **actual diagnostic input chart**
+(via `deriveAnchorAvailability(chart, natalInput)`) — **not** the gold-sample text. The
+gold-sample fixture and the live `MockAstroProvider` input are different sources:
 
-**Why it matters now.** The gold-sample fixture and the live diagnostic input are
-different sources:
-
-| | Gold sample (`DARROW_CORE_SAMPLE_REPORT_v4_1.md`) | Live diagnostic (`MockAstroProvider`) |
+| | Gold sample (fixture) | Live diagnostic (`MockAstroProvider`) |
 |---|---|---|
-| Chart | Cancer stellium · Gui Water | deterministic seeded chart (different) |
-| BaZi | present (Gui Water Day Master) | **`bazi.available = false`** |
+| BaZi | present | **`bazi.available = false`** |
 | Numerology | present | present (`computeNumerology`) |
-| PDF | 21 pp fixture | 32 pp real |
+| Birth time | known | known (`birth_time_known=true`) |
+| PDF | 21 pp | 32 pp real |
 
-In the one real run the model *happened* to respect availability (numerology anchors
-present, **no BaZi anchors** — correct for `bazi.available=false`), but this was **not
-enforced**. A future run could hallucinate BaZi/house anchors and pass all current gates.
+**Implemented checks (fail-loud):**
 
-**B5.3-A / B5.4 plan (next required gate, before any production trust):**
+- **Forbidden BaZi** — BaZi terms (Day Master, Four Pillars, stem/polarity+element, …)
+  when `bazi.available=false`.
+- **Forbidden house/angle** — `Nth house`, Ascendant, MC, IC, Descendant, rising sign
+  when `birth_time_known=false`.
+- **Forbidden name numerology** — Expression / Soul Urge / Personality when the full
+  name is absent (Life Path + Personal Year remain allowed — date-derived).
+- **Timing mismatch** — a stated `Personal Year N` that differs from the chart's
+  `personal_year`.
 
-1. **Canonical diagnostic anchor pack** — for the diagnostic input, derive the set of
-   anchors the chart can legitimately support (from `DarrowChartData`: planets/signs,
-   houses only if `birth_time_known`, numerology numbers, BaZi only if `bazi.available`).
-2. **Classify generated `proof_tags`** per section: `expected` (in pack), `found`,
-   `missing` (expected but absent), `unexpected` (plausible but not in pack),
-   `forbidden` (references an unavailable layer — e.g. BaZi when `bazi.available=false`,
-   houses/MC/ASC when `birth_time_known=false`).
-3. **Data-availability violations** — fail-loud list (forbidden anchors → FAIL).
-4. **Timing / Personal-Year mismatch** — check year/cycle claims against the numerology
-   `personal_year` actually supplied.
-5. **Fail-loud gate** — block accepting any real AI diagnostic PDF when there are
-   forbidden anchors or availability violations; surface in the CLI validation report
-   and `validation.json`.
+**Integration:** `runCoreV4Validation(core, availability)` attaches an `anchors`
+result; `formatValidationReport` prints `anchor validation: PASS/FAIL (+ violations)`;
+`validation.json` includes it; the approved CLI run **fails loudly** (`expect anchors.pass`)
+so a real diagnostic cannot be accepted on schema alone. Available in the no-AI
+re-render path too (`CORE_V4_FROM_JSON`). The current real run **PASSES** anchor
+validation (numerology present, no BaZi, houses allowed).
 
-Scope when built: diagnostic-only (extends `runCoreV4Validation` + CLI), no production,
-no AI call. Until this exists, a real AI diagnostic must be **manually** anchor-checked.
+**Known limitations (deferred):**
+
+- It is a **deny-list** (forbidden/availability) + timing check, **not** a full
+  expected/found/missing positive-coverage classification — it catches data-availability
+  violations and invented unavailable-layer anchors, but does not yet assert that every
+  expected anchor is present.
+- BaZi/house/name detection is regex-based (conservative — avoids Western "water sign"
+  false positives); exotic phrasings could slip through.
+- Western placement *correctness* (e.g. "Sun in Cancer" matching the actual chart sign)
+  is not yet cross-checked against `DarrowChartData` — only availability + timing.
+  Positive placement-matching is a candidate for B5.4 if needed.
 
 ---
 
 ## 10 · Recommended next step
 
-1. **A — Visual QA** the freshly re-rendered real-v4 PDF after `d64c63f`:
+1. ✅ **B5.3-A — Anchor & data-availability validation** — implemented (§9); real run PASSES.
+2. **A — Visual QA** the freshly re-rendered real-v4 PDF after `d64c63f`:
    `outputs/core-v4-diagnostic/core-v4-diagnostic.pdf` (32 pp) — confirm combined WARNING SIGNALS blocks, no stacked labels, continuation padding.
-2. **B5.3-A — Anchor & data-availability validation** (§9) — the required gate before
-   trusting real AI diagnostics. Do this **before** B6.
 3. **B6** — focused module patterns + real content calibration (section lengths to
-   26-page target; the `not depression` wording clears on regeneration).
+   26-page target; the `not depression` wording clears on regeneration). The anchor gate
+   now guards each regenerated diagnostic.
 4. **Production switch** later, separate explicit phase, only after the above are accepted.
