@@ -213,19 +213,24 @@ function LandingPage() {
                 </span>
               ))}
             </div>
-            {/* Price line — all tiers visible */}
-            <p
-              className="mt-5 sm:mt-6 text-center font-sans text-light-grey leading-relaxed"
+            {/* Price line — all tiers visible, wraps cleanly on mobile */}
+            <ul
+              className="mt-5 sm:mt-6 flex flex-wrap items-center justify-center gap-x-3 gap-y-1.5 text-center font-sans text-light-grey leading-relaxed list-none p-0"
               style={{ fontSize: "clamp(14px, 1.25vw, 15.5px)" }}
             >
-              <span className="text-gold font-semibold">CORE $4.99</span>
-              <span className="text-[#6B6B6B] mx-2.5">·</span>
-              <span className="whitespace-nowrap">Chapters $2.99 each</span>
-              <span className="text-[#6B6B6B] mx-2.5">·</span>
-              <span className="text-gold font-semibold whitespace-nowrap">
-                CORE Complete $14.99
-              </span>
-            </p>
+              <li className="whitespace-nowrap">
+                <span className="text-gold font-semibold">CORE</span>{" "}
+                <span>$4.99</span>
+              </li>
+              <li aria-hidden="true" className="text-[#6B6B6B]">·</li>
+              <li className="whitespace-nowrap">Chapters $2.99 each</li>
+              <li aria-hidden="true" className="text-[#6B6B6B]">·</li>
+              <li className="whitespace-nowrap">
+                <span className="text-gold font-semibold">CORE Complete</span>{" "}
+                <span className="text-gold font-semibold">$14.99</span>
+              </li>
+            </ul>
+
 
           </div>
         </div>
