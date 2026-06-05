@@ -130,19 +130,19 @@ function LandingPage() {
           </p>
 
           {/* Brand continuity */}
-          <p className="mt-3 text-[15px] sm:text-[16px] md:text-[17px] text-light-grey leading-[1.6] font-sans font-medium">
+          <p className="mt-4 text-[16px] sm:text-[17px] md:text-[18px] text-light-grey leading-[1.65] font-sans font-medium">
             AI-powered · Built from your birth data · Decoded through the Darrow Code Method
           </p>
 
           {/* Explainer */}
-          <p className="mt-6 sm:mt-7 text-[16px] sm:text-[17px] md:text-[18px] text-muted-grey max-w-[640px] mx-auto leading-[1.6] font-sans">
+          <p className="mt-6 sm:mt-7 text-[17px] sm:text-[18px] md:text-[19px] text-muted-grey max-w-[640px] mx-auto leading-[1.65] font-sans">
             Get a premium private astrology report built from your birth data — revealing your
             personal pattern: how you think, react, choose and move through change.
           </p>
 
           {/* Quote box */}
-          <div className="mt-6 sm:mt-7 max-w-[460px] mx-auto text-left bg-white/[0.04] border-l-2 border-gold/80 pl-5 pr-4 py-4 rounded-r-[6px]">
-            <p className="font-serif italic text-light-grey text-[16px] sm:text-[17px] leading-[1.45]">
+          <div className="mt-7 sm:mt-8 max-w-[480px] mx-auto text-left bg-white/[0.04] border-l-2 border-gold/80 pl-5 pr-4 py-4 rounded-r-[6px]">
+            <p className="font-serif italic text-light-grey text-[17px] sm:text-[18px] leading-[1.5]">
               "One astrology tradition shows part of the picture.
               <br />
               <span className="not-italic text-gold">Darrow Code reads the full pattern.</span>"
@@ -151,15 +151,15 @@ function LandingPage() {
 
           {/* Method line */}
           <p
-            className="mt-7 sm:mt-8 font-sans font-medium text-[11.5px] sm:text-[13px] text-[#9CA3AF] uppercase"
-            style={{ letterSpacing: "0.1em" }}
+            className="mt-8 sm:mt-9 font-sans font-medium text-[12px] sm:text-[13px] text-[#9CA3AF] uppercase"
+            style={{ letterSpacing: "0.14em" }}
           >
             Western Astrology · Chinese Bazi · Numerology · Pattern Psychology · AI Synthesis
           </p>
 
           {/* Focused chapters teaser */}
-          <div className="mt-3 sm:mt-4 max-w-[520px] mx-auto">
-            <p className="text-center font-sans text-[14px] sm:text-[15px] md:text-[16px] text-light-grey leading-relaxed">
+          <div className="mt-6 sm:mt-8 max-w-[560px] mx-auto">
+            <p className="text-center font-sans text-[15px] sm:text-[16px] md:text-[17px] text-light-grey leading-[1.6]">
               Start with{" "}
               <button
                 type="button"
@@ -180,36 +180,37 @@ function LandingPage() {
               </button>
               :
             </p>
-            <div className="mt-2 flex flex-wrap justify-center gap-x-2.5 gap-y-1">
+            <div className="mt-3 flex flex-wrap justify-center gap-x-3 gap-y-1.5">
               {["LOVE", "MONEY", "BODY", "YEAR", "STYLE", "PLACE"].map((m, i) => (
-                <span key={m} className="flex items-center gap-x-2.5">
+                <span key={m} className="flex items-center gap-x-3">
                   <button
                     type="button"
                     onClick={() => jumpToChapter(m)}
                     aria-label={`Jump to ${m} chapter`}
-                    className="font-sans font-semibold text-[13.5px] sm:text-[14px] md:text-[15px] text-[#D4AF37] cursor-pointer border-b border-transparent hover:border-[#D4AF37]/70 hover:text-[#E6C35A] transition-colors duration-150 pb-px"
+                    className="font-sans font-semibold text-[15px] sm:text-[16px] text-[#D4AF37] cursor-pointer border-b border-transparent hover:border-[#D4AF37]/70 hover:text-[#E6C35A] transition-colors duration-150 pb-px"
                   >
                     {m}
                   </button>
-                  {i < 5 && <span className="text-[#6B6B6B] text-[12px]">·</span>}
+                  {i < 5 && <span className="text-[#6B6B6B] text-[13px]">·</span>}
                 </span>
               ))}
             </div>
             {/* Price line — all tiers visible */}
             <p
-              className="mt-4 sm:mt-5 text-center font-sans text-light-grey/85 leading-relaxed"
-              style={{ fontSize: "clamp(12.5px, 1.15vw, 14px)" }}
+              className="mt-5 sm:mt-6 text-center font-sans text-light-grey leading-relaxed"
+              style={{ fontSize: "clamp(14px, 1.25vw, 15.5px)" }}
             >
               <span className="text-gold font-semibold">CORE $4.99</span>
-              <span className="text-[#6B6B6B] mx-2">·</span>
+              <span className="text-[#6B6B6B] mx-2.5">·</span>
               <span className="whitespace-nowrap">Focused chapters $2.99</span>
-              <span className="text-[#6B6B6B] mx-2">·</span>
+              <span className="text-[#6B6B6B] mx-2.5">·</span>
               <span className="text-gold font-semibold whitespace-nowrap">
                 CORE Complete $14.99
               </span>
             </p>
           </div>
         </div>
+
 
         {/* Gold hairline divider between hero and intake */}
         <div
