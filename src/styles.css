@@ -143,8 +143,9 @@
   background-color: #ffffff;
   border: 1px solid #e2dccb;
   border-radius: 8px;
-  padding: 12px 14px;
-  font-size: 15px;
+  padding: 13px 15px;
+  font-size: 16px;
+  line-height: 1.4;
   color: #151922;
   transition:
     border-color 0.15s ease,
@@ -153,7 +154,7 @@
 }
 .intake-input::placeholder {
   color: #9ca3af;
-  font-size: 14px;
+  font-size: 15px;
 }
 .intake-input:hover {
   border-color: #d6cdb6;
@@ -171,12 +172,12 @@
 
 .intake-label {
   display: block;
-  font-size: 12px;
+  font-size: 12.5px;
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: #4a402d;
-  margin-bottom: 6px;
-  font-weight: 500;
+  margin-bottom: 7px;
+  font-weight: 600;
 }
 
 .intake-card {
