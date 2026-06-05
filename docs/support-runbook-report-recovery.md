@@ -6,8 +6,11 @@ recovery actions reuse existing routes (resend) / generation retry.
 
 > Architecture note: **one `reports` row = one purchase = one combined PDF** (modules
 > in `modules_array`, one `download_token`, one report-ready email). `report_ref`
-> (`DC-YYYYMMDD-####`) is **per purchase**, not per module. Per-module separate PDFs
-> would be a separate architecture phase.
+> (`DC-YYYYMMDD-####`) is **per purchase**, not per module. This support model matches the
+> **current** combined-report architecture; **per-report support** (separate PDFs +
+> `DC-…-MODULE` refs + per-report regenerate/resend) is planned in BUNDLE-B/D — see
+> [`bundle-separate-reports-plan.md`](bundle-separate-reports-plan.md) and
+> [`launch-readiness-map.md`](launch-readiness-map.md).
 
 ## Find an order/report (read-only)
 

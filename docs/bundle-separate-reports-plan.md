@@ -2,6 +2,7 @@
 
 **Status:** Phase A (documentation lock). No code/schema/pipeline change in this phase.
 **Date:** 2026-06-05
+**See also:** [`launch-readiness-map.md`](launch-readiness-map.md) (overall launch status).
 
 > **Business rule (must preserve):** Bundles / CORE Complete are **discounted collections
 > of separate reports/PDFs**, not one merged combined PDF. The discount is for buying
