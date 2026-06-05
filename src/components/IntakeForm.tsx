@@ -210,11 +210,11 @@ export function IntakeForm({
           invalid={!!placeError}
         />
         {placeError ? (
-          <p className="mt-1.5 text-[11px]" style={{ color: "#B23A3A" }}>
+          <p className="mt-2 text-[13px]" style={{ color: "#B23A3A" }}>
             {placeError}
           </p>
         ) : (
-          <p className="mt-1.5 text-[11.5px] sm:text-[12px]" style={{ color: "#4A402D" }}>
+          <p className="mt-2 text-[13px] sm:text-[13.5px] leading-relaxed" style={{ color: "#4A402D" }}>
             Used only to calculate your birth chart timezone and coordinates.
           </p>
         )}
