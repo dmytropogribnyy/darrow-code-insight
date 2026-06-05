@@ -61,6 +61,12 @@ export function SiteFooter() {
           style={{ color: "#151922" }}
         >
           <Link
+            to="/"
+            className="font-medium hover:text-gold hover:underline underline-offset-4 decoration-gold/40 transition-colors py-1"
+          >
+            Home
+          </Link>
+          <Link
             to="/privacy"
             className="font-medium hover:text-gold hover:underline underline-offset-4 decoration-gold/40 transition-colors py-1"
           >
