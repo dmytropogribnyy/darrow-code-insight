@@ -20,6 +20,14 @@ dist-ssr
 .nitro
 *.local
 
+# Local secrets / env (never commit real keys — put them in .env.local)
+.env
+.env.local
+.env.*.local
+*.env
+# ...but keep the tracked placeholder example
+!.env.example
+
 # Wrangler / Cloudflare
 .wrangler/
 .dev.vars

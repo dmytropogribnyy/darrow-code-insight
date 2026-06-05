@@ -73,8 +73,9 @@ Env "flags": `CORE_V4_APPROVE_AI`, `CORE_V4_MODEL` (default `claude-sonnet-4-6`)
 
 - **`ANTHROPIC_API_KEY`** — required for a real Anthropic generation (CLI approved run, and future production Claude generation). Read from `process.env`.
 - Not present in any repo `.env`; for Cloudflare it lives as a Workers secret (`wrangler secret`).
-- **`OPENAI_API_KEY`** — NOT needed; no OpenAI usage in this repo today.
+- **`OPENAI_API_KEY`** — NOT needed; no OpenAI usage in this repo today (OpenAI/GPT fallback is future + separate, not implemented).
 - Do not commit secrets. Do not paste API keys in chat. Use local session env or hosting secrets.
+- **Local setup:** copy `.env.example` → `.env.local` (gitignored). See [`local-secrets.md`](local-secrets.md).
 
 ---
 
