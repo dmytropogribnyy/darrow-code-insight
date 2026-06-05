@@ -305,13 +305,13 @@ function LandingPage() {
 
       {/* FAQ — paper section */}
       <section className="flex-1" id="about">
-        <div className="max-w-[480px] mx-auto px-4 sm:px-6 pt-4 sm:pt-6 pb-6 sm:pb-8">
+        <div className="max-w-[480px] sm:max-w-[560px] md:max-w-[640px] mx-auto px-4 sm:px-6 pt-4 sm:pt-6 pb-6 sm:pb-8">
           <FaqBlock />
         </div>
       </section>
 
       {/* Divider */}
-      <div className="max-w-[480px] mx-auto px-4 sm:px-6">
+      <div className="max-w-[480px] sm:max-w-[560px] md:max-w-[640px] mx-auto px-4 sm:px-6">
         <div className="border-t border-[#E5E7EB]/40" />
       </div>
 
