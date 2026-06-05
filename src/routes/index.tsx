@@ -276,7 +276,7 @@ function LandingPage() {
       <section className="flex-1">
         <div className="max-w-[480px] mx-auto px-4 sm:px-6 pt-6 sm:pt-8 pb-4 sm:pb-5">
           <p
-            className="text-center font-medium text-[13px] sm:text-[14px] mb-5"
+            className="text-center font-medium text-[14px] sm:text-[15px] mb-5 leading-[1.55]"
             style={{ color: "#4A402D" }}
           >
             Enter your birth data — checkout comes next, then your private report.
