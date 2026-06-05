@@ -205,8 +205,10 @@ Status: 🟡 visibility yes; one-command recovery actions no.
   (2026-06-06, cases A–E); tooling + docs done (`npm run audit:freeastroapi`,
   [`material-assembly-readiness.md`](material-assembly-readiness.md)). Remaining = interpretive
   dictionaries + per-module contracts (MODULE-PATTERN-1) + per-module validation (ANCHOR-AUDIT-1).
-- **MODULE-PATTERN-1** — content contracts for LOVE / MONEY / BODY / YEAR / STYLE / PLACE
-  (source-of-truth map, prompt/schema pattern, data-availability rules, safety wording).
+- ✅ **MODULE-PATTERN-1** — per-module content + material contracts authored
+  ([`module-content-contracts.md`](module-content-contracts.md)): allowed/forbidden data,
+  structure, fallbacks, proof anchors, safety, do-not-claim registry. **Contracts only —
+  implementation (prompts/schema) is MODULE-PROMPT-1, still future.**
 - **MODULE-DIAG-1** — real generation + visual PDF QA for all add-on modules.
 - **ANCHOR-AUDIT-1** — all-module proof/data validation (positive placement matching +
   per-module anchor checks; extends B5.3-A beyond CORE).

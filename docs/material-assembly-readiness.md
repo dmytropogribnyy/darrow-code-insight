@@ -134,6 +134,7 @@ confidence notes, and the forbidden-claim list — enforcing **No invented enric
 
 ## Cross-links
 
+[`module-content-contracts.md`](module-content-contracts.md) ·
 [`data-source-map-by-module.md`](data-source-map-by-module.md) ·
 [`launch-readiness-map.md`](launch-readiness-map.md) ·
 [`bundle-separate-reports-plan.md`](bundle-separate-reports-plan.md)

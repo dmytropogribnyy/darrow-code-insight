@@ -18,6 +18,7 @@
 | [`local-secrets.md`](local-secrets.md) | Local `.env.local` + production secret checklist (never committed) |
 | [`data-source-map-by-module.md`](data-source-map-by-module.md) | Raw data / FreeAstroAPI source contract per module (CORE + LOVE/MONEY/BODY/YEAR/STYLE/PLACE); availability rules; gaps |
 | [`material-assembly-readiness.md`](material-assembly-readiness.md) | Can the system assemble the full material pack per report? Dictionary status, per-module safe categories, do-not-claim list, `npm run audit:freeastroapi` |
+| [`module-content-contracts.md`](module-content-contracts.md) | Per-module content + material contracts (CORE/LOVE/MONEY/BODY/YEAR/STYLE/PLACE): allowed/forbidden data, structure, fallbacks, proof anchors, safety, do-not-claim registry |
 | [`core-v4.1-readiness-status.md`](core-v4.1-readiness-status.md) | CORE v4.1 phase status, what works, what's not production, run commands |
 | `darrow-companion-custom-question-roadmap.md` | **TODO (not yet written)** — Darrow Companion / custom-question feature, future / feature-gated |
 
