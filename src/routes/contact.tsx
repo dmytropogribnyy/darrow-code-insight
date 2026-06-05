@@ -1,6 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useState } from "react";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
+
+const CONTACT_EMAIL = "thedarrowcode@gmail.com";
 
 export const Route = createFileRoute("/contact")({
   head: () => ({
@@ -10,6 +13,29 @@ export const Route = createFileRoute("/contact")({
 });
 
 function ContactPage() {
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = async () => {
+    try {
+      if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(CONTACT_EMAIL);
+      } else {
+        const ta = document.createElement("textarea");
+        ta.value = CONTACT_EMAIL;
+        ta.style.position = "fixed";
+        ta.style.opacity = "0";
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand("copy");
+        document.body.removeChild(ta);
+      }
+      setCopied(true);
+      window.setTimeout(() => setCopied(false), 1800);
+    } catch {
+      // no-op; mailto link remains usable
+    }
+  };
+
   return (
     <div className="min-h-screen flex flex-col bg-paper">
       <SiteHeader onDark />
@@ -74,12 +100,29 @@ function ContactPage() {
             </p>
             <a
               className="block mt-3 font-serif text-paper hover:text-gold transition-colors duration-200 break-all"
-              style={{ fontSize: "clamp(18px, 3vw, 22px)" }}
-              href="mailto:thedarrowcode@gmail.com"
+              style={{
+                fontSize: "clamp(18px, 3vw, 22px)",
+                userSelect: "text",
+                WebkitUserSelect: "text",
+                cursor: "text",
+              }}
+              href={`mailto:${CONTACT_EMAIL}`}
             >
-              thedarrowcode@gmail.com
+              {CONTACT_EMAIL}
             </a>
+            <div className="mt-4 flex justify-center">
+              <button
+                type="button"
+                onClick={handleCopy}
+                aria-live="polite"
+                className="inline-flex items-center gap-2 font-sans font-medium text-[13px] text-gold border border-gold/50 hover:border-gold hover:bg-gold/10 rounded-full px-4 py-2 transition-colors duration-200"
+                style={{ letterSpacing: "0.04em" }}
+              >
+                {copied ? "Copied" : "Copy email"}
+              </button>
+            </div>
           </div>
+
 
           <p
             className="mt-8 font-sans font-medium text-[11.5px] sm:text-[12px] text-[#9CA3AF] uppercase"
