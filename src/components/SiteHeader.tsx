@@ -9,15 +9,35 @@ export function SiteHeader({ onDark = false }: { onDark?: boolean }) {
           : "bg-paper text-charcoal border-b border-border"
       }
     >
-      <div className="max-w-6xl mx-auto px-6 h-14 flex items-center justify-between">
+      <div className="max-w-6xl mx-auto px-6 h-14 flex items-center justify-between gap-3">
         <Link
           to="/"
-          className="text-gold font-sans font-medium"
+          className="text-gold font-sans font-medium shrink-0"
           style={{ fontSize: 12, letterSpacing: "0.28em" }}
         >
           DARROW CODE
         </Link>
-        <div className="flex items-center gap-5">
+
+        {/* Centered announcement — subtle, responsive */}
+        <div
+          className="hidden sm:flex flex-1 justify-center px-3 min-w-0"
+          aria-label="Launch announcement"
+        >
+          <span
+            className={
+              "font-sans font-medium truncate " +
+              (onDark ? "text-light-grey/80" : "text-neutral-grey")
+            }
+            style={{ fontSize: "clamp(11px, 1vw, 12.5px)", letterSpacing: "0.06em" }}
+          >
+            <span className="hidden md:inline">
+              Launch drop · Your birth code, decoded for less than coffee
+            </span>
+            <span className="md:hidden text-gold/90">Birth code decoded</span>
+          </span>
+        </div>
+
+        <div className="flex items-center gap-5 shrink-0">
           <a
             href="#about"
             onClick={(e) => {
