@@ -10,10 +10,10 @@ type Faq = { question: string; answer: ReactNode };
 
 function SectionLabel({ text }: { text: string }) {
   return (
-    <div className="flex items-center justify-center gap-3 mb-5">
+    <div className="flex items-center justify-center gap-3 mb-6">
       <span className="h-px w-10 sm:w-12" style={{ backgroundColor: "rgba(212,175,55,0.45)" }} />
       <p
-        className="text-[11px] sm:text-[12px] tracking-[0.18em] sm:tracking-[0.2em] uppercase font-semibold"
+        className="text-[12px] sm:text-[13px] tracking-[0.18em] sm:tracking-[0.2em] uppercase font-semibold"
         style={{ color: "#D4AF37" }}
       >
         {text}
