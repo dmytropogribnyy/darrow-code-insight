@@ -12,6 +12,12 @@ recovery actions reuse existing routes (resend) / generation retry.
 > [`bundle-separate-reports-plan.md`](bundle-separate-reports-plan.md) and
 > [`launch-readiness-map.md`](launch-readiness-map.md).
 
+**Status (OPS-LEGAL-2):** the `report_ref` migration is **committed** but its **live Supabase
+application is unverified** — confirm via the Supabase dashboard (or service-role key) per
+"Applying the migration" below. `support:report` needs `SUPABASE_SERVICE_ROLE_KEY` locally.
+**No one-command resend/regenerate CLI exists yet** — recovery is manual via the existing
+routes (see "Recovery actions").
+
 ## Find an order/report (read-only)
 
 ```bash

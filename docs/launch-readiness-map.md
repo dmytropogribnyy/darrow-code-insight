@@ -1,9 +1,13 @@
 # Darrow Code — Launch Readiness Map
 
-**Phase:** LAUNCH-AUDIT-1 (docs-only) · **Date:** 2026-06-05 · **HEAD:** `602d2eb`
+**Phase:** LAUNCH-AUDIT-1 (docs-only) · **Updated:** 2026-06-06 · **HEAD:** see `git log`
 
 One place that records what is ready, partially ready, and still blocking public launch.
-This is a snapshot, not an implementation. Production remains v3 / one-combined-PDF.
+This is a living snapshot, not an implementation. Production remains v3 / one-combined-PDF.
+
+> **Business decision:** all modules (CORE + all focused chapters + bundles / CORE Complete)
+> are intended to launch. Therefore **BUNDLE-B and BUNDLE-C are mandatory before public
+> launch** — bundles must deliver **separate** focused PDFs per module (see §3).
 
 ---
 
@@ -46,11 +50,11 @@ See **[`bundle-separate-reports-plan.md`](bundle-separate-reports-plan.md)**.
 
 - Customer-facing promise should **remain separate focused PDFs**.
 - Current implementation delivers **one combined PDF**.
-- 🔴 **Do not publicly launch bundle / CORE Complete sales** until **BUNDLE-B** and
-  **BUNDLE-C** are implemented, or the business **explicitly accepts** one combined PDF
-  (with copy adjusted to match).
+- 🔴 **BUNDLE-B and BUNDLE-C are MANDATORY before public launch** (business decision: all
+  modules launch). The "explicitly accept one combined PDF" fallback is **off the table**
+  unless the business reverses that decision and adjusts copy.
 
-Required future phases:
+Required phases (now mandatory for launch):
 - **BUNDLE-B:** separate report units / one PDF per selected module.
 - **BUNDLE-C:** email + download/result page listing all report links.
 - **BUNDLE-D:** per-report support regenerate/resend.
@@ -91,6 +95,7 @@ Each still needs:
 - safety wording (no medical / financial / legal guarantees).
 
 🔴 **Do not claim add-on modules are final or launch-ready** until these passes are done.
+→ tracked as **MODULE-PATTERN-1** (content contracts) + **MODULE-DIAG-1** (real generation + PDF QA).
 
 ---
 
@@ -116,6 +121,7 @@ Each still needs:
   proof anchors.
 
 Status: 🟡 used in production; availability audit pending.
+→ tracked as **DATA-AUDIT-1** (provider field availability) + **ANCHOR-AUDIT-1** (all-module proof/data validation).
 
 ---
 
@@ -175,20 +181,26 @@ Status: 🟡 visibility yes; one-command recovery actions no.
 
 ---
 
-## 10 · Recommended execution order from here
+## 10 · Next Phases (named, in order)
 
-1. ✅ Push Phase A docs (`bundle-separate-reports-plan.md`).
-2. ✅ LAUNCH-AUDIT-1 docs-only readiness map (this file).
-3. Apply `report_ref` Supabase migration; test `support:report` on a real/test order.
-4. **BUNDLE-B:** separate report units / one PDF per module.
-5. **BUNDLE-C:** email + download/result page with multiple report links.
-6. **BUNDLE-D:** per-report regenerate/resend.
-7. Focused module content calibration: LOVE / MONEY / BODY / YEAR / STYLE / PLACE.
-8. FreeAstroAPI / data-availability audit across all modules.
-9. CORE v4.1 production switch — only after diagnostics / content / layout pass.
-10. Full Stripe test-mode E2E.
-11. Only then public launch / ads.
+- ✅ **LAUNCH-AUDIT-1** — this readiness map (docs).
+- ✅ **OPS-LEGAL-1 / OPS-LEGAL-2** — legal copy, `report_ref` migration, read-only support CLI, docs.
+- **OPS-LEGAL-2-live** — verify `report_ref` in the Supabase dashboard (column, unique index,
+  `set_report_ref()` function, `trg_set_report_ref` trigger, backfill) + run `support:report`
+  on a real/test order (needs `SUPABASE_SERVICE_ROLE_KEY` locally).
+- **STRIPE-E2E-1** — test-mode checkout → generation → email → download end-to-end.
+- **BUNDLE-B** — separate report units / one PDF per module *(mandatory for launch)*.
+- **BUNDLE-C** — bundle email + download/result page with multiple report links *(mandatory)*.
+- **BUNDLE-D** — per-report support regenerate/resend.
+- **DATA-AUDIT-1** — FreeAstroAPI / provider availability audit (which fields are reliably
+  present; see §6).
+- **MODULE-PATTERN-1** — content contracts for LOVE / MONEY / BODY / YEAR / STYLE / PLACE
+  (source-of-truth map, prompt/schema pattern, data-availability rules, safety wording).
+- **MODULE-DIAG-1** — real generation + visual PDF QA for all add-on modules.
+- **ANCHOR-AUDIT-1** — all-module proof/data validation (positive placement matching +
+  per-module anchor checks; extends B5.3-A beyond CORE).
+- **CORE-V4-PROD-SWITCH** — later; only after diagnostics / content / layout pass.
+- **COMPANION-MVP** — later / feature-gated (Darrow Companion / custom questions); not started.
 
-**Safe to sell today:** single-report purchases (CORE only, or one chapter) once P0
-checkout/email/download E2E + secrets are verified. **Hold bundle/CORE Complete** until
-BUNDLE-B/C or explicit acceptance.
+**Safe to sell today:** single-report purchases (CORE only, or one chapter) once
+STRIPE-E2E-1 + secrets are verified. **Bundles / CORE Complete are held** until BUNDLE-B/C.

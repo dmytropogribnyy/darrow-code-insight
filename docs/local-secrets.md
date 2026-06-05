@@ -53,5 +53,28 @@ CORE_V4_APPROVE_AI=1 CORE_V4_RENDER=html,pdf npm run diagnostic:core-v4
 - Never commit `.env.local` (or any file with real keys).
 - Never paste API keys into docs, tests, or commit messages.
 - Rotate a key immediately if it is ever exposed (e.g. shared in chat).
-- **Production** secrets belong in hosting secret storage (Cloudflare Workers
-  `wrangler secret` / Lovable), **not** in Git.
+- **Production** secrets belong in hosting secret storage (Lovable / Supabase / Cloudflare),
+  **not** in Git.
+
+## 8 · Full secret checklist (local + production)
+
+`.env.local` is **local-only and gitignored** — for running diagnostics / the support CLI
+on your machine. **Production** values live in hosting secret storage (Lovable / Supabase /
+Cloudflare), never in Git. Do not put real values in this doc; do not paste secrets in chat.
+
+| Secret | Used for | Needed locally? | Production home |
+|---|---|---|---|
+| `SUPABASE_URL` | Supabase project URL | yes (ships in tracked `.env`) | Lovable/Supabase env |
+| `SUPABASE_SERVICE_ROLE_KEY` | `support:report` read-only lookups (server-side) | **yes for `support:report`** — add to `.env.local` | Supabase/hosting secret |
+| `ANTHROPIC_API_KEY` | AI report generation + v4 diagnostic | yes for approved diagnostic | Lovable secret |
+| `RESEND_API_KEY` | report-ready / order emails (via Lovable connector) | no (prod email only) | Lovable Resend connector secret |
+| `STRIPE_SECRET_KEY` | checkout / payment (server) | no | Lovable/hosting secret |
+| `STRIPE_WEBHOOK_SECRET` | verify Stripe webhook signatures | no | Lovable/hosting secret |
+| `JOB_DISPATCH_SECRET` | auth for internal job routes (resend / process-generation) | no | Lovable/hosting secret |
+| `OPENAI_API_KEY` | **future / optional only** — no OpenAI fallback implemented | no | n/a (future) |
+
+Rules:
+- `SUPABASE_URL` is non-secret config and already in the tracked `.env`; the **service-role**
+  key is a secret — keep it out of Git.
+- Add only what a given local task needs (e.g. `SUPABASE_SERVICE_ROLE_KEY` for `support:report`).
+- Verify ignored: `git check-ignore -v .env.local` → ignored; `git status --short` → not listed.

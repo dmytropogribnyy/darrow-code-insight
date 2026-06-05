@@ -1,8 +1,23 @@
 # Darrow Code — Documentation Root
 
-> **Resuming CORE v4.1 work? Start at [`core-v4.1-readiness-status.md`](core-v4.1-readiness-status.md)** —
-> current phase status, what works, what is not production yet, and exact run commands.
-> (Production remains v3; HEAD `d64c63f`.)
+> **Where to start:**
+> - **Launch status / what's blocking go-live →** [`launch-readiness-map.md`](launch-readiness-map.md)
+> - **Resuming CORE v4.1 work →** [`core-v4.1-readiness-status.md`](core-v4.1-readiness-status.md)
+>
+> Production currently runs **CORE v3** (one combined PDF per purchase). v4.1 is
+> diagnostic/staged only. (Commit hashes elsewhere are *historical snapshots*, not the
+> current HEAD — use `git log` for the live HEAD.)
+
+## Operations & Launch
+
+| File | Role |
+|---|---|
+| [`launch-readiness-map.md`](launch-readiness-map.md) | What's ready / partial / blocking before public launch; P0–P2 blockers; next-phase order |
+| [`bundle-separate-reports-plan.md`](bundle-separate-reports-plan.md) | Bundles must deliver **separate** PDFs per module (current arch = one combined PDF); BUNDLE-B/C/D plan |
+| [`support-runbook-report-recovery.md`](support-runbook-report-recovery.md) | Find an order/report and recover it (resend/regenerate/refund); `npm run support:report` |
+| [`local-secrets.md`](local-secrets.md) | Local `.env.local` + production secret checklist (never committed) |
+| [`core-v4.1-readiness-status.md`](core-v4.1-readiness-status.md) | CORE v4.1 phase status, what works, what's not production, run commands |
+| `darrow-companion-custom-question-roadmap.md` | **TODO (not yet written)** — Darrow Companion / custom-question feature, future / feature-gated |
 
 ## Active v4.1 Canonical Documentation
 
