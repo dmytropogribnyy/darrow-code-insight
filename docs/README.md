@@ -1,5 +1,9 @@
 # Darrow Code — Documentation Root
 
+> **Resuming CORE v4.1 work? Start at [`core-v4.1-readiness-status.md`](core-v4.1-readiness-status.md)** —
+> current phase status, what works, what is not production yet, and exact run commands.
+> (Production remains v3; HEAD `d64c63f`.)
+
 ## Active v4.1 Canonical Documentation
 
 The files in `docs/` root are the **active v4.1 canonical documentation set**.

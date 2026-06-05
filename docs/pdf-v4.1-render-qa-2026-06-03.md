@@ -6,6 +6,23 @@
 
 ---
 
+## B5.2 — PDF polish: warning blocks + page breaks (`d64c63f`, 2026-06-04)
+
+Real-diagnostic visual QA found stacked WARNING SIGNAL boxes and callout splits.
+Fixed (v4 renderer only; v3 untouched):
+
+- multiple `warning_signals` → ONE combined **WARNING SIGNALS** block (numbered);
+  multiple `protocols` → ONE **PROTOCOLS** block — never stacked identical labels.
+- v4 callouts: `break-inside:avoid` (label+body never split across pages), relocate whole.
+- `BODY_PAGE_STYLE_V4` = `box-decoration-break:clone` → continuation pages get top padding.
+- staged prompt: `warning_signals` 0–1/section; no medical/clinical wording.
+- `CORE_V4_FROM_JSON` re-renders from existing JSON with no AI call.
+
+Real generated content from before `d64c63f` may still contain over-target section
+lengths and `not depression` wording until regenerated — that is **B6** content work.
+
+---
+
 ## B5.2 — manual CORE v4 JSON diagnostic CLI (2026-06-04)
 
 - Added a manual, local CLI (`npm run diagnostic:core-v4`) that runs the **existing

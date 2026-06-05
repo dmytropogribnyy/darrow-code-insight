@@ -74,10 +74,13 @@ skeleton placeholder sections** in a final CORE.
 
 - **Protocols:** behavioral, specific, supportive (not commanding), 2–4 sentences,
   named with a descriptive title (`PROTOCOL · {Name}`).
-- **Warning signals:** observable, non-judgmental, used **sparingly** (early-cue).
-- **No repeated identical PROTOCOL/WARNING labels stacked on one page** when
-  avoidable. If a section would stack multiples, fold extras into prose or use one
-  consolidated block. (Distinct-titled blocks are acceptable only when elegant.)
+- **Warning signals:** observable, non-judgmental, used **sparingly** — usually
+  **0–1 per section**, never three or more. No medical/clinical wording
+  (`depression`, `diagnosis`, `clinical`, `therapy`); frame interpretively.
+- **No repeated identical PROTOCOL/WARNING labels stacked on one page.** The renderer
+  (`d64c63f`) enforces this deterministically: multiple `warning_signals` render as ONE
+  combined **WARNING SIGNALS** block (numbered) and multiple `protocols` as ONE
+  **PROTOCOLS** block. Prefer keeping the model output to a single strong block anyway.
 
 ## 6 · Voice rules
 
