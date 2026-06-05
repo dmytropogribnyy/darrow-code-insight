@@ -12,6 +12,7 @@
 
 | File | Role |
 |---|---|
+| [`production-launch-train.md`](production-launch-train.md) | The launch plan — 9 phases (OPS-LEGAL-2-live → STRIPE-E2E-1 → BUNDLE-B/C/D → MODULE-PROMPT/DIAG/ANCHOR → hardening), gates, dependencies, parallelization |
 | [`launch-readiness-map.md`](launch-readiness-map.md) | What's ready / partial / blocking before public launch; P0–P2 blockers; next-phase order |
 | [`bundle-separate-reports-plan.md`](bundle-separate-reports-plan.md) | Bundles must deliver **separate** PDFs per module (current arch = one combined PDF); BUNDLE-B/C/D plan |
 | [`support-runbook-report-recovery.md`](support-runbook-report-recovery.md) | Find an order/report and recover it (resend/regenerate/refund); `npm run support:report` |
