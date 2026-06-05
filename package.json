@@ -15,7 +15,8 @@
     "generate:pdf": "node scripts/generate-v4-pdf.mjs",
     "diagnostic:core-v4": "npx vitest run src/lib/ai/diagnostics/run-core-v4-diagnostic.test.ts --disable-console-intercept",
     "support:report": "npx vitest run src/lib/support/run-support-report.test.ts --disable-console-intercept",
-    "audit:freeastroapi": "npx vitest run src/lib/diagnostics/material-context/run-freeastroapi-audit.test.ts --disable-console-intercept"
+    "audit:freeastroapi": "npx vitest run src/lib/diagnostics/material-context/run-freeastroapi-audit.test.ts --disable-console-intercept",
+    "diag:addon-render": "npx vitest run src/lib/pdf/run-addon-render-diag.test.ts --disable-console-intercept"
   },
   "dependencies": {
     "@cloudflare/vite-plugin": "^1.25.5",
