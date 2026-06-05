@@ -28,7 +28,7 @@ export function SiteHeader({ onDark = false }: { onDark?: boolean }) {
               "font-sans font-medium truncate " +
               (onDark ? "text-light-grey/90" : "text-neutral-grey")
             }
-            style={{ fontSize: "clamp(12.5px, 1.2vw, 14.5px)", letterSpacing: "0.05em" }}
+            style={{ fontSize: "clamp(14px, 1.4vw, 16px)", letterSpacing: "0.04em" }}
           >
             <span className="hidden md:inline">
               Launch drop · Your birth code, decoded for less than coffee
