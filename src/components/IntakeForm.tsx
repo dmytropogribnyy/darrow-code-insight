@@ -264,12 +264,12 @@ export function IntakeForm({
       </div>
 
       <div className="pt-3 text-center">
-        <div className="flex items-center justify-center gap-3 mb-2.5" aria-hidden="false">
-          <span className="h-px w-8 sm:w-10" style={{ backgroundColor: "rgba(212,175,55,0.45)" }} />
-          <p className="text-[11px] sm:text-[12px] tracking-[0.18em] sm:tracking-[0.2em] uppercase text-gold font-semibold">
+        <div className="flex items-center justify-center gap-3 mb-3" aria-hidden="false">
+          <span className="h-px w-10 sm:w-12" style={{ backgroundColor: "rgba(212,175,55,0.45)" }} />
+          <p className="text-[12px] sm:text-[13px] tracking-[0.18em] sm:tracking-[0.2em] uppercase text-gold font-semibold">
             Launch price
           </p>
-          <span className="h-px w-8 sm:w-10" style={{ backgroundColor: "rgba(212,175,55,0.45)" }} />
+          <span className="h-px w-10 sm:w-12" style={{ backgroundColor: "rgba(212,175,55,0.45)" }} />
         </div>
         <button
           type="submit"
@@ -279,14 +279,14 @@ export function IntakeForm({
             color: "#0A0F1E",
             boxShadow: "0 8px 22px rgba(212,175,55,0.28), 0 1px 0 rgba(10,15,30,0.06) inset",
           }}
-          className="cta-premium w-full font-sans font-semibold rounded-[10px] py-3.5 px-4 text-[15px] sm:text-[16px] flex items-center justify-center gap-2.5 disabled:opacity-60"
+          className="cta-premium w-full font-sans font-semibold rounded-[10px] py-4 px-4 text-[16px] sm:text-[17px] flex items-center justify-center gap-2.5 disabled:opacity-60"
         >
           <span>
             {submitting ? "Preparing…" : hasSelection ? ctaText : "Choose your report above"}
           </span>
           {hasSelection && (
             <span
-              className="font-mono text-[13px] px-2 py-[3px] rounded"
+              className="font-mono text-[14px] px-2.5 py-[3px] rounded"
               style={{ backgroundColor: "#0A0F1E", color: "#D4AF37" }}
             >
               {ctaPrice}
@@ -294,7 +294,7 @@ export function IntakeForm({
           )}
         </button>
         <p
-          className="mt-4 text-[12.5px] sm:text-[13px] font-medium leading-relaxed"
+          className="mt-4 text-[13.5px] sm:text-[14px] font-medium leading-[1.6]"
           style={{ color: "#4A402D" }}
         >
           Start instantly · Ready in a few minutes · Multi-page PDF ·{" "}
