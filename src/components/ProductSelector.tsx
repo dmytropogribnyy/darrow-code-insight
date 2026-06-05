@@ -46,16 +46,20 @@ export function ProductSelector({
             : "transition-opacity"
         }
       >
-        <div className="text-center mb-5">
+        <div className="text-center mb-6 sm:mb-7">
           <p
-            className="text-[11px] tracking-[0.22em] uppercase font-bold"
-            style={{ color: "#A07B1F" }}
+            className="uppercase font-bold"
+            style={{
+              color: "#A07B1F",
+              fontSize: "clamp(12px, 1.15vw, 13px)",
+              letterSpacing: "0.22em",
+            }}
           >
             Choose your report
           </p>
           <h2
-            className="font-serif mt-2 leading-[1.1]"
-            style={{ fontSize: "clamp(22px,3vw,26px)", color: "#1F1A10" }}
+            className="font-serif mt-2.5 leading-[1.1]"
+            style={{ fontSize: "clamp(26px, 3.6vw, 34px)", color: "#1F1A10" }}
           >
             CORE Report is your foundation.
             <br />
@@ -70,17 +74,17 @@ export function ProductSelector({
           disabled={locked}
           onClick={() => onToggle("CORE")}
           aria-pressed={coreSelected}
-          className="w-full text-left rounded-[10px] border-2 px-4 py-4 mb-3 flex items-start gap-3 transition disabled:cursor-default"
+          className="w-full text-left rounded-[12px] border-2 px-5 py-5 sm:px-6 sm:py-5 mb-3.5 flex items-start gap-3.5 transition disabled:cursor-default"
           style={{
             borderColor: coreSelected ? "#D4AF37" : "rgba(212,175,55,0.6)",
             background: coreSelected ? "rgba(212,175,55,0.12)" : "rgba(212,175,55,0.04)",
             boxShadow: coreSelected
-              ? "0 1px 0 rgba(255,255,255,0.6) inset, 0 6px 18px -10px rgba(160,123,31,0.45)"
+              ? "0 1px 0 rgba(255,255,255,0.6) inset, 0 8px 22px -10px rgba(160,123,31,0.5)"
               : "0 1px 0 rgba(255,255,255,0.5) inset",
           }}
         >
           <div
-            className="mt-0.5 w-4 h-4 rounded-sm flex items-center justify-center text-[10px] font-bold border"
+            className="mt-0.5 w-[18px] h-[18px] rounded-sm flex items-center justify-center text-[11px] font-bold border shrink-0"
             style={{
               backgroundColor: coreSelected ? "#B8860B" : "transparent",
               color: "#FFF7E0",
@@ -89,28 +93,39 @@ export function ProductSelector({
           >
             {coreSelected ? "✓" : ""}
           </div>
-          <div className="flex-1">
+          <div className="flex-1 min-w-0">
             <div className="flex items-baseline gap-2 flex-wrap">
               <p
-                className="text-[12px] tracking-[0.18em] uppercase font-bold"
-                style={{ color: "#8B6914" }}
+                className="uppercase font-bold"
+                style={{
+                  color: "#8B6914",
+                  fontSize: "clamp(13px, 1.25vw, 14.5px)",
+                  letterSpacing: "0.18em",
+                }}
               >
                 CORE Report
               </p>
               <span
-                className="text-[10px] tracking-[0.14em] uppercase font-semibold"
-                style={{ color: "#A07B1F" }}
+                className="uppercase font-semibold"
+                style={{
+                  color: "#A07B1F",
+                  fontSize: "clamp(10.5px, 1vw, 11.5px)",
+                  letterSpacing: "0.14em",
+                }}
               >
                 · Recommended foundation
               </span>
             </div>
-            <p className="text-[13px] leading-relaxed mt-1" style={{ color: "#2A2418" }}>
+            <p
+              className="leading-relaxed mt-1.5"
+              style={{ color: "#2A2418", fontSize: "clamp(14px, 1.35vw, 15.5px)" }}
+            >
               Your private birth code: how you think, react, choose and move through change.
             </p>
           </div>
           <span
-            className="font-mono text-[14px] whitespace-nowrap font-bold"
-            style={{ color: "#1F1A10" }}
+            className="font-mono whitespace-nowrap font-bold"
+            style={{ color: "#1F1A10", fontSize: "clamp(15px, 1.4vw, 17px)" }}
           >
             $4.99
           </span>
@@ -122,17 +137,17 @@ export function ProductSelector({
           type="button"
           disabled={locked}
           onClick={allSelected ? onClear : onSelectAll}
-          className="w-full text-left rounded-[10px] border-2 px-4 py-4 mb-5 transition flex items-start gap-3 disabled:cursor-default"
+          className="w-full text-left rounded-[12px] border-2 px-5 py-5 sm:px-6 sm:py-5 mb-6 transition flex items-start gap-3.5 disabled:cursor-default"
           style={{
             borderColor: allSelected ? "#B8860B" : "#D4AF37",
             background: allSelected ? "rgba(212,175,55,0.16)" : "rgba(212,175,55,0.06)",
             boxShadow: allSelected
-              ? "0 1px 0 rgba(255,255,255,0.6) inset, 0 10px 26px -12px rgba(160,123,31,0.55)"
-              : "0 1px 0 rgba(255,255,255,0.5) inset, 0 4px 14px -10px rgba(160,123,31,0.35)",
+              ? "0 1px 0 rgba(255,255,255,0.6) inset, 0 12px 28px -12px rgba(160,123,31,0.6)"
+              : "0 1px 0 rgba(255,255,255,0.5) inset, 0 6px 18px -10px rgba(160,123,31,0.4)",
           }}
         >
           <div
-            className="mt-0.5 w-4 h-4 rounded-sm flex items-center justify-center text-[10px] font-bold border"
+            className="mt-0.5 w-[18px] h-[18px] rounded-sm flex items-center justify-center text-[11px] font-bold border shrink-0"
             style={{
               backgroundColor: allSelected ? "#B8860B" : "transparent",
               color: "#FFF7E0",
@@ -141,51 +156,68 @@ export function ProductSelector({
           >
             {allSelected ? "✓" : ""}
           </div>
-          <div className="flex-1">
+          <div className="flex-1 min-w-0">
             <div className="flex items-baseline gap-2 flex-wrap">
               <p
-                className="text-[12px] tracking-[0.18em] uppercase font-bold"
-                style={{ color: "#8B6914" }}
+                className="uppercase font-bold"
+                style={{
+                  color: "#8B6914",
+                  fontSize: "clamp(13px, 1.25vw, 14.5px)",
+                  letterSpacing: "0.18em",
+                }}
               >
                 CORE Complete
               </p>
               <span
-                className="text-[10px] tracking-[0.18em] uppercase px-2 py-0.5 rounded font-bold"
+                className="uppercase px-2 py-0.5 rounded font-bold"
                 style={{
                   backgroundColor: "#0A0F1E",
                   color: "#F5D87A",
                   boxShadow: "0 2px 8px -3px rgba(10,15,30,0.5)",
+                  fontSize: "clamp(10.5px, 1vw, 11.5px)",
+                  letterSpacing: "0.18em",
                 }}
               >
                 Best value · Save $7.94
               </span>
             </div>
-            <p className="text-[13px] leading-relaxed mt-1" style={{ color: "#2A2418" }}>
+            <p
+              className="leading-relaxed mt-1.5"
+              style={{ color: "#2A2418", fontSize: "clamp(14px, 1.35vw, 15.5px)" }}
+            >
               CORE Report + all 6 Focused Chapters, delivered separately.
             </p>
           </div>
           <span
-            className="font-mono text-[14px] whitespace-nowrap font-bold"
-            style={{ color: "#1F1A10" }}
+            className="font-mono whitespace-nowrap font-bold"
+            style={{ color: "#1F1A10", fontSize: "clamp(15px, 1.4vw, 17px)" }}
           >
             $14.99
           </span>
         </button>
 
         <p
-          className="text-center text-[11px] tracking-[0.2em] uppercase mb-1 font-semibold"
-          style={{ color: "#5C5340" }}
+          className="text-center uppercase mb-1 font-semibold"
+          style={{
+            color: "#5C5340",
+            fontSize: "clamp(11.5px, 1.1vw, 12.5px)",
+            letterSpacing: "0.2em",
+          }}
         >
           — or pick individual chapters —
         </p>
         <p
-          className="text-center font-sans font-normal text-[12px] mb-3"
-          style={{ color: "#9CA3AF", marginTop: "4px" }}
+          className="text-center font-sans font-normal mb-4"
+          style={{
+            color: "#9CA3AF",
+            marginTop: "4px",
+            fontSize: "clamp(12.5px, 1.15vw, 13.5px)",
+          }}
         >
           Pick any chapter on its own, or combine several
         </p>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 mb-5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6">
           {MODULE_CODES.map((code) => {
             const meta = CHAPTER_META[code];
             const active = selected.has(code);
@@ -196,7 +228,7 @@ export function ProductSelector({
                 type="button"
                 disabled={locked}
                 onClick={() => onToggle(code)}
-                className="text-left rounded-[8px] border px-3.5 py-3 transition flex items-start gap-2.5 disabled:cursor-default"
+                className="text-left rounded-[10px] border px-4 py-3.5 transition flex items-start gap-2.5 disabled:cursor-default"
                 style={{
                   borderColor: active ? "#B8860B" : "rgba(74,64,45,0.28)",
                   background: active ? "rgba(212,175,55,0.14)" : "rgba(255,255,255,0.65)",
@@ -206,7 +238,7 @@ export function ProductSelector({
                 }}
               >
                 <div
-                  className="mt-0.5 w-3.5 h-3.5 rounded-sm flex items-center justify-center text-[9px] font-bold border"
+                  className="mt-0.5 w-4 h-4 rounded-sm flex items-center justify-center text-[10px] font-bold border shrink-0"
                   style={{
                     backgroundColor: active ? "#B8860B" : "transparent",
                     color: "#FFF7E0",
@@ -218,19 +250,26 @@ export function ProductSelector({
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between gap-2">
                     <p
-                      className="text-[12px] tracking-[0.16em] uppercase font-bold"
-                      style={{ color: "#8B6914" }}
+                      className="uppercase font-bold"
+                      style={{
+                        color: "#8B6914",
+                        fontSize: "clamp(12.5px, 1.2vw, 13.5px)",
+                        letterSpacing: "0.16em",
+                      }}
                     >
                       {meta.title}
                     </p>
                     <span
-                      className="font-mono text-[12px] whitespace-nowrap font-semibold"
-                      style={{ color: "#1F1A10" }}
+                      className="font-mono whitespace-nowrap font-semibold"
+                      style={{ color: "#1F1A10", fontSize: "clamp(12.5px, 1.15vw, 13.5px)" }}
                     >
                       $2.99
                     </span>
                   </div>
-                  <p className="text-[12px] leading-snug mt-0.5" style={{ color: "#3A3225" }}>
+                  <p
+                    className="leading-snug mt-1"
+                    style={{ color: "#3A3225", fontSize: "clamp(12.5px, 1.2vw, 13.5px)" }}
+                  >
                     {meta.desc}
                   </p>
                 </div>
@@ -242,23 +281,32 @@ export function ProductSelector({
 
       {/* Order summary — always full opacity, even when locked */}
       <div
-        className="rounded-[8px] px-4 py-3.5 mb-1 border-2"
+        className="rounded-[10px] px-5 py-4 mb-1 border-2"
         style={{
           borderColor: "rgba(74,64,45,0.35)",
           background: "rgba(255,255,255,0.85)",
-          boxShadow: "0 4px 16px -10px rgba(31,26,16,0.35)",
+          boxShadow: "0 6px 18px -10px rgba(31,26,16,0.4)",
         }}
       >
-        <div className="flex items-center justify-between text-[13px]">
+        <div
+          className="flex items-center justify-between"
+          style={{ fontSize: "clamp(13.5px, 1.25vw, 14.5px)" }}
+        >
           <span className="font-semibold" style={{ color: "#1F1A10" }}>
             {quote ? quote.label : "Nothing selected"}
           </span>
-          <span className="font-mono font-bold text-[15px]" style={{ color: "#0A0F1E" }}>
+          <span
+            className="font-mono font-bold"
+            style={{ color: "#0A0F1E", fontSize: "clamp(15px, 1.4vw, 16.5px)" }}
+          >
             {quote ? formatPrice(quote.cents) : "—"}
           </span>
         </div>
         {quote && quote.saved_cents > 0 && (
-          <div className="flex items-center justify-between text-[11.5px] mt-1">
+          <div
+            className="flex items-center justify-between mt-1.5"
+            style={{ fontSize: "clamp(11.5px, 1.05vw, 12.5px)" }}
+          >
             <span style={{ color: "#5C5340" }}>
               if bought separately:{" "}
               <span className="line-through">{formatPrice(quote.separate_cents)}</span>
