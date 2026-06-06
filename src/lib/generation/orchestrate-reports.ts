@@ -124,7 +124,9 @@ export async function orchestrateReports(
         pdf_bytes: pdf.byteLength,
       });
     } catch (e: any) {
-      results.push({ module, status: "failed_generation", error: String(e?.message ?? e) });
+      const msg = String(e?.message ?? e);
+      console.error(`[orchestrate-reports] module ${module} failed:`, msg, e?.stack ?? "");
+      results.push({ module, status: "failed_generation", error: msg });
     }
   }
   return results;
