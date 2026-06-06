@@ -64,13 +64,36 @@ async function lastSweeperRunAt(s: any): Promise<string | null> {
   }
 }
 
+// Schema guard: probe the exact columns the generation pipeline reads/writes. A missing column
+// means a migration was not applied — which breaks ALL generation (loadOrderContext selects
+// continuum_type; the separate pipeline inserts module_code; report_ref backs the per-module ref).
+// Surfacing it here catches an unapplied migration in any env BEFORE a customer hits it.
+const SCHEMA_PROBES: Array<{ table: string; column: string; migration: string }> = [
+  { table: "orders", column: "continuum_type", migration: "20260606170000_continuum" },
+  { table: "reports", column: "report_ref", migration: "20260605193000_report_ref_support" },
+  { table: "reports", column: "module_code", migration: "20260606120000_report_module_code" },
+  { table: "reports", column: "continuum_type", migration: "20260606170000_continuum" },
+];
+
+async function checkSchema(s: any): Promise<{ ready: boolean; missing: string[] }> {
+  const missing: string[] = [];
+  for (const p of SCHEMA_PROBES) {
+    const { error } = await s
+      .from(p.table)
+      .select(p.column, { head: true, count: "exact" })
+      .limit(1);
+    if (error) missing.push(`${p.table}.${p.column} (apply ${p.migration})`);
+  }
+  return { ready: missing.length === 0, missing };
+}
+
 export const Route = createFileRoute("/api/public/health/generation-pipeline")({
   server: {
     handlers: {
       GET: async () => {
         const s = sb();
         try {
-          const [paid_no_job, queued_5m, processing_10m, failed_24h, last_ok, last_sweep] =
+          const [paid_no_job, queued_5m, processing_10m, failed_24h, last_ok, last_sweep, schema] =
             await Promise.all([
               countPaidOrdersWithoutJob24h(s),
               countByStatusOlderThan(s, "queued", 5 * 60 * 1000),
@@ -78,14 +101,21 @@ export const Route = createFileRoute("/api/public/health/generation-pipeline")({
               countFailedReports24h(s),
               lastSuccessfulGenerationAt(s),
               lastSweeperRunAt(s),
+              checkSchema(s),
             ]);
           const sweepFresh = !!last_sweep && Date.now() - Date.parse(last_sweep) < 15 * 60 * 1000;
           const healthy =
-            paid_no_job === 0 && queued_5m === 0 && processing_10m === 0 && sweepFresh;
+            schema.ready &&
+            paid_no_job === 0 &&
+            queued_5m === 0 &&
+            processing_10m === 0 &&
+            sweepFresh;
           return Response.json(
             {
               healthy,
               checked_at: new Date().toISOString(),
+              schema_ready: schema.ready,
+              schema_missing: schema.missing,
               paid_orders_without_job_24h: paid_no_job,
               queued_older_than_5m: queued_5m,
               processing_older_than_10m: processing_10m,

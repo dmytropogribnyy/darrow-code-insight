@@ -27,6 +27,10 @@ Do **not** do any of these without a fresh, explicit go from the product owner:
 - [ ] `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY` present
 - [ ] `ANTHROPIC_API_KEY` present
 - [ ] `FREEASTROAPI_KEY` present
+- [ ] `APITEMPLATE_API_KEY` present — the **PDF render engine** (`rest.apitemplate.io`). Confirm the
+      key is from a **paid** account with enough monthly quota: each report = 1 PDF and **CORE
+      Complete (separate mode) = 7 PDFs/order** (free tier is 50/mo → throttles after ~7 orders →
+      generation fails with no PDF). Currently on Starter (1,500/mo).
 - [ ] `RESEND_API_KEY` present
 - [ ] `GEOAPIFY_API_KEY` present
 - [ ] `STRIPE_LIVE_API_KEY` + `PAYMENTS_LIVE_WEBHOOK_SECRET` present (live webhook verified)
@@ -44,9 +48,19 @@ Do **not** do any of these without a fresh, explicit go from the product owner:
 - [ ] Stale bundle prices archived (`bundle_modules_3_799 / 4_1099 / 5_1299`)
 - [ ] Live webhook `…/api/public/payments/webhook?env=live` listening on `checkout.session.completed`
 
-### Database / storage
-- [ ] `report_ref` + `module_code` migrations applied (trigger `trg_set_report_ref`, `set_report_ref()`)
-- [ ] `20260606170000_continuum.sql` applied (`orders.continuum_type`, `reports.continuum_type`, index)
+### Database / storage — ⚠️ #1 LAUNCH GATE (migrations are NOT auto-applied)
+PHASE 6 found that the deploy pipeline does **not** auto-apply repo migrations — all three recent
+migrations were missing in the target DB, which **breaks ALL generation** (CORE/add-ons/Continuum):
+`loadOrderContext` selects `continuum_type`, the separate pipeline inserts `module_code`, and the
+per-module ref needs `report_ref`. A missing column makes every order fail with "order not found"
+or `failed_generation`. **Apply + verify these BEFORE the PHASE 5 code (`c450555`+) is deployed:**
+- [ ] `20260605193000_report_ref_support.sql` → `reports.report_ref` + trigger `set_report_ref()`
+- [ ] `20260606120000_report_module_code.sql` → `reports.module_code` + ref `-MODULE` suffix
+- [ ] `20260606170000_continuum.sql` → `orders.continuum_type`, `reports.continuum_type`, index
+- [ ] **Verify via the health endpoint:** `GET /api/public/health/generation-pipeline` returns
+      `"schema_ready": true` and `"schema_missing": []`. If any column is missing it lists exactly
+      which migration to apply — this guard now fails the health check (503) so an unapplied
+      migration is caught before a customer hits it.
 - [ ] `reports` storage bucket exists (private)
 - [ ] `support:report` works against production (read-only)
 
