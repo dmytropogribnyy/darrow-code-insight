@@ -1,9 +1,9 @@
 import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 
-function scrollToAbout() {
+function scrollToId(id: string) {
   const start = Date.now();
   const tick = () => {
-    const el = document.getElementById("about");
+    const el = document.getElementById(id);
     if (el) {
       el.scrollIntoView({ behavior: "smooth", block: "start" });
       return;
@@ -16,6 +16,21 @@ function scrollToAbout() {
 export function SiteHeader({ onDark = false }: { onDark?: boolean }) {
   const navigate = useNavigate();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
+
+  const goToSection = (id: string) => {
+    if (pathname === "/") {
+      scrollToId(id);
+    } else {
+      navigate({ to: "/" }).then(() => scrollToId(id));
+    }
+  };
+
+  const announcementClasses =
+    "font-sans font-medium transition-colors duration-200 cursor-pointer " +
+    (onDark
+      ? "text-light-grey/90 hover:text-gold"
+      : "text-neutral-grey hover:text-charcoal");
+
   return (
     <header
       className={
@@ -33,23 +48,23 @@ export function SiteHeader({ onDark = false }: { onDark?: boolean }) {
           DARROW CODE
         </Link>
 
-        {/* Centered announcement — subtle, responsive */}
+        {/* Centered announcement — tablet+ only; mobile gets its own row below */}
         <div
           className="hidden sm:flex flex-1 justify-center px-3 min-w-0"
           aria-label="Launch announcement"
         >
-          <span
-            className={
-              "font-sans font-medium truncate " +
-              (onDark ? "text-light-grey/90" : "text-neutral-grey")
-            }
-            style={{ fontSize: "clamp(14px, 1.4vw, 16px)", letterSpacing: "0.04em" }}
+          <button
+            type="button"
+            onClick={() => goToSection("product-selector")}
+            className={announcementClasses + " truncate"}
+            style={{ fontSize: "clamp(13px, 1.3vw, 16px)", letterSpacing: "0.04em" }}
+            aria-label="Jump to choose your report"
           >
             <span className="hidden md:inline">
               Launch drop · Your birth code, decoded for less than a latte
             </span>
-            <span className="md:hidden text-gold/90">Birth code decoded</span>
-          </span>
+            <span className="md:hidden">Launch drop · Birth code decoded</span>
+          </button>
         </div>
 
         <div className="flex items-center gap-5 shrink-0">
@@ -57,11 +72,7 @@ export function SiteHeader({ onDark = false }: { onDark?: boolean }) {
             href="/#about"
             onClick={(e) => {
               e.preventDefault();
-              if (pathname === "/") {
-                scrollToAbout();
-              } else {
-                navigate({ to: "/" }).then(() => scrollToAbout());
-              }
+              goToSection("about");
             }}
             className={
               "font-sans font-medium transition-colors duration-200 " +
@@ -86,6 +97,24 @@ export function SiteHeader({ onDark = false }: { onDark?: boolean }) {
             See a sample <span className="text-gold">→</span>
           </Link>
         </div>
+      </div>
+
+      {/* Mobile announcement row — visible only below sm */}
+      <div
+        className={
+          "sm:hidden px-4 py-2 flex justify-center border-t " +
+          (onDark ? "border-gold/10" : "border-border")
+        }
+      >
+        <button
+          type="button"
+          onClick={() => goToSection("product-selector")}
+          className={announcementClasses + " text-center"}
+          style={{ fontSize: 12.5, letterSpacing: "0.04em" }}
+          aria-label="Jump to choose your report"
+        >
+          Launch drop · Birth code decoded <span className="text-gold">→</span>
+        </button>
       </div>
     </header>
   );
