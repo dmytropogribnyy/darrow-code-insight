@@ -81,7 +81,7 @@ function LandingPage() {
 
       {/* HERO — dark navy section */}
       <section
-        className="text-light-grey"
+        className="text-light-grey relative overflow-hidden"
         style={{
           background: `
             radial-gradient(circle at 50% 18%, rgba(212,175,55,0.06), transparent 28%),
@@ -91,7 +91,8 @@ function LandingPage() {
           backgroundColor: "#0A0F1E",
         }}
       >
-        <div className="max-w-3xl mx-auto px-6 pt-12 sm:pt-16 pb-10 sm:pb-12 text-center">
+        <HeroStars />
+        <div className="relative max-w-3xl mx-auto px-6 pt-12 sm:pt-16 pb-10 sm:pb-12 text-center">
           {/* Top badge */}
           <div className="inline-flex items-center border border-gold/60 rounded-full px-4 py-2">
             <span
@@ -101,6 +102,11 @@ function LandingPage() {
               PREMIUM AI-POWERED ASTROLOGY REPORT · DARROW CODE METHOD · PDF
             </span>
           </div>
+
+          {/* Decorative planetary glyph ribbon + tonight's moon phase */}
+          <PlanetGlyphRibbon />
+          <MoonPhaseChip />
+
 
           {/* Darrow symbol */}
           <img
