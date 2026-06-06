@@ -111,7 +111,7 @@ const aboutFaqs: Faq[] = [
     question: "What are the focused chapters?",
     answer: (
       <div className="space-y-2.5">
-        <p>Focused chapters go deeper into one part of your life.</p>
+        <p>Focused chapters are separate life-area astrology readings that go deeper into one part of your life.</p>
         <p>
           You can add them to CORE, buy only the area you want, or get CORE Complete with all
           chapters.
