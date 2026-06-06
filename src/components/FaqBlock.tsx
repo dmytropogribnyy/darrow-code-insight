@@ -191,7 +191,44 @@ const aboutFaqs: Faq[] = [
       </div>
     ),
   },
+  {
+    question: "What is Continuum (Personal Timing Report)?",
+    answer: (
+      <div className="space-y-2.5">
+        <p>
+          Continuum is a separate AI horoscope report focused on <strong>timing</strong> — what's
+          coming next for you personally. It's built from the same birth data as CORE, but instead
+          of mapping <em>who you are</em>, it maps <em>when to act</em>: pressure zones, green
+          windows, vectors, environments and a daily protocol.
+        </p>
+        <p>Delivered as its own private PDF, independent from CORE and the Focused Chapters.</p>
+      </div>
+    ),
+  },
+  {
+    question: "What's the difference between the 7-day and 30-day Continuum?",
+    answer: (
+      <div className="space-y-3">
+        <p>
+          <strong>Continuum 7 Days — $1.99.</strong> A week-ahead timing brief: main theme of the
+          week, pressure zones vs green windows, focus across work, relationships and body, plus a
+          daily protocol. Best for short-horizon decisions.
+        </p>
+        <p>
+          <strong>Continuum 30 Days — $3.99.</strong> A full month-ahead map: monthly theme,
+          primary vector, green &amp; pressure windows, and protocols across work, money,
+          relationships and body. Best for planning a month of moves.
+        </p>
+        <p>
+          Both are AI-generated from your birth chart and arrive as a separate PDF — they are not
+          part of CORE Complete.
+        </p>
+      </div>
+    ),
+  },
 ];
+
+
 
 const commonFaqs: Faq[] = [
   {
