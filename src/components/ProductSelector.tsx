@@ -120,7 +120,8 @@ export function ProductSelector({
               className="leading-relaxed mt-1.5"
               style={{ color: "#2A2418", fontSize: "clamp(14px, 1.35vw, 15.5px)" }}
             >
-              Your private birth code: how you think, react, choose and move through change.
+              Your full personal astrology foundation report — birth chart, personality patterns,
+              timing, numerology and life rhythm. Delivered as a private PDF.
             </p>
           </div>
           <span
