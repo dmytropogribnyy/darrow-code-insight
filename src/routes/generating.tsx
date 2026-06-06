@@ -26,7 +26,7 @@ function GeneratingPage() {
   const { session_id } = Route.useSearch();
   const navigate = useNavigate();
   const [status, setStatus] = useState<string>("Reading the full pattern…");
-  const [detail, setDetail] = useState<string>("Usually 1–5 minutes depending on your selection");
+  const [detail, setDetail] = useState<string>("Single reports: ~2–4 min · CORE Complete: ~15–20 min · we'll email your link");
   const [atmosphericIdx, setAtmosphericIdx] = useState(0);
   const [atmosphericVisible, setAtmosphericVisible] = useState(true);
   const [showReassurance, setShowReassurance] = useState(false);
