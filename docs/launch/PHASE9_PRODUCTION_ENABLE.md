@@ -71,9 +71,25 @@ or `failed_generation`. **Apply + verify these BEFORE the PHASE 5 code (`c450555
 - [ ] Rollback rehearsed in staging (flipping flags back to 0 restores legacy behavior)
 
 ### Gates already green
-- [ ] PHASE 4 — add-ons + Continuum real-AI validation pass (schema, proof-anchored, zero forbidden claims)
-- [ ] PHASE 6 — separate-pipeline dry run green (needs `SUPABASE_SERVICE_ROLE_KEY`)
-- [ ] PHASE 7 — Stripe **test-mode** E2E green (CORE Complete + Continuum 7d/30d)
+- [x] PHASE 4 — add-ons + Continuum real-AI validation pass (schema, proof-anchored, zero forbidden claims)
+- [x] PHASE 6 — separate-pipeline dry run **GREEN** (CORE+LOVE end-to-end via async sweeper: AI →
+      APITemplate PDF → bucket → rows with `-MODULE` ref; `attempt_count=2` = resume works)
+- [ ] PHASE 7 — Stripe **test-mode** E2E green (CORE Complete + Continuum 7d/30d) — see PHASE7_E2E_CHECKLIST.md
+
+### Launch-readiness guards (close in PHASE 8, verify before enable)
+- [ ] **Health endpoint is a HARD GATE:** do not enable any production flag unless
+      `GET /api/public/health/generation-pipeline` returns `200` + `schema_ready:true`.
+- [ ] **Stripe lookup keys** resolve in LIVE (manual checklist now; a `verifyStripeLookupKeys()` script
+      later): `core_499`, `core_complete_1499`, `module_*_299`, `bundle_modules_2_499`/`3_699`/`4_899`/
+      `5_999`/`6_1000`, `continuum_7d_199`, `continuum_30d_399`.
+- [ ] **APITemplate** account = paid (Starter+), monthly quota ≥ expected, a render test passes
+      (CORE Complete = 7 PDFs/order).
+- [ ] **pg_cron / sweeper health:** `last_sweeper_run_at` exists and is < 5 min old; cron job
+      `darrow-generation-sweeper-v2` exists; stuck-queued count = 0 (or known); `failed_generation_24h` visible.
+- [ ] **Debug routes audit:** every `/api/public/debug/*` route is secret-gated, prints no secrets,
+      creates no customer data without an explicit test marker, and sends no email by default.
+- [ ] **Timing expectation copy** live: `/result` says "we'll email you when ready"; premium
+      `expectedMin = 20`; FAQ says CORE Complete ~15–20 min (no false-failure banner before ~9 min).
 
 ---
 
@@ -82,9 +98,11 @@ or `failed_generation`. **Apply + verify these BEFORE the PHASE 5 code (`c450555
 1. Confirm **no active generation jobs** in flight (`generation_jobs` quiet).
 2. Confirm the **latest commit is deployed** to production.
 3. Confirm env/secrets (§1) one more time.
+3b. **HARD GATE:** `GET /api/public/health/generation-pipeline` → `200` + `schema_ready:true`.
+    If 503 / `schema_ready:false` → **do not enable any flag**; apply the listed migration first.
 4. **Enable `BUNDLE_SEPARATE_REPORTS=1`** (production). Legacy combined path is the fallback if anything misbehaves.
 5. **Enable `CONTINUUM_ENABLED=1` + `VITE_CONTINUUM_ENABLED=1`** — only if PHASE 7 Continuum E2E is green **and** explicitly approved.
-6. Place **one controlled live order** (only if explicitly approved) — smallest viable (e.g. CORE $4.99, or Continuum 7d $1.99).
+6. Place **one controlled live order** (only if explicitly approved) — smallest viable (e.g. CORE $4.99, or Continuum 7d $1.99). **Do not run marketing/paid traffic until this first live order completes end-to-end.** If it fails → flags back to 0 immediately.
 7. **Monitor** for that order end-to-end:
    - `generation_jobs` (queued → complete, no stuck/`failed`)
    - `reports` (rows created; per-module `report_ref` `…-LOVE` etc.; `pdf_url`, `download_token`; Continuum row has `continuum_type` + correct period)
