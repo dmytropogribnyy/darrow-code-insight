@@ -191,7 +191,7 @@ export function ContinuumTeaser({
         <ContinuumCard
           period="Next 30 Days"
           priceLabel="$3.99"
-          blurb="A full month-ahead map: vectors, windows, environments and recovery focus."
+          blurb="AI horoscope report built from your birth chart — a full month-ahead map: vectors, windows, environments and recovery focus. Delivered as a separate PDF."
           bullets={[
             "Month theme · primary vector",
             "Green & pressure windows",
