@@ -273,7 +273,13 @@ export function buildDefaultSeparateHooks(sb: any): SeparatePipelineHooks {
     if (completeEntries.length === 0) return;
 
     const { bundleReportReadyEmail, sendEmail } = await import("@/lib/email/resend.server");
+    const { recommendNextProducts } = await import("@/lib/email/recommend-next");
+    const { continuumEnabled } = await import("@/lib/continuum/continuum-config");
     const resultUrl = `${appBaseUrl}/result/${completeEntries[0].download_token}`;
+    const recommendation = recommendNextProducts(
+      results.map((r) => r.module),
+      { appBaseUrl, continuumEnabled: continuumEnabled() },
+    )[0];
     const { subject, html } = bundleReportReadyEmail({
       first_name: deliveryCtx.first_name ?? null,
       result_url: resultUrl,
@@ -283,6 +289,7 @@ export function buildDefaultSeparateHooks(sb: any): SeparatePipelineHooks {
         download_url: e.download_url as string,
       })),
       pending_count: delivery.total - completeEntries.length,
+      recommendation,
     });
     await sendEmail({ to: deliveryCtx.email, subject, html });
     // Mark the complete rows as emailed (idempotency).

@@ -110,6 +110,7 @@ export function bundleReportReadyEmail(args: {
   result_url: string;
   items: Array<{ label: string; report_ref: string | null; download_url: string }>;
   pending_count?: number;
+  recommendation?: { title: string; body: string; cta_label: string; cta_url: string };
 }): { subject: string; html: string } {
   const name = args.first_name ?? "";
   const greeting = name ? `Hi ${escape(name)},` : "Hi,";
@@ -136,6 +137,16 @@ export function bundleReportReadyEmail(args: {
       ? `<p style="font-size:13px;line-height:1.6;color:#7A6F58;margin:18px 0 0;font-style:italic">${args.pending_count} more report${args.pending_count === 1 ? " is" : "s are"} still being prepared — we'll follow up when ready.</p>`
       : "";
 
+  // PHASE 2 — subtle, optional "recommended next" block (max one). Links to the website only.
+  const r = args.recommendation;
+  const rec = r
+    ? `<div style="margin:26px 0 0;padding:18px 20px;background:#F0EBE0;border-radius:8px">
+         <p style="font-family:'Inter',Helvetica,Arial,sans-serif;font-size:11px;letter-spacing:2px;color:#A8841F;text-transform:uppercase;font-weight:600;margin:0 0 8px">${escape(r.title)}</p>
+         <p style="font-size:14px;line-height:1.6;color:#3A3528;margin:0 0 10px">${escape(r.body)}</p>
+         <p style="font-size:14px;margin:0"><a href="${r.cta_url}" style="color:#D4AF37;text-decoration:none;font-family:'Inter',Helvetica,Arial,sans-serif;font-weight:600">${escape(r.cta_label)} →</a></p>
+       </div>`
+    : "";
+
   return {
     subject,
     html: `<!doctype html><html><body style="font-family:Georgia,'Times New Roman',serif;color:#151922;background:#EFEAE0;margin:0;padding:0;-webkit-font-smoothing:antialiased">
@@ -154,6 +165,7 @@ export function bundleReportReadyEmail(args: {
           <p style="font-size:14px;line-height:1.65;margin:0 0 28px">
             <a href="${args.result_url}" style="color:#D4AF37;text-decoration:none;font-family:'Inter',Helvetica,Arial,sans-serif;word-break:break-all">${args.result_url}</a>
           </p>
+          ${rec}
           <div style="border-top:1px solid #E0D9C9;padding-top:22px">
             <p style="font-family:'Inter',Helvetica,Arial,sans-serif;font-size:11px;letter-spacing:4px;color:#9CA3AF;text-transform:uppercase;font-weight:600;margin:0 0 8px">Darrow Code</p>
             <p style="color:#7A6F58;font-size:12px;margin:0 0 4px;font-style:italic;font-family:Georgia,serif">For self-reflection and personal insight.</p>
