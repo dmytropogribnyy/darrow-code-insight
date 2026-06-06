@@ -3,12 +3,12 @@ import { MODULE_CODES, type ModuleCode, priceForModules } from "@/lib/modules";
 export type Selectable = "CORE" | ModuleCode;
 
 const CHAPTER_META: Record<ModuleCode, { title: string; desc: string }> = {
-  LOVE: { title: "LOVE", desc: "Who you attract — and why it keeps happening" },
-  MONEY: { title: "MONEY", desc: "Your wealth, work & business mechanism" },
-  BODY: { title: "BODY", desc: "Your stress signature & recovery rhythm" },
-  YEAR: { title: "YEAR", desc: "Your year pattern, pressure & opportunity" },
-  STYLE: { title: "STYLE", desc: "Your colors, aesthetic & personal signature" },
-  PLACE: { title: "PLACE", desc: "Where you thrive — and where you lose energy" },
+  LOVE: { title: "LOVE", desc: "Your love pattern, attraction style and relationship rhythm" },
+  MONEY: { title: "MONEY", desc: "Your work, money and value pattern" },
+  BODY: { title: "BODY", desc: "Your stress signature and recovery rhythm" },
+  YEAR: { title: "YEAR", desc: "Your personal year, timing pressure and opportunity pattern" },
+  STYLE: { title: "STYLE", desc: "Your aesthetic signature, presence and style pattern" },
+  PLACE: { title: "PLACE", desc: "Your environment pattern — where your system feels clearer or drained" },
 };
 
 interface Props {
