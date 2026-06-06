@@ -26,7 +26,7 @@ function GeneratingPage() {
   const { session_id } = Route.useSearch();
   const navigate = useNavigate();
   const [status, setStatus] = useState<string>("Reading the full pattern…");
-  const [detail, setDetail] = useState<string>("Usually 1–5 minutes depending on your selection");
+  const [detail, setDetail] = useState<string>("Single reports: ~2–4 min · CORE Complete: ~15–20 min · we'll email your link");
   const [atmosphericIdx, setAtmosphericIdx] = useState(0);
   const [atmosphericVisible, setAtmosphericVisible] = useState(true);
   const [showReassurance, setShowReassurance] = useState(false);
@@ -54,7 +54,7 @@ function GeneratingPage() {
         }
         if (res.generation_status === "processing" || res.job_status === "processing") {
           setStatus("Synthesising your patterns…");
-          setDetail("This can take several minutes for larger readings.");
+          setDetail("Multi-chapter selections can take 10–20 minutes — your link will arrive by email.");
         }
         if (res.job_recovery_pending) {
           setStatus("Taking longer than usual — recovery is queued…");

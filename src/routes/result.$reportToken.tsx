@@ -116,16 +116,16 @@ function ReportCard({
   // Adaptive ETA copy + stuck detection for pending reports
   const ageMs = Date.now() - new Date(row.created_at).getTime();
   const ageMin = Math.floor(ageMs / 60000);
-  const expectedMin = isPremium ? 7 : info.kind === "addons" ? Math.max(2, row.modules.length) : 2;
-  const takingLonger = pending && ageMin >= expectedMin + 2;
+  const expectedMin = isPremium ? 20 : info.kind === "addons" ? Math.max(4, row.modules.length * 3) : 4;
+  const takingLonger = pending && ageMin >= expectedMin + 3;
 
   let pendingCopy: string;
   if (isPremium) {
-    pendingCopy = "Composing your complete set… ~5–7 min · CORE + 6 focused reports";
+    pendingCopy = "Composing your complete set… ~15–20 min · CORE + 6 focused reports · we'll email you";
   } else if (info.kind === "addons" && row.modules.length > 2) {
     pendingCopy = `Composing ${row.modules.length} chapters… ~${expectedMin} min · we'll email you`;
   } else {
-    pendingCopy = "Generating… ETA ~2 min · we'll email you";
+    pendingCopy = "Generating… ETA ~2–4 min · we'll email you";
   }
 
   return (
