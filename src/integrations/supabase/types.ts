@@ -318,9 +318,11 @@ export type Database = {
           id: string
           intake_id: string
           model_used: string | null
+          module_code: Database["public"]["Enums"]["module_code"] | null
           modules_array: Database["public"]["Enums"]["module_code"][]
           pdf_url: string | null
           ready_email_sent_at: string | null
+          report_ref: string | null
         }
         Insert: {
           ai_content_json?: Json | null
@@ -333,9 +335,11 @@ export type Database = {
           id?: string
           intake_id: string
           model_used?: string | null
+          module_code?: Database["public"]["Enums"]["module_code"] | null
           modules_array?: Database["public"]["Enums"]["module_code"][]
           pdf_url?: string | null
           ready_email_sent_at?: string | null
+          report_ref?: string | null
         }
         Update: {
           ai_content_json?: Json | null
@@ -348,9 +352,11 @@ export type Database = {
           id?: string
           intake_id?: string
           model_used?: string | null
+          module_code?: Database["public"]["Enums"]["module_code"] | null
           modules_array?: Database["public"]["Enums"]["module_code"][]
           pdf_url?: string | null
           ready_email_sent_at?: string | null
+          report_ref?: string | null
         }
         Relationships: [
           {
