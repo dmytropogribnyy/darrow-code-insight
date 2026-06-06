@@ -10,9 +10,11 @@ import { useEffect, useState } from "react";
 
 const PLANET_GLYPHS = ["☉", "☽", "☿", "♀", "♂", "♃", "♄"];
 // 12 zodiac glyphs, Aries at top, clockwise.
+// "\uFE0E" = variation selector-15 → forces text presentation (not emoji color),
+// so the glyphs inherit the monochrome gold fill instead of system emoji colors.
 const ZODIAC_GLYPHS = [
-  "♈", "♉", "♊", "♋", "♌", "♍",
-  "♎", "♏", "♐", "♑", "♒", "♓",
+  "♈\uFE0E", "♉\uFE0E", "♊\uFE0E", "♋\uFE0E", "♌\uFE0E", "♍\uFE0E",
+  "♎\uFE0E", "♏\uFE0E", "♐\uFE0E", "♑\uFE0E", "♒\uFE0E", "♓\uFE0E",
 ];
 
 /**
