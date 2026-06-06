@@ -8,7 +8,7 @@ import { createClient } from "@supabase/supabase-js";
 import { toSupportFacts, type SupportReportFacts } from "./report-support";
 
 const REPORT_COLS =
-  "id, report_ref, module_code, customer_id, intake_id, modules_array, pdf_url, generation_status, " +
+  "id, report_ref, module_code, continuum_type, customer_id, intake_id, modules_array, pdf_url, generation_status, " +
   "generation_error, download_token, ready_email_sent_at, model_used, created_at";
 
 function sb() {

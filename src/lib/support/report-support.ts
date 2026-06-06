@@ -13,6 +13,7 @@ export interface SupportReportFacts {
   report_ref: string | null;
   report_id: string;
   module_code: string | null; // per-module bundle row; null = legacy combined
+  continuum_type: string | null; // "7d"/"30d" for a Continuum report; null otherwise
   client_name: string | null;
   email: string | null;
   modules: string[];
@@ -112,10 +113,13 @@ export function toSupportFacts(input: {
     report_ref: report?.report_ref ?? null,
     report_id: report?.id,
     module_code: report?.module_code ?? null,
+    continuum_type: report?.continuum_type ?? null,
     client_name: customer?.first_name ?? null,
     email: customer?.email ?? null,
     modules,
-    product_title: productTitle(modules),
+    product_title: report?.continuum_type
+      ? `CONTINUUM · ${report.continuum_type === "7d" ? "Next 7 Days" : "Next 30 Days"}`
+      : productTitle(modules),
     order_status: order?.status ?? null,
     stripe_session_id: order?.stripe_session_id ?? null,
     amount_cents: typeof order?.amount_cents === "number" ? order.amount_cents : null,
@@ -167,7 +171,9 @@ export function planSupportActions(facts: SupportReportFacts[]): ModuleActionPla
     const rec = recommendedAction(f);
     return {
       report_ref: f.report_ref,
-      module: f.module_code ?? f.modules[0] ?? "REPORT",
+      module: f.continuum_type
+        ? `CONT-${f.continuum_type}`
+        : (f.module_code ?? f.modules[0] ?? "REPORT"),
       action: rec.action,
       reason: rec.reason,
     };
@@ -187,7 +193,9 @@ export function formatPurchaseSupport(facts: SupportReportFacts[]): string {
   ];
   for (const f of facts) {
     const rec = recommendedAction(f);
-    const mod = f.module_code ?? (f.modules.length === 1 ? f.modules[0] : "COMBINED");
+    const mod = f.continuum_type
+      ? `CONT-${f.continuum_type}`
+      : (f.module_code ?? (f.modules.length === 1 ? f.modules[0] : "COMBINED"));
     lines.push(
       `  ${mod.padEnd(8)} ${f.report_ref ?? "(no ref)"}  gen=${f.generation_status ?? "?"}  pdf=${yn(f.pdf_exists)}  link=${f.link_active ? "active" : "—"}  email=${yn(f.email_sent)}  → ${rec.action.toUpperCase()}`,
     );

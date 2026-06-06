@@ -78,7 +78,7 @@ async function loadOrderContext(order_id: string) {
   const sb = admin();
   const { data: order } = await sb
     .from("orders")
-    .select("id, customer_id, intake_id, status")
+    .select("id, customer_id, intake_id, status, continuum_type")
     .eq("id", order_id)
     .single();
   if (!order) throw new Error(`order ${order_id} not found`);
@@ -252,6 +252,25 @@ export async function runFullGenerationPipeline(order_id: string): Promise<void>
     firstName = customer?.first_name ?? null;
     customerEmail = customer?.email ?? null;
     console.log("[pipeline] generation started", { order_id, intake_id: intake.id, modules });
+
+    // CONTINUUM: standalone timing product (own order_type). Dispatched when the order is a
+    // continuum order. Self-contained; never affects CORE/add-on orders (continuum_type null).
+    if ((order as any).continuum_type) {
+      console.log("[pipeline] continuum order — dispatching", {
+        order_id,
+        continuum_type: (order as any).continuum_type,
+      });
+      const { runContinuumGeneration, buildDefaultContinuumHooks } =
+        await import("@/lib/continuum/continuum-pipeline.server");
+      const result = await runContinuumGeneration(order_id, buildDefaultContinuumHooks(sb));
+      logStage({
+        stage: "status_updated",
+        result: result.status === "complete" ? "success" : "failed",
+        order_id,
+        extra: { mode: "continuum", status: result.status },
+      });
+      return;
+    }
 
     // BUNDLE-B: separate per-module reports (one PDF per module). Flag-gated, default OFF.
     // When OFF (production today) this branch is skipped and the legacy combined path below
