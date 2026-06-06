@@ -186,7 +186,8 @@ export function ProductSelector({
               className="leading-relaxed mt-1.5"
               style={{ color: "#2A2418", fontSize: "clamp(14px, 1.35vw, 15.5px)" }}
             >
-              CORE Report + all 6 Focused Chapters, delivered separately.
+              The complete AI astrology report set: CORE + LOVE, MONEY, BODY, YEAR, STYLE and PLACE
+              — delivered as separate private PDFs.
             </p>
           </div>
           <span
