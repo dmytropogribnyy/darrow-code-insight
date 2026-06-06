@@ -238,6 +238,9 @@
   .darrow-symbol-spin {
     animation: none;
   }
+}
+
+
 
 /* Chapter card pulse — triggered by hero pill clicks */
 @keyframes chapter-pulse {
