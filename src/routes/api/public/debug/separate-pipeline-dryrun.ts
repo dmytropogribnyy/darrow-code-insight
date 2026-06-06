@@ -177,29 +177,97 @@ async function inspect(body: any) {
 
   const { data: order } = await sb
     .from("orders")
-    .select("id, status")
+    .select("id, status, created_at")
     .eq("intake_id", intake_id)
     .order("created_at", { ascending: false })
     .limit(1)
     .maybeSingle();
-  let job_status: string | null = null;
+  let job: any = null;
   if (order?.id) {
-    const { data: job } = await sb
+    const { data: j } = await sb
       .from("generation_jobs")
-      .select("status, last_error")
+      .select("id, status, attempt_count, last_error, created_at, updated_at")
       .eq("order_id", order.id)
       .maybeSingle();
-    job_status = job?.status ?? null;
+    job = j ?? null;
+  }
+  const job_status: string | null = job?.status ?? null;
+
+  // Sweeper / cron observability — best-effort (RPC may not exist in every env).
+  let last_sweeper_run_at: string | null = null;
+  let sweeper_error: string | null = null;
+  try {
+    const { data, error } = await sb.rpc("last_sweeper_run_at");
+    if (error) sweeper_error = error.message ?? String(error);
+    else last_sweeper_run_at = (data as any) ?? null;
+  } catch (e: any) {
+    sweeper_error = String(e?.message ?? e);
+  }
+
+  const now = Date.now();
+  const enqueuedAt = job?.created_at ? new Date(job.created_at).getTime() : null;
+  const sweeperAt = last_sweeper_run_at ? new Date(last_sweeper_run_at).getTime() : null;
+  const queued_for_seconds = enqueuedAt ? Math.round((now - enqueuedAt) / 1000) : null;
+  const seconds_since_last_sweeper_run = sweeperAt ? Math.round((now - sweeperAt) / 1000) : null;
+  const sweeper_ran_after_enqueue =
+    sweeperAt !== null && enqueuedAt !== null ? sweeperAt > enqueuedAt : null;
+
+  const env_flags = {
+    BUNDLE_SEPARATE_REPORTS: separateReportsEnabled(process.env),
+    BUNDLE_SEPARATE_REPORTS_raw: process.env.BUNDLE_SEPARATE_REPORTS ?? null,
+    CONTINUUM_ENABLED: process.env.CONTINUUM_ENABLED ?? null,
+    JOB_DISPATCH_SECRET_present: !!process.env.JOB_DISPATCH_SECRET,
+    PHASE6_DRYRUN_TOKEN_present: !!process.env.PHASE6_DRYRUN_TOKEN,
+    SUPABASE_SERVICE_ROLE_KEY_present: !!process.env.SUPABASE_SERVICE_ROLE_KEY,
+    APP_BASE_URL: process.env.APP_BASE_URL ?? null,
+  };
+
+  // Diagnose why the job might still be queued.
+  const diagnostic_hints: string[] = [];
+  if (job_status === "queued") {
+    if (queued_for_seconds !== null && queued_for_seconds > 300) {
+      diagnostic_hints.push(
+        `Job queued for ${queued_for_seconds}s (>5min) — worker not picking up.`,
+      );
+    }
+    if (sweeper_ran_after_enqueue === false) {
+      diagnostic_hints.push(
+        "pg_cron sweeper has NOT run since this job was enqueued — cron job 'darrow-generation-sweeper-v2' may be unscheduled, paused, or failing.",
+      );
+    }
+    if (last_sweeper_run_at === null) {
+      diagnostic_hints.push(
+        "No successful sweeper run recorded ever — verify cron job exists: SELECT * FROM cron.job WHERE jobname='darrow-generation-sweeper-v2'.",
+      );
+    } else if (seconds_since_last_sweeper_run !== null && seconds_since_last_sweeper_run > 300) {
+      diagnostic_hints.push(
+        `Last successful sweeper run was ${seconds_since_last_sweeper_run}s ago (>5min) — cron may be stalled.`,
+      );
+    }
+    if (sweeper_error) {
+      diagnostic_hints.push(`last_sweeper_run_at RPC failed: ${sweeper_error}`);
+    }
+  }
+  if (job_status === "failed" && job?.last_error) {
+    diagnostic_hints.push(`Worker reported failure: ${job.last_error}`);
+  }
+  if (!env_flags.BUNDLE_SEPARATE_REPORTS) {
+    diagnostic_hints.push(
+      "BUNDLE_SEPARATE_REPORTS is OFF — combined pipeline will run (single report row), not separate.",
+    );
   }
 
   const { data: rows } = await sb
     .from("reports")
-    .select("module_code, report_ref, download_token, pdf_url, generation_status")
+    .select(
+      "module_code, report_ref, download_token, pdf_url, generation_status, generation_error, model_used, created_at",
+    )
     .eq("intake_id", intake_id)
     .order("created_at", { ascending: true });
   const moduleReport = (rows ?? []).map((r: any) => ({
     module_code: r.module_code,
     status: r.generation_status,
+    generation_error: r.generation_error ?? null,
     report_ref: r.report_ref,
     ref_has_module_suffix:
       r.module_code && r.module_code !== "CORE"
@@ -208,7 +276,30 @@ async function inspect(body: any) {
     download_token: r.download_token,
     storage_path: r.pdf_url,
     pdf_exists: !!r.pdf_url,
+    model_used: r.model_used,
+    created_at: r.created_at,
   }));
+
+  const observability = {
+    order: order
+      ? {
+          id: order.id,
+          status: order.status,
+          created_at: order.created_at,
+          age_seconds: order.created_at
+            ? Math.round((now - new Date(order.created_at).getTime()) / 1000)
+            : null,
+        }
+      : null,
+    job,
+    queued_for_seconds,
+    last_sweeper_run_at,
+    seconds_since_last_sweeper_run,
+    sweeper_ran_after_enqueue,
+    sweeper_rpc_error: sweeper_error,
+    env_flags,
+    diagnostic_hints,
+  };
 
   const allComplete =
     moduleReport.length >= modules_expected &&
@@ -225,7 +316,8 @@ async function inspect(body: any) {
       modules_expected,
       rows_so_far: moduleReport.length,
       rows: moduleReport,
-      note: "Still generating (or worker not swept yet). Poll again in ~30–60s.",
+      observability,
+      note: "Still generating (or worker not swept yet). Poll again in ~30–60s. See observability.diagnostic_hints for likely reasons.",
     };
   }
 
@@ -261,6 +353,7 @@ async function inspect(body: any) {
     order_status: order?.status ?? null,
     modules: moduleReport,
     checks,
+    observability,
     note: "Diagnostic test records left in place for support:report verification. No Stripe, no charge.",
   };
 }
