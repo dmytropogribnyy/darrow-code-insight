@@ -163,6 +163,42 @@ async function reenqueue(body: any) {
   };
 }
 
+// Same-env dispatch: run the REAL pipeline in THIS deployment (same Supabase the order was created
+// in), bypassing pg_cron. If this generates but pg_cron reported "order not found", the preview
+// pg_cron worker targets a DIFFERENT env — infra wiring, not a pipeline bug. Use a SMALL module set
+// (1 module) so it fits the request timeout, like the core-v3-run diagnostic.
+async function dispatch(body: any) {
+  const sb = admin();
+  const order_id = body?.order_id;
+  if (typeof order_id !== "string" || !order_id) throw new Error("order_id required");
+  const { data: order } = await sb
+    .from("orders")
+    .select("id, intake_id")
+    .eq("id", order_id)
+    .single();
+  if (!order)
+    throw new Error(`order ${order_id} not found in THIS deployment's Supabase (env mismatch?)`);
+  await sb
+    .from("generation_jobs")
+    .upsert({ order_id, status: "queued", last_error: null }, { onConflict: "order_id" });
+  const { runFullGenerationPipeline } = await import("@/lib/generation/pipeline.server");
+  let pipeline_error: string | null = null;
+  try {
+    await runFullGenerationPipeline(order_id);
+  } catch (e: any) {
+    pipeline_error = String(e?.message ?? e).slice(0, 700);
+  }
+  const result = await inspect({ intake_id: order.intake_id });
+  return {
+    ...result,
+    mode: "dispatch",
+    pipeline_error,
+    same_env_note:
+      "Ran the pipeline in THIS deployment against THIS Supabase. If this passes but pg_cron failed " +
+      "with 'order not found', preview pg_cron targets a different env (infra), not a pipeline bug.",
+  };
+}
+
 // Read the rows for a test intake and compute PASS/FAIL (fast; no generation).
 async function inspect(body: any) {
   const sb = admin();
@@ -384,9 +420,11 @@ export const Route = createFileRoute("/api/public/debug/separate-pipeline-dryrun
           const result =
             action === "inspect"
               ? await inspect(body)
-              : action === "reenqueue"
-                ? await reenqueue(body)
-                : await enqueue(body);
+              : action === "dispatch"
+                ? await dispatch(body)
+                : action === "reenqueue"
+                  ? await reenqueue(body)
+                  : await enqueue(body);
           return Response.json(result);
         } catch (e: any) {
           return Response.json(
