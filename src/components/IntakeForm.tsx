@@ -2,12 +2,14 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { useNavigate } from "@tanstack/react-router";
 import { createCheckout } from "@/utils/checkout.functions";
+import { createContinuumCheckout } from "@/utils/continuum-checkout.functions";
 import { getStripeEnvironment } from "@/lib/stripe";
 import { StripeEmbeddedCheckoutBox } from "@/components/StripeEmbeddedCheckout";
 import { PlaceAutocomplete } from "@/components/PlaceAutocomplete";
 import type { PlaceSuggestion } from "@/utils/places.functions";
 import { priceForModules, type ModuleCode } from "@/lib/modules";
 import { ctaLabelFor } from "@/components/ProductSelector";
+import { CONTINUUM_PRODUCTS, type ContinuumType } from "@/lib/continuum/continuum-config";
 
 type FormState = {
   first_name: string;
@@ -32,11 +34,13 @@ const initial: FormState = {
 export function IntakeForm({
   chapters = [],
   includesCore = true,
+  continuumType,
   onCheckoutOpen,
   resetSignal = 0,
 }: {
   chapters?: ModuleCode[];
   includesCore?: boolean;
+  continuumType?: ContinuumType;
   onCheckoutOpen?: () => void;
   resetSignal?: number;
 } = {}) {
@@ -57,10 +61,18 @@ export function IntakeForm({
     }
   }, [resetSignal]);
 
-  const hasSelection = includesCore || chapters.length > 0;
-  const quote = hasSelection ? priceForModules(chapters, includesCore) : null;
-  const ctaText = ctaLabelFor(includesCore, chapters);
-  const ctaPrice = quote ? `$${(quote.cents / 100).toFixed(2)}` : "—";
+  const isContinuum = !!continuumType;
+  const continuumProduct = continuumType ? CONTINUUM_PRODUCTS[continuumType] : null;
+  const hasSelection = isContinuum || includesCore || chapters.length > 0;
+  const quote = !isContinuum && hasSelection ? priceForModules(chapters, includesCore) : null;
+  const ctaText = isContinuum
+    ? `Get my ${continuumType === "7d" ? "7-day" : "30-day"} brief`
+    : ctaLabelFor(includesCore, chapters);
+  const ctaPrice = isContinuum
+    ? `$${((continuumProduct!.price_cents) / 100).toFixed(2)}`
+    : quote
+    ? `$${(quote.cents / 100).toFixed(2)}`
+    : "—";
 
   const update = (k: keyof FormState) => (e: React.ChangeEvent<HTMLInputElement>) =>
     setForm((f) => ({ ...f, [k]: e.target.value }));
@@ -68,7 +80,7 @@ export function IntakeForm({
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!hasSelection) {
-      toast.error("Please choose CORE or at least one focused chapter.");
+      toast.error(isContinuum ? "Continuum unavailable." : "Please choose CORE or at least one focused chapter.");
       return;
     }
     if (!form.first_name || !form.email || !form.date_of_birth || !form.birth_city) {
@@ -86,30 +98,33 @@ export function IntakeForm({
     setPlaceError(null);
     setSubmitting(true);
     try {
-      const res = await createCheckout({
-        data: {
-          modules: chapters,
-          includes_core: includesCore,
-          first_name: form.first_name.trim(),
-          email: form.email.trim(),
-          date_of_birth: form.date_of_birth,
-          birth_time: form.birth_time || "",
-          birth_city: form.birth_city.trim(),
-          full_name_for_numerology: form.full_name_for_numerology || "",
-          bazi_sex: form.bazi_sex as "M" | "F",
-          origin: window.location.origin,
-          environment: getStripeEnvironment(),
-          resolved_place: resolvedPlace
-            ? {
-                latitude: resolvedPlace.latitude,
-                longitude: resolvedPlace.longitude,
-                timezone: resolvedPlace.timezone,
-                resolved_name: resolvedPlace.resolved_name,
-                country: resolvedPlace.country,
-              }
-            : undefined,
-        },
-      });
+      const commonData = {
+        first_name: form.first_name.trim(),
+        email: form.email.trim(),
+        date_of_birth: form.date_of_birth,
+        birth_time: form.birth_time || "",
+        birth_city: form.birth_city.trim(),
+        full_name_for_numerology: form.full_name_for_numerology || "",
+        bazi_sex: form.bazi_sex as "M" | "F",
+        origin: window.location.origin,
+        environment: getStripeEnvironment(),
+        resolved_place: resolvedPlace
+          ? {
+              latitude: resolvedPlace.latitude,
+              longitude: resolvedPlace.longitude,
+              timezone: resolvedPlace.timezone,
+              resolved_name: resolvedPlace.resolved_name,
+              country: resolvedPlace.country,
+            }
+          : undefined,
+      };
+      const res = isContinuum
+        ? await createContinuumCheckout({
+            data: { ...commonData, continuum_type: continuumType! },
+          })
+        : await createCheckout({
+            data: { ...commonData, modules: chapters, includes_core: includesCore },
+          });
       setClientSecret(res.client_secret);
       setSessionId(res.session_id);
       onCheckoutOpen?.();

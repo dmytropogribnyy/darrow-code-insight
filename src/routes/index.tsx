@@ -6,6 +6,8 @@ import { IntakeForm } from "@/components/IntakeForm";
 import { ProductSelector } from "@/components/ProductSelector";
 import { FaqBlock } from "@/components/FaqBlock";
 import { ContinuumTeaser } from "@/components/ContinuumTeaser";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import type { ContinuumType } from "@/lib/continuum/continuum-config";
 import {
   PlanetGlyphRibbon,
   HeroStars,
@@ -47,6 +49,8 @@ function LandingPage() {
   const [selected, setSelected] = useState<Set<Selectable>>(new Set(["CORE"]));
   const [checkoutOpen, setCheckoutOpen] = useState(false);
   const [resetSignal, setResetSignal] = useState(0);
+  const [continuumOpen, setContinuumOpen] = useState<ContinuumType | null>(null);
+  const [continuumResetSignal, setContinuumResetSignal] = useState(0);
   const selectorRef = useRef<HTMLDivElement>(null);
 
   const toggle = (code: Selectable) =>
@@ -325,9 +329,45 @@ function LandingPage() {
 
         {/* CONTINUUM teaser — separate timing product, below chapters */}
         <div className="max-w-[560px] sm:max-w-[640px] md:max-w-[720px] mx-auto px-4 sm:px-6 mt-8 sm:mt-10">
-          <ContinuumTeaser comingSoon />
+          <ContinuumTeaser
+            onSelect7d={() => {
+              setContinuumResetSignal((n) => n + 1);
+              setContinuumOpen("7d");
+            }}
+            onSelect30d={() => {
+              setContinuumResetSignal((n) => n + 1);
+              setContinuumOpen("30d");
+            }}
+          />
         </div>
       </section>
+
+      {/* CONTINUUM intake modal */}
+      <Dialog
+        open={continuumOpen !== null}
+        onOpenChange={(o) => {
+          if (!o) setContinuumOpen(null);
+        }}
+      >
+        <DialogContent className="max-w-[520px] max-h-[90vh] overflow-y-auto bg-paper">
+          <DialogHeader>
+            <DialogTitle className="font-serif text-[22px]" style={{ color: "#1F1A10" }}>
+              CONTINUUM · {continuumOpen === "7d" ? "Next 7 Days" : "Next 30 Days"}
+            </DialogTitle>
+            <DialogDescription style={{ color: "#4A402D" }}>
+              Enter your birth data — your personal timing brief PDF is generated right after checkout.
+            </DialogDescription>
+          </DialogHeader>
+          {continuumOpen && (
+            <IntakeForm
+              continuumType={continuumOpen}
+              resetSignal={continuumResetSignal}
+              onCheckoutOpen={() => {}}
+            />
+          )}
+        </DialogContent>
+      </Dialog>
+
 
       {/* INTAKE — paper section */}
       <section className="flex-1">
