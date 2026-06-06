@@ -28,6 +28,7 @@ import { Route as ApiPublicDebugCoreV3RunRouteImport } from './routes/api/public
 import { Route as ApiPublicDebugBuildStatusRouteImport } from './routes/api/public/debug/build-status'
 import { Route as ApiPublicDebugBuildMarkerRouteImport } from './routes/api/public/debug/build-marker'
 import { Route as ApiPublicDebugAstroProbeRouteImport } from './routes/api/public/debug/astro-probe'
+import { Route as ApiPublicDebugApitemplateAccountRouteImport } from './routes/api/public/debug/apitemplate-account'
 
 const TermsRoute = TermsRouteImport.update({
   id: '/terms',
@@ -133,6 +134,12 @@ const ApiPublicDebugAstroProbeRoute =
     path: '/api/public/debug/astro-probe',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicDebugApitemplateAccountRoute =
+  ApiPublicDebugApitemplateAccountRouteImport.update({
+    id: '/api/public/debug/apitemplate-account',
+    path: '/api/public/debug/apitemplate-account',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -143,6 +150,7 @@ export interface FileRoutesByFullPath {
   '/terms': typeof TermsRoute
   '/download/$reportToken': typeof DownloadReportTokenRoute
   '/result/$reportToken': typeof ResultReportTokenRoute
+  '/api/public/debug/apitemplate-account': typeof ApiPublicDebugApitemplateAccountRoute
   '/api/public/debug/astro-probe': typeof ApiPublicDebugAstroProbeRoute
   '/api/public/debug/build-marker': typeof ApiPublicDebugBuildMarkerRoute
   '/api/public/debug/build-status': typeof ApiPublicDebugBuildStatusRoute
@@ -164,6 +172,7 @@ export interface FileRoutesByTo {
   '/terms': typeof TermsRoute
   '/download/$reportToken': typeof DownloadReportTokenRoute
   '/result/$reportToken': typeof ResultReportTokenRoute
+  '/api/public/debug/apitemplate-account': typeof ApiPublicDebugApitemplateAccountRoute
   '/api/public/debug/astro-probe': typeof ApiPublicDebugAstroProbeRoute
   '/api/public/debug/build-marker': typeof ApiPublicDebugBuildMarkerRoute
   '/api/public/debug/build-status': typeof ApiPublicDebugBuildStatusRoute
@@ -186,6 +195,7 @@ export interface FileRoutesById {
   '/terms': typeof TermsRoute
   '/download/$reportToken': typeof DownloadReportTokenRoute
   '/result/$reportToken': typeof ResultReportTokenRoute
+  '/api/public/debug/apitemplate-account': typeof ApiPublicDebugApitemplateAccountRoute
   '/api/public/debug/astro-probe': typeof ApiPublicDebugAstroProbeRoute
   '/api/public/debug/build-marker': typeof ApiPublicDebugBuildMarkerRoute
   '/api/public/debug/build-status': typeof ApiPublicDebugBuildStatusRoute
@@ -209,6 +219,7 @@ export interface FileRouteTypes {
     | '/terms'
     | '/download/$reportToken'
     | '/result/$reportToken'
+    | '/api/public/debug/apitemplate-account'
     | '/api/public/debug/astro-probe'
     | '/api/public/debug/build-marker'
     | '/api/public/debug/build-status'
@@ -230,6 +241,7 @@ export interface FileRouteTypes {
     | '/terms'
     | '/download/$reportToken'
     | '/result/$reportToken'
+    | '/api/public/debug/apitemplate-account'
     | '/api/public/debug/astro-probe'
     | '/api/public/debug/build-marker'
     | '/api/public/debug/build-status'
@@ -251,6 +263,7 @@ export interface FileRouteTypes {
     | '/terms'
     | '/download/$reportToken'
     | '/result/$reportToken'
+    | '/api/public/debug/apitemplate-account'
     | '/api/public/debug/astro-probe'
     | '/api/public/debug/build-marker'
     | '/api/public/debug/build-status'
@@ -273,6 +286,7 @@ export interface RootRouteChildren {
   TermsRoute: typeof TermsRoute
   DownloadReportTokenRoute: typeof DownloadReportTokenRoute
   ResultReportTokenRoute: typeof ResultReportTokenRoute
+  ApiPublicDebugApitemplateAccountRoute: typeof ApiPublicDebugApitemplateAccountRoute
   ApiPublicDebugAstroProbeRoute: typeof ApiPublicDebugAstroProbeRoute
   ApiPublicDebugBuildMarkerRoute: typeof ApiPublicDebugBuildMarkerRoute
   ApiPublicDebugBuildStatusRoute: typeof ApiPublicDebugBuildStatusRoute
@@ -421,6 +435,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicDebugAstroProbeRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/debug/apitemplate-account': {
+      id: '/api/public/debug/apitemplate-account'
+      path: '/api/public/debug/apitemplate-account'
+      fullPath: '/api/public/debug/apitemplate-account'
+      preLoaderRoute: typeof ApiPublicDebugApitemplateAccountRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -433,6 +454,7 @@ const rootRouteChildren: RootRouteChildren = {
   TermsRoute: TermsRoute,
   DownloadReportTokenRoute: DownloadReportTokenRoute,
   ResultReportTokenRoute: ResultReportTokenRoute,
+  ApiPublicDebugApitemplateAccountRoute: ApiPublicDebugApitemplateAccountRoute,
   ApiPublicDebugAstroProbeRoute: ApiPublicDebugAstroProbeRoute,
   ApiPublicDebugBuildMarkerRoute: ApiPublicDebugBuildMarkerRoute,
   ApiPublicDebugBuildStatusRoute: ApiPublicDebugBuildStatusRoute,
