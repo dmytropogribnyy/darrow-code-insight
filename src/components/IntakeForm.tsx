@@ -34,11 +34,13 @@ const initial: FormState = {
 export function IntakeForm({
   chapters = [],
   includesCore = true,
+  continuumType,
   onCheckoutOpen,
   resetSignal = 0,
 }: {
   chapters?: ModuleCode[];
   includesCore?: boolean;
+  continuumType?: ContinuumType;
   onCheckoutOpen?: () => void;
   resetSignal?: number;
 } = {}) {
@@ -59,10 +61,18 @@ export function IntakeForm({
     }
   }, [resetSignal]);
 
-  const hasSelection = includesCore || chapters.length > 0;
-  const quote = hasSelection ? priceForModules(chapters, includesCore) : null;
-  const ctaText = ctaLabelFor(includesCore, chapters);
-  const ctaPrice = quote ? `$${(quote.cents / 100).toFixed(2)}` : "—";
+  const isContinuum = !!continuumType;
+  const continuumProduct = continuumType ? CONTINUUM_PRODUCTS[continuumType] : null;
+  const hasSelection = isContinuum || includesCore || chapters.length > 0;
+  const quote = !isContinuum && hasSelection ? priceForModules(chapters, includesCore) : null;
+  const ctaText = isContinuum
+    ? `Get my ${continuumType === "7d" ? "7-day" : "30-day"} brief`
+    : ctaLabelFor(includesCore, chapters);
+  const ctaPrice = isContinuum
+    ? `$${((continuumProduct!.price_cents) / 100).toFixed(2)}`
+    : quote
+    ? `$${(quote.cents / 100).toFixed(2)}`
+    : "—";
 
   const update = (k: keyof FormState) => (e: React.ChangeEvent<HTMLInputElement>) =>
     setForm((f) => ({ ...f, [k]: e.target.value }));
