@@ -49,6 +49,8 @@ function LandingPage() {
   const [selected, setSelected] = useState<Set<Selectable>>(new Set(["CORE"]));
   const [checkoutOpen, setCheckoutOpen] = useState(false);
   const [resetSignal, setResetSignal] = useState(0);
+  const [continuumOpen, setContinuumOpen] = useState<ContinuumType | null>(null);
+  const [continuumResetSignal, setContinuumResetSignal] = useState(0);
   const selectorRef = useRef<HTMLDivElement>(null);
 
   const toggle = (code: Selectable) =>
