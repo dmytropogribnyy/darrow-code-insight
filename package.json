@@ -17,7 +17,8 @@
     "support:report": "npx vitest run src/lib/support/run-support-report.test.ts --disable-console-intercept",
     "audit:freeastroapi": "npx vitest run src/lib/diagnostics/material-context/run-freeastroapi-audit.test.ts --disable-console-intercept",
     "diag:addon-render": "npx vitest run src/lib/pdf/run-addon-render-diag.test.ts --disable-console-intercept",
-    "validate:style-addon": "npx vitest run src/lib/ai/addon-modules/run-style-validation.test.ts --disable-console-intercept"
+    "validate:style-addon": "npx vitest run src/lib/ai/addon-modules/run-style-validation.test.ts --disable-console-intercept",
+    "validate:addons": "npx vitest run src/lib/ai/addon-modules/run-addons-validation.test.ts --disable-console-intercept"
   },
   "dependencies": {
     "@cloudflare/vite-plugin": "^1.25.5",
