@@ -2,12 +2,14 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { useNavigate } from "@tanstack/react-router";
 import { createCheckout } from "@/utils/checkout.functions";
+import { createContinuumCheckout } from "@/utils/continuum-checkout.functions";
 import { getStripeEnvironment } from "@/lib/stripe";
 import { StripeEmbeddedCheckoutBox } from "@/components/StripeEmbeddedCheckout";
 import { PlaceAutocomplete } from "@/components/PlaceAutocomplete";
 import type { PlaceSuggestion } from "@/utils/places.functions";
 import { priceForModules, type ModuleCode } from "@/lib/modules";
 import { ctaLabelFor } from "@/components/ProductSelector";
+import { CONTINUUM_PRODUCTS, type ContinuumType } from "@/lib/continuum/continuum-config";
 
 type FormState = {
   first_name: string;
