@@ -118,15 +118,16 @@ function LandingPage() {
           <MoonPhaseChip />
 
 
-          {/* Darrow symbol */}
+          {/* Darrow symbol — single cinematic 360° spin on load, then static */}
           <img
             src="/brand/darrow-symbol-small.png"
             alt="Darrow Code"
-            className="mx-auto mt-5 sm:mt-7 mb-[18px] sm:mb-6 opacity-95"
+            className="mx-auto mt-5 sm:mt-7 mb-[18px] sm:mb-6 opacity-95 darrow-symbol-spin"
             style={{
               width: "clamp(44px, 8vw, 56px)",
               height: "auto",
               imageRendering: "-webkit-optimize-contrast",
+              transformOrigin: "center center",
             }}
           />
 
