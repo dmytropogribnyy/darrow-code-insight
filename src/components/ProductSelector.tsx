@@ -100,7 +100,7 @@ export function ProductSelector({
           disabled={locked}
           onClick={() => onToggle("CORE")}
           aria-pressed={coreSelected}
-          className="w-full text-left rounded-[12px] border-2 px-5 py-5 sm:px-6 sm:py-5 mb-3.5 flex items-start gap-3.5 transition disabled:cursor-default"
+          className="w-full text-left rounded-[12px] border-2 px-5 py-5 sm:px-6 sm:py-5 flex items-start gap-3.5 transition disabled:cursor-default"
           style={{
             borderColor: coreSelected ? "#D4AF37" : "rgba(212,175,55,0.6)",
             background: coreSelected ? "rgba(212,175,55,0.12)" : "rgba(212,175,55,0.04)",
@@ -179,7 +179,7 @@ export function ProductSelector({
           type="button"
           disabled={locked}
           onClick={allSelected ? onClear : onSelectAll}
-          className="w-full text-left rounded-[12px] border-2 px-5 py-5 sm:px-6 sm:py-5 mb-6 transition flex items-start gap-3.5 disabled:cursor-default"
+          className="w-full text-left rounded-[12px] border-2 px-5 py-5 sm:px-6 sm:py-5 transition flex items-start gap-3.5 disabled:cursor-default"
           style={{
             borderColor: allSelected ? "#B8860B" : "#D4AF37",
             background: allSelected ? "rgba(212,175,55,0.16)" : "rgba(212,175,55,0.06)",
