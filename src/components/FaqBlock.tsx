@@ -70,20 +70,21 @@ function FaqAccordion({
 
 const aboutFaqs: Faq[] = [
   {
-    question: "What makes Darrow Code different?",
+    question: "What is Darrow Code?",
     answer: (
       <div className="space-y-2.5">
-        <p>Darrow Code is not a generic horoscope.</p>
         <p>
-          It is a premium AI-powered astrology report built from your real birth data — and, if you
-          add it, your full name for deeper numerology.
+          Darrow Code is a premium AI-powered personal astrology horoscope report — delivered as a
+          private PDF, generated from your real birth data (and, optionally, your full name for
+          deeper numerology).
         </p>
         <p>
-          Instead of giving you vague zodiac lines, Darrow Code combines Western astrology, Chinese
-          BaZi / Four Pillars, numerology and timing patterns into one clear reading about you.
+          Instead of generic zodiac lines, it combines Western astrology, Chinese BaZi / Four
+          Pillars, numerology, timing patterns and AI synthesis into one clear personal reading
+          about you — your birth chart, personality patterns, life rhythm and current timing.
         </p>
         <p>
-          The goal is simple: to help you understand yourself faster — how you think, feel, react,
+          The goal is simple: help you understand yourself faster — how you think, feel, react,
           choose, love, work and move through change.
         </p>
       </div>
@@ -93,7 +94,7 @@ const aboutFaqs: Faq[] = [
     question: "What is the CORE Report?",
     answer: (
       <div className="space-y-2.5">
-        <p>CORE is the main personal report about you.</p>
+        <p>CORE is the main personal astrology report about you — your foundation reading.</p>
         <p>
           It gives you a clear astrological summary of your personality, emotional pattern,
           strengths, repeating life themes and current timing.
@@ -110,7 +111,7 @@ const aboutFaqs: Faq[] = [
     question: "What are the focused chapters?",
     answer: (
       <div className="space-y-2.5">
-        <p>Focused chapters go deeper into one part of your life.</p>
+        <p>Focused chapters are separate life-area astrology readings that go deeper into one part of your life.</p>
         <p>
           You can add them to CORE, buy only the area you want, or get CORE Complete with all
           chapters.
@@ -163,6 +164,29 @@ const aboutFaqs: Faq[] = [
         <p>
           Tap <strong>&ldquo;See a sample&rdquo;</strong> at the top of the page to preview the
           format before buying.
+        </p>
+      </div>
+    ),
+  },
+  {
+    question: "What Darrow Code is not",
+    answer: (
+      <div className="space-y-2.5">
+        <p>
+          Darrow Code is a premium personal astrology reading for self-understanding. To keep things
+          honest and safe, it is not:
+        </p>
+        <ul className="space-y-1 list-disc pl-5">
+          <li>not medical, psychological or health advice</li>
+          <li>not financial or investment advice</li>
+          <li>not a guaranteed prediction of future events</li>
+          <li>not a compatibility / synastry reading between two people</li>
+          <li>not astrocartography or specific city recommendations</li>
+          <li>not a replacement for a qualified professional</li>
+        </ul>
+        <p>
+          It is a thoughtful AI-generated astrology PDF designed to help you understand your own
+          pattern more clearly.
         </p>
       </div>
     ),

@@ -163,13 +163,14 @@ function LandingPage() {
 
           {/* Brand continuity */}
           <p className="mt-4 text-[16px] sm:text-[17px] md:text-[18px] text-light-grey leading-[1.65] font-sans font-medium">
-            AI-powered · Built from your birth data · Decoded through the Darrow Code Method
+            AI astrology report · Built from your birth data · Decoded through the Darrow Code Method
           </p>
 
           {/* Explainer */}
           <p className="mt-6 sm:mt-7 text-[17px] sm:text-[18px] md:text-[19px] text-muted-grey max-w-[640px] mx-auto leading-[1.65] font-sans">
-            Get a premium private astrology report built from your birth data — revealing your
-            personal pattern: how you think, react, choose and move through change.
+            A premium AI-powered personal astrology horoscope report built from your birth data —
+            a private PDF reading of your birth chart, personality patterns, timing, love, money,
+            body, style and place.
           </p>
 
           {/* Quote box */}
@@ -261,7 +262,7 @@ function LandingPage() {
             </ul>
 
             {/* Primary hero CTA — scrolls to product selector / intake */}
-            <div className="mt-7 sm:mt-8 flex justify-center">
+            <div className="mt-7 sm:mt-8 flex flex-col items-center">
               <button
                 type="button"
                 onClick={() =>
@@ -273,6 +274,12 @@ function LandingPage() {
               >
                 Unlock My Birth Code <span className="ml-2">→</span>
               </button>
+              <p
+                className="mt-3 font-sans text-[12.5px] sm:text-[13px] text-[#9CA3AF]"
+                style={{ letterSpacing: "0.04em" }}
+              >
+                Private AI astrology PDF · ready in a few minutes · no subscription
+              </p>
             </div>
 
 
@@ -323,7 +330,7 @@ function LandingPage() {
             className="text-center font-medium text-[14px] sm:text-[15px] mb-5 leading-[1.55]"
             style={{ color: "#4A402D" }}
           >
-            Enter your birth data — checkout comes next, then your private report.
+            Enter your birth data — checkout comes next, then your private astrology PDF.
           </p>
           <div className="relative">
             {/* Subtle gold accent line above card */}

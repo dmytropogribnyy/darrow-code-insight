@@ -3,12 +3,12 @@ import { MODULE_CODES, type ModuleCode, priceForModules } from "@/lib/modules";
 export type Selectable = "CORE" | ModuleCode;
 
 const CHAPTER_META: Record<ModuleCode, { title: string; desc: string }> = {
-  LOVE: { title: "LOVE", desc: "Who you attract — and why it keeps happening" },
-  MONEY: { title: "MONEY", desc: "Your wealth, work & business mechanism" },
-  BODY: { title: "BODY", desc: "Your stress signature & recovery rhythm" },
-  YEAR: { title: "YEAR", desc: "Your year pattern, pressure & opportunity" },
-  STYLE: { title: "STYLE", desc: "Your colors, aesthetic & personal signature" },
-  PLACE: { title: "PLACE", desc: "Where you thrive — and where you lose energy" },
+  LOVE: { title: "LOVE", desc: "Your love pattern, attraction style and relationship rhythm" },
+  MONEY: { title: "MONEY", desc: "Your work, money and value pattern" },
+  BODY: { title: "BODY", desc: "Your stress signature and recovery rhythm" },
+  YEAR: { title: "YEAR", desc: "Your personal year, timing pressure and opportunity pattern" },
+  STYLE: { title: "STYLE", desc: "Your aesthetic signature, presence and style pattern" },
+  PLACE: { title: "PLACE", desc: "Your environment pattern — where your system feels clearer or drained" },
 };
 
 interface Props {
@@ -55,15 +55,15 @@ export function ProductSelector({
               letterSpacing: "0.22em",
             }}
           >
-            Choose your report
+            Choose your personal astrology PDF
           </p>
           <h2
             className="font-serif mt-2.5 leading-[1.1]"
             style={{ fontSize: "clamp(26px, 3.6vw, 34px)", color: "#1F1A10" }}
           >
-            CORE Report is your foundation.
+            Start with CORE — your foundation report.
             <br />
-            Or choose only the area you want.
+            Or add focused chapters for the areas you want.
           </h2>
         </div>
 
@@ -120,7 +120,8 @@ export function ProductSelector({
               className="leading-relaxed mt-1.5"
               style={{ color: "#2A2418", fontSize: "clamp(14px, 1.35vw, 15.5px)" }}
             >
-              Your private birth code: how you think, react, choose and move through change.
+              Your full personal astrology foundation report — birth chart, personality patterns,
+              timing, numerology and life rhythm. Delivered as a private PDF.
             </p>
           </div>
           <span
@@ -185,7 +186,8 @@ export function ProductSelector({
               className="leading-relaxed mt-1.5"
               style={{ color: "#2A2418", fontSize: "clamp(14px, 1.35vw, 15.5px)" }}
             >
-              CORE Report + all 6 Focused Chapters, delivered separately.
+              The complete AI astrology report set: CORE + LOVE, MONEY, BODY, YEAR, STYLE and PLACE
+              — delivered as separate private PDFs.
             </p>
           </div>
           <span
