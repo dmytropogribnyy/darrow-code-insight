@@ -261,6 +261,7 @@ export type Database = {
       orders: {
         Row: {
           amount_cents: number
+          continuum_type: string | null
           created_at: string
           customer_id: string
           id: string
@@ -270,6 +271,7 @@ export type Database = {
         }
         Insert: {
           amount_cents: number
+          continuum_type?: string | null
           created_at?: string
           customer_id: string
           id?: string
@@ -279,6 +281,7 @@ export type Database = {
         }
         Update: {
           amount_cents?: number
+          continuum_type?: string | null
           created_at?: string
           customer_id?: string
           id?: string
@@ -306,6 +309,7 @@ export type Database = {
       reports: {
         Row: {
           ai_content_json: Json | null
+          continuum_type: string | null
           created_at: string
           customer_id: string
           download_token: string
@@ -320,6 +324,7 @@ export type Database = {
         }
         Insert: {
           ai_content_json?: Json | null
+          continuum_type?: string | null
           created_at?: string
           customer_id: string
           download_token?: string
@@ -334,6 +339,7 @@ export type Database = {
         }
         Update: {
           ai_content_json?: Json | null
+          continuum_type?: string | null
           created_at?: string
           customer_id?: string
           download_token?: string
