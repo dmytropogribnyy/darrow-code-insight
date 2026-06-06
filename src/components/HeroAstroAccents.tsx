@@ -9,6 +9,73 @@
 import { useEffect, useState } from "react";
 
 const PLANET_GLYPHS = ["☉", "☽", "☿", "♀", "♂", "♃", "♄"];
+// 12 zodiac glyphs, Aries at top, clockwise.
+const ZODIAC_GLYPHS = [
+  "♈", "♉", "♊", "♋", "♌", "♍",
+  "♎", "♏", "♐", "♑", "♒", "♓",
+];
+
+/**
+ * Thin gold zodiac wheel — decorative SVG watermark for the hero.
+ * Pure ornament, no data. Sits behind the headline at very low opacity.
+ */
+export function ZodiacWheel({
+  size = 520,
+  className = "",
+}: {
+  size?: number;
+  className?: string;
+}) {
+  const cx = size / 2;
+  const cy = size / 2;
+  const rOuter = size / 2 - 1;
+  const rInner = rOuter - 28;
+  const rGlyph = rOuter - 14;
+  const gold = "rgba(212,175,55,1)";
+
+  const ticks = Array.from({ length: 12 }, (_, i) => {
+    const angle = (-90 + i * 30) * (Math.PI / 180);
+    const x1 = cx + rInner * Math.cos(angle);
+    const y1 = cy + rInner * Math.sin(angle);
+    const x2 = cx + rOuter * Math.cos(angle);
+    const y2 = cy + rOuter * Math.sin(angle);
+    const glyphAngle = (-90 + i * 30 + 15) * (Math.PI / 180);
+    const gx = cx + rGlyph * Math.cos(glyphAngle);
+    const gy = cy + rGlyph * Math.sin(glyphAngle);
+    return { x1, y1, x2, y2, gx, gy, glyph: ZODIAC_GLYPHS[i] };
+  });
+
+  return (
+    <svg
+      aria-hidden="true"
+      viewBox={`0 0 ${size} ${size}`}
+      className={`pointer-events-none select-none ${className}`}
+      width={size}
+      height={size}
+      style={{ opacity: 0.085 }}
+    >
+      <circle cx={cx} cy={cy} r={rOuter} fill="none" stroke={gold} strokeWidth={1} />
+      <circle cx={cx} cy={cy} r={rInner} fill="none" stroke={gold} strokeWidth={0.75} />
+      <circle cx={cx} cy={cy} r={rInner - 60} fill="none" stroke={gold} strokeWidth={0.5} />
+      {ticks.map((t, i) => (
+        <g key={i}>
+          <line x1={t.x1} y1={t.y1} x2={t.x2} y2={t.y2} stroke={gold} strokeWidth={0.75} />
+          <text
+            x={t.gx}
+            y={t.gy}
+            fill={gold}
+            fontSize={14}
+            fontFamily="serif"
+            textAnchor="middle"
+            dominantBaseline="middle"
+          >
+            {t.glyph}
+          </text>
+        </g>
+      ))}
+    </svg>
+  );
+}
 
 const SYNODIC_MONTH = 29.53058867;
 // Known new moon: 2000-01-06 18:14 UTC
