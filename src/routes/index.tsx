@@ -82,7 +82,7 @@ function LandingPage() {
 
       {/* HERO — dark navy section */}
       <section
-        className="text-light-grey relative overflow-hidden"
+        className="text-light-grey relative overflow-hidden hero-veil hero-grain"
         style={{
           background: `
             radial-gradient(circle at 50% 18%, rgba(212,175,55,0.06), transparent 28%),
