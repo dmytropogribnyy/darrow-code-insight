@@ -18,6 +18,7 @@ export interface SeparateContext {
   modules: ReportModule[];
   chart: Partial<DarrowChartData>;
   first_name: string | null;
+  email?: string | null;
 }
 
 export interface SeparatePipelineHooks {
@@ -83,6 +84,9 @@ export async function runSeparateReportsPipeline(
 // avoid a static import cycle with pipeline.server.ts.
 export function buildDefaultSeparateHooks(sb: any): SeparatePipelineHooks {
   const ADDON_MODEL = "claude-sonnet-4-6";
+  const appBaseUrl = (process.env.APP_BASE_URL ?? "").replace(/\/$/, "");
+  // Captured during loadContext for use in finalize (email delivery).
+  const deliveryCtx: { intake_id?: string; email?: string | null; first_name?: string | null } = {};
 
   const loadContext = async (order_id: string): Promise<SeparateContext> => {
     const { data: order } = await sb
@@ -98,9 +102,12 @@ export function buildDefaultSeparateHooks(sb: any): SeparatePipelineHooks {
       .single();
     const { data: customer } = await sb
       .from("customers")
-      .select("id, first_name")
+      .select("id, first_name, email")
       .eq("id", order.customer_id)
       .single();
+    deliveryCtx.intake_id = order.intake_id;
+    deliveryCtx.email = customer?.email ?? null;
+    deliveryCtx.first_name = customer?.first_name ?? null;
     const { data: ownedRows } = await sb
       .from("modules_purchased")
       .select("module_code")
@@ -129,7 +136,12 @@ export function buildDefaultSeparateHooks(sb: any): SeparatePipelineHooks {
     const chart = await provider.computeNatal(natal);
     // stash ids for persistence
     (chart as any)._ctx = { customer_id: order.customer_id, intake_id: order.intake_id };
-    return { modules, chart, first_name: customer?.first_name ?? null };
+    return {
+      modules,
+      chart,
+      first_name: customer?.first_name ?? null,
+      email: customer?.email ?? null,
+    };
   };
 
   const buildDeps = (ctx: SeparateContext): OrchestratorDeps => {
@@ -222,13 +234,14 @@ export function buildDefaultSeparateHooks(sb: any): SeparatePipelineHooks {
     results: ModuleReportResult[],
     outcome: OrderOutcome,
   ) => {
+    const intake_id = deliveryCtx.intake_id ?? "";
     // Mark failed modules' rows (best-effort) so support sees the error.
     for (const r of results) {
-      if (r.status === "failed_generation") {
+      if (r.status === "failed_generation" && intake_id) {
         await sb
           .from("reports")
           .update({ generation_status: "failed_generation", generation_error: r.error ?? "failed" })
-          .eq("intake_id", (results as any)._intake_id ?? "")
+          .eq("intake_id", intake_id)
           .eq("module_code", r.module);
       }
     }
@@ -241,6 +254,44 @@ export function buildDefaultSeparateHooks(sb: any): SeparatePipelineHooks {
         updated_at: new Date().toISOString(),
       })
       .eq("order_id", order_id);
+
+    // BUNDLE-C — one multi-link report-ready email per purchase (idempotent).
+    if (!deliveryCtx.email || !intake_id) return;
+    const { data: siblings } = await sb
+      .from("reports")
+      .select(
+        "module_code, modules_array, report_ref, generation_status, pdf_url, download_token, ready_email_sent_at",
+      )
+      .eq("intake_id", intake_id);
+    const rows = (siblings ?? []) as any[];
+    const alreadyEmailed = rows.some((r) => !!r.ready_email_sent_at);
+    if (alreadyEmailed) return;
+
+    const { buildPurchaseDelivery } = await import("@/lib/delivery/purchase-delivery");
+    const delivery = buildPurchaseDelivery(rows, { appBaseUrl });
+    const completeEntries = delivery.entries.filter((e) => e.complete && e.download_url);
+    if (completeEntries.length === 0) return;
+
+    const { bundleReportReadyEmail, sendEmail } = await import("@/lib/email/resend.server");
+    const resultUrl = `${appBaseUrl}/result/${completeEntries[0].download_token}`;
+    const { subject, html } = bundleReportReadyEmail({
+      first_name: deliveryCtx.first_name ?? null,
+      result_url: resultUrl,
+      items: completeEntries.map((e) => ({
+        label: e.label,
+        report_ref: e.report_ref,
+        download_url: e.download_url as string,
+      })),
+      pending_count: delivery.total - completeEntries.length,
+    });
+    await sendEmail({ to: deliveryCtx.email, subject, html });
+    // Mark the complete rows as emailed (idempotency).
+    for (const e of completeEntries) {
+      await sb
+        .from("reports")
+        .update({ ready_email_sent_at: new Date().toISOString() })
+        .eq("download_token", e.download_token);
+    }
   };
 
   return { loadContext, buildDeps, finalize };
