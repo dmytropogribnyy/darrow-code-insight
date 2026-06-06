@@ -330,6 +330,13 @@ export function ProductSelector({
                   >
                     {meta.desc}
                   </p>
+                  <p
+                    className="leading-snug mt-1 italic"
+                    style={{ color: "#6B6151", fontSize: "clamp(11.5px, 1.1vw, 12.5px)" }}
+                  >
+                    {meta.detail}
+                  </p>
+
                 </div>
               </button>
             );
