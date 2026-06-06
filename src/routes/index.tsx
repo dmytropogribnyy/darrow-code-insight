@@ -9,6 +9,7 @@ import {
   PlanetGlyphRibbon,
   HeroStars,
   MoonPhaseChip,
+  ZodiacWheel,
 } from "@/components/HeroAstroAccents";
 import { MODULE_CODES, type ModuleCode } from "@/lib/modules";
 
