@@ -1,15 +1,41 @@
+import { Link } from "@tanstack/react-router";
 import { MODULE_CODES, type ModuleCode, priceForModules } from "@/lib/modules";
 
 export type Selectable = "CORE" | ModuleCode;
 
-const CHAPTER_META: Record<ModuleCode, { title: string; desc: string }> = {
-  LOVE: { title: "LOVE", desc: "Your love pattern, attraction style and relationship rhythm" },
-  MONEY: { title: "MONEY", desc: "Your work, money and value pattern" },
-  BODY: { title: "BODY", desc: "Your stress signature and recovery rhythm" },
-  YEAR: { title: "YEAR", desc: "Your personal year, timing pressure and opportunity pattern" },
-  STYLE: { title: "STYLE", desc: "Your aesthetic signature, presence and style pattern" },
-  PLACE: { title: "PLACE", desc: "Your environment pattern — where your system feels clearer or drained" },
+const CHAPTER_META: Record<ModuleCode, { title: string; desc: string; detail: string }> = {
+  LOVE: {
+    title: "LOVE",
+    desc: "Your love pattern, attraction style and relationship rhythm.",
+    detail: "How you bond, what drains you, what kind of partner fits your chart.",
+  },
+  MONEY: {
+    title: "MONEY",
+    desc: "Your work, money and value pattern.",
+    detail: "Where your earning power lives, your spending pattern, work environments that fit.",
+  },
+  BODY: {
+    title: "BODY",
+    desc: "Your stress signature and recovery rhythm.",
+    detail: "How your body holds pressure, what restores you, signals to watch.",
+  },
+  YEAR: {
+    title: "YEAR",
+    desc: "Your personal year, timing pressure and opportunity pattern.",
+    detail: "What this year is really for, the green windows, the pressure zones.",
+  },
+  STYLE: {
+    title: "STYLE",
+    desc: "Your aesthetic signature, presence and style pattern.",
+    detail: "Your visual archetype, colors and textures that amplify you, presence cues.",
+  },
+  PLACE: {
+    title: "PLACE",
+    desc: "Your environment pattern — where your system feels clearer or drained.",
+    detail: "Cities, climates and rooms that lift you vs. flatten you.",
+  },
 };
+
 
 interface Props {
   selected: Set<Selectable>;
@@ -74,7 +100,7 @@ export function ProductSelector({
           disabled={locked}
           onClick={() => onToggle("CORE")}
           aria-pressed={coreSelected}
-          className="w-full text-left rounded-[12px] border-2 px-5 py-5 sm:px-6 sm:py-5 mb-3.5 flex items-start gap-3.5 transition disabled:cursor-default"
+          className="w-full text-left rounded-[12px] border-2 px-5 py-5 sm:px-6 sm:py-5 flex items-start gap-3.5 transition disabled:cursor-default"
           style={{
             borderColor: coreSelected ? "#D4AF37" : "rgba(212,175,55,0.6)",
             background: coreSelected ? "rgba(212,175,55,0.12)" : "rgba(212,175,55,0.04)",
@@ -121,7 +147,8 @@ export function ProductSelector({
               style={{ color: "#2A2418", fontSize: "clamp(14px, 1.35vw, 15.5px)" }}
             >
               Your full personal astrology foundation report — birth chart, personality patterns,
-              timing, numerology and life rhythm. Delivered as a private PDF.
+              timing, numerology and life rhythm. Decoded through the Darrow Code Method and
+              delivered as a private PDF.
             </p>
           </div>
           <span
@@ -131,6 +158,20 @@ export function ProductSelector({
             $4.99
           </span>
         </button>
+        <div className="mt-1.5 mb-3.5 text-center">
+          <Link
+            to="/sample"
+            className="font-sans font-medium underline-offset-4 hover:underline transition-colors"
+            style={{
+              color: "#8B6914",
+              fontSize: "clamp(12px, 1.1vw, 13px)",
+              letterSpacing: "0.02em",
+            }}
+          >
+            See a sample report →
+          </Link>
+        </div>
+
 
         {/* CORE Complete bundle card */}
         <button
@@ -138,7 +179,7 @@ export function ProductSelector({
           type="button"
           disabled={locked}
           onClick={allSelected ? onClear : onSelectAll}
-          className="w-full text-left rounded-[12px] border-2 px-5 py-5 sm:px-6 sm:py-5 mb-6 transition flex items-start gap-3.5 disabled:cursor-default"
+          className="w-full text-left rounded-[12px] border-2 px-5 py-5 sm:px-6 sm:py-5 transition flex items-start gap-3.5 disabled:cursor-default"
           style={{
             borderColor: allSelected ? "#B8860B" : "#D4AF37",
             background: allSelected ? "rgba(212,175,55,0.16)" : "rgba(212,175,55,0.06)",
@@ -186,8 +227,9 @@ export function ProductSelector({
               className="leading-relaxed mt-1.5"
               style={{ color: "#2A2418", fontSize: "clamp(14px, 1.35vw, 15.5px)" }}
             >
-              The complete AI astrology report set: CORE + LOVE, MONEY, BODY, YEAR, STYLE and PLACE
-              — delivered as separate private PDFs.
+              The complete AI astrology report set — CORE + all 6 focused chapters (LOVE, MONEY,
+              BODY, YEAR, STYLE, PLACE), each delivered as its own private PDF. The full Darrow
+              Code reading of your birth pattern.
             </p>
           </div>
           <span
@@ -197,6 +239,20 @@ export function ProductSelector({
             $14.99
           </span>
         </button>
+        <div className="mt-1.5 mb-6 text-center">
+          <Link
+            to="/sample"
+            className="font-sans font-medium underline-offset-4 hover:underline transition-colors"
+            style={{
+              color: "#8B6914",
+              fontSize: "clamp(12px, 1.1vw, 13px)",
+              letterSpacing: "0.02em",
+            }}
+          >
+            See what's inside →
+          </Link>
+        </div>
+
 
         <p
           className="text-center uppercase mb-1 font-semibold"
@@ -274,6 +330,13 @@ export function ProductSelector({
                   >
                     {meta.desc}
                   </p>
+                  <p
+                    className="leading-snug mt-1 italic"
+                    style={{ color: "#6B6151", fontSize: "clamp(11.5px, 1.1vw, 12.5px)" }}
+                  >
+                    {meta.detail}
+                  </p>
+
                 </div>
               </button>
             );
