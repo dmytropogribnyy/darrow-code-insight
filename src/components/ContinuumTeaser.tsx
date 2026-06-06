@@ -90,6 +90,17 @@ function ContinuumCard({ period, priceLabel, blurb, bullets, ctaLabel, disabled,
       >
         {ctaLabel}
       </button>
+      <p
+        className="text-center mt-2 font-sans italic"
+        style={{
+          color: "#8A7F68",
+          fontSize: "clamp(11px, 1vw, 12px)",
+          letterSpacing: "0.02em",
+        }}
+      >
+        Sample preview coming soon
+      </p>
+
     </div>
   );
 }
