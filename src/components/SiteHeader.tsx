@@ -60,10 +60,10 @@ export function SiteHeader({ onDark = false }: { onDark?: boolean }) {
             style={{ fontSize: "clamp(12.5px, 1.2vw, 16px)", letterSpacing: "0.04em" }}
             aria-label="Jump to choose your report"
           >
-            <span className="hidden md:inline">
+            <span className="hidden lg:inline">
               Launch drop · Your birth code, decoded for less than a latte
             </span>
-            <span className="md:hidden">
+            <span className="lg:hidden">
               Launch drop ·<br />
               <span className="whitespace-nowrap">Your birth code, decoded for less than a latte</span>
             </span>
