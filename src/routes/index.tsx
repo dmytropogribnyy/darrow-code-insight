@@ -342,7 +342,7 @@ function LandingPage() {
         </div>
 
         {/* CONTINUUM teaser — separate timing product, below chapters */}
-        <div className="max-w-[560px] sm:max-w-[640px] md:max-w-[720px] mx-auto px-4 sm:px-6 mt-8 sm:mt-10">
+        <div id="continuum" className="max-w-[560px] sm:max-w-[640px] md:max-w-[720px] mx-auto px-4 sm:px-6 mt-8 sm:mt-10 scroll-mt-20">
           <ContinuumTeaser
             onSelect7d={() => {
               setContinuumResetSignal((n) => n + 1);
