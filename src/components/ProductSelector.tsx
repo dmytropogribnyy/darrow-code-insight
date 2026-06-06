@@ -227,8 +227,9 @@ export function ProductSelector({
               className="leading-relaxed mt-1.5"
               style={{ color: "#2A2418", fontSize: "clamp(14px, 1.35vw, 15.5px)" }}
             >
-              The complete AI astrology report set: CORE + LOVE, MONEY, BODY, YEAR, STYLE and PLACE
-              — delivered as separate private PDFs.
+              The complete AI astrology report set — CORE + all 6 focused chapters (LOVE, MONEY,
+              BODY, YEAR, STYLE, PLACE), each delivered as its own private PDF. The full Darrow
+              Code reading of your birth pattern.
             </p>
           </div>
           <span
@@ -238,6 +239,20 @@ export function ProductSelector({
             $14.99
           </span>
         </button>
+        <div className="mt-1.5 mb-6 text-center">
+          <Link
+            to="/sample"
+            className="font-sans font-medium underline-offset-4 hover:underline transition-colors"
+            style={{
+              color: "#8B6914",
+              fontSize: "clamp(12px, 1.1vw, 13px)",
+              letterSpacing: "0.02em",
+            }}
+          >
+            See what's inside →
+          </Link>
+        </div>
+
 
         <p
           className="text-center uppercase mb-1 font-semibold"
