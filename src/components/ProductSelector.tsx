@@ -147,7 +147,8 @@ export function ProductSelector({
               style={{ color: "#2A2418", fontSize: "clamp(14px, 1.35vw, 15.5px)" }}
             >
               Your full personal astrology foundation report — birth chart, personality patterns,
-              timing, numerology and life rhythm. Delivered as a private PDF.
+              timing, numerology and life rhythm. Decoded through the Darrow Code Method and
+              delivered as a private PDF.
             </p>
           </div>
           <span
@@ -157,6 +158,20 @@ export function ProductSelector({
             $4.99
           </span>
         </button>
+        <div className="mt-1.5 mb-3.5 text-center">
+          <Link
+            to="/sample"
+            className="font-sans font-medium underline-offset-4 hover:underline transition-colors"
+            style={{
+              color: "#8B6914",
+              fontSize: "clamp(12px, 1.1vw, 13px)",
+              letterSpacing: "0.02em",
+            }}
+          >
+            See a sample report →
+          </Link>
+        </div>
+
 
         {/* CORE Complete bundle card */}
         <button
