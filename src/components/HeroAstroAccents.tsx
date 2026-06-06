@@ -53,13 +53,26 @@ export function PlanetGlyphRibbon() {
 }
 
 export function HeroStars() {
+  // A small constellation-feel field: varied sizes, some highlighted with a
+  // soft golden glow. Hand-placed so it never looks like a single stray pixel.
   const stars = [
-    { top: "12%", left: "8%", delay: "0s", size: 3 },
-    { top: "22%", left: "92%", delay: "1.4s", size: 2 },
-    { top: "60%", left: "5%", delay: "2.6s", size: 2 },
-    { top: "72%", left: "94%", delay: "0.8s", size: 3 },
-    { top: "38%", left: "96%", delay: "3.1s", size: 2 },
-    { top: "85%", left: "12%", delay: "2.0s", size: 2 },
+    // left cluster
+    { top: "8%", left: "6%", delay: "0s", size: 2, glow: false },
+    { top: "14%", left: "11%", delay: "1.2s", size: 3, glow: true },
+    { top: "20%", left: "4%", delay: "2.4s", size: 1.5, glow: false },
+    { top: "32%", left: "9%", delay: "0.6s", size: 2, glow: false },
+    { top: "48%", left: "3%", delay: "3.0s", size: 2.5, glow: false },
+    { top: "62%", left: "8%", delay: "1.8s", size: 3, glow: true },
+    { top: "78%", left: "5%", delay: "2.2s", size: 2, glow: false },
+    { top: "88%", left: "13%", delay: "0.4s", size: 1.5, glow: false },
+    // right cluster
+    { top: "10%", left: "88%", delay: "2.6s", size: 2, glow: false },
+    { top: "18%", left: "94%", delay: "1.0s", size: 3, glow: true },
+    { top: "30%", left: "91%", delay: "3.2s", size: 1.5, glow: false },
+    { top: "44%", left: "96%", delay: "0.8s", size: 2.5, glow: false },
+    { top: "58%", left: "89%", delay: "2.0s", size: 2, glow: false },
+    { top: "72%", left: "95%", delay: "1.4s", size: 3, glow: true },
+    { top: "84%", left: "92%", delay: "0.2s", size: 2, glow: false },
   ];
   return (
     <div aria-hidden="true" className="pointer-events-none absolute inset-0 overflow-hidden">
@@ -72,21 +85,24 @@ export function HeroStars() {
             left: s.left,
             width: `${s.size}px`,
             height: `${s.size}px`,
-            background: "rgba(230,195,90,0.7)",
-            boxShadow: "0 0 6px rgba(230,195,90,0.55)",
+            background: s.glow ? "rgba(230,195,90,0.95)" : "rgba(230,230,235,0.75)",
+            boxShadow: s.glow
+              ? "0 0 8px rgba(230,195,90,0.7), 0 0 14px rgba(230,195,90,0.35)"
+              : "0 0 4px rgba(230,230,235,0.45)",
             animation: `darrow-twinkle 3.6s ease-in-out ${s.delay} infinite`,
           }}
         />
       ))}
       <style>{`
         @keyframes darrow-twinkle {
-          0%, 100% { opacity: 0.15; transform: scale(0.9); }
-          50% { opacity: 0.9; transform: scale(1.1); }
+          0%, 100% { opacity: 0.25; transform: scale(0.9); }
+          50% { opacity: 0.95; transform: scale(1.15); }
         }
       `}</style>
     </div>
   );
 }
+
 
 export function MoonPhaseChip() {
   const [phase, setPhase] = useState<PhaseInfo | null>(null);
