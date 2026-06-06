@@ -98,30 +98,33 @@ export function IntakeForm({
     setPlaceError(null);
     setSubmitting(true);
     try {
-      const res = await createCheckout({
-        data: {
-          modules: chapters,
-          includes_core: includesCore,
-          first_name: form.first_name.trim(),
-          email: form.email.trim(),
-          date_of_birth: form.date_of_birth,
-          birth_time: form.birth_time || "",
-          birth_city: form.birth_city.trim(),
-          full_name_for_numerology: form.full_name_for_numerology || "",
-          bazi_sex: form.bazi_sex as "M" | "F",
-          origin: window.location.origin,
-          environment: getStripeEnvironment(),
-          resolved_place: resolvedPlace
-            ? {
-                latitude: resolvedPlace.latitude,
-                longitude: resolvedPlace.longitude,
-                timezone: resolvedPlace.timezone,
-                resolved_name: resolvedPlace.resolved_name,
-                country: resolvedPlace.country,
-              }
-            : undefined,
-        },
-      });
+      const commonData = {
+        first_name: form.first_name.trim(),
+        email: form.email.trim(),
+        date_of_birth: form.date_of_birth,
+        birth_time: form.birth_time || "",
+        birth_city: form.birth_city.trim(),
+        full_name_for_numerology: form.full_name_for_numerology || "",
+        bazi_sex: form.bazi_sex as "M" | "F",
+        origin: window.location.origin,
+        environment: getStripeEnvironment(),
+        resolved_place: resolvedPlace
+          ? {
+              latitude: resolvedPlace.latitude,
+              longitude: resolvedPlace.longitude,
+              timezone: resolvedPlace.timezone,
+              resolved_name: resolvedPlace.resolved_name,
+              country: resolvedPlace.country,
+            }
+          : undefined,
+      };
+      const res = isContinuum
+        ? await createContinuumCheckout({
+            data: { ...commonData, continuum_type: continuumType! },
+          })
+        : await createCheckout({
+            data: { ...commonData, modules: chapters, includes_core: includesCore },
+          });
       setClientSecret(res.client_secret);
       setSessionId(res.session_id);
       onCheckoutOpen?.();
