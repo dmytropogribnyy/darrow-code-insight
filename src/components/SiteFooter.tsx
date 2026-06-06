@@ -1,6 +1,7 @@
-import { Link } from "@tanstack/react-router";
+import { Link, useRouterState } from "@tanstack/react-router";
 
 export function SiteFooter() {
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
   return (
     <footer>
       <div className="max-w-2xl mx-auto px-6 pt-12 sm:pt-14 pb-14 text-center">
@@ -62,6 +63,12 @@ export function SiteFooter() {
         >
           <Link
             to="/"
+            onClick={(e) => {
+              if (pathname === "/") {
+                e.preventDefault();
+                window.scrollTo({ top: 0, behavior: "smooth" });
+              }
+            }}
             className="font-medium hover:text-gold hover:underline underline-offset-4 decoration-gold/40 transition-colors py-1"
           >
             Home
