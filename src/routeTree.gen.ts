@@ -24,6 +24,7 @@ import { Route as ApiPublicHealthGenerationPipelineRouteImport } from './routes/
 import { Route as ApiPublicDebugCoreV4RunRouteImport } from './routes/api/public/debug/core-v4-run'
 import { Route as ApiPublicDebugCoreV4RenderRouteImport } from './routes/api/public/debug/core-v4-render'
 import { Route as ApiPublicDebugCoreV3RunRouteImport } from './routes/api/public/debug/core-v3-run'
+import { Route as ApiPublicDebugSeparatePipelineDryrunRouteImport } from './routes/api/public/debug/separate-pipeline-dryrun'
 import { Route as ApiPublicDebugBuildStatusRouteImport } from './routes/api/public/debug/build-status'
 import { Route as ApiPublicDebugBuildMarkerRouteImport } from './routes/api/public/debug/build-marker'
 import { Route as ApiPublicDebugAstroProbeRouteImport } from './routes/api/public/debug/astro-probe'
@@ -108,6 +109,12 @@ const ApiPublicDebugCoreV3RunRoute = ApiPublicDebugCoreV3RunRouteImport.update({
   path: '/api/public/debug/core-v3-run',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicDebugSeparatePipelineDryrunRoute =
+  ApiPublicDebugSeparatePipelineDryrunRouteImport.update({
+    id: '/api/public/debug/separate-pipeline-dryrun',
+    path: '/api/public/debug/separate-pipeline-dryrun',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicDebugBuildStatusRoute =
   ApiPublicDebugBuildStatusRouteImport.update({
     id: '/api/public/debug/build-status',
@@ -140,6 +147,7 @@ export interface FileRoutesByFullPath {
   '/api/public/debug/build-marker': typeof ApiPublicDebugBuildMarkerRoute
   '/api/public/debug/build-status': typeof ApiPublicDebugBuildStatusRoute
   '/api/public/debug/core-v3-run': typeof ApiPublicDebugCoreV3RunRoute
+  '/api/public/debug/separate-pipeline-dryrun': typeof ApiPublicDebugSeparatePipelineDryrunRoute
   '/api/public/debug/core-v4-render': typeof ApiPublicDebugCoreV4RenderRoute
   '/api/public/debug/core-v4-run': typeof ApiPublicDebugCoreV4RunRoute
   '/api/public/health/generation-pipeline': typeof ApiPublicHealthGenerationPipelineRoute
@@ -160,6 +168,7 @@ export interface FileRoutesByTo {
   '/api/public/debug/build-marker': typeof ApiPublicDebugBuildMarkerRoute
   '/api/public/debug/build-status': typeof ApiPublicDebugBuildStatusRoute
   '/api/public/debug/core-v3-run': typeof ApiPublicDebugCoreV3RunRoute
+  '/api/public/debug/separate-pipeline-dryrun': typeof ApiPublicDebugSeparatePipelineDryrunRoute
   '/api/public/debug/core-v4-render': typeof ApiPublicDebugCoreV4RenderRoute
   '/api/public/debug/core-v4-run': typeof ApiPublicDebugCoreV4RunRoute
   '/api/public/health/generation-pipeline': typeof ApiPublicHealthGenerationPipelineRoute
@@ -181,6 +190,7 @@ export interface FileRoutesById {
   '/api/public/debug/build-marker': typeof ApiPublicDebugBuildMarkerRoute
   '/api/public/debug/build-status': typeof ApiPublicDebugBuildStatusRoute
   '/api/public/debug/core-v3-run': typeof ApiPublicDebugCoreV3RunRoute
+  '/api/public/debug/separate-pipeline-dryrun': typeof ApiPublicDebugSeparatePipelineDryrunRoute
   '/api/public/debug/core-v4-render': typeof ApiPublicDebugCoreV4RenderRoute
   '/api/public/debug/core-v4-run': typeof ApiPublicDebugCoreV4RunRoute
   '/api/public/health/generation-pipeline': typeof ApiPublicHealthGenerationPipelineRoute
@@ -203,6 +213,7 @@ export interface FileRouteTypes {
     | '/api/public/debug/build-marker'
     | '/api/public/debug/build-status'
     | '/api/public/debug/core-v3-run'
+    | '/api/public/debug/separate-pipeline-dryrun'
     | '/api/public/debug/core-v4-render'
     | '/api/public/debug/core-v4-run'
     | '/api/public/health/generation-pipeline'
@@ -223,6 +234,7 @@ export interface FileRouteTypes {
     | '/api/public/debug/build-marker'
     | '/api/public/debug/build-status'
     | '/api/public/debug/core-v3-run'
+    | '/api/public/debug/separate-pipeline-dryrun'
     | '/api/public/debug/core-v4-render'
     | '/api/public/debug/core-v4-run'
     | '/api/public/health/generation-pipeline'
@@ -243,6 +255,7 @@ export interface FileRouteTypes {
     | '/api/public/debug/build-marker'
     | '/api/public/debug/build-status'
     | '/api/public/debug/core-v3-run'
+    | '/api/public/debug/separate-pipeline-dryrun'
     | '/api/public/debug/core-v4-render'
     | '/api/public/debug/core-v4-run'
     | '/api/public/health/generation-pipeline'
@@ -264,6 +277,7 @@ export interface RootRouteChildren {
   ApiPublicDebugBuildMarkerRoute: typeof ApiPublicDebugBuildMarkerRoute
   ApiPublicDebugBuildStatusRoute: typeof ApiPublicDebugBuildStatusRoute
   ApiPublicDebugCoreV3RunRoute: typeof ApiPublicDebugCoreV3RunRoute
+  ApiPublicDebugSeparatePipelineDryrunRoute: typeof ApiPublicDebugSeparatePipelineDryrunRoute
   ApiPublicDebugCoreV4RenderRoute: typeof ApiPublicDebugCoreV4RenderRoute
   ApiPublicDebugCoreV4RunRoute: typeof ApiPublicDebugCoreV4RunRoute
   ApiPublicHealthGenerationPipelineRoute: typeof ApiPublicHealthGenerationPipelineRoute
@@ -379,6 +393,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicDebugCoreV3RunRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/debug/separate-pipeline-dryrun': {
+      id: '/api/public/debug/separate-pipeline-dryrun'
+      path: '/api/public/debug/separate-pipeline-dryrun'
+      fullPath: '/api/public/debug/separate-pipeline-dryrun'
+      preLoaderRoute: typeof ApiPublicDebugSeparatePipelineDryrunRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/debug/build-status': {
       id: '/api/public/debug/build-status'
       path: '/api/public/debug/build-status'
@@ -416,6 +437,8 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicDebugBuildMarkerRoute: ApiPublicDebugBuildMarkerRoute,
   ApiPublicDebugBuildStatusRoute: ApiPublicDebugBuildStatusRoute,
   ApiPublicDebugCoreV3RunRoute: ApiPublicDebugCoreV3RunRoute,
+  ApiPublicDebugSeparatePipelineDryrunRoute:
+    ApiPublicDebugSeparatePipelineDryrunRoute,
   ApiPublicDebugCoreV4RenderRoute: ApiPublicDebugCoreV4RenderRoute,
   ApiPublicDebugCoreV4RunRoute: ApiPublicDebugCoreV4RunRoute,
   ApiPublicHealthGenerationPipelineRoute:
