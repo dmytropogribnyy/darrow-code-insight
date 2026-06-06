@@ -6,6 +6,8 @@ import { IntakeForm } from "@/components/IntakeForm";
 import { ProductSelector } from "@/components/ProductSelector";
 import { FaqBlock } from "@/components/FaqBlock";
 import { ContinuumTeaser } from "@/components/ContinuumTeaser";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import type { ContinuumType } from "@/lib/continuum/continuum-config";
 import {
   PlanetGlyphRibbon,
   HeroStars,
