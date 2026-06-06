@@ -94,7 +94,7 @@ const aboutFaqs: Faq[] = [
     question: "What is the CORE Report?",
     answer: (
       <div className="space-y-2.5">
-        <p>CORE is the main personal report about you.</p>
+        <p>CORE is the main personal astrology report about you — your foundation reading.</p>
         <p>
           It gives you a clear astrological summary of your personality, emotional pattern,
           strengths, repeating life themes and current timing.
