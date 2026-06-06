@@ -55,15 +55,15 @@ export function ProductSelector({
               letterSpacing: "0.22em",
             }}
           >
-            Choose your report
+            Choose your personal astrology PDF
           </p>
           <h2
             className="font-serif mt-2.5 leading-[1.1]"
             style={{ fontSize: "clamp(26px, 3.6vw, 34px)", color: "#1F1A10" }}
           >
-            CORE Report is your foundation.
+            Start with CORE — your foundation report.
             <br />
-            Or choose only the area you want.
+            Or add focused chapters for the areas you want.
           </h2>
         </div>
 
