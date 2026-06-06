@@ -4,6 +4,14 @@
 Continuum, so output is explicitly "Darrow Method" grounded — not AI-from-training. Synthesized from a
 full audit of `docs/knowledge/` (rules/, modules/, mapping/, source_packs/, governance).
 
+**Hard design constraint — DEPTH, NOT LENGTH (owner):** wiring must make reports more *grounded,
+specific, and Darrow-voiced at roughly the SAME length they are now* — never longer. The knowledge pack
+is source material the model **grounds in to replace generic phrasing**, not content to reproduce or
+append. Enforced by: (1) **no schema / section / word-target changes** — `addon_v1`, CORE targets, and
+Continuum targets stay exactly as today; (2) the prompt instructs "use these meanings to ground the
+EXISTING sections; do not add sections or length"; (3) a **compact** selector (top-N placements, token
+budget) so input stays lean; (4) the A/B re-validation explicitly checks output length did **not** grow.
+
 **Hard rule:** wire only **`docs/knowledge/rules/`** (original Darrow, IP-safe). **Never inject
 `source_packs/`** (third-party research — IP: must not reproduce wording). Gated/blocked layers stay off.
 
