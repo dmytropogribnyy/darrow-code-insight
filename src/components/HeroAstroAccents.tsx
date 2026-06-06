@@ -4,9 +4,7 @@
 // - Local moon-phase chip computed from the current UTC date
 //
 // No external API calls. Moon phase is derived from the synodic month
-// (~29.53 days) anchored to a known new moon. Accuracy is ±1 day, which is
-// fine for a decorative "sky right now" chip — we only display the phase
-// name + glyph, not a degree or zodiac sign.
+// (~29.53 days) anchored to a known new moon. Accuracy ±1 day.
 
 import { useEffect, useState } from "react";
 
@@ -41,7 +39,7 @@ export function PlanetGlyphRibbon() {
       className="mt-4 flex items-center justify-center gap-x-4 sm:gap-x-5 select-none pointer-events-none"
       style={{
         fontSize: "clamp(14px, 1.4vw, 16px)",
-        color: "rgba(212,175,55,0.35)",
+        color: "rgba(212,175,55,0.45)",
         letterSpacing: "0.08em",
       }}
     >
@@ -55,7 +53,6 @@ export function PlanetGlyphRibbon() {
 }
 
 export function HeroStars() {
-  // Hand-placed positions so it never looks random/noisy.
   const stars = [
     { top: "12%", left: "8%", delay: "0s", size: 3 },
     { top: "22%", left: "92%", delay: "1.4s", size: 2 },
@@ -92,7 +89,6 @@ export function HeroStars() {
 }
 
 export function MoonPhaseChip() {
-  // Compute on client to avoid SSR/hydration mismatch.
   const [phase, setPhase] = useState<PhaseInfo | null>(null);
 
   useEffect(() => {
@@ -100,7 +96,6 @@ export function MoonPhaseChip() {
   }, []);
 
   if (!phase) {
-    // Reserve a small space so the layout doesn't jump after hydration.
     return <div aria-hidden="true" className="mt-4 h-[28px]" />;
   }
 
