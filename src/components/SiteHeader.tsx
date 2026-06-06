@@ -39,7 +39,7 @@ export function SiteHeader({ onDark = false }: { onDark?: boolean }) {
           : "bg-paper text-charcoal border-b border-border"
       }
     >
-      <div className="max-w-6xl mx-auto px-6 h-14 flex items-center justify-between gap-3">
+      <div className="max-w-6xl mx-auto px-6 min-h-14 py-2 flex items-center justify-between gap-3">
         <Link
           to="/"
           className="text-gold font-sans font-medium shrink-0"
@@ -48,7 +48,7 @@ export function SiteHeader({ onDark = false }: { onDark?: boolean }) {
           DARROW CODE
         </Link>
 
-        {/* Centered announcement — tablet+ only; mobile gets its own row below */}
+        {/* Centered announcement — tablet+ (wraps to 2 lines if needed); mobile gets its own row below */}
         <div
           className="hidden sm:flex flex-1 justify-center px-3 min-w-0"
           aria-label="Launch announcement"
@@ -56,14 +56,17 @@ export function SiteHeader({ onDark = false }: { onDark?: boolean }) {
           <button
             type="button"
             onClick={() => goToSection("product-selector")}
-            className={announcementClasses + " truncate"}
-            style={{ fontSize: "clamp(13px, 1.3vw, 16px)", letterSpacing: "0.04em" }}
+            className={announcementClasses + " text-center leading-snug"}
+            style={{ fontSize: "clamp(12.5px, 1.2vw, 16px)", letterSpacing: "0.04em" }}
             aria-label="Jump to choose your report"
           >
             <span className="hidden md:inline">
               Launch drop · Your birth code, decoded for less than a latte
             </span>
-            <span className="md:hidden">Launch drop · Birth code decoded</span>
+            <span className="md:hidden">
+              Launch drop ·<br />
+              Your birth code, decoded for less than a latte
+            </span>
           </button>
         </div>
 
@@ -99,21 +102,22 @@ export function SiteHeader({ onDark = false }: { onDark?: boolean }) {
         </div>
       </div>
 
-      {/* Mobile announcement row — visible only below sm */}
+      {/* Mobile announcement row — visible only below sm, full phrase in 2 lines */}
       <div
         className={
-          "sm:hidden px-4 py-2 flex justify-center border-t " +
+          "sm:hidden px-4 py-2 flex justify-center text-center border-t " +
           (onDark ? "border-gold/10" : "border-border")
         }
       >
         <button
           type="button"
           onClick={() => goToSection("product-selector")}
-          className={announcementClasses + " text-center"}
+          className={announcementClasses + " leading-snug"}
           style={{ fontSize: 12.5, letterSpacing: "0.04em" }}
           aria-label="Jump to choose your report"
         >
-          Launch drop · Birth code decoded <span className="text-gold">→</span>
+          Launch drop ·<br />
+          Your birth code, decoded for less than a latte <span className="text-gold">→</span>
         </button>
       </div>
     </header>
