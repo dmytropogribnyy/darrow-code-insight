@@ -19,6 +19,23 @@ goal is not to copy interpretations. The goal is to build our own structured
 rule base from general symbolic traditions, public facts, and original Darrow
 Code language.
 
+### 1.1 · MAXIMAL-ENRICHMENT MANDATE (owner-approved 2026-06-07)
+
+Darrow Code should enrich every report **as much as safely possible**. Mine ALL
+available material — the `source_packs/`, general symbolic traditions, and any
+CC0/public-domain/licensed source — for their **concepts**, and author **original
+Darrow Code rules** (`docs/knowledge/rules/`) that we then wire into generation.
+Cover every layer that adds real value (Western astro, BaZi, numerology, archetypes,
+Chinese zodiac, colors/stones as aesthetic anchors, names, soft place-archetypes, …).
+
+This mandate does NOT relax two bedrock constraints — they protect us legally and
+keep the brand honest, and richness is achieved *within* them, never by breaking them:
+1. **Never copy or lightly paraphrase third-party wording / protected tables** (§2.3).
+   `source_packs/` are mined for concepts only and are NEVER injected raw into prompts.
+2. **Never make lucky / healing / protection / medical / financial / relationship /
+   guaranteed-outcome / deterministic claims** for any layer (§2.3, §5). Secondary
+   systems (colors/stones/etc.) may appear only as aesthetic/sensory/symbolic anchors.
+
 ---
 
 ## 2 · WHAT IS ALLOWED
@@ -135,9 +152,19 @@ Before any secondary symbolic system is implemented in production:
 | Supportive colors (CORE symbolic anchors) | ⚠️ Policy ready, dict pending | Curated dict required before production |
 | Supportive stones (CORE symbolic anchors) | ⚠️ Policy ready, dict pending | Curated dict required before production |
 | Symbolic allies / planetary allies | ⚠️ Policy ready, dict pending | Curated dict required before production |
-| Celtic / Druid tree calendar | 🔒 Future optional only | Requires strong curated Darrow Code rules |
-| Progressions, Solar Returns | 🔒 Future add-ons | Not current CORE scope |
-| Astrocartography | 🔒 Future PLACE chapter | Requires PLACE purchase + birth_time_known=true |
+| Archetype library | 🟡 Active authoring target | Author curated Darrow library, then wire |
+| Chinese zodiac (BaZi animal) | 🟡 Active authoring target | Soft symbolic layer; no fortune-telling/compatibility |
+| Names / etymology (soft) | 🟡 Active authoring target | Soft symbolic layer; no fate/destiny claims |
+| Celtic / Druid tree calendar | 🟡 Optional authoring target | Curated Darrow rules; symbolic mirror only |
+| Progressions, Solar Returns | 🔒 Future add-ons | YEAR/Continuum routing; no deterministic forecasts |
+| Astrocartography / cities | 🔒 PLACE add-on only | MAP0 + birth_time; CORE/PLACE use soft archetype, never city recommendations |
+| Synastry / compatibility | 🔒 Blocked | Requires partner data + separate phase |
+| Health / Neijing / medical | 🔒 Blocked permanently | Never in scope |
+
+**Under the §1.1 maximal-enrichment mandate**, every 🟡 / ⚠️ layer above is an **active
+authoring target**: build its original curated Darrow rules dict, gate it by the forbidden-claims
+contract, then wire + re-validate. Roadmap + per-module map: `docs/launch/KNOWLEDGE_WIRE_PLAN.md`.
+🔒 layers stay off until their separate gate (partner data / MAP0 / never).
 
 ---
 

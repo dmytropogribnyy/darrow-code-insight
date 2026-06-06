@@ -83,9 +83,19 @@ material packet + safety contracts.
   schema-valid, forbidden-clean, token cost). Verify rule text is original (not copied from source_packs).
 - **Stage 2 — All add-ons + Continuum.** Wire LOVE/MONEY/BODY/YEAR/STYLE/PLACE(soft)/Continuum per the
   map; **re-run PHASE 4 real-AI diagnostics for every module** (schema + proof-anchor + forbidden scans).
-- **Stage 3 (optional, higher value) — author BaZi meaning dict + archetype library**, wire, re-validate.
+- **Stage 3 — author the curated dicts that need writing** (owner-reviewed drafts, original Darrow
+  language from concepts, each carrying its own `forbidden_claims`): BaZi meaning dict (Day Master /
+  Five Elements / Ten Gods), Archetype library, Chinese-zodiac soft layer, Names soft layer, and
+  Colors/Stones **as aesthetic/sensory anchors only** (STYLE) — never luck/healing/protection. Wire +
+  re-validate each.
+- **Stage 4 — timing knowledge for YEAR + Continuum**: transit / solar-return / BaZi-flow / moon-phase
+  interpretation rules; wire; re-validate Continuum 7d/30d.
 
-Each stage gates on: schema valid · proof-anchored · zero forbidden claims · token budget OK.
+**Maximal-enrichment mandate (owner-approved):** author curated original rules for EVERY layer that adds
+value, mining `source_packs/` + general/licensed sources for concepts (never wording). Each stage gates
+on: schema valid · proof-anchored · **zero forbidden claims** (incl. no luck/healing/protection/medical/
+guarantee) · token budget OK. Authored dicts are drafts pending owner review for voice/accuracy.
+Still never wired: source_packs raw (IP), cities/astrocartography-as-recommendation, synastry, health.
 
 ## 5. Boundaries (non-negotiable)
 - `source_packs/` NEVER injected (IP).
