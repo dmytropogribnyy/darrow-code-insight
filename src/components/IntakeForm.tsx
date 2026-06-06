@@ -80,7 +80,7 @@ export function IntakeForm({
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!hasSelection) {
-      toast.error("Please choose CORE or at least one focused chapter.");
+      toast.error(isContinuum ? "Continuum unavailable." : "Please choose CORE or at least one focused chapter.");
       return;
     }
     if (!form.first_name || !form.email || !form.date_of_birth || !form.birth_city) {
