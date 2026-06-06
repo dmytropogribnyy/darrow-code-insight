@@ -79,7 +79,6 @@ function scanTimingViolations(text: string): string[] {
 
 describe("validate:continuum", () => {
   it.skipIf(approved)("plan-only (no network)", () => {
-    // eslint-disable-next-line no-console
     console.log(
       "── validate:continuum · PLAN-ONLY ──\n  types: " +
         CONTINUUM_TYPES.join(", ") +
@@ -143,7 +142,7 @@ describe("validate:continuum", () => {
         writeFileSync(`${OUT_DIR}/${type}.payload.json`, JSON.stringify(parsed.data, null, 2));
         const periodOk =
           html.includes(ctx.period.generated_label) && html.includes(ctx.period.covers_label);
-        // eslint-disable-next-line no-console
+
         console.log(
           `── CONTINUUM ${type} ── schema=VALID html=${html.length}B period=${periodOk ? "ok" : "MISSING"} proof_tags=${proofTags.length} unbacked=${unbacked.length ? unbacked.join(",") : "none"} forbidden=${forbidden.length ? forbidden.map((v) => `[${v.category}]${v.match}`).join(",") : "none"} covers="${ctx.period.covers_label}"`,
         );

@@ -27,9 +27,7 @@ export function SiteHeader({ onDark = false }: { onDark?: boolean }) {
 
   const announcementClasses =
     "font-sans font-medium transition-colors duration-200 cursor-pointer " +
-    (onDark
-      ? "text-light-grey/90 hover:text-gold"
-      : "text-neutral-grey hover:text-charcoal");
+    (onDark ? "text-light-grey/90 hover:text-gold" : "text-neutral-grey hover:text-charcoal");
 
   return (
     <header
@@ -65,7 +63,9 @@ export function SiteHeader({ onDark = false }: { onDark?: boolean }) {
             </span>
             <span className="lg:hidden">
               Launch drop ·<br />
-              <span className="whitespace-nowrap">Your birth code, decoded for less than a latte</span>
+              <span className="whitespace-nowrap">
+                Your birth code, decoded for less than a latte
+              </span>
             </span>
           </button>
         </div>
@@ -117,7 +117,9 @@ export function SiteHeader({ onDark = false }: { onDark?: boolean }) {
           aria-label="Jump to choose your report"
         >
           Launch drop ·<br />
-          <span className="whitespace-nowrap">Your birth code, decoded for less than a latte <span className="text-gold">→</span></span>
+          <span className="whitespace-nowrap">
+            Your birth code, decoded for less than a latte <span className="text-gold">→</span>
+          </span>
         </button>
       </div>
     </header>

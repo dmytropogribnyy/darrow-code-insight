@@ -59,7 +59,7 @@ describe("audit:freeastroapi", () => {
       "  To run an APPROVED audit (uses FreeAstroAPI quota, synthetic inputs only):",
       "    FREEASTROAPI_AUDIT_APPROVE=1 ASTRO_PROVIDER=freeastroapi npm run audit:freeastroapi",
     ];
-    // eslint-disable-next-line no-console
+
     console.log(lines.join("\n"));
     expect(approved).toBe(false);
   });
@@ -144,7 +144,6 @@ describe("audit:freeastroapi", () => {
         ].join("\n\n"),
       );
 
-      // eslint-disable-next-line no-console
       console.log(`[audit:freeastroapi] wrote sanitized report to ${OUT_DIR}/`);
       expect(report.length).toBe(AUDIT_CASES.length);
     },

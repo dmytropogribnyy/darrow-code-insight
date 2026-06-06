@@ -78,8 +78,10 @@ async function main() {
   // Default to the B5.0 diagnostic artifact; allow override via env so other
   // diagnostic tooling (e.g. the manual core-v4 CLI) can reuse this single PDF
   // engine without a second implementation. Backward-compatible.
-  const htmlPath = process.env.CORE_V4_PDF_IN || join(ROOT, "outputs", "pdf-v4.1-core-diagnostic.html");
-  const outPath = process.env.CORE_V4_PDF_OUT || join(ROOT, "outputs", "pdf-v4.1-core-diagnostic.pdf");
+  const htmlPath =
+    process.env.CORE_V4_PDF_IN || join(ROOT, "outputs", "pdf-v4.1-core-diagnostic.html");
+  const outPath =
+    process.env.CORE_V4_PDF_OUT || join(ROOT, "outputs", "pdf-v4.1-core-diagnostic.pdf");
 
   // Read HTML
   let html;

@@ -51,7 +51,7 @@ describe("MODULE-DIAG-lite — add-on render diagnostics", () => {
       summary.push(`${m}: ${html.length} bytes`);
     }
     writeFileSync(`${OUT_DIR}/_summary.txt`, summary.join("\n"));
-    // eslint-disable-next-line no-console
+
     console.log(
       `[addon-render-diag] wrote ${MODULE_CODES.length} module HTML files to ${OUT_DIR}/`,
     );

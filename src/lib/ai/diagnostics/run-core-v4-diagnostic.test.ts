@@ -40,7 +40,6 @@ for (const f of [".env.local", ".env"]) {
   if (existsSync(f)) {
     const names = loadLocalEnv(readFileSync(f, "utf8"));
     if (names.length) {
-      // eslint-disable-next-line no-console
       console.log(`[diagnostic] loaded ${names.length} var(s) from ${f}: ${names.join(", ")}`);
     }
   }
@@ -75,7 +74,6 @@ function renderArtifacts(core: any, clientName: string): { htmlPath?: string; pd
 
 describe("CORE v4 manual diagnostic CLI", () => {
   it("prints the run plan", () => {
-    // eslint-disable-next-line no-console
     console.log("\n" + buildPlan(options) + "\n");
     expect(options.mode).toMatch(/^(sequential|parallel)$/);
   });
@@ -91,7 +89,7 @@ describe("CORE v4 manual diagnostic CLI", () => {
     const input = await buildCoreV4DiagnosticInput();
     const availability = deriveAnchorAvailability(input.chart, input.natalInput);
     const validation = runCoreV4Validation(core, availability);
-    // eslint-disable-next-line no-console
+
     console.log("\n" + formatValidationReport(validation) + "\n");
     writeFileSync(
       join(options.outDir, "core-v4-diagnostic.validation.json"),
@@ -99,7 +97,7 @@ describe("CORE v4 manual diagnostic CLI", () => {
       "utf8",
     );
     const paths = renderArtifacts(core, "Dmitry");
-    // eslint-disable-next-line no-console
+
     console.log("re-rendered:", paths);
     expect(validation.schemaPass).toBe(true);
   });
@@ -129,7 +127,7 @@ describe("CORE v4 manual diagnostic CLI", () => {
 
       const availability = deriveAnchorAvailability(input.chart, input.natalInput);
       const validation = runCoreV4Validation(core, availability);
-      // eslint-disable-next-line no-console
+
       console.log("\n" + formatValidationReport(validation) + "\n");
 
       mkdirSync(options.outDir, { recursive: true });

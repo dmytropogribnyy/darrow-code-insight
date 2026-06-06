@@ -111,7 +111,10 @@ const aboutFaqs: Faq[] = [
     question: "What are the focused chapters?",
     answer: (
       <div className="space-y-2.5">
-        <p>Focused chapters are separate life-area astrology readings that go deeper into one part of your life.</p>
+        <p>
+          Focused chapters are separate life-area astrology readings that go deeper into one part of
+          your life.
+        </p>
         <p>
           You can add them to CORE, buy only the area you want, or get CORE Complete with all
           chapters.
@@ -215,9 +218,9 @@ const aboutFaqs: Faq[] = [
           daily protocol. Best for short-horizon decisions.
         </p>
         <p>
-          <strong>Continuum 30 Days — $3.99.</strong> A full month-ahead map: monthly theme,
-          primary vector, green &amp; pressure windows, and protocols across work, money,
-          relationships and body. Best for planning a month of moves.
+          <strong>Continuum 30 Days — $3.99.</strong> A full month-ahead map: monthly theme, primary
+          vector, green &amp; pressure windows, and protocols across work, money, relationships and
+          body. Best for planning a month of moves.
         </p>
         <p>
           Both are AI-generated from your birth chart and arrive as a separate PDF — they are not
@@ -227,8 +230,6 @@ const aboutFaqs: Faq[] = [
     ),
   },
 ];
-
-
 
 const commonFaqs: Faq[] = [
   {

@@ -36,7 +36,6 @@ const CHAPTER_META: Record<ModuleCode, { title: string; desc: string; detail: st
   },
 };
 
-
 interface Props {
   selected: Set<Selectable>;
   onToggle: (m: Selectable) => void;
@@ -172,7 +171,6 @@ export function ProductSelector({
           </Link>
         </div>
 
-
         {/* CORE Complete bundle card */}
         <button
           id="chapter-COMPLETE"
@@ -228,8 +226,8 @@ export function ProductSelector({
               style={{ color: "#2A2418", fontSize: "clamp(14px, 1.35vw, 15.5px)" }}
             >
               The complete AI astrology report set — CORE + all 6 focused chapters (LOVE, MONEY,
-              BODY, YEAR, STYLE, PLACE), each delivered as its own private PDF. The full Darrow
-              Code reading of your birth pattern.
+              BODY, YEAR, STYLE, PLACE), each delivered as its own private PDF. The full Darrow Code
+              reading of your birth pattern.
             </p>
           </div>
           <span
@@ -252,7 +250,6 @@ export function ProductSelector({
             See what's inside →
           </Link>
         </div>
-
 
         <p
           className="text-center uppercase mb-1 font-semibold"
@@ -336,7 +333,6 @@ export function ProductSelector({
                   >
                     {meta.detail}
                   </p>
-
                 </div>
               </button>
             );

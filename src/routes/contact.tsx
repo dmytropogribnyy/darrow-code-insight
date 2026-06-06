@@ -87,8 +87,8 @@ function ContactPage() {
           </p>
 
           <p className="mt-7 text-[15px] sm:text-[16px] text-muted-grey leading-[1.65] font-sans max-w-[520px] mx-auto">
-            For questions, support, or data deletion requests — reach out and
-            we'll respond as soon as we can.
+            For questions, support, or data deletion requests — reach out and we'll respond as soon
+            as we can.
           </p>
 
           <div className="mt-9 sm:mt-10 max-w-[460px] mx-auto bg-white/[0.04] border border-gold/30 rounded-[10px] px-6 py-7">
@@ -122,7 +122,6 @@ function ContactPage() {
               </button>
             </div>
           </div>
-
 
           <p
             className="mt-8 font-sans font-medium text-[11.5px] sm:text-[12px] text-[#9CA3AF] uppercase"

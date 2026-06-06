@@ -30,7 +30,15 @@ interface CardProps {
   onClick?: () => void;
 }
 
-function ContinuumCard({ period, priceLabel, blurb, bullets, ctaLabel, disabled, onClick }: CardProps) {
+function ContinuumCard({
+  period,
+  priceLabel,
+  blurb,
+  bullets,
+  ctaLabel,
+  disabled,
+  onClick,
+}: CardProps) {
   return (
     <div
       className="rounded-[12px] border-2 px-5 py-5 sm:px-6 sm:py-6 flex flex-col"
@@ -70,7 +78,9 @@ function ContinuumCard({ period, priceLabel, blurb, bullets, ctaLabel, disabled,
       >
         {bullets.map((b) => (
           <li key={b} className="flex items-start gap-2 leading-snug">
-            <span aria-hidden="true" style={{ color: "#B8860B" }} className="mt-[2px]">·</span>
+            <span aria-hidden="true" style={{ color: "#B8860B" }} className="mt-[2px]">
+              ·
+            </span>
             <span>{b}</span>
           </li>
         ))}
@@ -100,29 +110,21 @@ function ContinuumCard({ period, priceLabel, blurb, bullets, ctaLabel, disabled,
       >
         Sample preview coming soon
       </p>
-
     </div>
   );
 }
 
-export function ContinuumTeaser({
-  comingSoon,
-  onSelect7d,
-  onSelect30d,
-}: ContinuumTeaserProps) {
+export function ContinuumTeaser({ comingSoon, onSelect7d, onSelect30d }: ContinuumTeaserProps) {
   // When `comingSoon` is not explicitly provided, derive from the client gate.
   // Production stays dark until VITE_CONTINUUM_ENABLED is flipped.
   const resolvedComingSoon =
-    typeof comingSoon === "boolean"
-      ? comingSoon
-      : import.meta.env.VITE_CONTINUUM_ENABLED !== "1";
+    typeof comingSoon === "boolean" ? comingSoon : import.meta.env.VITE_CONTINUUM_ENABLED !== "1";
   return (
     <section
       aria-labelledby="continuum-heading"
       className="rounded-[14px] px-5 py-7 sm:px-7 sm:py-8"
       style={{
-        background:
-          "linear-gradient(180deg, rgba(212,175,55,0.06) 0%, rgba(212,175,55,0.02) 100%)",
+        background: "linear-gradient(180deg, rgba(212,175,55,0.06) 0%, rgba(212,175,55,0.02) 100%)",
         border: "1px solid rgba(212,175,55,0.32)",
         boxShadow: "0 8px 28px -18px rgba(31,26,16,0.35)",
       }}
@@ -167,8 +169,8 @@ export function ContinuumTeaser({
             maxWidth: "520px",
           }}
         >
-          A private AI astrology forecast based on your birth chart — what's coming next,
-          pressure zones, green windows and a daily protocol. Delivered as a separate PDF.
+          A private AI astrology forecast based on your birth chart — what's coming next, pressure
+          zones, green windows and a daily protocol. Delivered as a separate PDF.
         </p>
       </div>
 

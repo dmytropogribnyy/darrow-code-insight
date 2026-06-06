@@ -82,7 +82,7 @@ describe("validate:style-addon", () => {
     const ctx = buildReportContextForModule("STYLE", syntheticStyleChart(), {
       first_name: "Sample",
     });
-    // eslint-disable-next-line no-console
+
     console.log(
       [
         "── validate:style-addon · PLAN-ONLY (no network) ──",
@@ -119,7 +119,7 @@ describe("validate:style-addon", () => {
       if (!parsed.success) {
         const issues = parsed.error.issues.map((i) => `${i.path.join(".")}: ${i.message}`);
         writeFileSync(`${OUT_DIR}/STYLE.schema-issues.json`, JSON.stringify(issues, null, 2));
-        // eslint-disable-next-line no-console
+
         console.log("── STYLE validation: SCHEMA FAILED ──\n  " + issues.join("\n  "));
       }
       expect(parsed.success, `schema invalid — see ${OUT_DIR}/STYLE.schema-issues.json`).toBe(true);
@@ -164,7 +164,7 @@ describe("validate:style-addon", () => {
         html_bytes: artifact.html.length,
       };
       writeFileSync(`${OUT_DIR}/STYLE.validation.json`, JSON.stringify(report, null, 2));
-      // eslint-disable-next-line no-console
+
       console.log(
         [
           "── STYLE validation report ──",

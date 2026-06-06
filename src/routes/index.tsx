@@ -6,7 +6,13 @@ import { IntakeForm } from "@/components/IntakeForm";
 import { ProductSelector } from "@/components/ProductSelector";
 import { FaqBlock } from "@/components/FaqBlock";
 import { ContinuumTeaser } from "@/components/ContinuumTeaser";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
 import type { ContinuumType } from "@/lib/continuum/continuum-config";
 import {
   PlanetGlyphRibbon,
@@ -122,7 +128,6 @@ function LandingPage() {
           <PlanetGlyphRibbon />
           <MoonPhaseChip />
 
-
           {/* Darrow symbol — cinematic spin on load + replay on click */}
           <img
             src="/brand/darrow-symbol-small.png"
@@ -141,7 +146,6 @@ function LandingPage() {
               transformOrigin: "center center",
             }}
           />
-
 
           {/* Headline */}
           <h1
@@ -168,13 +172,14 @@ function LandingPage() {
 
           {/* Brand continuity */}
           <p className="mt-4 text-[16px] sm:text-[17px] md:text-[18px] text-light-grey leading-[1.65] font-sans font-medium">
-            AI astrology report · Built from your birth data · Decoded through the Darrow Code Method
+            AI astrology report · Built from your birth data · Decoded through the Darrow Code
+            Method
           </p>
 
           {/* Explainer */}
           <p className="mt-6 sm:mt-7 text-[17px] sm:text-[18px] md:text-[19px] text-muted-grey max-w-[640px] mx-auto leading-[1.65] font-sans">
-            A premium AI-powered personal astrology horoscope report built from your birth data —
-            a private PDF reading of your birth chart, personality patterns, timing, love, money,
+            A premium AI-powered personal astrology horoscope report built from your birth data — a
+            private PDF reading of your birth chart, personality patterns, timing, love, money,
             body, style and place.
           </p>
 
@@ -189,16 +194,12 @@ function LandingPage() {
               </span>
               One astrology tradition shows part of the picture.
               <br />
-              <span className="font-semibold text-gold">
-                Darrow Code reads the full pattern.
-              </span>
+              <span className="font-semibold text-gold">Darrow Code reads the full pattern.</span>
               <span className="text-gold/70 ml-1 align-[-0.1em] text-[1.4em] leading-none font-serif">
                 ”
               </span>
             </blockquote>
           </figure>
-
-
 
           {/* Method line */}
           <p
@@ -268,12 +269,15 @@ function LandingPage() {
               style={{ fontSize: "clamp(14px, 1.25vw, 15.5px)" }}
             >
               <li className="whitespace-nowrap">
-                <span className="text-gold font-semibold">CORE</span>{" "}
-                <span>$4.99</span>
+                <span className="text-gold font-semibold">CORE</span> <span>$4.99</span>
               </li>
-              <li aria-hidden="true" className="text-[#6B6B6B]">·</li>
+              <li aria-hidden="true" className="text-[#6B6B6B]">
+                ·
+              </li>
               <li className="whitespace-nowrap">Chapters $2.99 each</li>
-              <li aria-hidden="true" className="text-[#6B6B6B]">·</li>
+              <li aria-hidden="true" className="text-[#6B6B6B]">
+                ·
+              </li>
               <li className="whitespace-nowrap">
                 <span className="text-gold font-semibold">CORE Complete</span>{" "}
                 <span className="text-gold font-semibold">$14.99</span>
@@ -300,11 +304,8 @@ function LandingPage() {
                 Private AI Astrology PDF · Ready In A Few Minutes · No Subscription
               </p>
             </div>
-
-
           </div>
         </div>
-
 
         {/* Gold hairline divider between hero and intake */}
         <div
@@ -319,7 +320,11 @@ function LandingPage() {
 
       {/* PRODUCT SELECTOR — paper section */}
       <section>
-        <div ref={selectorRef} id="product-selector" className="max-w-[560px] sm:max-w-[640px] md:max-w-[720px] mx-auto px-4 sm:px-6 pt-10 sm:pt-12">
+        <div
+          ref={selectorRef}
+          id="product-selector"
+          className="max-w-[560px] sm:max-w-[640px] md:max-w-[720px] mx-auto px-4 sm:px-6 pt-10 sm:pt-12"
+        >
           <ProductSelector
             selected={selected}
             onToggle={toggle}
@@ -342,7 +347,10 @@ function LandingPage() {
         </div>
 
         {/* CONTINUUM teaser — separate timing product, below chapters */}
-        <div id="continuum" className="max-w-[560px] sm:max-w-[640px] md:max-w-[720px] mx-auto px-4 sm:px-6 mt-8 sm:mt-10 scroll-mt-20">
+        <div
+          id="continuum"
+          className="max-w-[560px] sm:max-w-[640px] md:max-w-[720px] mx-auto px-4 sm:px-6 mt-8 sm:mt-10 scroll-mt-20"
+        >
           <ContinuumTeaser
             onSelect7d={() => {
               setContinuumResetSignal((n) => n + 1);
@@ -369,7 +377,8 @@ function LandingPage() {
               CONTINUUM · {continuumOpen === "7d" ? "Next 7 Days" : "Next 30 Days"}
             </DialogTitle>
             <DialogDescription style={{ color: "#4A402D" }}>
-              Enter your birth data — your personal timing brief PDF is generated right after checkout.
+              Enter your birth data — your personal timing brief PDF is generated right after
+              checkout.
             </DialogDescription>
           </DialogHeader>
           {continuumOpen && (
@@ -381,7 +390,6 @@ function LandingPage() {
           )}
         </DialogContent>
       </Dialog>
-
 
       {/* INTAKE — paper section */}
       <section className="flex-1">

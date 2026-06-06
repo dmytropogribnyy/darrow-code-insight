@@ -41,7 +41,6 @@ const hasQuery = !!(query.ref || query.email || query.stripe);
 
 describe("support:report — read-only report recovery summary", () => {
   it.skipIf(hasQuery)("prints usage when no query is provided", () => {
-    // eslint-disable-next-line no-console
     console.log(
       [
         "── support:report ─ usage ───────────────────────────────",
@@ -60,15 +59,12 @@ describe("support:report — read-only report recovery summary", () => {
       // Purchase-level: a per-module report_ref returns that module + all its siblings.
       const facts = await fetchPurchaseSupportFacts(query);
       if (facts.length === 0) {
-        // eslint-disable-next-line no-console
         console.log("No reports found for", query);
       } else {
-        // eslint-disable-next-line no-console
         console.log("\n" + formatPurchaseSupport(facts) + "\n");
         // Full per-report detail for the focused/queried report when a single ref was given.
         for (const f of facts) {
           if (query.ref && f.report_ref === query.ref) {
-            // eslint-disable-next-line no-console
             console.log(formatSupportSummary(f) + "\n");
           }
         }

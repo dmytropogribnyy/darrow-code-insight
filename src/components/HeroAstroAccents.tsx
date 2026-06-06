@@ -13,21 +13,25 @@ const PLANET_GLYPHS = ["☉", "☽", "☿", "♀", "♂", "♃", "♄"];
 // "\uFE0E" = variation selector-15 → forces text presentation (not emoji color),
 // so the glyphs inherit the monochrome gold fill instead of system emoji colors.
 const ZODIAC_GLYPHS = [
-  "♈\uFE0E", "♉\uFE0E", "♊\uFE0E", "♋\uFE0E", "♌\uFE0E", "♍\uFE0E",
-  "♎\uFE0E", "♏\uFE0E", "♐\uFE0E", "♑\uFE0E", "♒\uFE0E", "♓\uFE0E",
+  "♈\uFE0E",
+  "♉\uFE0E",
+  "♊\uFE0E",
+  "♋\uFE0E",
+  "♌\uFE0E",
+  "♍\uFE0E",
+  "♎\uFE0E",
+  "♏\uFE0E",
+  "♐\uFE0E",
+  "♑\uFE0E",
+  "♒\uFE0E",
+  "♓\uFE0E",
 ];
 
 /**
  * Thin gold zodiac wheel — decorative SVG watermark for the hero.
  * Pure ornament, no data. Sits behind the headline at very low opacity.
  */
-export function ZodiacWheel({
-  size = 520,
-  className = "",
-}: {
-  size?: number;
-  className?: string;
-}) {
+export function ZodiacWheel({ size = 520, className = "" }: { size?: number; className?: string }) {
   const cx = size / 2;
   const cy = size / 2;
   const rOuter = size / 2 - 1;
@@ -171,7 +175,6 @@ export function HeroStars() {
     </div>
   );
 }
-
 
 export function MoonPhaseChip() {
   const [phase, setPhase] = useState<PhaseInfo | null>(null);

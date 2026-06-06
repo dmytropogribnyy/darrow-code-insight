@@ -113,7 +113,6 @@ function collect(payload: any): { text: string; proofTags: string[] } {
 
 describe("validate:addons (all six modules)", () => {
   it.skipIf(approved)("plan-only: lists the modules it would validate (no network)", () => {
-    // eslint-disable-next-line no-console
     console.log(
       "── validate:addons · PLAN-ONLY ──\n  modules: " +
         MODULE_CODES.join(", ") +
@@ -138,7 +137,7 @@ describe("validate:addons (all six modules)", () => {
         if (!parsed.success) {
           const issues = parsed.error.issues.map((i) => `${i.path.join(".")}: ${i.message}`);
           writeFileSync(`${OUT_DIR}/${module}.schema-issues.json`, JSON.stringify(issues, null, 2));
-          // eslint-disable-next-line no-console
+
           console.log(`── ${module}: SCHEMA FAILED ──\n  ` + issues.join("\n  "));
         }
         expect(parsed.success, `${module} schema invalid — see outputs/`).toBe(true);
@@ -166,7 +165,7 @@ describe("validate:addons (all six modules)", () => {
             2,
           ),
         );
-        // eslint-disable-next-line no-console
+
         console.log(
           `── ${module} ── schema=VALID html=${html.length}B proof_tags=${proofTags.length} unbacked=${unbacked.length ? unbacked.join(",") : "none"} forbidden=${violations.length ? violations.map((v) => `[${v.category}]${v.match}`).join(",") : "none"}`,
         );

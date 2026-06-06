@@ -69,10 +69,10 @@ export function IntakeForm({
     ? `Get my ${continuumType === "7d" ? "7-day" : "30-day"} brief`
     : ctaLabelFor(includesCore, chapters);
   const ctaPrice = isContinuum
-    ? `$${((continuumProduct!.price_cents) / 100).toFixed(2)}`
+    ? `$${(continuumProduct!.price_cents / 100).toFixed(2)}`
     : quote
-    ? `$${(quote.cents / 100).toFixed(2)}`
-    : "—";
+      ? `$${(quote.cents / 100).toFixed(2)}`
+      : "—";
 
   const update = (k: keyof FormState) => (e: React.ChangeEvent<HTMLInputElement>) =>
     setForm((f) => ({ ...f, [k]: e.target.value }));
@@ -80,7 +80,11 @@ export function IntakeForm({
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!hasSelection) {
-      toast.error(isContinuum ? "Continuum unavailable." : "Please choose CORE or at least one focused chapter.");
+      toast.error(
+        isContinuum
+          ? "Continuum unavailable."
+          : "Please choose CORE or at least one focused chapter.",
+      );
       return;
     }
     if (!form.first_name || !form.email || !form.date_of_birth || !form.birth_city) {
@@ -229,7 +233,10 @@ export function IntakeForm({
             {placeError}
           </p>
         ) : (
-          <p className="mt-2 text-[13px] sm:text-[13.5px] leading-relaxed" style={{ color: "#4A402D" }}>
+          <p
+            className="mt-2 text-[13px] sm:text-[13.5px] leading-relaxed"
+            style={{ color: "#4A402D" }}
+          >
             Used only to calculate your birth chart timezone and coordinates.
           </p>
         )}
@@ -273,18 +280,27 @@ export function IntakeForm({
             );
           })}
         </div>
-        <p className="mt-2 text-[13px] sm:text-[13.5px] leading-relaxed" style={{ color: "#4A402D" }}>
+        <p
+          className="mt-2 text-[13px] sm:text-[13.5px] leading-relaxed"
+          style={{ color: "#4A402D" }}
+        >
           Used only for the traditional BaZi calculation. Not shown in your report.
         </p>
       </div>
 
       <div className="pt-3 text-center">
         <div className="flex items-center justify-center gap-3 mb-3" aria-hidden="false">
-          <span className="h-px w-10 sm:w-12" style={{ backgroundColor: "rgba(212,175,55,0.45)" }} />
+          <span
+            className="h-px w-10 sm:w-12"
+            style={{ backgroundColor: "rgba(212,175,55,0.45)" }}
+          />
           <p className="text-[12px] sm:text-[13px] tracking-[0.18em] sm:tracking-[0.2em] uppercase text-gold font-semibold">
             Launch price
           </p>
-          <span className="h-px w-10 sm:w-12" style={{ backgroundColor: "rgba(212,175,55,0.45)" }} />
+          <span
+            className="h-px w-10 sm:w-12"
+            style={{ backgroundColor: "rgba(212,175,55,0.45)" }}
+          />
         </div>
         <button
           type="submit"
