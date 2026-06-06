@@ -330,7 +330,7 @@ function LandingPage() {
             className="text-center font-medium text-[14px] sm:text-[15px] mb-5 leading-[1.55]"
             style={{ color: "#4A402D" }}
           >
-            Enter your birth data — checkout comes next, then your private report.
+            Enter your birth data — checkout comes next, then your private astrology PDF.
           </p>
           <div className="relative">
             {/* Subtle gold accent line above card */}
