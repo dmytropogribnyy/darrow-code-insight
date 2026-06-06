@@ -120,3 +120,6 @@ export function SiteHeader({ onDark = false }: { onDark?: boolean }) {
           Your birth code, decoded for less than a latte <span className="text-gold">→</span>
         </button>
       </div>
+    </header>
+  );
+}
