@@ -232,6 +232,20 @@ function LandingPage() {
                 CORE Complete
               </button>
               .
+              <br />
+              Need timing? Add a{" "}
+              <button
+                type="button"
+                onClick={() => {
+                  const el = document.getElementById("continuum");
+                  el?.scrollIntoView({ behavior: "smooth", block: "start" });
+                }}
+                className="font-semibold text-[#D4AF37] border-b border-transparent hover:border-[#D4AF37]/70 hover:text-[#E6C35A] transition-colors duration-150 pb-px cursor-pointer"
+                aria-label="Jump to Continuum personal timing report"
+              >
+                Continuum
+              </button>{" "}
+              7-day or 30-day AI forecast.
             </p>
             <div className="mt-4 flex flex-wrap justify-center gap-x-3 gap-y-1.5">
               {["LOVE", "MONEY", "BODY", "YEAR", "STYLE", "PLACE"].map((m, i) => (
@@ -328,7 +342,7 @@ function LandingPage() {
         </div>
 
         {/* CONTINUUM teaser — separate timing product, below chapters */}
-        <div className="max-w-[560px] sm:max-w-[640px] md:max-w-[720px] mx-auto px-4 sm:px-6 mt-8 sm:mt-10">
+        <div id="continuum" className="max-w-[560px] sm:max-w-[640px] md:max-w-[720px] mx-auto px-4 sm:px-6 mt-8 sm:mt-10 scroll-mt-20">
           <ContinuumTeaser
             onSelect7d={() => {
               setContinuumResetSignal((n) => n + 1);
