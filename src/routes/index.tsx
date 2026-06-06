@@ -163,13 +163,14 @@ function LandingPage() {
 
           {/* Brand continuity */}
           <p className="mt-4 text-[16px] sm:text-[17px] md:text-[18px] text-light-grey leading-[1.65] font-sans font-medium">
-            AI-powered · Built from your birth data · Decoded through the Darrow Code Method
+            AI astrology report · Built from your birth data · Decoded through the Darrow Code Method
           </p>
 
           {/* Explainer */}
           <p className="mt-6 sm:mt-7 text-[17px] sm:text-[18px] md:text-[19px] text-muted-grey max-w-[640px] mx-auto leading-[1.65] font-sans">
-            Get a premium private astrology report built from your birth data — revealing your
-            personal pattern: how you think, react, choose and move through change.
+            A premium AI-powered personal astrology horoscope report built from your birth data —
+            a private PDF reading of your birth chart, personality patterns, timing, love, money,
+            body, style and place.
           </p>
 
           {/* Quote box */}
