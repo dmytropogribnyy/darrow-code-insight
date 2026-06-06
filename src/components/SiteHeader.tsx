@@ -65,7 +65,7 @@ export function SiteHeader({ onDark = false }: { onDark?: boolean }) {
             </span>
             <span className="md:hidden">
               Launch drop ·<br />
-              Your birth code, decoded for less than a latte
+              <span className="whitespace-nowrap">Your birth code, decoded for less than a latte</span>
             </span>
           </button>
         </div>
@@ -117,7 +117,7 @@ export function SiteHeader({ onDark = false }: { onDark?: boolean }) {
           aria-label="Jump to choose your report"
         >
           Launch drop ·<br />
-          Your birth code, decoded for less than a latte <span className="text-gold">→</span>
+          <span className="whitespace-nowrap">Your birth code, decoded for less than a latte <span className="text-gold">→</span></span>
         </button>
       </div>
     </header>
