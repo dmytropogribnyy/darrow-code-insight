@@ -118,11 +118,17 @@ function LandingPage() {
           <MoonPhaseChip />
 
 
-          {/* Darrow symbol — single cinematic 360° spin on load, then static */}
+          {/* Darrow symbol — cinematic spin on load + replay on click */}
           <img
             src="/brand/darrow-symbol-small.png"
             alt="Darrow Code"
-            className="mx-auto mt-5 sm:mt-7 mb-[18px] sm:mb-6 opacity-95 darrow-symbol-spin"
+            onClick={(e) => {
+              const el = e.currentTarget;
+              el.classList.remove("darrow-symbol-spin");
+              void el.offsetWidth; // force reflow to restart animation
+              el.classList.add("darrow-symbol-spin");
+            }}
+            className="mx-auto mt-5 sm:mt-7 mb-[18px] sm:mb-6 opacity-95 darrow-symbol-spin cursor-pointer"
             style={{
               width: "clamp(44px, 8vw, 56px)",
               height: "auto",
@@ -130,6 +136,7 @@ function LandingPage() {
               transformOrigin: "center center",
             }}
           />
+
 
           {/* Headline */}
           <h1
