@@ -1,15 +1,41 @@
+import { Link } from "@tanstack/react-router";
 import { MODULE_CODES, type ModuleCode, priceForModules } from "@/lib/modules";
 
 export type Selectable = "CORE" | ModuleCode;
 
-const CHAPTER_META: Record<ModuleCode, { title: string; desc: string }> = {
-  LOVE: { title: "LOVE", desc: "Your love pattern, attraction style and relationship rhythm" },
-  MONEY: { title: "MONEY", desc: "Your work, money and value pattern" },
-  BODY: { title: "BODY", desc: "Your stress signature and recovery rhythm" },
-  YEAR: { title: "YEAR", desc: "Your personal year, timing pressure and opportunity pattern" },
-  STYLE: { title: "STYLE", desc: "Your aesthetic signature, presence and style pattern" },
-  PLACE: { title: "PLACE", desc: "Your environment pattern — where your system feels clearer or drained" },
+const CHAPTER_META: Record<ModuleCode, { title: string; desc: string; detail: string }> = {
+  LOVE: {
+    title: "LOVE",
+    desc: "Your love pattern, attraction style and relationship rhythm.",
+    detail: "How you bond, what drains you, what kind of partner fits your chart.",
+  },
+  MONEY: {
+    title: "MONEY",
+    desc: "Your work, money and value pattern.",
+    detail: "Where your earning power lives, your spending pattern, work environments that fit.",
+  },
+  BODY: {
+    title: "BODY",
+    desc: "Your stress signature and recovery rhythm.",
+    detail: "How your body holds pressure, what restores you, signals to watch.",
+  },
+  YEAR: {
+    title: "YEAR",
+    desc: "Your personal year, timing pressure and opportunity pattern.",
+    detail: "What this year is really for, the green windows, the pressure zones.",
+  },
+  STYLE: {
+    title: "STYLE",
+    desc: "Your aesthetic signature, presence and style pattern.",
+    detail: "Your visual archetype, colors and textures that amplify you, presence cues.",
+  },
+  PLACE: {
+    title: "PLACE",
+    desc: "Your environment pattern — where your system feels clearer or drained.",
+    detail: "Cities, climates and rooms that lift you vs. flatten you.",
+  },
 };
+
 
 interface Props {
   selected: Set<Selectable>;
