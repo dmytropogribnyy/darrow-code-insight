@@ -137,7 +137,7 @@ export function ContinuumTeaser({
             letterSpacing: "0.22em",
           }}
         >
-          <span>Timing · New</span>
+          <span>Personal Timing Report</span>
           {resolvedComingSoon && (
             <span
               className="px-2 py-0.5 rounded-full font-bold uppercase"
