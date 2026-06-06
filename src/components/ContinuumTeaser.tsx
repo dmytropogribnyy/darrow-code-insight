@@ -106,15 +106,15 @@ function ContinuumCard({ period, priceLabel, blurb, bullets, ctaLabel, disabled,
 }
 
 export function ContinuumTeaser({
-  resolvedComingSoon,
+  comingSoon,
   onSelect7d,
   onSelect30d,
 }: ContinuumTeaserProps) {
-  // When `resolvedComingSoon` is not explicitly provided, derive from the client gate.
+  // When `comingSoon` is not explicitly provided, derive from the client gate.
   // Production stays dark until VITE_CONTINUUM_ENABLED is flipped.
   const resolvedComingSoon =
-    typeof resolvedComingSoon === "boolean"
-      ? resolvedComingSoon
+    typeof comingSoon === "boolean"
+      ? comingSoon
       : import.meta.env.VITE_CONTINUUM_ENABLED !== "1";
   return (
     <section
