@@ -286,7 +286,7 @@ function LandingPage() {
 
       {/* PRODUCT SELECTOR — paper section */}
       <section>
-        <div ref={selectorRef} className="max-w-[560px] sm:max-w-[640px] md:max-w-[720px] mx-auto px-4 sm:px-6 pt-10 sm:pt-12">
+        <div ref={selectorRef} id="product-selector" className="max-w-[560px] sm:max-w-[640px] md:max-w-[720px] mx-auto px-4 sm:px-6 pt-10 sm:pt-12">
           <ProductSelector
             selected={selected}
             onToggle={toggle}
