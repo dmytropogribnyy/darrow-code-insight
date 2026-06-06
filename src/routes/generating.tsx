@@ -54,7 +54,7 @@ function GeneratingPage() {
         }
         if (res.generation_status === "processing" || res.job_status === "processing") {
           setStatus("Synthesising your patterns…");
-          setDetail("This can take several minutes for larger readings.");
+          setDetail("Multi-chapter selections can take 10–20 minutes — your link will arrive by email.");
         }
         if (res.job_recovery_pending) {
           setStatus("Taking longer than usual — recovery is queued…");
