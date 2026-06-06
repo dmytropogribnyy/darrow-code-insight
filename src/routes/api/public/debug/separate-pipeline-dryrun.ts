@@ -246,10 +246,20 @@ export const Route = createFileRoute("/api/public/debug/separate-pipeline-dryrun
   server: {
     handlers: {
       POST: async ({ request }) => {
-        if (!process.env.JOB_DISPATCH_SECRET)
+        // Two accepted gates: JOB_DISPATCH_SECRET (worker auth, same as other /debug/*),
+        // OR a dedicated PHASE6_DRYRUN_TOKEN the operator sets themselves (so it can be passed
+        // in the Bearer header without reading a write-only secret). Refuse if neither configured.
+        const dryToken = process.env.PHASE6_DRYRUN_TOKEN;
+        if (!process.env.JOB_DISPATCH_SECRET && !dryToken)
           return new Response("not configured", { status: 500 });
-        const auth = checkWorkerAuth(request.headers);
-        if (!auth.ok) return unauthorizedResponse(auth);
+        const bearer = (request.headers.get("authorization") ?? "")
+          .replace(/^Bearer\s+/i, "")
+          .trim();
+        const okByDryToken = !!dryToken && bearer === dryToken;
+        if (!okByDryToken) {
+          const auth = checkWorkerAuth(request.headers);
+          if (!auth.ok) return unauthorizedResponse(auth);
+        }
         let body: any = {};
         try {
           body = await request.json();
