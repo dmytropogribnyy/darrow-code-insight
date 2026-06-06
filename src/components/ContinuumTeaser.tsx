@@ -106,15 +106,15 @@ function ContinuumCard({ period, priceLabel, blurb, bullets, ctaLabel, disabled,
 }
 
 export function ContinuumTeaser({
-  comingSoon,
+  resolvedComingSoon,
   onSelect7d,
   onSelect30d,
 }: ContinuumTeaserProps) {
-  // When `comingSoon` is not explicitly provided, derive from the client gate.
+  // When `resolvedComingSoon` is not explicitly provided, derive from the client gate.
   // Production stays dark until VITE_CONTINUUM_ENABLED is flipped.
   const resolvedComingSoon =
-    typeof comingSoon === "boolean"
-      ? comingSoon
+    typeof resolvedComingSoon === "boolean"
+      ? resolvedComingSoon
       : import.meta.env.VITE_CONTINUUM_ENABLED !== "1";
   return (
     <section
@@ -138,7 +138,7 @@ export function ContinuumTeaser({
           }}
         >
           <span>Timing · New</span>
-          {comingSoon && (
+          {resolvedComingSoon && (
             <span
               className="px-2 py-0.5 rounded-full font-bold uppercase"
               style={{
@@ -184,8 +184,8 @@ export function ContinuumTeaser({
             "Work, relationships, body rhythm",
             "Daily protocol",
           ]}
-          ctaLabel={comingSoon ? "Coming soon" : "Get my 7-day brief"}
-          disabled={comingSoon}
+          ctaLabel={resolvedComingSoon ? "Coming soon" : "Get my 7-day brief"}
+          disabled={resolvedComingSoon}
           onClick={onSelect7d}
         />
         <ContinuumCard
@@ -198,8 +198,8 @@ export function ContinuumTeaser({
             "Work, money, relationships, body",
             "Monthly protocols",
           ]}
-          ctaLabel={comingSoon ? "Coming soon" : "Get my 30-day brief"}
-          disabled={comingSoon}
+          ctaLabel={resolvedComingSoon ? "Coming soon" : "Get my 30-day brief"}
+          disabled={resolvedComingSoon}
           onClick={onSelect30d}
         />
       </div>
