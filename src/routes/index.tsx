@@ -278,7 +278,7 @@ function LandingPage() {
                 className="mt-3 font-sans text-[12.5px] sm:text-[13px] text-[#9CA3AF]"
                 style={{ letterSpacing: "0.04em" }}
               >
-                Private AI astrology PDF · ready in a few minutes · no subscription
+                Private AI Astrology PDF · Ready In A Few Minutes · No Subscription
               </p>
             </div>
 
