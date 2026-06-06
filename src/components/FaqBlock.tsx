@@ -235,7 +235,7 @@ const commonFaqs: Faq[] = [
   {
     question: "How long does report generation take?",
     answer:
-      "Most reports are ready within 2–4 minutes. Larger bundles like CORE Complete may take up to 6–8 minutes because each Focused Chapter is generated separately.",
+      "Single reports are typically ready in 2–4 minutes. Multi-chapter selections add roughly 2–3 minutes per extra chapter, since each one is composed separately. CORE Complete (CORE + 6 Focused Chapters) usually takes around 15–20 minutes end to end. You don't need to keep the page open — we email a private link to every report as soon as it's ready.",
   },
   {
     question: "Do I save if I add multiple chapters?",
