@@ -1,6 +1,21 @@
-import { Link } from "@tanstack/react-router";
+import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
+
+function scrollToAbout() {
+  const start = Date.now();
+  const tick = () => {
+    const el = document.getElementById("about");
+    if (el) {
+      el.scrollIntoView({ behavior: "smooth", block: "start" });
+      return;
+    }
+    if (Date.now() - start < 2000) requestAnimationFrame(tick);
+  };
+  tick();
+}
 
 export function SiteHeader({ onDark = false }: { onDark?: boolean }) {
+  const navigate = useNavigate();
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
   return (
     <header
       className={
@@ -39,13 +54,13 @@ export function SiteHeader({ onDark = false }: { onDark?: boolean }) {
 
         <div className="flex items-center gap-5 shrink-0">
           <a
-            href="#about"
+            href="/#about"
             onClick={(e) => {
-              if (window.location.pathname === "/") {
-                e.preventDefault();
-                document
-                  .getElementById("about")
-                  ?.scrollIntoView({ behavior: "smooth", block: "start" });
+              e.preventDefault();
+              if (pathname === "/") {
+                scrollToAbout();
+              } else {
+                navigate({ to: "/" }).then(() => scrollToAbout());
               }
             }}
             className={
