@@ -168,6 +168,29 @@ const aboutFaqs: Faq[] = [
       </div>
     ),
   },
+  {
+    question: "What Darrow Code is not",
+    answer: (
+      <div className="space-y-2.5">
+        <p>
+          Darrow Code is a premium personal astrology reading for self-understanding. To keep things
+          honest and safe, it is not:
+        </p>
+        <ul className="space-y-1 list-disc pl-5">
+          <li>not medical, psychological or health advice</li>
+          <li>not financial or investment advice</li>
+          <li>not a guaranteed prediction of future events</li>
+          <li>not a compatibility / synastry reading between two people</li>
+          <li>not astrocartography or specific city recommendations</li>
+          <li>not a replacement for a qualified professional</li>
+        </ul>
+        <p>
+          It is a thoughtful AI-generated astrology PDF designed to help you understand your own
+          pattern more clearly.
+        </p>
+      </div>
+    ),
+  },
 ];
 
 const commonFaqs: Faq[] = [
