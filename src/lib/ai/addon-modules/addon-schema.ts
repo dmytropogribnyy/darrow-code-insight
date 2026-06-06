@@ -10,7 +10,7 @@ import type { ModuleCode } from "@/lib/modules";
 // Per-section structured fields (same family as CORE v4).
 export const AddonSectionSchema = z
   .object({
-    opening_line: z.string().max(160).optional(),
+    opening_line: z.string().max(280).optional(),
     scenario: z.string().optional(),
     prose: z.string().min(1),
     key_insight: z.string().optional(),

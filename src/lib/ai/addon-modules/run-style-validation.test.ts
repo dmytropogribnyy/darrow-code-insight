@@ -10,7 +10,10 @@
 import { existsSync, readFileSync, mkdirSync, writeFileSync } from "node:fs";
 import { describe, it, expect } from "vitest";
 import { buildReportContextForModule } from "@/lib/report-context/build-report-context";
-import { buildAddonArtifact, createAnthropicAddonCall } from "./generate-addon";
+import { buildAddonModulePrompt } from "./addon-prompt";
+import { addonModuleSchema } from "./addon-schema";
+import { createAnthropicAddonCall } from "./generate-addon";
+import { renderAddonModuleHtmlSafe } from "@/lib/pdf/addon-template";
 import { scanForbiddenClaims, scanUnbackedProofTags } from "./forbidden-claim-scan";
 
 for (const f of [".env.local", ".env"]) {
@@ -103,12 +106,30 @@ describe("validate:style-addon", () => {
       const chart = syntheticStyleChart();
       const ctx = buildReportContextForModule("STYLE", chart, { first_name: "Sample" });
 
-      // Real chain: prompt -> Anthropic -> addon_v1 validation -> render. Throws on schema fail.
-      const artifact = await buildAddonArtifact("STYLE", chart, {
-        call: createAnthropicAddonCall(),
-        first_name: "Sample",
-        clientName: "Sample Client",
+      mkdirSync(OUT_DIR, { recursive: true });
+      // Real chain, captured step by step so the raw output is saved even on a schema miss.
+      const prompt = buildAddonModulePrompt("STYLE", ctx, { first_name: "Sample" });
+      const raw = await createAnthropicAddonCall()({
+        userPrompt: prompt,
+        model: "claude-sonnet-4-6",
       });
+      writeFileSync(`${OUT_DIR}/STYLE.raw.json`, JSON.stringify(raw, null, 2));
+
+      const parsed = addonModuleSchema("STYLE").safeParse(raw);
+      if (!parsed.success) {
+        const issues = parsed.error.issues.map((i) => `${i.path.join(".")}: ${i.message}`);
+        writeFileSync(`${OUT_DIR}/STYLE.schema-issues.json`, JSON.stringify(issues, null, 2));
+        // eslint-disable-next-line no-console
+        console.log("── STYLE validation: SCHEMA FAILED ──\n  " + issues.join("\n  "));
+      }
+      expect(parsed.success, `schema invalid — see ${OUT_DIR}/STYLE.schema-issues.json`).toBe(true);
+      if (!parsed.success) return;
+
+      const payload = parsed.data;
+      const artifact = {
+        html: renderAddonModuleHtmlSafe("STYLE", payload, "Sample Client"),
+        payload,
+      };
 
       // Collect all text + proof tags from the validated payload.
       const sections = (artifact.payload as any).sections ?? {};

@@ -69,6 +69,27 @@ export async function buildAddonArtifact(
 export function createAnthropicAddonCall(module?: ModuleCode): AddonModelCall {
   const ANTHROPIC_URL = "https://api.anthropic.com/v1/messages";
   const toolName = module ? `emit_${module.toLowerCase()}_module` : "emit_darrow_addon";
+  // Per-section shape so the model emits the structured fields (not free-form prose).
+  const sectionSchema = {
+    type: "object",
+    required: ["prose"],
+    properties: {
+      opening_line: { type: "string", maxLength: 280, description: "Short declarative hook." },
+      scenario: { type: "string" },
+      prose: { type: "string" },
+      key_insight: { type: "string" },
+      protocols: {
+        type: "array",
+        items: {
+          type: "object",
+          required: ["title", "body"],
+          properties: { title: { type: "string" }, body: { type: "string" } },
+        },
+      },
+      warning_signals: { type: "array", items: { type: "string" } },
+      proof_tags: { type: "array", items: { type: "string" }, maxItems: 5 },
+    },
+  };
   const inputSchema = {
     type: "object",
     required: ["schema_version", "module_code", "cover_tagline", "sections"],
@@ -79,11 +100,12 @@ export function createAnthropicAddonCall(module?: ModuleCode): AddonModelCall {
       sections: module
         ? {
             type: "object",
+            required: ADDON_SECTION_KEYS[module],
             properties: Object.fromEntries(
-              ADDON_SECTION_KEYS[module].map((k) => [k, { type: "object" }]),
+              ADDON_SECTION_KEYS[module].map((k) => [k, sectionSchema]),
             ),
           }
-        : { type: "object" },
+        : { type: "object", additionalProperties: sectionSchema },
     },
   };
   return async ({ userPrompt, model }) => {
