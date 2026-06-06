@@ -177,7 +177,7 @@ export function ContinuumTeaser({
         <ContinuumCard
           period="Next 7 Days"
           priceLabel="$1.99"
-          blurb="A week-ahead timing brief: what to push, what to pause, what to protect."
+          blurb="AI horoscope report built from your birth chart — a week-ahead timing brief: what to push, what to pause, what to protect. Delivered as a separate PDF."
           bullets={[
             "Main theme of the week",
             "Pressure zones · green windows",
@@ -191,7 +191,7 @@ export function ContinuumTeaser({
         <ContinuumCard
           period="Next 30 Days"
           priceLabel="$3.99"
-          blurb="A full month-ahead map: vectors, windows, environments and recovery focus."
+          blurb="AI horoscope report built from your birth chart — a full month-ahead map: vectors, windows, environments and recovery focus. Delivered as a separate PDF."
           bullets={[
             "Month theme · primary vector",
             "Green & pressure windows",
