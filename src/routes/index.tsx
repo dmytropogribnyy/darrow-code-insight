@@ -5,6 +5,7 @@ import { SiteFooter } from "@/components/SiteFooter";
 import { IntakeForm } from "@/components/IntakeForm";
 import { ProductSelector } from "@/components/ProductSelector";
 import { FaqBlock } from "@/components/FaqBlock";
+import { ContinuumTeaser } from "@/components/ContinuumTeaser";
 import {
   PlanetGlyphRibbon,
   HeroStars,
@@ -320,6 +321,11 @@ function LandingPage() {
               </button>
             </div>
           )}
+        </div>
+
+        {/* CONTINUUM teaser — separate timing product, below chapters */}
+        <div className="max-w-[560px] sm:max-w-[640px] md:max-w-[720px] mx-auto px-4 sm:px-6 mt-8 sm:mt-10">
+          <ContinuumTeaser comingSoon />
         </div>
       </section>
 
