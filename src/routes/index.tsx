@@ -262,7 +262,7 @@ function LandingPage() {
             </ul>
 
             {/* Primary hero CTA — scrolls to product selector / intake */}
-            <div className="mt-7 sm:mt-8 flex justify-center">
+            <div className="mt-7 sm:mt-8 flex flex-col items-center">
               <button
                 type="button"
                 onClick={() =>
@@ -274,6 +274,12 @@ function LandingPage() {
               >
                 Unlock My Birth Code <span className="ml-2">→</span>
               </button>
+              <p
+                className="mt-3 font-sans text-[12.5px] sm:text-[13px] text-[#9CA3AF]"
+                style={{ letterSpacing: "0.04em" }}
+              >
+                Private AI astrology PDF · ready in a few minutes · no subscription
+              </p>
             </div>
 
 
