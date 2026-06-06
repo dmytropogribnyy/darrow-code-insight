@@ -11,6 +11,11 @@ import { renderReportHtmlSafe } from "@/lib/pdf/template";
 import { renderHtmlToPdf } from "@/lib/pdf/apitemplate.server";
 import { sendEmail, reportReadyEmail, reportDelayEmail } from "@/lib/email/resend.server";
 import { logStage } from "@/lib/observability/pipeline-log";
+import { separateReportsEnabled } from "@/lib/generation/bundle-reports";
+import {
+  runSeparateReportsPipeline,
+  buildDefaultSeparateHooks,
+} from "@/lib/generation/separate-reports-pipeline.server";
 
 const STUCK_PROCESSING_MS = 4 * 60 * 1000; // 4 min
 // CORE v3 produces 3000–3600 words (~5000 tokens), and Zod superRefine word-count rejections
@@ -247,6 +252,21 @@ export async function runFullGenerationPipeline(order_id: string): Promise<void>
     firstName = customer?.first_name ?? null;
     customerEmail = customer?.email ?? null;
     console.log("[pipeline] generation started", { order_id, intake_id: intake.id, modules });
+
+    // BUNDLE-B: separate per-module reports (one PDF per module). Flag-gated, default OFF.
+    // When OFF (production today) this branch is skipped and the legacy combined path below
+    // runs exactly as before.
+    if (separateReportsEnabled(process.env)) {
+      console.log("[pipeline] BUNDLE_SEPARATE_REPORTS on — per-module orchestrator", { order_id });
+      const { outcome } = await runSeparateReportsPipeline(order_id, buildDefaultSeparateHooks(sb));
+      logStage({
+        stage: "status_updated",
+        result: outcome.allComplete ? "success" : "failed",
+        order_id,
+        extra: { mode: "separate", ...outcome },
+      });
+      return;
+    }
 
     // Pre-create reports row in 'processing' so polling UI sees it.
     const r = await upsertReportProcessing(intake.id, order.customer_id, modules);

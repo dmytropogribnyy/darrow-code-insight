@@ -63,23 +63,27 @@ export async function buildAddonArtifact(
 }
 
 // Real default model call (Anthropic tool_use). Only runs when ANTHROPIC_API_KEY is set;
-// tests inject a mock instead. Mirrors the existing core-split tool-call shape.
-export function createAnthropicAddonCall(module: ModuleCode): AddonModelCall {
+// tests inject a mock instead. Mirrors the existing core-split tool-call shape. When `module`
+// is omitted the call is GENERIC (one call usable for any add-on); strict per-module validation
+// still happens afterwards via addonModuleSchema.
+export function createAnthropicAddonCall(module?: ModuleCode): AddonModelCall {
   const ANTHROPIC_URL = "https://api.anthropic.com/v1/messages";
-  const toolName = `emit_${module.toLowerCase()}_module`;
+  const toolName = module ? `emit_${module.toLowerCase()}_module` : "emit_darrow_addon";
   const inputSchema = {
     type: "object",
     required: ["schema_version", "module_code", "cover_tagline", "sections"],
     properties: {
       schema_version: { type: "string", enum: ["addon_v1"] },
-      module_code: { type: "string", enum: [module] },
+      module_code: module ? { type: "string", enum: [module] } : { type: "string" },
       cover_tagline: { type: "string" },
-      sections: {
-        type: "object",
-        properties: Object.fromEntries(
-          ADDON_SECTION_KEYS[module].map((k) => [k, { type: "object" }]),
-        ),
-      },
+      sections: module
+        ? {
+            type: "object",
+            properties: Object.fromEntries(
+              ADDON_SECTION_KEYS[module].map((k) => [k, { type: "object" }]),
+            ),
+          }
+        : { type: "object" },
     },
   };
   return async ({ userPrompt, model }) => {
@@ -99,7 +103,9 @@ export function createAnthropicAddonCall(module: ModuleCode): AddonModelCall {
         tools: [
           {
             name: toolName,
-            description: `Emit the ${module} focused chapter as JSON.`,
+            description: module
+              ? `Emit the ${module} focused chapter as JSON.`
+              : "Emit a Darrow add-on focused chapter as JSON.",
             input_schema: inputSchema,
           },
         ],
