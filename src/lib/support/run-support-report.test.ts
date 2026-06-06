@@ -12,8 +12,8 @@
 
 import { existsSync, readFileSync } from "node:fs";
 import { describe, it, expect } from "vitest";
-import { formatSupportSummary } from "./report-support";
-import { fetchSupportFacts } from "./report-support.server";
+import { formatSupportSummary, formatPurchaseSupport } from "./report-support";
+import { fetchPurchaseSupportFacts } from "./report-support.server";
 
 // Minimal local .env loader (does not override shell; never logs values).
 function loadEnvFile(path: string) {
@@ -55,16 +55,23 @@ describe("support:report — read-only report recovery summary", () => {
   });
 
   it.runIf(hasQuery)(
-    "looks up report(s) and prints support summary + recommended action",
+    "looks up the purchase and prints per-module support summary + recommended actions",
     async () => {
-      const facts = await fetchSupportFacts(query);
+      // Purchase-level: a per-module report_ref returns that module + all its siblings.
+      const facts = await fetchPurchaseSupportFacts(query);
       if (facts.length === 0) {
         // eslint-disable-next-line no-console
         console.log("No reports found for", query);
-      }
-      for (const f of facts) {
+      } else {
         // eslint-disable-next-line no-console
-        console.log("\n" + formatSupportSummary(f) + "\n");
+        console.log("\n" + formatPurchaseSupport(facts) + "\n");
+        // Full per-report detail for the focused/queried report when a single ref was given.
+        for (const f of facts) {
+          if (query.ref && f.report_ref === query.ref) {
+            // eslint-disable-next-line no-console
+            console.log(formatSupportSummary(f) + "\n");
+          }
+        }
       }
       expect(Array.isArray(facts)).toBe(true);
     },

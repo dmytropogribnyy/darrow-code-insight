@@ -8,7 +8,7 @@ import { createClient } from "@supabase/supabase-js";
 import { toSupportFacts, type SupportReportFacts } from "./report-support";
 
 const REPORT_COLS =
-  "id, report_ref, customer_id, intake_id, modules_array, pdf_url, generation_status, " +
+  "id, report_ref, module_code, customer_id, intake_id, modules_array, pdf_url, generation_status, " +
   "generation_error, download_token, ready_email_sent_at, model_used, created_at";
 
 function sb() {
@@ -93,4 +93,42 @@ export async function fetchSupportFacts(q: SupportQuery): Promise<SupportReportF
   }
 
   return Promise.all(reports.map((r) => withContext(s, r)));
+}
+
+// BUNDLE-D — purchase-level lookup: returns ALL sibling reports for the purchase.
+// ref / stripe -> resolve the intake then list every module report for it (so a per-module
+// report_ref like DC-…-LOVE returns that module PLUS its purchase context); email -> all of the
+// customer's reports. Same-intake grouping only; never exposes another customer's reports.
+export async function fetchPurchaseSupportFacts(q: SupportQuery): Promise<SupportReportFacts[]> {
+  const s = sb();
+  let intake_id: string | null = null;
+
+  if (q.ref) {
+    const { data } = await s
+      .from("reports")
+      .select("intake_id")
+      .eq("report_ref", q.ref)
+      .maybeSingle();
+    intake_id = data?.intake_id ?? null;
+  } else if (q.stripe) {
+    const { data } = await s
+      .from("orders")
+      .select("intake_id")
+      .eq("stripe_session_id", q.stripe)
+      .maybeSingle();
+    intake_id = data?.intake_id ?? null;
+  } else if (q.email) {
+    // Email spans all the customer's reports (possibly multiple purchases) — reuse base fetch.
+    return fetchSupportFacts(q);
+  } else {
+    throw new Error("Provide one of: ref, email, stripe.");
+  }
+
+  if (!intake_id) return [];
+  const { data: reports } = await s
+    .from("reports")
+    .select(REPORT_COLS)
+    .eq("intake_id", intake_id)
+    .order("created_at", { ascending: true });
+  return Promise.all((reports ?? []).map((r) => withContext(s, r)));
 }

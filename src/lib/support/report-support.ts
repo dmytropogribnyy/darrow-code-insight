@@ -12,6 +12,7 @@ export const ALL_MODULES = ["CORE", "LOVE", "MONEY", "BODY", "YEAR", "STYLE", "P
 export interface SupportReportFacts {
   report_ref: string | null;
   report_id: string;
+  module_code: string | null; // per-module bundle row; null = legacy combined
   client_name: string | null;
   email: string | null;
   modules: string[];
@@ -110,6 +111,7 @@ export function toSupportFacts(input: {
   return {
     report_ref: report?.report_ref ?? null,
     report_id: report?.id,
+    module_code: report?.module_code ?? null,
     client_name: customer?.first_name ?? null,
     email: customer?.email ?? null,
     modules,
@@ -148,4 +150,49 @@ export function formatSupportSummary(f: SupportReportFacts): string {
     `  → recommended:     ${rec.action.toUpperCase()} — ${rec.reason}`,
     "──────────────────────────────────────────────────────────",
   ].join("\n");
+}
+
+// ── BUNDLE-D: purchase-level (per-module) support ───────────────────
+
+export interface ModuleActionPlan {
+  report_ref: string | null;
+  module: string;
+  action: SupportAction;
+  reason: string;
+}
+
+// Per-module recommended action across all reports of a purchase.
+export function planSupportActions(facts: SupportReportFacts[]): ModuleActionPlan[] {
+  return facts.map((f) => {
+    const rec = recommendedAction(f);
+    return {
+      report_ref: f.report_ref,
+      module: f.module_code ?? f.modules[0] ?? "REPORT",
+      action: rec.action,
+      reason: rec.reason,
+    };
+  });
+}
+
+// Purchase-level summary: header (client/email) + one compact line per module + action.
+export function formatPurchaseSupport(facts: SupportReportFacts[]): string {
+  if (facts.length === 0) return "No reports found for this purchase.";
+  const head = facts[0];
+  const yn = (b: boolean) => (b ? "yes" : "no");
+  const lines = [
+    "══════════════════════════════════════════════════════════",
+    `  PURCHASE · ${head.client_name ?? "(no name)"} · ${head.email ?? "(no email)"}`,
+    `  reports: ${facts.length}   payment: ${head.order_status ?? "unknown"}   stripe: ${head.stripe_session_id ?? "none"}`,
+    "──────────────────────────────────────────────────────────",
+  ];
+  for (const f of facts) {
+    const rec = recommendedAction(f);
+    const mod = f.module_code ?? (f.modules.length === 1 ? f.modules[0] : "COMBINED");
+    lines.push(
+      `  ${mod.padEnd(8)} ${f.report_ref ?? "(no ref)"}  gen=${f.generation_status ?? "?"}  pdf=${yn(f.pdf_exists)}  link=${f.link_active ? "active" : "—"}  email=${yn(f.email_sent)}  → ${rec.action.toUpperCase()}`,
+    );
+    if (rec.action !== "none") lines.push(`           ${rec.reason}`);
+  }
+  lines.push("══════════════════════════════════════════════════════════");
+  return lines.join("\n");
 }
