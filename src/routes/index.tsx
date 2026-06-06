@@ -9,6 +9,7 @@ import {
   PlanetGlyphRibbon,
   HeroStars,
   MoonPhaseChip,
+  ZodiacWheel,
 } from "@/components/HeroAstroAccents";
 import { MODULE_CODES, type ModuleCode } from "@/lib/modules";
 
@@ -92,6 +93,15 @@ function LandingPage() {
         }}
       >
         <HeroStars />
+        {/* Faint zodiac wheel watermark behind the headline */}
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute left-1/2 -translate-x-1/2"
+          style={{ top: "clamp(180px, 28%, 320px)" }}
+        >
+          <ZodiacWheel size={520} className="hidden sm:block" />
+          <ZodiacWheel size={340} className="block sm:hidden" />
+        </div>
         <div className="relative max-w-3xl mx-auto px-6 pt-12 sm:pt-16 pb-10 sm:pb-12 text-center">
           {/* Top badge */}
           <div className="inline-flex items-center border border-gold/60 rounded-full px-4 py-2">
