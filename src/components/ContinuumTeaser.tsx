@@ -9,9 +9,9 @@
  * with a distinct "TIMING" framing so cold visitors understand it's a
  * different category (forecast/timing) from CORE (identity/foundation).
  *
- * `comingSoon` (default: true) renders disabled CTAs with a "Coming soon"
- * badge until the Continuum checkout backend ships. Flip to false once
- * `createContinuumCheckout` and the webhook branch are merged + flags up.
+ * `comingSoon` can explicitly render disabled CTAs with a "Coming soon"
+ * badge, but the default is live because the backend gate now controls
+ * checkout availability.
  */
 
 interface ContinuumTeaserProps {
@@ -115,10 +115,7 @@ function ContinuumCard({
 }
 
 export function ContinuumTeaser({ comingSoon, onSelect7d, onSelect30d }: ContinuumTeaserProps) {
-  // When `comingSoon` is not explicitly provided, derive from the client gate.
-  // Production stays dark until VITE_CONTINUUM_ENABLED is flipped.
-  const resolvedComingSoon =
-    typeof comingSoon === "boolean" ? comingSoon : import.meta.env.VITE_CONTINUUM_ENABLED !== "1";
+  const resolvedComingSoon = comingSoon === true;
   return (
     <section
       aria-labelledby="continuum-heading"
