@@ -140,10 +140,11 @@ function TestimonialCard({ t }: { t: Testimonial }) {
           </p>
           <p
             className="font-sans truncate"
-            style={{ color: "#4A4232", fontSize: "12.5px" }}
+            style={{ color: "#241F18", fontSize: "12.5px" }}
           >
             {t.location} · {t.context}
           </p>
+
         </div>
       </figcaption>
     </figure>
