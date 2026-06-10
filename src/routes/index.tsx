@@ -336,7 +336,9 @@ function LandingPage() {
             onSelectAll={selectAll}
             onClear={clear}
             locked={checkoutOpen}
+            onContinue={handleContinueToIntake}
           />
+
           {/* Continue CTA — opens intake modal, mirrors Continuum pattern */}
           <div className="mt-6 flex flex-col items-center">
             <button

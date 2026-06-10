@@ -42,6 +42,7 @@ interface Props {
   onSelectAll: () => void;
   onClear: () => void;
   locked?: boolean;
+  onContinue?: () => void;
 }
 
 function formatPrice(cents: number): string {
@@ -54,7 +55,9 @@ export function ProductSelector({
   onSelectAll,
   onClear,
   locked = false,
+  onContinue,
 }: Props) {
+
   const coreSelected = selected.has("CORE");
   const chapters = Array.from(selected).filter((c): c is ModuleCode => c !== "CORE");
   const hasAnySelection = coreSelected || chapters.length > 0;
@@ -346,17 +349,32 @@ export function ProductSelector({
         </div>
       </div>
 
-      {/* Order summary — always full opacity, even when locked */}
-      <div
-        className="rounded-[14px] px-6 py-5 mb-1 border-2 relative overflow-hidden"
-        style={{
+      {/* Order summary — always full opacity, even when locked; clickable when a selection exists */}
+      {(() => {
+        const clickable = !!onContinue && !locked && hasAnySelection;
+        const commonClass =
+          "block w-full text-left rounded-[14px] px-6 py-5 mb-1 border-2 relative overflow-hidden transition-transform";
+        const commonStyle = {
           borderColor: "rgba(212,175,55,0.55)",
           background:
             "linear-gradient(180deg, rgba(255,255,255,0.96) 0%, rgba(252,247,232,0.96) 100%)",
           boxShadow:
             "0 10px 28px -14px rgba(31,26,16,0.45), inset 0 1px 0 rgba(255,255,255,0.6)",
-        }}
-      >
+        } as const;
+        const InnerTag = clickable ? "button" : "div";
+        return (
+          <InnerTag
+            {...(clickable
+              ? {
+                  type: "button" as const,
+                  onClick: onContinue,
+                  "aria-label": "Continue to enter your birth data",
+                  className: `${commonClass} cursor-pointer hover:-translate-y-[1px] hover:shadow-[0_14px_32px_-14px_rgba(31,26,16,0.55)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#D4AF37]/70`,
+                }
+              : { className: commonClass })}
+            style={commonStyle}
+          >
+
         {quote && quote.saved_cents > 0 && (
           <div className="mb-2.5 flex">
             <span
@@ -425,8 +443,11 @@ export function ProductSelector({
             </div>
           </>
         )}
-      </div>
+          </InnerTag>
+        );
+      })()}
     </div>
+
   );
 }
 
