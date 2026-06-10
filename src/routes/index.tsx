@@ -268,7 +268,7 @@ function LandingPage() {
               </button>{" "}
               ($1.99 / $3.99).
             </p>
-            <div className="mt-1.5 flex flex-wrap justify-center gap-x-3 gap-y-1.5">
+            <div className="mt-0 flex flex-wrap justify-center gap-x-3 gap-y-1.5">
               {["LOVE", "MONEY", "BODY", "YEAR", "STYLE", "PLACE"].map((m, i) => (
                 <span key={m} className="flex items-center gap-x-3">
                   <button
