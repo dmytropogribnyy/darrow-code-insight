@@ -395,17 +395,17 @@ export function ProductSelector({
               }}
             />
             <div
-              className="flex items-center justify-between gap-3"
+              className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2"
               style={{ fontSize: "clamp(13px, 1.2vw, 14px)" }}
             >
-              <span style={{ color: "#5C5340" }} className="font-sans">
+              <span style={{ color: "#5C5340" }} className="font-sans min-w-0">
                 If bought separately{" "}
-                <span className="line-through ml-0.5" style={{ color: "#8A7E5E" }}>
+                <span className="line-through ml-0.5 whitespace-nowrap" style={{ color: "#8A7E5E" }}>
                   {formatPrice(quote.separate_cents)}
                 </span>
               </span>
               <span
-                className="font-sans font-bold inline-flex items-center rounded-full px-3 py-1"
+                className="font-sans font-bold inline-flex items-center rounded-full px-3 py-1 whitespace-nowrap shrink-0"
                 style={{
                   color: "#1F1A10",
                   background: "rgba(212,175,55,0.18)",
