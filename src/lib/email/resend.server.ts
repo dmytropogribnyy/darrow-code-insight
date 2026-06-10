@@ -1,5 +1,11 @@
 // Resend email gateway client (via Lovable connector gateway).
-import symbolDataUrl from "@/assets/darrow-symbol-small.png?inline";
+
+// Email-safe brand mark. Inline data-URL <img> gets stripped by Gmail and other
+// clients (renders as empty box). Use a unicode diamond styled with brand gold —
+// renders consistently across Gmail / Apple Mail / Outlook with no asset hosting.
+const BRAND_MARK = `<div style="text-align:center;line-height:1;margin:0 0 14px">
+  <span style="display:inline-block;font-family:Arial,Helvetica,sans-serif;font-size:36px;line-height:1;color:#D4AF37;mso-line-height-rule:exactly">&#9670;</span>
+</div>`;
 
 const GATEWAY_URL = "https://connector-gateway.lovable.dev/resend";
 
@@ -70,7 +76,7 @@ export function reportReadyEmail(args: {
       <div style="max-width:600px;margin:0 auto;background:#F6F4EF">
 
         <div style="background:#0A0F1E;padding:28px 0;text-align:center">
-          <img src="${symbolDataUrl}" alt="" width="40" height="40" style="display:inline-block;border:0;margin:0 auto 10px" />
+          ${BRAND_MARK}
           <div style="font-family:'Inter',Helvetica,Arial,sans-serif;font-size:13px;letter-spacing:5px;color:#D4AF37;text-transform:uppercase;font-weight:600">Darrow Code</div>
         </div>
 
@@ -153,7 +159,7 @@ export function bundleReportReadyEmail(args: {
       <div style="display:none;max-height:0;overflow:hidden;opacity:0;color:#EFEAE0">Your Darrow Code reports are ready.</div>
       <div style="max-width:600px;margin:0 auto;background:#F6F4EF">
         <div style="background:#0A0F1E;padding:28px 0;text-align:center">
-          <img src="${symbolDataUrl}" alt="" width="40" height="40" style="display:inline-block;border:0;margin:0 auto 10px" />
+          ${BRAND_MARK}
           <div style="font-family:'Inter',Helvetica,Arial,sans-serif;font-size:13px;letter-spacing:5px;color:#D4AF37;text-transform:uppercase;font-weight:600">Darrow Code</div>
         </div>
         <div style="padding:44px 36px 36px">
@@ -188,7 +194,7 @@ export function reportDelayEmail(args: { first_name: string | null; assets_base_
     html: `<!doctype html><html><body style="font-family:Georgia,serif;color:#151922;background:#F6F4EF;margin:0;padding:0">
       <div style="max-width:600px;margin:0 auto;background:#F6F4EF">
         <div style="background:#0A0F1E;padding:28px 0;text-align:center">
-          <img src="${symbolDataUrl}" alt="" width="40" height="40" style="display:inline-block;border:0;margin:0 auto 10px" />
+          ${BRAND_MARK}
           <div style="font-family:'Inter',Helvetica,Arial,sans-serif;font-size:13px;letter-spacing:5px;color:#D4AF37;text-transform:uppercase;font-weight:600">Darrow Code</div>
         </div>
         <div style="padding:36px 32px">

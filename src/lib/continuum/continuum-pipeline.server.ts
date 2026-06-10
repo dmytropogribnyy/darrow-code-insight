@@ -55,7 +55,12 @@ export async function runContinuumGeneration(
 // ── Real default hooks (Supabase + AI + PDF). Runs only when dispatched (flag-ON, paid). ──
 export function buildDefaultContinuumHooks(sb: any): ContinuumHooks {
   const MODEL = "claude-sonnet-4-6";
-  const ctxRef: { customer_id?: string; intake_id?: string; email?: string | null } = {};
+  const ctxRef: {
+    customer_id?: string;
+    intake_id?: string;
+    email?: string | null;
+    first_name?: string | null;
+  } = {};
 
   return {
     loadContext: async (order_id) => {
@@ -79,6 +84,7 @@ export function buildDefaultContinuumHooks(sb: any): ContinuumHooks {
       ctxRef.customer_id = order.customer_id;
       ctxRef.intake_id = order.intake_id;
       ctxRef.email = customer?.email ?? null;
+      ctxRef.first_name = customer?.first_name ?? null;
 
       const { getAstroProvider } = await import("@/lib/astro/provider");
       const provider = await getAstroProvider();
@@ -185,7 +191,7 @@ export function buildDefaultContinuumHooks(sb: any): ContinuumHooks {
       if (rep?.ready_email_sent_at) return;
       const { reportReadyEmail, sendEmail } = await import("@/lib/email/resend.server");
       const { subject, html } = reportReadyEmail({
-        first_name: null,
+        first_name: ctxRef.first_name ?? null,
         download_url: `${appBaseUrl}/download/${result.download_token}`,
         result_url: `${appBaseUrl}/result/${result.download_token}`,
       });
