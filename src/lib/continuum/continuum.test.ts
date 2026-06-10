@@ -27,10 +27,16 @@ function chart(over: any = {}): any {
     },
     numerology: { available: true, personal_year: 6, name_numerology: { available: false } },
     bazi: { available: true, day_master: "Xin" },
-    transits: { available: true },
-    solar_return: { available: true },
-    moon_phase: { available: true, phase: {} },
-    bazi_flow: { available: true },
+    transits: {
+      available: true,
+      aspects: [{ a: "Saturn", b: "Sun", type: "square", orb: 2.1, high_priority: true }],
+    },
+    solar_return: {
+      available: true,
+      natal_comparison: { angularity: [{ planet: "Mars", angle: "MC", orb: 1.5 }] },
+    },
+    moon_phase: { available: true, phase: { name: "Waxing Crescent" }, zodiac: { sign: "Taurus" } },
+    bazi_flow: { available: true, annual_pillar: { gan_zhi: "Jia-Chen", ten_god: "Wealth" } },
     ...over,
   };
 }
@@ -75,7 +81,10 @@ describe("buildContinuumContext", () => {
     expect(ctx.period.covers_label).toBe("Covers: June 6–June 13, 2026");
     expect(ctx.timingIncluded).toBe(true);
     expect(ctx.allowedProofAnchorCandidates).toContain("Personal Year 6");
-    expect(ctx.allowedProofAnchorCandidates.join(" ")).toMatch(/transit window/);
+    expect(ctx.allowedProofAnchorCandidates.join(" ")).toMatch(/Transit Saturn square natal Sun/);
+    expect(ctx.allowedProofAnchorCandidates.join(" ")).toMatch(
+      /Moon phase Waxing Crescent in Taurus/,
+    );
     expect(ctx.forbiddenClaims.join(" ")).toMatch(/guaranteed predictions/);
     expect(ctx.forbiddenClaims.join(" ")).toMatch(/calendar week\/month/);
   });

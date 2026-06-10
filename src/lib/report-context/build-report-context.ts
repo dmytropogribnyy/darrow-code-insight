@@ -44,34 +44,132 @@ export interface ReportContext {
 }
 
 // ── chart readers ───────────────────────────────────────────────
-function planetSign(chart: Partial<DarrowChartData>, name: string): string | null {
+// CONTENT-DEPTH-1: anchors keep their base string (e.g. "Venus in Aquarius") and append precise
+// detail as a suffix — so they stay more SPECIFIC without lengthening the report. Detail is gated by
+// availability; absent data never appears.
+function planetDetail(
+  chart: Partial<DarrowChartData>,
+  name: string,
+): { sign: string; house?: number | null; retrograde?: boolean; dignity?: string | null } | null {
+  let p: any = null;
   const planets = chart.natal?.planets;
-  if (Array.isArray(planets)) {
-    const p = planets.find((x: any) => String(x?.name).toLowerCase() === name.toLowerCase());
-    if (p?.sign) return p.sign;
-  }
-  if (name.toLowerCase() === "sun" && chart.natal?.sun?.sign) return chart.natal.sun.sign;
-  if (name.toLowerCase() === "moon" && chart.natal?.moon?.sign) return chart.natal.moon.sign;
-  return null;
+  if (Array.isArray(planets))
+    p = planets.find((x: any) => String(x?.name).toLowerCase() === name.toLowerCase());
+  if (!p && name.toLowerCase() === "sun") p = chart.natal?.sun;
+  if (!p && name.toLowerCase() === "moon") p = chart.natal?.moon;
+  if (!p?.sign) return null;
+  return {
+    sign: p.sign,
+    house: p.house ?? null,
+    retrograde: !!p.retrograde,
+    dignity: p.dignity ?? null,
+  };
 }
 
-function placementAnchors(chart: Partial<DarrowChartData>, planets: string[]): string[] {
+const MEANINGLESS_DIGNITY = new Set(["peregrine", "none", "neutral", ""]);
+
+// A3: sign + (house if birth time) + retrograde + meaningful dignity.
+function placementAnchors(
+  chart: Partial<DarrowChartData>,
+  planets: string[],
+  withHouses: boolean,
+): string[] {
   const out: string[] = [];
   for (const name of planets) {
-    const sign = planetSign(chart, name);
-    if (sign) out.push(`${name} in ${sign}`);
+    const d = planetDetail(chart, name);
+    if (!d) continue;
+    const extra: string[] = [];
+    if (withHouses && d.house != null) extra.push(`${d.house}H`);
+    if (d.retrograde) extra.push("retrograde");
+    if (d.dignity && !MEANINGLESS_DIGNITY.has(d.dignity.toLowerCase())) extra.push(d.dignity);
+    out.push(`${name} in ${d.sign}${extra.length ? ` · ${extra.join(", ")}` : ""}`);
   }
   return out;
 }
 
+// A3: aspect type + orb + applying; tightest-orb first (more central to the pattern).
 function aspectAnchors(chart: Partial<DarrowChartData>, planets: string[]): string[] {
   const aspects = chart.natal?.aspects;
   if (!Array.isArray(aspects)) return [];
   const set = new Set(planets.map((p) => p.toLowerCase()));
   return aspects
     .filter((a: any) => set.has(String(a?.a).toLowerCase()) && set.has(String(a?.b).toLowerCase()))
-    .map((a: any) => `${a.a} ${a.type} ${a.b}`)
-    .slice(0, 6);
+    .slice()
+    .sort((x: any, y: any) => Math.abs(x?.orb ?? 99) - Math.abs(y?.orb ?? 99))
+    .slice(0, 6)
+    .map((a: any) => {
+      const detail =
+        typeof a.orb === "number"
+          ? ` (orb ${a.orb.toFixed(1)}°${a.is_applying ? ", applying" : ""})`
+          : "";
+      return `${a.a} ${a.type} ${a.b}${detail}`;
+    });
+}
+
+// A2: BaZi depth — day master (+strength), element balance, favorable elements, current luck cycle.
+// Keeps the legacy "BaZi Day Master X" + "BaZi dominant element X" base strings for back-compat.
+function baziDepthAnchors(chart: Partial<DarrowChartData>, module: ReportModule): string[] {
+  const b: any = chart.bazi;
+  if (!b?.available) return [];
+  const out: string[] = [];
+  if (b.day_master) {
+    const strength = b.professional?.dm_strength;
+    out.push(`BaZi Day Master ${b.day_master}${strength ? ` (${strength})` : ""}`);
+  }
+  const dom = b.elements?.dominant;
+  const def = b.elements?.deficient;
+  if (dom) out.push(`BaZi dominant element ${dom}${def ? ` (deficient: ${def})` : ""}`);
+  const fav = b.professional?.favorable_elements;
+  if (
+    Array.isArray(fav) &&
+    fav.length &&
+    (module === "MONEY" || module === "BODY" || module === "CORE")
+  )
+    out.push(`BaZi favorable elements ${fav.slice(0, 3).join("/")}`);
+  const cur = b.current_luck_cycle;
+  if (cur?.pillar_label && (module === "MONEY" || module === "YEAR" || module === "CORE"))
+    out.push(`BaZi current luck cycle ${cur.pillar_label}`);
+  return out;
+}
+
+// A1: real timing signals for YEAR + Continuum — actual transits, solar-return angularity, BaZi annual
+// flow, moon phase. Descriptive anchors only (no event prediction). Capped + ordered by salience.
+export function timingAnchors(chart: Partial<DarrowChartData>): string[] {
+  const out: string[] = [];
+  const t: any = chart.transits;
+  if (t?.available && Array.isArray(t.aspects)) {
+    const ranked = t.aspects
+      .slice()
+      .sort(
+        (x: any, y: any) =>
+          (y.high_priority ? 1 : 0) - (x.high_priority ? 1 : 0) ||
+          Math.abs(x?.orb ?? 99) - Math.abs(y?.orb ?? 99),
+      )
+      .slice(0, 4);
+    for (const a of ranked) {
+      const hp = a.high_priority ? ", high-priority" : "";
+      const orb = typeof a.orb === "number" ? `, orb ${a.orb.toFixed(1)}°` : "";
+      out.push(`Transit ${a.a} ${a.type} natal ${a.b}${hp}${orb}`);
+    }
+  }
+  const sr: any = chart.solar_return;
+  if (sr?.available) {
+    const ang = sr.natal_comparison?.angularity;
+    if (Array.isArray(ang)) {
+      for (const x of ang.slice(0, 2)) out.push(`Solar Return ${x.planet} angular to ${x.angle}`);
+    }
+  }
+  const flow: any = chart.bazi_flow;
+  if (flow?.available && flow.annual_pillar?.gan_zhi) {
+    const tg = flow.annual_pillar.ten_god ? ` (Ten God: ${flow.annual_pillar.ten_god})` : "";
+    out.push(`BaZi annual pillar ${flow.annual_pillar.gan_zhi}${tg}`);
+  }
+  const mp: any = chart.moon_phase;
+  if (mp?.available && mp.phase?.name) {
+    const sign = mp.zodiac?.sign ? ` in ${mp.zodiac.sign}` : "";
+    out.push(`Moon phase ${mp.phase.name}${sign}`);
+  }
+  return out;
 }
 
 // Key natal planets per module (from module-content-contracts.md).
@@ -98,34 +196,38 @@ export function buildReportContextForModule(
   const nameNumerologyIncluded = a.numerology.name_numerology_available;
   const timingIncluded = a.transits.available || a.solar_return.available || a.bazi_flow.available;
 
-  // Concrete allowed anchor candidates, derived from the chart + gating.
+  // Concrete allowed anchor candidates, derived from the chart + gating. CONTENT-DEPTH-1: richer,
+  // capped, availability-gated — more SPECIFIC anchors at the same report length.
   const anchors: string[] = [];
-  anchors.push(...placementAnchors(chart, MODULE_PLANETS[module]));
-  anchors.push(...aspectAnchors(chart, MODULE_PLANETS[module]));
+  anchors.push(...placementAnchors(chart, MODULE_PLANETS[module], housesIncluded)); // A3
+  anchors.push(...aspectAnchors(chart, MODULE_PLANETS[module])); // A3 (orb/applying)
+
+  // Numerology (A4 depth).
   if (module === "CORE" || module === "MONEY") {
-    if (typeof a.numerology.life_path === "boolean" && chart.numerology?.life_path != null)
+    if (chart.numerology?.life_path != null)
       anchors.push(`Life Path ${chart.numerology.life_path}`);
   }
+  if (module === "CORE" && chart.numerology?.birth_day_number != null)
+    anchors.push(`Birth Day ${chart.numerology.birth_day_number}`);
   if (module === "CORE" && nameNumerologyIncluded) {
     const n: any = chart.numerology?.name_numerology;
     if (typeof n?.expression === "number") anchors.push(`Expression ${n.expression}`);
+    if (typeof n?.soul_urge === "number") anchors.push(`Soul Urge ${n.soul_urge}`);
   }
-  if (
-    (module === "CORE" ||
-      module === "MONEY" ||
-      module === "BODY" ||
-      module === "STYLE" ||
-      module === "PLACE") &&
-    baziIncluded
-  ) {
-    if (chart.bazi?.day_master) anchors.push(`BaZi Day Master ${chart.bazi.day_master}`);
-    const el = chart.bazi?.elements?.dominant;
-    if (el) anchors.push(`BaZi dominant element ${el}`);
+
+  // BaZi depth (A2).
+  if (baziIncluded) anchors.push(...baziDepthAnchors(chart, module));
+
+  // YEAR timing (A1) — real signals, not a generic placeholder string.
+  if (module === "YEAR") {
+    if (chart.numerology?.personal_year != null) {
+      const mm = chart.numerology.personal_year_master_marker;
+      anchors.push(`Personal Year ${chart.numerology.personal_year}${mm ? ` (master ${mm})` : ""}`);
+    }
+    if (timingIncluded) anchors.push(...timingAnchors(chart));
   }
-  if (module === "YEAR" && chart.numerology?.personal_year != null) {
-    anchors.push(`Personal Year ${chart.numerology.personal_year}`);
-    if (timingIncluded) anchors.push("current transit/solar-return window (when available)");
-  }
+
+  // Ascendant (gated by birth time).
   if (
     housesIncluded &&
     (module === "LOVE" ||
@@ -136,6 +238,9 @@ export function buildReportContextForModule(
   ) {
     if (chart.natal?.ascendant?.sign) anchors.push(`Ascendant in ${chart.natal.ascendant.sign}`);
   }
+
+  // Token budget: cap total anchor candidates.
+  if (anchors.length > 18) anchors.splice(18);
 
   // Forbidden anchors — explicit, from gating + contract.
   const forbiddenAnchors: string[] = [...pack.forbidden];

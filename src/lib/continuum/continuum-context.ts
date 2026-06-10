@@ -13,6 +13,7 @@ import {
   type ContinuumType,
   type ContinuumPeriod,
 } from "./continuum-config";
+import { timingAnchors } from "@/lib/report-context/build-report-context";
 
 export interface ContinuumContext {
   type: ContinuumType;
@@ -60,13 +61,17 @@ export function buildContinuumContext(
     if (s) anchors.push(`${n} in ${s}`);
   }
   // Numerology timing.
-  if (chart.numerology?.personal_year != null)
-    anchors.push(`Personal Year ${chart.numerology.personal_year}`);
-  // Gated timing layers (named only when available).
-  if (transits) anchors.push("current high-priority transit window");
-  if (solar) anchors.push("solar-return year context");
-  if (flow) anchors.push("BaZi annual/monthly flow");
-  if (moon) anchors.push("current moon-phase rhythm");
+  if (chart.numerology?.personal_year != null) {
+    const mm = chart.numerology.personal_year_master_marker;
+    anchors.push(`Personal Year ${chart.numerology.personal_year}${mm ? ` (master ${mm})` : ""}`);
+  }
+  // BaZi essentials (if available).
+  if (chart.bazi?.available && chart.bazi.day_master)
+    anchors.push(`BaZi Day Master ${chart.bazi.day_master}`);
+  // CONTENT-DEPTH-1 A1: real timing signals (transits / solar-return / BaZi flow / moon phase) —
+  // descriptive anchors only, emitted only for available layers; replaces the old generic strings.
+  anchors.push(...timingAnchors(chart));
+  if (anchors.length > 16) anchors.splice(16);
 
   const optionalEnrichmentAvailable = [
     transits && "transits",
