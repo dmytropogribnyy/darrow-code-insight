@@ -45,7 +45,7 @@ export const Route = createFileRoute("/api/public/jobs/resend-ready-email")({
         let q = s
           .from("reports")
           .select(
-            "id, intake_id, generation_status, pdf_url, download_token, ready_email_sent_at, modules_array",
+            "id, intake_id, generation_status, pdf_url, download_token, ready_email_sent_at, modules_array, module_code, continuum_type",
           )
           .limit(1);
         if (reportId) q = q.eq("id", reportId);
