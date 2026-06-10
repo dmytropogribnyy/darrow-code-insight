@@ -60,6 +60,7 @@ export function buildDefaultContinuumHooks(sb: any): ContinuumHooks {
     intake_id?: string;
     email?: string | null;
     first_name?: string | null;
+    type?: ContinuumType;
   } = {};
 
   return {
