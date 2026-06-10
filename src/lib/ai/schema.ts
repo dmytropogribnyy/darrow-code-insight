@@ -408,6 +408,9 @@ function sectionObjectJsonSchema(opts: { protocols?: boolean; warnings?: boolean
   const required: string[] = ["prose"];
   if (opts.protocols) properties.protocols = { type: "array", items: protocolJsonSchema };
   if (opts.warnings) properties.warning_signals = { type: "array", items: { type: "string" } };
+  // CORE-HUMAN-VOICE v3.2: expose per-section proof_tags in the v3 split TOOL schema so the model
+  // can actually emit the technical anchors here (not in prose). Optional → back-compatible.
+  properties.proof_tags = { type: "array", items: { type: "string" }, maxItems: 5 };
   return { type: "object", required, properties };
 }
 
