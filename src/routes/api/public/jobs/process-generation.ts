@@ -151,6 +151,16 @@ async function sendOneMissingReadyEmail(): Promise<boolean> {
   const modulesArray: string[] = Array.isArray(rep.modules_array) ? rep.modules_array : [];
   const downloadUrl = `${appBaseUrl()}/download/${rep.download_token}`;
   const resultUrl = `${appBaseUrl()}/result/${rep.download_token}`;
+  // Per-report label so the email names exactly which report it is.
+  let reportLabel: string | null = null;
+  if (rep.continuum_type === "7d") reportLabel = "CONTINUUM · Next 7 Days";
+  else if (rep.continuum_type === "30d") reportLabel = "CONTINUUM · Next 30 Days";
+  else if (rep.module_code)
+    reportLabel = rep.module_code === "CORE" ? "CORE Report" : `${rep.module_code} chapter`;
+  else if (modulesArray.length === 1)
+    reportLabel =
+      modulesArray[0] === "CORE" ? "CORE Report" : `${modulesArray[0]} chapter`;
+
   const { subject, html } = reportReadyEmail({
     first_name: customer.first_name ?? null,
     download_url: downloadUrl,
@@ -159,6 +169,7 @@ async function sendOneMissingReadyEmail(): Promise<boolean> {
     has_core: modulesArray.includes("CORE"),
     chapter_count: modulesArray.filter((m) => m !== "CORE").length,
     modules: modulesArray,
+    report_label: reportLabel,
   });
   await sendEmail({ to: customer.email, subject, html });
   await s
