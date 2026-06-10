@@ -42,6 +42,7 @@ interface Props {
   onSelectAll: () => void;
   onClear: () => void;
   locked?: boolean;
+  onContinue?: () => void;
 }
 
 function formatPrice(cents: number): string {
@@ -54,7 +55,9 @@ export function ProductSelector({
   onSelectAll,
   onClear,
   locked = false,
+  onContinue,
 }: Props) {
+
   const coreSelected = selected.has("CORE");
   const chapters = Array.from(selected).filter((c): c is ModuleCode => c !== "CORE");
   const hasAnySelection = coreSelected || chapters.length > 0;
