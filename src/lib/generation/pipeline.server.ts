@@ -486,6 +486,7 @@ export async function runFullGenerationPipeline(order_id: string): Promise<void>
         chapter_count: chapterCount,
         modules: modules as string[],
         report_label: reportLabel,
+        purchase_url: `${appBaseUrl()}/#product-selector`,
       });
       const tMail = Date.now();
       try {

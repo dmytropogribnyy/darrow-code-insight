@@ -289,6 +289,7 @@ export function buildDefaultSeparateHooks(sb: any): SeparatePipelineHooks {
         download_url: e.download_url as string,
         result_url: resultUrl,
         report_label: e.label,
+        purchase_url: `${appBaseUrl}/#product-selector`,
       });
       await sendEmail({ to: deliveryCtx.email, subject, html });
       await sb

@@ -170,6 +170,7 @@ async function sendOneMissingReadyEmail(): Promise<boolean> {
     chapter_count: modulesArray.filter((m) => m !== "CORE").length,
     modules: modulesArray,
     report_label: reportLabel,
+    purchase_url: `${appBaseUrl()}/#product-selector`,
   });
   await sendEmail({ to: customer.email, subject, html });
   await s

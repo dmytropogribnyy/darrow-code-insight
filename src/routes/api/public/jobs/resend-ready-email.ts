@@ -123,6 +123,7 @@ export const Route = createFileRoute("/api/public/jobs/resend-ready-email")({
           chapter_count: chapterCount,
           modules: modulesArray,
           report_label: reportLabel,
+          purchase_url: `${appBaseUrl()}/#product-selector`,
         });
         try {
           const result = await sendEmail({ to: customer.email, subject, html });
