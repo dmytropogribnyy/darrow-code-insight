@@ -410,36 +410,53 @@ function LandingPage() {
         </DialogContent>
       </Dialog>
 
-      {/* INTAKE — paper section */}
-      <section className="flex-1">
-        <div className="max-w-[480px] mx-auto px-4 sm:px-6 pt-6 sm:pt-8 pb-4 sm:pb-5">
-          <p
-            className="text-center font-medium text-[14px] sm:text-[15px] mb-5 leading-[1.55]"
-            style={{ color: "#4A402D" }}
-          >
-            Enter your birth data — checkout comes next, then your private astrology PDF.
-          </p>
-          <div className="relative">
-            {/* Subtle gold accent line above card */}
-            <div
-              aria-hidden="true"
-              className="absolute -top-px left-6 right-6 h-px"
-              style={{
-                background:
-                  "linear-gradient(90deg, transparent 0%, rgba(212,175,55,0.5) 50%, transparent 100%)",
-              }}
+      {/* INTAKE modal — opens after the user picks CORE / chapters */}
+      <Dialog
+        open={intakeOpen}
+        onOpenChange={(o) => {
+          if (!o) {
+            setIntakeOpen(false);
+            setCheckoutOpen(false);
+          }
+        }}
+      >
+        <DialogContent className="max-w-[520px] max-h-[90vh] overflow-y-auto bg-paper">
+          <DialogHeader>
+            <DialogTitle className="font-serif text-[22px]" style={{ color: "#1F1A10" }}>
+              {selected.has("CORE") && chaptersList.length === 6
+                ? "CORE Complete"
+                : selected.has("CORE") && chaptersList.length === 0
+                  ? "CORE Report"
+                  : selected.has("CORE")
+                    ? `CORE + ${chaptersList.length} chapter${chaptersList.length > 1 ? "s" : ""}`
+                    : `${chaptersList.length} chapter${chaptersList.length > 1 ? "s" : ""}`}
+            </DialogTitle>
+            <DialogDescription style={{ color: "#4A402D" }}>
+              Enter your birth data — checkout comes next, then your private astrology PDF.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="intake-card">
+            <IntakeForm
+              includesCore={selected.has("CORE")}
+              chapters={chaptersList}
+              onCheckoutOpen={() => setCheckoutOpen(true)}
+              resetSignal={resetSignal}
             />
-            <div className="intake-card">
-              <IntakeForm
-                includesCore={selected.has("CORE")}
-                chapters={Array.from(selected).filter((c): c is ModuleCode => c !== "CORE")}
-                onCheckoutOpen={() => setCheckoutOpen(true)}
-                resetSignal={resetSignal}
-              />
-            </div>
           </div>
-        </div>
-      </section>
+          {checkoutOpen && (
+            <div className="mt-3 flex justify-center">
+              <button
+                type="button"
+                onClick={handleChangeSelection}
+                className="font-sans font-medium text-[14px] min-h-[44px] px-3 inline-flex items-center transition-colors border-b border-transparent hover:border-current"
+                style={{ color: "#D4AF37" }}
+              >
+                + Change selection
+              </button>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
 
       {/* FAQ — paper section */}
       <section className="flex-1" id="about">
