@@ -443,8 +443,11 @@ export function ProductSelector({
             </div>
           </>
         )}
-      </div>
+          </InnerTag>
+        );
+      })()}
     </div>
+
   );
 }
 
