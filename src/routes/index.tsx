@@ -55,9 +55,18 @@ function LandingPage() {
   const [selected, setSelected] = useState<Set<Selectable>>(new Set(["CORE"]));
   const [checkoutOpen, setCheckoutOpen] = useState(false);
   const [resetSignal, setResetSignal] = useState(0);
+  const [intakeOpen, setIntakeOpen] = useState(false);
   const [continuumOpen, setContinuumOpen] = useState<ContinuumType | null>(null);
   const [continuumResetSignal, setContinuumResetSignal] = useState(0);
   const selectorRef = useRef<HTMLDivElement>(null);
+
+  const hasAnySelection = selected.size > 0;
+  const chaptersList = Array.from(selected).filter((c): c is ModuleCode => c !== "CORE");
+  const handleContinueToIntake = () => {
+    setResetSignal((n) => n + 1);
+    setCheckoutOpen(false);
+    setIntakeOpen(true);
+  };
 
   const toggle = (code: Selectable) =>
     setSelected((s) => {
