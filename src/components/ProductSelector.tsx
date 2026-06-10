@@ -99,13 +99,15 @@ export function ProductSelector({
           disabled={locked}
           onClick={() => onToggle("CORE")}
           aria-pressed={coreSelected}
-          className="w-full text-left rounded-[12px] border-2 px-5 py-5 sm:px-6 sm:py-5 flex items-start gap-3.5 transition disabled:cursor-default"
+          className="w-full text-left rounded-[14px] px-5 py-5 sm:px-6 sm:py-5 flex items-start gap-3.5 transition disabled:cursor-default"
           style={{
-            borderColor: coreSelected ? "#D4AF37" : "rgba(212,175,55,0.6)",
-            background: coreSelected ? "rgba(212,175,55,0.12)" : "rgba(212,175,55,0.04)",
+            border: coreSelected ? "2px solid #D4AF37" : "2px solid rgba(212,175,55,0.55)",
+            background: coreSelected
+              ? "linear-gradient(180deg, rgba(212,175,55,0.18) 0%, rgba(252,247,232,0.95) 100%)"
+              : "linear-gradient(180deg, rgba(255,255,255,0.95) 0%, rgba(252,247,232,0.92) 100%)",
             boxShadow: coreSelected
-              ? "0 1px 0 rgba(255,255,255,0.6) inset, 0 8px 22px -10px rgba(160,123,31,0.5)"
-              : "0 1px 0 rgba(255,255,255,0.5) inset",
+              ? "0 1px 0 rgba(255,255,255,0.7) inset, 0 14px 32px -16px rgba(160,123,31,0.55), 0 0 0 4px rgba(212,175,55,0.10)"
+              : "0 1px 0 rgba(255,255,255,0.7) inset, 0 10px 26px -18px rgba(31,26,16,0.45)",
           }}
         >
           <div
@@ -177,13 +179,15 @@ export function ProductSelector({
           type="button"
           disabled={locked}
           onClick={allSelected ? onClear : onSelectAll}
-          className="w-full text-left rounded-[12px] border-2 px-5 py-5 sm:px-6 sm:py-5 transition flex items-start gap-3.5 disabled:cursor-default"
+          className="w-full text-left rounded-[14px] px-5 py-5 sm:px-6 sm:py-5 transition flex items-start gap-3.5 disabled:cursor-default"
           style={{
-            borderColor: allSelected ? "#B8860B" : "#D4AF37",
-            background: allSelected ? "rgba(212,175,55,0.16)" : "rgba(212,175,55,0.06)",
+            border: allSelected ? "2px solid #B8860B" : "2px solid #D4AF37",
+            background: allSelected
+              ? "linear-gradient(180deg, rgba(212,175,55,0.22) 0%, rgba(252,247,232,0.96) 100%)"
+              : "linear-gradient(180deg, rgba(212,175,55,0.12) 0%, rgba(255,251,238,0.95) 100%)",
             boxShadow: allSelected
-              ? "0 1px 0 rgba(255,255,255,0.6) inset, 0 12px 28px -12px rgba(160,123,31,0.6)"
-              : "0 1px 0 rgba(255,255,255,0.5) inset, 0 6px 18px -10px rgba(160,123,31,0.4)",
+              ? "0 1px 0 rgba(255,255,255,0.7) inset, 0 16px 36px -16px rgba(160,123,31,0.65), 0 0 0 4px rgba(212,175,55,0.12)"
+              : "0 1px 0 rgba(255,255,255,0.7) inset, 0 12px 30px -16px rgba(160,123,31,0.5)",
           }}
         >
           <div
@@ -283,13 +287,15 @@ export function ProductSelector({
                 type="button"
                 disabled={locked}
                 onClick={() => onToggle(code)}
-                className="text-left rounded-[10px] border px-4 py-3.5 transition flex items-start gap-2.5 disabled:cursor-default"
+                className="text-left rounded-[12px] px-4 py-3.5 transition flex items-start gap-2.5 disabled:cursor-default"
                 style={{
-                  borderColor: active ? "#B8860B" : "rgba(74,64,45,0.28)",
-                  background: active ? "rgba(212,175,55,0.14)" : "rgba(255,255,255,0.65)",
+                  border: active ? "1.5px solid #B8860B" : "1px solid rgba(74,64,45,0.28)",
+                  background: active
+                    ? "linear-gradient(180deg, rgba(212,175,55,0.16) 0%, rgba(252,247,232,0.92) 100%)"
+                    : "linear-gradient(180deg, rgba(255,255,255,0.85) 0%, rgba(252,247,232,0.7) 100%)",
                   boxShadow: active
-                    ? "0 4px 14px -8px rgba(160,123,31,0.5)"
-                    : "0 1px 0 rgba(255,255,255,0.5) inset",
+                    ? "0 1px 0 rgba(255,255,255,0.65) inset, 0 8px 20px -12px rgba(160,123,31,0.55)"
+                    : "0 1px 0 rgba(255,255,255,0.6) inset, 0 4px 12px -10px rgba(31,26,16,0.35)",
                 }}
               >
                 <div
