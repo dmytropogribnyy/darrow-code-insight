@@ -123,7 +123,7 @@ function ReportCard({
   busyAction: "open" | "download" | null;
   onRefresh: () => void;
 }) {
-  const info = describeReport(row.modules);
+  const info = describeReport(row);
   const complete = row.status === "complete";
   const failed = row.status === "failed";
   const pending = !complete && !failed;
