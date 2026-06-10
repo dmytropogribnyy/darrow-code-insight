@@ -145,7 +145,7 @@ export function ProductSelector({
             </div>
             <p
               className="leading-relaxed mt-1.5"
-              style={{ color: "#6B6B68", fontSize: "clamp(14px, 1.35vw, 15.5px)" }}
+              style={{ color: "#8A8A87", fontSize: "clamp(14px, 1.35vw, 15.5px)" }}
             >
               Your full personal astrology foundation report — birth chart, personality patterns,
               timing, numerology and life rhythm. Decoded through the Darrow Code Method and
@@ -227,7 +227,7 @@ export function ProductSelector({
             </div>
             <p
               className="leading-relaxed mt-1.5"
-              style={{ color: "#6B6B68", fontSize: "clamp(14px, 1.35vw, 15.5px)" }}
+              style={{ color: "#8A8A87", fontSize: "clamp(14px, 1.35vw, 15.5px)" }}
             >
               The complete AI astrology report set — CORE + all 6 focused chapters (LOVE, MONEY,
               BODY, YEAR, STYLE, PLACE), each delivered as its own private PDF. The full Darrow Code
