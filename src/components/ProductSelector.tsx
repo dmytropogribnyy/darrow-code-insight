@@ -125,7 +125,7 @@ export function ProductSelector({
               <p
                 className="uppercase font-bold"
                 style={{
-                  color: "#5C4410",
+                  color: "#8B6914",
                   fontSize: "clamp(13px, 1.25vw, 14.5px)",
                   letterSpacing: "0.18em",
                 }}
@@ -145,7 +145,7 @@ export function ProductSelector({
             </div>
             <p
               className="leading-relaxed mt-1.5"
-              style={{ color: "#2A2418", fontSize: "clamp(14px, 1.35vw, 15.5px)" }}
+              style={{ color: "#4A4A48", fontSize: "clamp(14px, 1.35vw, 15.5px)" }}
             >
               Your full personal astrology foundation report — birth chart, personality patterns,
               timing, numerology and life rhythm. Decoded through the Darrow Code Method and
@@ -164,7 +164,7 @@ export function ProductSelector({
             to="/sample"
             className="font-sans font-medium underline-offset-4 hover:underline transition-colors"
             style={{
-              color: "#5C4410",
+              color: "#8B6914",
               fontSize: "clamp(12px, 1.1vw, 13px)",
               letterSpacing: "0.02em",
             }}
@@ -205,7 +205,7 @@ export function ProductSelector({
               <p
                 className="uppercase font-bold"
                 style={{
-                  color: "#5C4410",
+                  color: "#8B6914",
                   fontSize: "clamp(13px, 1.25vw, 14.5px)",
                   letterSpacing: "0.18em",
                 }}
@@ -227,7 +227,7 @@ export function ProductSelector({
             </div>
             <p
               className="leading-relaxed mt-1.5"
-              style={{ color: "#2A2418", fontSize: "clamp(14px, 1.35vw, 15.5px)" }}
+              style={{ color: "#4A4A48", fontSize: "clamp(14px, 1.35vw, 15.5px)" }}
             >
               The complete AI astrology report set — CORE + all 6 focused chapters (LOVE, MONEY,
               BODY, YEAR, STYLE, PLACE), each delivered as its own private PDF. The full Darrow Code
@@ -246,7 +246,7 @@ export function ProductSelector({
             to="/sample"
             className="font-sans font-medium underline-offset-4 hover:underline transition-colors"
             style={{
-              color: "#5C4410",
+              color: "#8B6914",
               fontSize: "clamp(12px, 1.1vw, 13px)",
               letterSpacing: "0.02em",
             }}
@@ -313,7 +313,7 @@ export function ProductSelector({
                     <p
                       className="uppercase font-bold"
                       style={{
-                        color: "#5C4410",
+                        color: "#8B6914",
                         fontSize: "clamp(12.5px, 1.2vw, 13.5px)",
                         letterSpacing: "0.16em",
                       }}
@@ -329,13 +329,13 @@ export function ProductSelector({
                   </div>
                   <p
                     className="leading-snug mt-1"
-                    style={{ color: "#3A3225", fontSize: "clamp(12.5px, 1.2vw, 13.5px)" }}
+                    style={{ color: "#525252", fontSize: "clamp(12.5px, 1.2vw, 13.5px)" }}
                   >
                     {meta.desc}
                   </p>
                   <p
                     className="leading-snug mt-1 italic"
-                    style={{ color: "#6B6151", fontSize: "clamp(11.5px, 1.1vw, 12.5px)" }}
+                    style={{ color: "#7A7A78", fontSize: "clamp(11.5px, 1.1vw, 12.5px)" }}
                   >
                     {meta.detail}
                   </p>
