@@ -76,7 +76,7 @@ export function reportReadyEmail(args: {
       <div style="max-width:600px;margin:0 auto;background:#F6F4EF">
 
         <div style="background:#0A0F1E;padding:28px 0;text-align:center">
-          <img src="${symbolDataUrl}" alt="" width="40" height="40" style="display:inline-block;border:0;margin:0 auto 10px" />
+          ${BRAND_MARK}
           <div style="font-family:'Inter',Helvetica,Arial,sans-serif;font-size:13px;letter-spacing:5px;color:#D4AF37;text-transform:uppercase;font-weight:600">Darrow Code</div>
         </div>
 
@@ -159,7 +159,7 @@ export function bundleReportReadyEmail(args: {
       <div style="display:none;max-height:0;overflow:hidden;opacity:0;color:#EFEAE0">Your Darrow Code reports are ready.</div>
       <div style="max-width:600px;margin:0 auto;background:#F6F4EF">
         <div style="background:#0A0F1E;padding:28px 0;text-align:center">
-          <img src="${symbolDataUrl}" alt="" width="40" height="40" style="display:inline-block;border:0;margin:0 auto 10px" />
+          ${BRAND_MARK}
           <div style="font-family:'Inter',Helvetica,Arial,sans-serif;font-size:13px;letter-spacing:5px;color:#D4AF37;text-transform:uppercase;font-weight:600">Darrow Code</div>
         </div>
         <div style="padding:44px 36px 36px">
@@ -194,7 +194,7 @@ export function reportDelayEmail(args: { first_name: string | null; assets_base_
     html: `<!doctype html><html><body style="font-family:Georgia,serif;color:#151922;background:#F6F4EF;margin:0;padding:0">
       <div style="max-width:600px;margin:0 auto;background:#F6F4EF">
         <div style="background:#0A0F1E;padding:28px 0;text-align:center">
-          <img src="${symbolDataUrl}" alt="" width="40" height="40" style="display:inline-block;border:0;margin:0 auto 10px" />
+          ${BRAND_MARK}
           <div style="font-family:'Inter',Helvetica,Arial,sans-serif;font-size:13px;letter-spacing:5px;color:#D4AF37;text-transform:uppercase;font-weight:600">Darrow Code</div>
         </div>
         <div style="padding:36px 32px">
