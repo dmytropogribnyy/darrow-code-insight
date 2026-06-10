@@ -21,9 +21,9 @@ const TESTIMONIALS: Testimonial[] = [
   },
   {
     quote:
-      "Bought CORE Complete on a whim before a big career pivot. The MONEY and YEAR chapters were uncomfortably accurate. I keep going back to it.",
+      "I got CORE Complete while thinking through a career change. The MONEY and YEAR chapters felt especially relevant — not like generic advice, but like a clearer map of my timing, habits, and where my energy was actually going.",
     name: "Marcus",
-    location: "Great Britain",
+    location: "United Kingdom",
     context: "CORE Complete",
   },
   {
@@ -170,15 +170,6 @@ export function TestimonialsBlock() {
         >
           What people are saying
         </h2>
-        <div className="mt-3 inline-flex items-center gap-2">
-          <StarRow />
-          <span
-            className="font-sans font-semibold"
-            style={{ color: "#3A3225", fontSize: "13.5px" }}
-          >
-            4.9 average · private PDFs delivered
-          </span>
-        </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5">
