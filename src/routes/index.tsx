@@ -21,7 +21,7 @@ import {
   MoonPhaseChip,
   ZodiacWheel,
 } from "@/components/HeroAstroAccents";
-import { MODULE_CODES, type ModuleCode } from "@/lib/modules";
+import { MODULE_CODES, type ModuleCode, priceForModules } from "@/lib/modules";
 
 type Selectable = "CORE" | ModuleCode;
 
