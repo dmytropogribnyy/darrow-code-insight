@@ -473,7 +473,43 @@ function LandingPage() {
             <DialogDescription style={{ color: "#4A402D" }}>
               Enter your birth data — checkout comes next, then your private astrology PDF.
             </DialogDescription>
+            {hasAnySelection && (() => {
+              const q = priceForModules(chaptersList, selected.has("CORE"));
+              return (
+                <div
+                  className="mt-2 flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1 rounded-[10px] px-3.5 py-2.5 border"
+                  style={{
+                    borderColor: "rgba(212,175,55,0.45)",
+                    background:
+                      "linear-gradient(180deg, rgba(255,255,255,0.92) 0%, rgba(252,247,232,0.92) 100%)",
+                  }}
+                >
+                  <span
+                    className="font-mono font-bold"
+                    style={{ color: "#0A0F1E", fontSize: "20px" }}
+                  >
+                    ${(q.cents / 100).toFixed(2)}
+                  </span>
+                  {q.saved_cents > 0 && (
+                    <span
+                      className="font-sans"
+                      style={{ color: "#5C5340", fontSize: "12.5px" }}
+                    >
+                      separately{" "}
+                      <span className="line-through" style={{ color: "#8A7E5E" }}>
+                        ${(q.separate_cents / 100).toFixed(2)}
+                      </span>{" "}
+                      ·{" "}
+                      <span className="font-semibold" style={{ color: "#1F1A10" }}>
+                        save ${(q.saved_cents / 100).toFixed(2)}
+                      </span>
+                    </span>
+                  )}
+                </div>
+              );
+            })()}
           </DialogHeader>
+
           <div className="intake-card">
             <IntakeForm
               includesCore={selected.has("CORE")}
