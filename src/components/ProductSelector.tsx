@@ -42,6 +42,7 @@ interface Props {
   onSelectAll: () => void;
   onClear: () => void;
   locked?: boolean;
+  onContinue?: () => void;
 }
 
 function formatPrice(cents: number): string {
@@ -54,7 +55,9 @@ export function ProductSelector({
   onSelectAll,
   onClear,
   locked = false,
+  onContinue,
 }: Props) {
+
   const coreSelected = selected.has("CORE");
   const chapters = Array.from(selected).filter((c): c is ModuleCode => c !== "CORE");
   const hasAnySelection = coreSelected || chapters.length > 0;
@@ -99,13 +102,15 @@ export function ProductSelector({
           disabled={locked}
           onClick={() => onToggle("CORE")}
           aria-pressed={coreSelected}
-          className="w-full text-left rounded-[12px] border-2 px-5 py-5 sm:px-6 sm:py-5 flex items-start gap-3.5 transition disabled:cursor-default"
+          className="w-full text-left rounded-[14px] px-5 py-5 sm:px-6 sm:py-5 flex items-start gap-3.5 transition disabled:cursor-default"
           style={{
-            borderColor: coreSelected ? "#D4AF37" : "rgba(212,175,55,0.6)",
-            background: coreSelected ? "rgba(212,175,55,0.12)" : "rgba(212,175,55,0.04)",
+            border: coreSelected ? "2px solid #D4AF37" : "2px solid rgba(212,175,55,0.55)",
+            background: coreSelected
+              ? "linear-gradient(180deg, rgba(212,175,55,0.08) 0%, rgba(255,255,255,0.95) 100%)"
+              : "linear-gradient(180deg, rgba(255,255,255,0.95) 0%, rgba(255,253,247,0.9) 100%)",
             boxShadow: coreSelected
-              ? "0 1px 0 rgba(255,255,255,0.6) inset, 0 8px 22px -10px rgba(160,123,31,0.5)"
-              : "0 1px 0 rgba(255,255,255,0.5) inset",
+              ? "0 1px 0 rgba(255,255,255,0.7) inset, 0 14px 32px -16px rgba(160,123,31,0.55), 0 0 0 4px rgba(212,175,55,0.10)"
+              : "0 1px 0 rgba(255,255,255,0.7) inset, 0 10px 26px -18px rgba(31,26,16,0.45)",
           }}
         >
           <div
@@ -177,13 +182,15 @@ export function ProductSelector({
           type="button"
           disabled={locked}
           onClick={allSelected ? onClear : onSelectAll}
-          className="w-full text-left rounded-[12px] border-2 px-5 py-5 sm:px-6 sm:py-5 transition flex items-start gap-3.5 disabled:cursor-default"
+          className="w-full text-left rounded-[14px] px-5 py-5 sm:px-6 sm:py-5 transition flex items-start gap-3.5 disabled:cursor-default"
           style={{
-            borderColor: allSelected ? "#B8860B" : "#D4AF37",
-            background: allSelected ? "rgba(212,175,55,0.16)" : "rgba(212,175,55,0.06)",
+            border: allSelected ? "2px solid #B8860B" : "2px solid #D4AF37",
+            background: allSelected
+              ? "linear-gradient(180deg, rgba(212,175,55,0.12) 0%, rgba(255,255,255,0.96) 100%)"
+              : "linear-gradient(180deg, rgba(212,175,55,0.06) 0%, rgba(255,255,255,0.95) 100%)",
             boxShadow: allSelected
-              ? "0 1px 0 rgba(255,255,255,0.6) inset, 0 12px 28px -12px rgba(160,123,31,0.6)"
-              : "0 1px 0 rgba(255,255,255,0.5) inset, 0 6px 18px -10px rgba(160,123,31,0.4)",
+              ? "0 1px 0 rgba(255,255,255,0.7) inset, 0 16px 36px -16px rgba(160,123,31,0.65), 0 0 0 4px rgba(212,175,55,0.12)"
+              : "0 1px 0 rgba(255,255,255,0.7) inset, 0 12px 30px -16px rgba(160,123,31,0.5)",
           }}
         >
           <div
@@ -259,7 +266,7 @@ export function ProductSelector({
             letterSpacing: "0.2em",
           }}
         >
-          — or pick individual chapters —
+          — or pick also individual chapters —
         </p>
         <p
           className="text-center font-sans font-normal mb-4"
@@ -269,7 +276,8 @@ export function ProductSelector({
             fontSize: "clamp(12.5px, 1.15vw, 13.5px)",
           }}
         >
-          Pick any chapter on its own, or combine several
+          Pick any chapter on its own, or combine several and save more
+
         </p>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6">
@@ -283,13 +291,15 @@ export function ProductSelector({
                 type="button"
                 disabled={locked}
                 onClick={() => onToggle(code)}
-                className="text-left rounded-[10px] border px-4 py-3.5 transition flex items-start gap-2.5 disabled:cursor-default"
+                className="text-left rounded-[12px] px-4 py-3.5 transition flex items-start gap-2.5 disabled:cursor-default"
                 style={{
-                  borderColor: active ? "#B8860B" : "rgba(74,64,45,0.28)",
-                  background: active ? "rgba(212,175,55,0.14)" : "rgba(255,255,255,0.65)",
+                  border: active ? "1.5px solid #B8860B" : "1px solid rgba(74,64,45,0.28)",
+                  background: active
+                    ? "linear-gradient(180deg, rgba(212,175,55,0.16) 0%, rgba(252,247,232,0.92) 100%)"
+                    : "linear-gradient(180deg, rgba(255,255,255,0.85) 0%, rgba(252,247,232,0.7) 100%)",
                   boxShadow: active
-                    ? "0 4px 14px -8px rgba(160,123,31,0.5)"
-                    : "0 1px 0 rgba(255,255,255,0.5) inset",
+                    ? "0 1px 0 rgba(255,255,255,0.65) inset, 0 8px 20px -12px rgba(160,123,31,0.55)"
+                    : "0 1px 0 rgba(255,255,255,0.6) inset, 0 4px 12px -10px rgba(31,26,16,0.35)",
                 }}
               >
                 <div
@@ -323,13 +333,13 @@ export function ProductSelector({
                   </div>
                   <p
                     className="leading-snug mt-1"
-                    style={{ color: "#3A3225", fontSize: "clamp(12.5px, 1.2vw, 13.5px)" }}
+                    style={{ color: "#2A2418", fontSize: "clamp(12.5px, 1.2vw, 13.5px)" }}
                   >
                     {meta.desc}
                   </p>
                   <p
                     className="leading-snug mt-1 italic"
-                    style={{ color: "#6B6151", fontSize: "clamp(11.5px, 1.1vw, 12.5px)" }}
+                    style={{ color: "#3A3225", fontSize: "clamp(11.5px, 1.1vw, 12.5px)" }}
                   >
                     {meta.detail}
                   </p>
@@ -340,45 +350,117 @@ export function ProductSelector({
         </div>
       </div>
 
-      {/* Order summary — always full opacity, even when locked */}
-      <div
-        className="rounded-[10px] px-5 py-4 mb-1 border-2"
-        style={{
-          borderColor: "rgba(74,64,45,0.35)",
-          background: "rgba(255,255,255,0.85)",
-          boxShadow: "0 6px 18px -10px rgba(31,26,16,0.4)",
-        }}
-      >
-        <div
-          className="flex items-center justify-between"
-          style={{ fontSize: "clamp(13.5px, 1.25vw, 14.5px)" }}
-        >
-          <span className="font-semibold" style={{ color: "#1F1A10" }}>
-            {quote ? quote.label : "Nothing selected"}
-          </span>
-          <span
-            className="font-mono font-bold"
-            style={{ color: "#0A0F1E", fontSize: "clamp(15px, 1.4vw, 16.5px)" }}
-          >
-            {quote ? formatPrice(quote.cents) : "—"}
-          </span>
-        </div>
-        {quote && quote.saved_cents > 0 && (
-          <div
-            className="flex items-center justify-between mt-1.5"
-            style={{ fontSize: "clamp(11.5px, 1.05vw, 12.5px)" }}
-          >
-            <span style={{ color: "#5C5340" }}>
-              if bought separately:{" "}
-              <span className="line-through">{formatPrice(quote.separate_cents)}</span>
-            </span>
-            <span className="font-mono font-bold" style={{ color: "#8B6914" }}>
-              save {formatPrice(quote.saved_cents)}
-            </span>
+      {/* Order summary — always full opacity, even when locked; clickable when a selection exists */}
+      {(() => {
+        const clickable = !!onContinue && !locked && hasAnySelection;
+        const baseClass =
+          "block w-full text-left rounded-[14px] px-6 py-5 mb-1 border-2 relative overflow-hidden transition-transform";
+        const clickableClass =
+          " cursor-pointer hover:-translate-y-[1px] hover:shadow-[0_14px_32px_-14px_rgba(31,26,16,0.55)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#D4AF37]/70";
+        const style = {
+          borderColor: "rgba(212,175,55,0.55)",
+          background:
+            "linear-gradient(180deg, rgba(255,255,255,0.96) 0%, rgba(252,247,232,0.96) 100%)",
+          boxShadow:
+            "0 10px 28px -14px rgba(31,26,16,0.45), inset 0 1px 0 rgba(255,255,255,0.6)",
+        };
+        const inner = (
+          <>
+            {quote && quote.saved_cents > 0 && (
+              <div className="mb-2.5 flex">
+                <span
+                  className="inline-flex items-center rounded-full px-2.5 py-1 font-sans font-bold uppercase"
+                  style={{
+                    fontSize: "10.5px",
+                    letterSpacing: "0.1em",
+                    color: "#1F1A10",
+                    background: "linear-gradient(180deg, #F2D27A 0%, #D4AF37 100%)",
+                    boxShadow: "0 2px 6px -2px rgba(212,175,55,0.6)",
+                  }}
+                >
+                  Best value
+                </span>
+              </div>
+            )}
+            <div
+              className="flex items-baseline justify-between gap-4"
+              style={{ fontSize: "clamp(15px, 1.45vw, 17px)" }}
+            >
+              <span
+                className="font-serif font-semibold leading-tight min-w-0 break-words"
+                style={{ color: "#1F1A10", fontSize: "clamp(17px, 1.7vw, 20px)" }}
+              >
+                {quote ? quote.label : "Nothing selected"}
+              </span>
+              <span
+                className="font-mono font-bold whitespace-nowrap shrink-0"
+                style={{ color: "#0A0F1E", fontSize: "clamp(22px, 2.4vw, 28px)" }}
+              >
+                {quote ? formatPrice(quote.cents) : "—"}
+              </span>
+            </div>
+            {quote && quote.saved_cents > 0 && (
+              <>
+                <div
+                  aria-hidden="true"
+                  className="my-3 h-px w-full"
+                  style={{
+                    background:
+                      "linear-gradient(90deg, transparent 0%, rgba(212,175,55,0.45) 50%, transparent 100%)",
+                  }}
+                />
+                <div
+                  className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2"
+                  style={{ fontSize: "clamp(13px, 1.2vw, 14px)" }}
+                >
+                  <span style={{ color: "#5C5340" }} className="font-sans min-w-0">
+                    If bought separately{" "}
+                    <span
+                      className="line-through ml-0.5 whitespace-nowrap"
+                      style={{ color: "#8A7E5E" }}
+                    >
+                      {formatPrice(quote.separate_cents)}
+                    </span>
+                  </span>
+                  <span
+                    className="font-sans font-bold inline-flex items-center rounded-full px-3 py-1 whitespace-nowrap shrink-0"
+                    style={{
+                      color: "#1F1A10",
+                      background: "rgba(212,175,55,0.18)",
+                      border: "1px solid rgba(212,175,55,0.45)",
+                      fontSize: "clamp(12.5px, 1.15vw, 13.5px)",
+                      letterSpacing: "0.01em",
+                    }}
+                  >
+                    You save {formatPrice(quote.saved_cents)}
+                  </span>
+                </div>
+              </>
+            )}
+          </>
+        );
+        if (clickable) {
+          return (
+            <button
+              type="button"
+              onClick={onContinue}
+              aria-label="Continue to enter your birth data"
+              className={baseClass + clickableClass}
+              style={style}
+            >
+              {inner}
+            </button>
+          );
+        }
+        return (
+          <div className={baseClass} style={style}>
+            {inner}
           </div>
-        )}
-      </div>
+        );
+      })()}
     </div>
+
+
   );
 }
 

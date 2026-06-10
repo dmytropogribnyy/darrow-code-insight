@@ -163,7 +163,15 @@ const aboutFaqs: Faq[] = [
           Depending on what you choose, your order can include your CORE Report and any selected
           Focused Chapters as separate readings.
         </p>
-        <p>No account is required. Your report links are yours to keep.</p>
+        <p>
+          Every email also contains a link to <strong>Your Darrow Code Library</strong> — a personal
+          page where all your reports live together. You can return to it anytime, re-download your
+          PDFs and add more chapters to the same reading.
+        </p>
+        <p>
+          No account is required. Your download and Library links don&rsquo;t expire — they are
+          yours to keep.
+        </p>
         <p>
           Tap <strong>&ldquo;See a sample&rdquo;</strong> at the top of the page to preview the
           format before buying.
@@ -171,6 +179,7 @@ const aboutFaqs: Faq[] = [
       </div>
     ),
   },
+
   {
     question: "What Darrow Code is not",
     answer: (
@@ -355,9 +364,25 @@ const commonFaqs: Faq[] = [
   },
   {
     question: "What if something goes wrong with my report?",
-    answer:
-      "If a technical issue prevents your report from being generated or delivered, contact us with your report reference or the email used at checkout. We’ll check the order and re-generate or re-deliver the purchased report at no additional charge.",
+    answer: (
+      <div className="space-y-2.5">
+        <p>
+          If a technical issue prevents your report from being generated or delivered, contact us
+          with your <strong>report reference</strong> (a short code like{" "}
+          <span className="font-mono">DC-20260610-0001-AB12</span>) or the email used at checkout.
+        </p>
+        <p>
+          You&rsquo;ll find the reference in the subject line of your delivery email and in the
+          gray footer of the email body. It&rsquo;s the fastest way for us to locate your order.
+        </p>
+        <p>
+          We&rsquo;ll check the order and re-generate or re-deliver the purchased report at no
+          additional charge.
+        </p>
+      </div>
+    ),
   },
+
 ];
 
 export function FaqBlock() {

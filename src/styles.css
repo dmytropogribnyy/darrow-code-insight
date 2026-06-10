@@ -320,3 +320,28 @@
     animation: none;
   }
 }
+
+/* CONTINUUM section — gentle gold breathing glow to draw the eye */
+@keyframes continuum-breathe {
+  0%, 100% {
+    box-shadow:
+      0 14px 38px -18px rgba(31, 26, 16, 0.45),
+      0 0 0 6px rgba(212, 175, 55, 0.08),
+      inset 0 1px 0 rgba(255, 255, 255, 0.6);
+  }
+  50% {
+    box-shadow:
+      0 14px 38px -18px rgba(31, 26, 16, 0.45),
+      0 0 0 10px rgba(212, 175, 55, 0.18),
+      0 0 28px -4px rgba(212, 175, 55, 0.35),
+      inset 0 1px 0 rgba(255, 255, 255, 0.6);
+  }
+}
+.continuum-glow > section {
+  animation: continuum-breathe 4.2s ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .continuum-glow > section {
+    animation: none;
+  }
+}

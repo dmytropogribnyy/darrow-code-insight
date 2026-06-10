@@ -5,6 +5,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { SiteFooter } from "@/components/SiteFooter";
+import { ContinuumTeaser } from "@/components/ContinuumTeaser";
 import { SiteHeader } from "@/components/SiteHeader";
 import { StripeEmbeddedCheckoutBox } from "@/components/StripeEmbeddedCheckout";
 import { getReportContext, createUpsellCheckout } from "@/utils/checkout.functions";
@@ -60,13 +61,29 @@ type ReportRow = {
   error: string | null;
   created_at: string;
   is_current: boolean;
+  continuum_type?: string | null;
 };
 
-function describeReport(modules: string[]): {
-  kind: "complete" | "addons" | "core";
+function describeReport(row: ReportRow): {
+  kind: "complete" | "addons" | "core" | "continuum";
   label: string;
   sub: string;
 } {
+  if (row.continuum_type === "7d") {
+    return {
+      kind: "continuum",
+      label: "CONTINUUM · Next 7 Days",
+      sub: "Your 7-day timing brief",
+    };
+  }
+  if (row.continuum_type === "30d") {
+    return {
+      kind: "continuum",
+      label: "CONTINUUM · Next 30 Days",
+      sub: "Your monthly orientation brief",
+    };
+  }
+  const modules = row.modules;
   const set = new Set(modules);
   if (set.size === 7) {
     return {
@@ -107,7 +124,7 @@ function ReportCard({
   busyAction: "open" | "download" | null;
   onRefresh: () => void;
 }) {
-  const info = describeReport(row.modules);
+  const info = describeReport(row);
   const complete = row.status === "complete";
   const failed = row.status === "failed";
   const pending = !complete && !failed;
@@ -470,6 +487,25 @@ function ResultPage() {
                         : "border-border bg-white/30 hover:border-gold/60")
                     }
                   >
+                    <span
+                      aria-hidden
+                      className={
+                        "mt-0.5 w-5 h-5 rounded-[4px] border-2 flex items-center justify-center flex-shrink-0 transition " +
+                        (active ? "border-gold bg-gold" : "border-gold/50 bg-white/40")
+                      }
+                    >
+                      {active && (
+                        <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                          <path
+                            d="M2.5 6.2L4.8 8.5L9.5 3.5"
+                            stroke="#0A0F1E"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                        </svg>
+                      )}
+                    </span>
                     <div className="flex-1">
                       <p
                         className="text-[12px] tracking-meta uppercase font-bold"
@@ -558,6 +594,24 @@ function ResultPage() {
             )}
           </div>
         )}
+
+        {/* CONTINUUM — separate timing product */}
+        <div className="mt-14 border-t border-border pt-10">
+          <h2 className="font-serif text-center text-warm-brown" style={{ fontSize: 24 }}>
+            Add a timing brief
+          </h2>
+          <p className="text-center text-[13.5px] mt-2 mb-6" style={{ color: "#2E2519" }}>
+            CONTINUUM is a separate AI timing brief — what to do <em>now</em>, not who you are.
+          </p>
+          <ContinuumTeaser
+            onSelect7d={() => {
+              window.location.href = "/#continuum";
+            }}
+            onSelect30d={() => {
+              window.location.href = "/#continuum";
+            }}
+          />
+        </div>
 
         <div className="mt-12 text-center">
           <Link to="/" className="text-[12px] text-neutral-grey hover:text-charcoal">

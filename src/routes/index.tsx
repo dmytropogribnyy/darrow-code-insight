@@ -5,6 +5,7 @@ import { SiteFooter } from "@/components/SiteFooter";
 import { IntakeForm } from "@/components/IntakeForm";
 import { ProductSelector } from "@/components/ProductSelector";
 import { FaqBlock } from "@/components/FaqBlock";
+import { TestimonialsBlock } from "@/components/TestimonialsBlock";
 import { ContinuumTeaser } from "@/components/ContinuumTeaser";
 import {
   Dialog,
@@ -20,7 +21,7 @@ import {
   MoonPhaseChip,
   ZodiacWheel,
 } from "@/components/HeroAstroAccents";
-import { MODULE_CODES, type ModuleCode } from "@/lib/modules";
+import { MODULE_CODES, type ModuleCode, priceForModules } from "@/lib/modules";
 
 type Selectable = "CORE" | ModuleCode;
 
@@ -55,9 +56,18 @@ function LandingPage() {
   const [selected, setSelected] = useState<Set<Selectable>>(new Set(["CORE"]));
   const [checkoutOpen, setCheckoutOpen] = useState(false);
   const [resetSignal, setResetSignal] = useState(0);
+  const [intakeOpen, setIntakeOpen] = useState(false);
   const [continuumOpen, setContinuumOpen] = useState<ContinuumType | null>(null);
   const [continuumResetSignal, setContinuumResetSignal] = useState(0);
   const selectorRef = useRef<HTMLDivElement>(null);
+
+  const hasAnySelection = selected.size > 0;
+  const chaptersList = Array.from(selected).filter((c): c is ModuleCode => c !== "CORE");
+  const handleContinueToIntake = () => {
+    setResetSignal((n) => n + 1);
+    setCheckoutOpen(false);
+    setIntakeOpen(true);
+  };
 
   const toggle = (code: Selectable) =>
     setSelected((s) => {
@@ -71,6 +81,7 @@ function LandingPage() {
 
   const handleChangeSelection = () => {
     setCheckoutOpen(false);
+    setIntakeOpen(false);
     setResetSignal((n) => n + 1);
     requestAnimationFrame(() => {
       selectorRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -219,9 +230,9 @@ function LandingPage() {
                 className="font-semibold text-[#D4AF37] border-b border-transparent hover:border-[#D4AF37]/70 hover:text-[#E6C35A] transition-colors duration-150 pb-px cursor-pointer"
                 aria-label="Jump to CORE Report"
               >
-                CORE
+                CORE — $4.99
               </button>
-              . Add the chapters you want.
+              .
               <br />
               Or unlock{" "}
               <button
@@ -230,11 +241,11 @@ function LandingPage() {
                 className="font-semibold text-[#D4AF37] border-b border-transparent hover:border-[#D4AF37]/70 hover:text-[#E6C35A] transition-colors duration-150 pb-px cursor-pointer"
                 aria-label="Jump to CORE Complete bundle"
               >
-                CORE Complete
+                CORE Complete — $14.99
               </button>
               .
               <br />
-              Need timing? Add a{" "}
+              Need timing? Add{" "}
               <button
                 type="button"
                 onClick={() => {
@@ -246,9 +257,21 @@ function LandingPage() {
               >
                 Continuum
               </button>{" "}
-              7-day or 30-day AI forecast.
+              ($1.99 / $3.99).
             </p>
-            <div className="mt-4 flex flex-wrap justify-center gap-x-3 gap-y-1.5">
+            <p className="mt-4 text-center font-sans text-[16px] sm:text-[17px] md:text-[18px] text-light-grey leading-[1.65]">
+              Add{" "}
+              <button
+                type="button"
+                onClick={() => jumpToChapter("LOVE")}
+                className="font-semibold text-[#D4AF37] border-b border-transparent hover:border-[#D4AF37]/70 hover:text-[#E6C35A] transition-colors duration-150 pb-px cursor-pointer"
+                aria-label="Jump to chapters"
+              >
+                chapters
+              </button>{" "}
+              ($2.99 each):
+            </p>
+            <div className="mt-1.5 flex flex-wrap justify-center gap-x-3 gap-y-1.5">
               {["LOVE", "MONEY", "BODY", "YEAR", "STYLE", "PLACE"].map((m, i) => (
                 <span key={m} className="flex items-center gap-x-3">
                   <button
@@ -263,26 +286,8 @@ function LandingPage() {
                 </span>
               ))}
             </div>
-            {/* Price line — all tiers visible, wraps cleanly on mobile */}
-            <ul
-              className="mt-5 sm:mt-6 flex flex-wrap items-center justify-center gap-x-3 gap-y-1.5 text-center font-sans text-light-grey leading-relaxed list-none p-0"
-              style={{ fontSize: "clamp(14px, 1.25vw, 15.5px)" }}
-            >
-              <li className="whitespace-nowrap">
-                <span className="text-gold font-semibold">CORE</span> <span>$4.99</span>
-              </li>
-              <li aria-hidden="true" className="text-[#6B6B6B]">
-                ·
-              </li>
-              <li className="whitespace-nowrap">Chapters $2.99 each</li>
-              <li aria-hidden="true" className="text-[#6B6B6B]">
-                ·
-              </li>
-              <li className="whitespace-nowrap">
-                <span className="text-gold font-semibold">CORE Complete</span>{" "}
-                <span className="text-gold font-semibold">$14.99</span>
-              </li>
-            </ul>
+
+
 
             {/* Primary hero CTA — scrolls to product selector / intake */}
             <div className="mt-7 sm:mt-8 flex flex-col items-center">
@@ -331,25 +336,78 @@ function LandingPage() {
             onSelectAll={selectAll}
             onClear={clear}
             locked={checkoutOpen}
+            onContinue={handleContinueToIntake}
           />
-          {checkoutOpen && (
-            <div className="mt-3 flex justify-center">
-              <button
-                type="button"
-                onClick={handleChangeSelection}
-                className="font-sans font-medium text-[14px] min-h-[44px] px-3 inline-flex items-center transition-colors border-b border-transparent hover:border-current"
-                style={{ color: "#D4AF37" }}
-              >
-                + Add more to your order
-              </button>
-            </div>
-          )}
+
+          {/* Continue CTA — opens intake modal, mirrors Continuum pattern */}
+          <div className="mt-6 flex flex-col items-center">
+            <button
+              type="button"
+              onClick={handleContinueToIntake}
+              disabled={!hasAnySelection}
+              className="inline-flex items-center justify-center font-sans font-semibold rounded-full px-7 py-3.5 sm:px-8 sm:py-4 bg-gold text-navy hover:bg-[#E6C35A] transition-colors duration-200 shadow-[0_8px_24px_-10px_rgba(212,175,55,0.55)] disabled:opacity-50 disabled:cursor-not-allowed"
+              style={{ fontSize: "clamp(15px, 1.4vw, 16.5px)", letterSpacing: "0.02em" }}
+              aria-label="Continue to enter birth data"
+            >
+              Continue → Enter Birth Data
+            </button>
+            <p
+              className="mt-3 font-sans text-[12.5px] sm:text-[13px] text-[#6B6B6B] text-center"
+              style={{ letterSpacing: "0.02em" }}
+            >
+              {hasAnySelection
+                ? "Next: enter your birth data, then checkout."
+                : "Pick at least one report to continue."}
+            </p>
+          </div>
+        </div>
+
+        {/* Attention bridge → CONTINUUM */}
+        <div className="max-w-[560px] sm:max-w-[640px] md:max-w-[720px] mx-auto px-4 sm:px-6 mt-10 sm:mt-12">
+          <div className="flex items-center gap-3" aria-hidden="true">
+            <div
+              className="h-px flex-1"
+              style={{
+                background:
+                  "linear-gradient(90deg, transparent 0%, rgba(212,175,55,0.55) 100%)",
+              }}
+            />
+            <span
+              className="font-sans font-bold uppercase px-3 py-1 rounded-full"
+              style={{
+                fontSize: "11px",
+                letterSpacing: "0.18em",
+                color: "#1F1A10",
+                background: "linear-gradient(180deg, #F2D27A 0%, #D4AF37 100%)",
+                boxShadow: "0 2px 8px -2px rgba(212,175,55,0.55)",
+              }}
+            >
+              Also available
+            </span>
+            <div
+              className="h-px flex-1"
+              style={{
+                background:
+                  "linear-gradient(270deg, transparent 0%, rgba(212,175,55,0.55) 100%)",
+              }}
+            />
+          </div>
+          <p
+            className="text-center mt-3 font-sans"
+            style={{
+              color: "#5C5340",
+              fontSize: "clamp(12.5px, 1.15vw, 13.5px)",
+              letterSpacing: "0.04em",
+            }}
+          >
+            Need timing too? Add a personal AI forecast ↓
+          </p>
         </div>
 
         {/* CONTINUUM teaser — separate timing product, below chapters */}
         <div
           id="continuum"
-          className="max-w-[560px] sm:max-w-[640px] md:max-w-[720px] mx-auto px-4 sm:px-6 mt-8 sm:mt-10 scroll-mt-20"
+          className="max-w-[560px] sm:max-w-[640px] md:max-w-[720px] mx-auto px-4 sm:px-6 mt-4 sm:mt-5 scroll-mt-20 continuum-glow"
         >
           <ContinuumTeaser
             onSelect7d={() => {
@@ -380,7 +438,29 @@ function LandingPage() {
               Enter your birth data — your personal timing brief PDF is generated right after
               checkout.
             </DialogDescription>
+            <div
+              className="mt-2 flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1 rounded-[10px] px-3.5 py-2.5 border"
+              style={{
+                borderColor: "rgba(212,175,55,0.45)",
+                background:
+                  "linear-gradient(180deg, rgba(255,255,255,0.92) 0%, rgba(252,247,232,0.92) 100%)",
+              }}
+            >
+              <span
+                className="font-sans"
+                style={{ color: "#5C5340", fontSize: "12.5px", letterSpacing: "0.04em" }}
+              >
+                {continuumOpen === "7d" ? "7-day AI timing brief" : "30-day AI timing brief"}
+              </span>
+              <span
+                className="font-mono font-bold"
+                style={{ color: "#0A0F1E", fontSize: "20px" }}
+              >
+                {continuumOpen === "7d" ? "$1.99" : "$3.99"}
+              </span>
+            </div>
           </DialogHeader>
+
           {continuumOpen && (
             <IntakeForm
               continuumType={continuumOpen}
@@ -391,41 +471,101 @@ function LandingPage() {
         </DialogContent>
       </Dialog>
 
-      {/* INTAKE — paper section */}
-      <section className="flex-1">
-        <div className="max-w-[480px] mx-auto px-4 sm:px-6 pt-6 sm:pt-8 pb-4 sm:pb-5">
-          <p
-            className="text-center font-medium text-[14px] sm:text-[15px] mb-5 leading-[1.55]"
-            style={{ color: "#4A402D" }}
-          >
-            Enter your birth data — checkout comes next, then your private astrology PDF.
-          </p>
-          <div className="relative">
-            {/* Subtle gold accent line above card */}
-            <div
-              aria-hidden="true"
-              className="absolute -top-px left-6 right-6 h-px"
-              style={{
-                background:
-                  "linear-gradient(90deg, transparent 0%, rgba(212,175,55,0.5) 50%, transparent 100%)",
-              }}
+      {/* INTAKE modal — opens after the user picks CORE / chapters */}
+      <Dialog
+        open={intakeOpen}
+        onOpenChange={(o) => {
+          if (!o) {
+            setIntakeOpen(false);
+            setCheckoutOpen(false);
+          }
+        }}
+      >
+        <DialogContent className="max-w-[520px] max-h-[90vh] overflow-y-auto bg-paper">
+          <DialogHeader>
+            <DialogTitle className="font-serif text-[22px]" style={{ color: "#1F1A10" }}>
+              {selected.has("CORE") && chaptersList.length === 6
+                ? "CORE Complete"
+                : selected.has("CORE") && chaptersList.length === 0
+                  ? "CORE Report"
+                  : selected.has("CORE")
+                    ? `CORE + ${chaptersList.length} chapter${chaptersList.length > 1 ? "s" : ""}`
+                    : `${chaptersList.length} chapter${chaptersList.length > 1 ? "s" : ""}`}
+            </DialogTitle>
+            <DialogDescription style={{ color: "#4A402D" }}>
+              Enter your birth data — checkout comes next, then your private astrology PDF.
+            </DialogDescription>
+            {hasAnySelection && (() => {
+              const q = priceForModules(chaptersList, selected.has("CORE"));
+              return (
+                <div
+                  className="mt-2 flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1 rounded-[10px] px-3.5 py-2.5 border"
+                  style={{
+                    borderColor: "rgba(212,175,55,0.45)",
+                    background:
+                      "linear-gradient(180deg, rgba(255,255,255,0.92) 0%, rgba(252,247,232,0.92) 100%)",
+                  }}
+                >
+                  <span
+                    className="font-mono font-bold"
+                    style={{ color: "#0A0F1E", fontSize: "20px" }}
+                  >
+                    ${(q.cents / 100).toFixed(2)}
+                  </span>
+                  {q.saved_cents > 0 && (
+                    <span
+                      className="font-sans"
+                      style={{ color: "#5C5340", fontSize: "12.5px" }}
+                    >
+                      separately{" "}
+                      <span className="line-through" style={{ color: "#8A7E5E" }}>
+                        ${(q.separate_cents / 100).toFixed(2)}
+                      </span>{" "}
+                      ·{" "}
+                      <span className="font-semibold" style={{ color: "#1F1A10" }}>
+                        save ${(q.saved_cents / 100).toFixed(2)}
+                      </span>
+                    </span>
+                  )}
+                </div>
+              );
+            })()}
+          </DialogHeader>
+
+          <div className="intake-card">
+            <IntakeForm
+              includesCore={selected.has("CORE")}
+              chapters={chaptersList}
+              onCheckoutOpen={() => setCheckoutOpen(true)}
+              resetSignal={resetSignal}
             />
-            <div className="intake-card">
-              <IntakeForm
-                includesCore={selected.has("CORE")}
-                chapters={Array.from(selected).filter((c): c is ModuleCode => c !== "CORE")}
-                onCheckoutOpen={() => setCheckoutOpen(true)}
-                resetSignal={resetSignal}
-              />
-            </div>
           </div>
-        </div>
-      </section>
+          {checkoutOpen && (
+            <div className="mt-3 flex justify-center">
+              <button
+                type="button"
+                onClick={handleChangeSelection}
+                className="font-sans font-medium text-[14px] min-h-[44px] px-3 inline-flex items-center transition-colors border-b border-transparent hover:border-current"
+                style={{ color: "#D4AF37" }}
+              >
+                + Change selection
+              </button>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
 
       {/* FAQ — paper section */}
       <section className="flex-1" id="about">
-        <div className="max-w-[480px] sm:max-w-[560px] md:max-w-[640px] mx-auto px-4 sm:px-6 pt-4 sm:pt-6 pb-6 sm:pb-8">
+        <div className="max-w-[480px] sm:max-w-[560px] md:max-w-[640px] mx-auto px-4 sm:px-6 pt-6 sm:pt-8 pb-6 sm:pb-8">
           <FaqBlock />
+        </div>
+      </section>
+
+      {/* TESTIMONIALS — paper section, below FAQ */}
+      <section className="flex-1">
+        <div className="max-w-[480px] sm:max-w-[640px] md:max-w-[760px] mx-auto px-4 sm:px-6 pt-4 sm:pt-6 pb-8 sm:pb-10">
+          <TestimonialsBlock />
         </div>
       </section>
 

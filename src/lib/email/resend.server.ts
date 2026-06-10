@@ -1,5 +1,11 @@
 // Resend email gateway client (via Lovable connector gateway).
-import symbolDataUrl from "@/assets/darrow-symbol-small.png?inline";
+
+// Email-safe brand mark. Inline data-URL <img> gets stripped by Gmail and other
+// clients (renders as empty box). Use a unicode diamond styled with brand gold —
+// renders consistently across Gmail / Apple Mail / Outlook with no asset hosting.
+const BRAND_MARK = `<div style="text-align:center;line-height:1;margin:0 0 14px">
+  <span style="display:inline-block;font-family:Arial,Helvetica,sans-serif;font-size:36px;line-height:1;color:#D4AF37;mso-line-height-rule:exactly">&#9670;</span>
+</div>`;
 
 const GATEWAY_URL = "https://connector-gateway.lovable.dev/resend";
 
@@ -56,42 +62,69 @@ export function reportReadyEmail(args: {
   has_core?: boolean;
   chapter_count?: number;
   modules?: string[];
+  // Specific report name (e.g. "CORE Report", "LOVE chapter",
+  // "CONTINUUM · Next 7 Days"). When provided, subject and body name the
+  // exact report instead of the generic "Darrow Code report".
+  report_label?: string | null;
+  // Human-readable reference id from reports.report_ref (e.g. "DC-20260610-0001-...").
+  // Shown in subject + footer for support/tracking.
+  report_ref?: string | null;
+  // Optional separate "shop more" link (e.g. home page #product-selector).
+  // Rendered as its own CTA block alongside the Library link.
+  purchase_url?: string | null;
 }): { subject: string; html: string } {
   const name = args.first_name ?? "";
   const resultUrl = args.result_url ?? args.download_url;
+  const label = (args.report_label ?? "").trim();
+  const ref = (args.report_ref ?? "").trim();
+  const purchaseUrl = (args.purchase_url ?? "").trim();
 
-  const subject = "Your premium Darrow Code report is ready";
+  const subject = label
+    ? `Your Darrow Code — ${label} is ready${ref ? ` · ${ref}` : ""}`
+    : `Your premium Darrow Code report is ready${ref ? ` · ${ref}` : ""}`;
+  const intro = label
+    ? `Your <strong>${escape(label)}</strong> is ready.`
+    : "Your premium Darrow Code report is ready.";
   const greeting = name ? `Hi ${escape(name)},` : "Hi,";
 
   return {
     subject,
     html: `<!doctype html><html><body style="font-family:Georgia,'Times New Roman',serif;color:#151922;background:#EFEAE0;margin:0;padding:0;-webkit-font-smoothing:antialiased">
-      <div style="display:none;max-height:0;overflow:hidden;opacity:0;color:#EFEAE0">Your premium Darrow Code report is ready.</div>
+      <div style="display:none;max-height:0;overflow:hidden;opacity:0;color:#EFEAE0">${escape(label || "Your premium Darrow Code report")} is ready.</div>
       <div style="max-width:600px;margin:0 auto;background:#F6F4EF">
 
         <div style="background:#0A0F1E;padding:28px 0;text-align:center">
-          <img src="${symbolDataUrl}" alt="" width="40" height="40" style="display:inline-block;border:0;margin:0 auto 10px" />
-          <div style="font-family:'Inter',Helvetica,Arial,sans-serif;font-size:13px;letter-spacing:5px;color:#D4AF37;text-transform:uppercase;font-weight:600">Darrow Code</div>
+          ${BRAND_MARK}
+          <div style="font-family:'Inter',Helvetica,Arial,sans-serif;font-size:13px;letter-spacing:5px;color:#D4AF37;text-transform:uppercase;font-weight:600">Darrow Code${label ? ` · ${escape(label)}` : ""}</div>
         </div>
 
         <div style="padding:44px 36px 36px">
           <p style="font-size:15px;line-height:1.65;color:#3A3528;margin:0 0 18px">${greeting}</p>
-          <p style="font-size:15px;line-height:1.65;color:#3A3528;margin:0 0 24px">Your premium Darrow Code report is ready.</p>
+          <p style="font-size:15px;line-height:1.65;color:#3A3528;margin:0 0 24px">${intro}</p>
+
 
           <p style="font-size:14px;line-height:1.65;color:#3A3528;margin:0 0 8px">Download your PDF:</p>
           <p style="font-size:14px;line-height:1.65;margin:0 0 28px">
             <a href="${args.download_url}" style="color:#D4AF37;text-decoration:none;font-family:'Inter',Helvetica,Arial,sans-serif;word-break:break-all">${args.download_url}</a>
           </p>
 
-          <p style="font-size:14px;line-height:1.65;color:#3A3528;margin:0 0 28px">You can return to this link anytime. No account required.</p>
-
-          <p style="font-size:14px;line-height:1.65;color:#3A3528;margin:0 0 8px">Want to go deeper?<br/>You can add more chapters here:</p>
-          <p style="font-size:14px;line-height:1.65;margin:0 0 32px">
+          <p style="font-size:14px;line-height:1.65;color:#3A3528;margin:0 0 8px">Open your library — all your readings in one place. No account required, bookmark this link:</p>
+          <p style="font-size:14px;line-height:1.65;margin:0 0 28px">
             <a href="${resultUrl}" style="color:#D4AF37;text-decoration:none;font-family:'Inter',Helvetica,Arial,sans-serif;word-break:break-all">${resultUrl}</a>
           </p>
 
+          ${
+            purchaseUrl
+              ? `<p style="font-size:14px;line-height:1.65;color:#3A3528;margin:0 0 8px">Want to go deeper? Add more chapters or a timing brief:</p>
+          <p style="font-size:14px;line-height:1.65;margin:0 0 32px">
+            <a href="${purchaseUrl}" style="color:#D4AF37;text-decoration:none;font-family:'Inter',Helvetica,Arial,sans-serif;word-break:break-all">${purchaseUrl}</a>
+          </p>`
+              : ""
+          }
+
           <div style="border-top:1px solid #E0D9C9;padding-top:22px">
             <p style="font-family:'Inter',Helvetica,Arial,sans-serif;font-size:11px;letter-spacing:4px;color:#9CA3AF;text-transform:uppercase;font-weight:600;margin:0 0 8px">Darrow Code</p>
+            ${ref ? `<p style="font-family:'Inter',Helvetica,Arial,sans-serif;color:#9CA3AF;font-size:11px;margin:0 0 8px">Reference: ${escape(ref)}</p>` : ""}
             <p style="color:#7A6F58;font-size:12px;margin:0 0 4px;font-style:italic;font-family:Georgia,serif">For self-reflection and personal insight.</p>
             <p style="color:#9CA3AF;font-size:11px;margin:0;font-family:Georgia,serif">Not medical, legal or financial advice.</p>
           </div>
@@ -153,7 +186,7 @@ export function bundleReportReadyEmail(args: {
       <div style="display:none;max-height:0;overflow:hidden;opacity:0;color:#EFEAE0">Your Darrow Code reports are ready.</div>
       <div style="max-width:600px;margin:0 auto;background:#F6F4EF">
         <div style="background:#0A0F1E;padding:28px 0;text-align:center">
-          <img src="${symbolDataUrl}" alt="" width="40" height="40" style="display:inline-block;border:0;margin:0 auto 10px" />
+          ${BRAND_MARK}
           <div style="font-family:'Inter',Helvetica,Arial,sans-serif;font-size:13px;letter-spacing:5px;color:#D4AF37;text-transform:uppercase;font-weight:600">Darrow Code</div>
         </div>
         <div style="padding:44px 36px 36px">
@@ -188,7 +221,7 @@ export function reportDelayEmail(args: { first_name: string | null; assets_base_
     html: `<!doctype html><html><body style="font-family:Georgia,serif;color:#151922;background:#F6F4EF;margin:0;padding:0">
       <div style="max-width:600px;margin:0 auto;background:#F6F4EF">
         <div style="background:#0A0F1E;padding:28px 0;text-align:center">
-          <img src="${symbolDataUrl}" alt="" width="40" height="40" style="display:inline-block;border:0;margin:0 auto 10px" />
+          ${BRAND_MARK}
           <div style="font-family:'Inter',Helvetica,Arial,sans-serif;font-size:13px;letter-spacing:5px;color:#D4AF37;text-transform:uppercase;font-weight:600">Darrow Code</div>
         </div>
         <div style="padding:36px 32px">

@@ -23,7 +23,7 @@ const CLOSING = COVER.replace(
   "page-break-after:always;break-after:page;",
   "page-break-before:always;break-before:page;page-break-after:auto;break-after:auto;",
 );
-const BODY_PAGE = `width:210mm;min-height:297mm;padding:24mm 26mm;background:#FAF7F2;color:#151922;box-sizing:border-box;page-break-before:always;break-before:page;`;
+const BODY_PAGE = `width:210mm;min-height:297mm;padding:24mm 26mm 32mm;background:#FAF7F2;color:#151922;box-sizing:border-box;page-break-before:always;break-before:page;`;
 const GOLD_MARK = `<div style="width:34pt;height:34pt;margin:0 auto 24pt;transform:rotate(45deg);background:#D4AF37;-webkit-print-color-adjust:exact;print-color-adjust:exact;"></div>`;
 const BRAND = `font-family:Arial,Helvetica,sans-serif;color:#D4AF37;font-size:11pt;letter-spacing:6pt;text-transform:uppercase;`;
 const H2 = `font-family:Georgia,'Times New Roman',serif;color:#4A402D;font-size:20pt;font-weight:400;margin:0 0 12pt;`;
@@ -87,8 +87,24 @@ export function renderContinuumHtmlSafe(
     const sec = sections[k];
     if (!sec || !(sec.prose || sec.scenario || sec.opening_line)) continue;
     if (k === "closing_signal") {
+      const raw = String(sec.prose || sec.opening_line || "");
+      const paragraphs = raw
+        .split(/\n{2,}|(?<=\.)\s+(?=[A-Z])/)
+        .map((p) => p.trim())
+        .filter(Boolean);
+      // Group sentences into ~2-3 sentence paragraphs for easier reading.
+      const grouped: string[] = [];
+      for (let i = 0; i < paragraphs.length; i += 3) {
+        grouped.push(paragraphs.slice(i, i + 3).join(" "));
+      }
+      const bodyHtml = (grouped.length ? grouped : [raw])
+        .map(
+          (p) =>
+            `<p style="font-family:Georgia,'Times New Roman',serif;font-size:13pt;color:#F1ECE0;margin:0 0 14pt;line-height:1.75;text-align:left;">${escape(p)}</p>`,
+        )
+        .join("");
       out.push(
-        `<section style="${CLOSING}">${GOLD_MARK}<div style="${BRAND}margin-bottom:22pt;">Darrow Code · Continuum</div><p style="font-family:Georgia,'Times New Roman',serif;font-style:italic;font-size:14pt;color:#E5E7EB;margin:0 auto;max-width:120mm;line-height:1.6;">${escape(sec.prose || sec.opening_line)}</p></section>`,
+        `<section style="${CLOSING}"><div style="max-width:150mm;width:100%;margin:0 auto;text-align:left;">${GOLD_MARK}<div style="${BRAND}margin-bottom:22pt;text-align:center;">Darrow Code · Continuum</div>${bodyHtml}</div></section>`,
       );
     } else {
       out.push(renderSection(humanize(k), sec));

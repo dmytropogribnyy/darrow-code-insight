@@ -255,7 +255,10 @@ export function buildDefaultSeparateHooks(sb: any): SeparatePipelineHooks {
       })
       .eq("order_id", order_id);
 
-    // BUNDLE-C — one multi-link report-ready email per purchase (idempotent).
+    // Per-report delivery — one email per completed report (idempotent per row).
+    // CORE Complete delivers 1 + 6 reports, possibly with delays between them;
+    // each module gets its own clearly-labelled email. Rows already emailed are
+    // skipped via ready_email_sent_at.
     if (!deliveryCtx.email || !intake_id) return;
     const { data: siblings } = await sb
       .from("reports")
@@ -264,41 +267,37 @@ export function buildDefaultSeparateHooks(sb: any): SeparatePipelineHooks {
       )
       .eq("intake_id", intake_id);
     const rows = (siblings ?? []) as any[];
-    const alreadyEmailed = rows.some((r) => !!r.ready_email_sent_at);
-    if (alreadyEmailed) return;
 
     const { buildPurchaseDelivery } = await import("@/lib/delivery/purchase-delivery");
     const delivery = buildPurchaseDelivery(rows, { appBaseUrl });
     const completeEntries = delivery.entries.filter((e) => e.complete && e.download_url);
     if (completeEntries.length === 0) return;
 
-    const { bundleReportReadyEmail, sendEmail } = await import("@/lib/email/resend.server");
-    const { recommendNextProducts } = await import("@/lib/email/recommend-next");
-    const { continuumEnabled } = await import("@/lib/continuum/continuum-config");
-    const resultUrl = `${appBaseUrl}/result/${completeEntries[0].download_token}`;
-    const recommendation = recommendNextProducts(
-      results.map((r) => r.module),
-      { appBaseUrl, continuumEnabled: continuumEnabled() },
-    )[0];
-    const { subject, html } = bundleReportReadyEmail({
-      first_name: deliveryCtx.first_name ?? null,
-      result_url: resultUrl,
-      items: completeEntries.map((e) => ({
-        label: e.label,
-        report_ref: e.report_ref,
+    // Find which complete entries have NOT been emailed yet (per-row idempotency).
+    const emailedTokens = new Set(
+      rows.filter((r) => !!r.ready_email_sent_at).map((r) => r.download_token),
+    );
+    const toEmail = completeEntries.filter((e) => !emailedTokens.has(e.download_token));
+    if (toEmail.length === 0) return;
+
+    const { reportReadyEmail, sendEmail } = await import("@/lib/email/resend.server");
+
+    for (const e of toEmail) {
+      const resultUrl = `${appBaseUrl}/result/${e.download_token}`;
+      const { subject, html } = reportReadyEmail({
+        first_name: deliveryCtx.first_name ?? null,
         download_url: e.download_url as string,
-      })),
-      pending_count: delivery.total - completeEntries.length,
-      recommendation,
-    });
-    await sendEmail({ to: deliveryCtx.email, subject, html });
-    // Mark the complete rows as emailed (idempotency).
-    for (const e of completeEntries) {
+        result_url: resultUrl,
+        report_label: e.label,
+        purchase_url: `${appBaseUrl}/#product-selector`,
+      });
+      await sendEmail({ to: deliveryCtx.email, subject, html });
       await sb
         .from("reports")
         .update({ ready_email_sent_at: new Date().toISOString() })
         .eq("download_token", e.download_token);
     }
+
   };
 
   return { loadContext, buildDeps, finalize };
