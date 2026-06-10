@@ -60,13 +60,29 @@ type ReportRow = {
   error: string | null;
   created_at: string;
   is_current: boolean;
+  continuum_type?: string | null;
 };
 
-function describeReport(modules: string[]): {
-  kind: "complete" | "addons" | "core";
+function describeReport(row: ReportRow): {
+  kind: "complete" | "addons" | "core" | "continuum";
   label: string;
   sub: string;
 } {
+  if (row.continuum_type === "7d") {
+    return {
+      kind: "continuum",
+      label: "CONTINUUM · Next 7 Days",
+      sub: "Your 7-day timing brief",
+    };
+  }
+  if (row.continuum_type === "30d") {
+    return {
+      kind: "continuum",
+      label: "CONTINUUM · Next 30 Days",
+      sub: "Your monthly orientation brief",
+    };
+  }
+  const modules = row.modules;
   const set = new Set(modules);
   if (set.size === 7) {
     return {
@@ -107,7 +123,7 @@ function ReportCard({
   busyAction: "open" | "download" | null;
   onRefresh: () => void;
 }) {
-  const info = describeReport(row.modules);
+  const info = describeReport(row);
   const complete = row.status === "complete";
   const failed = row.status === "failed";
   const pending = !complete && !failed;

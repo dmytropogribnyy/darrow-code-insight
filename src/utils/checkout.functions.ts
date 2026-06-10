@@ -409,7 +409,7 @@ export const getReportContext = createServerFn({ method: "POST" })
     // All sibling reports for the same intake — each is its own PDF.
     const { data: siblings } = await sb
       .from("reports")
-      .select("download_token, modules_array, generation_status, generation_error, created_at")
+      .select("download_token, modules_array, generation_status, generation_error, created_at, continuum_type")
       .eq("intake_id", report.intake_id)
       .order("created_at", { ascending: false });
 
@@ -423,6 +423,7 @@ export const getReportContext = createServerFn({ method: "POST" })
         error: (r.generation_error as string | null) ?? null,
         created_at: r.created_at as string,
         is_current: (r.download_token as string) === data.report_token,
+        continuum_type: (r.continuum_type as string | null) ?? null,
       })),
     };
   });
