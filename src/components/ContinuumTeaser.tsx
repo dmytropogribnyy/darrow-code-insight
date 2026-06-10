@@ -119,19 +119,37 @@ export function ContinuumTeaser({ comingSoon, onSelect7d, onSelect30d }: Continu
   return (
     <section
       aria-labelledby="continuum-heading"
-      className="rounded-[14px] px-5 py-7 sm:px-7 sm:py-8"
+      className="rounded-[16px] px-5 py-7 sm:px-7 sm:py-8 relative"
       style={{
-        background: "linear-gradient(180deg, rgba(212,175,55,0.06) 0%, rgba(212,175,55,0.02) 100%)",
-        border: "1px solid rgba(212,175,55,0.32)",
-        boxShadow: "0 8px 28px -18px rgba(31,26,16,0.35)",
+        background:
+          "linear-gradient(180deg, rgba(212,175,55,0.16) 0%, rgba(212,175,55,0.06) 60%, rgba(255,255,255,0.5) 100%)",
+        border: "2px solid rgba(212,175,55,0.6)",
+        boxShadow:
+          "0 14px 38px -18px rgba(31,26,16,0.45), 0 0 0 6px rgba(212,175,55,0.08), inset 0 1px 0 rgba(255,255,255,0.6)",
       }}
     >
+      {/* Floating badge — draws the eye */}
+      <span
+        className="absolute -top-3 left-1/2 -translate-x-1/2 inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full font-sans font-bold uppercase whitespace-nowrap"
+        style={{
+          fontSize: "11px",
+          letterSpacing: "0.18em",
+          color: "#1F1A10",
+          background: "linear-gradient(180deg, #F2D27A 0%, #D4AF37 100%)",
+          boxShadow:
+            "0 4px 14px -4px rgba(212,175,55,0.75), 0 0 0 3px rgba(245,232,196,0.55)",
+        }}
+      >
+        <span aria-hidden="true">✦</span>
+        New · Timing add-on
+      </span>
+
       {/* Header */}
-      <div className="text-center mb-5 sm:mb-6">
+      <div className="text-center mb-5 sm:mb-6 mt-2">
         <p
           className="uppercase font-bold inline-flex items-center gap-2 flex-wrap justify-center"
           style={{
-            color: "#A07B1F",
+            color: "#8B6914",
             fontSize: "clamp(11.5px, 1.1vw, 12.5px)",
             letterSpacing: "0.22em",
           }}
