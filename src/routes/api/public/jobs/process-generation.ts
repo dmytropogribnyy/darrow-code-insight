@@ -127,7 +127,7 @@ async function sendOneMissingReadyEmail(): Promise<boolean> {
   const s = sb();
   const { data: rep } = await s
     .from("reports")
-    .select("id, intake_id, download_token, modules_array")
+    .select("id, intake_id, download_token, modules_array, module_code, continuum_type")
     .eq("generation_status", "complete")
     .not("pdf_url", "is", null)
     .is("ready_email_sent_at", null)
