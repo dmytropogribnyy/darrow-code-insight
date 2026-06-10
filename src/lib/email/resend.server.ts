@@ -66,14 +66,22 @@ export function reportReadyEmail(args: {
   // "CONTINUUM · Next 7 Days"). When provided, subject and body name the
   // exact report instead of the generic "Darrow Code report".
   report_label?: string | null;
+  // Human-readable reference id from reports.report_ref (e.g. "DC-20260610-0001-...").
+  // Shown in subject + footer for support/tracking.
+  report_ref?: string | null;
+  // Optional separate "shop more" link (e.g. home page #product-selector).
+  // Rendered as its own CTA block alongside the Library link.
+  purchase_url?: string | null;
 }): { subject: string; html: string } {
   const name = args.first_name ?? "";
   const resultUrl = args.result_url ?? args.download_url;
   const label = (args.report_label ?? "").trim();
+  const ref = (args.report_ref ?? "").trim();
+  const purchaseUrl = (args.purchase_url ?? "").trim();
 
   const subject = label
-    ? `Your Darrow Code — ${label} is ready`
-    : "Your premium Darrow Code report is ready";
+    ? `Your Darrow Code — ${label} is ready${ref ? ` · ${ref}` : ""}`
+    : `Your premium Darrow Code report is ready${ref ? ` · ${ref}` : ""}`;
   const intro = label
     ? `Your <strong>${escape(label)}</strong> is ready.`
     : "Your premium Darrow Code report is ready.";
@@ -100,15 +108,23 @@ export function reportReadyEmail(args: {
             <a href="${args.download_url}" style="color:#D4AF37;text-decoration:none;font-family:'Inter',Helvetica,Arial,sans-serif;word-break:break-all">${args.download_url}</a>
           </p>
 
-          <p style="font-size:14px;line-height:1.65;color:#3A3528;margin:0 0 28px">You can return to this link anytime. No account required.</p>
-
-          <p style="font-size:14px;line-height:1.65;color:#3A3528;margin:0 0 8px">Want to go deeper?<br/>You can add more chapters here:</p>
-          <p style="font-size:14px;line-height:1.65;margin:0 0 32px">
+          <p style="font-size:14px;line-height:1.65;color:#3A3528;margin:0 0 8px">Open your library — all your readings in one place. No account required, bookmark this link:</p>
+          <p style="font-size:14px;line-height:1.65;margin:0 0 28px">
             <a href="${resultUrl}" style="color:#D4AF37;text-decoration:none;font-family:'Inter',Helvetica,Arial,sans-serif;word-break:break-all">${resultUrl}</a>
           </p>
 
+          ${
+            purchaseUrl
+              ? `<p style="font-size:14px;line-height:1.65;color:#3A3528;margin:0 0 8px">Want to go deeper? Add more chapters or a timing brief:</p>
+          <p style="font-size:14px;line-height:1.65;margin:0 0 32px">
+            <a href="${purchaseUrl}" style="color:#D4AF37;text-decoration:none;font-family:'Inter',Helvetica,Arial,sans-serif;word-break:break-all">${purchaseUrl}</a>
+          </p>`
+              : ""
+          }
+
           <div style="border-top:1px solid #E0D9C9;padding-top:22px">
             <p style="font-family:'Inter',Helvetica,Arial,sans-serif;font-size:11px;letter-spacing:4px;color:#9CA3AF;text-transform:uppercase;font-weight:600;margin:0 0 8px">Darrow Code</p>
+            ${ref ? `<p style="font-family:'Inter',Helvetica,Arial,sans-serif;color:#9CA3AF;font-size:11px;margin:0 0 8px">Reference: ${escape(ref)}</p>` : ""}
             <p style="color:#7A6F58;font-size:12px;margin:0 0 4px;font-style:italic;font-family:Georgia,serif">For self-reflection and personal insight.</p>
             <p style="color:#9CA3AF;font-size:11px;margin:0;font-family:Georgia,serif">Not medical, legal or financial advice.</p>
           </div>
