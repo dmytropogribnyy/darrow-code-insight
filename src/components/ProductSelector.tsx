@@ -103,8 +103,8 @@ export function ProductSelector({
           style={{
             border: coreSelected ? "2px solid #D4AF37" : "2px solid rgba(212,175,55,0.55)",
             background: coreSelected
-              ? "linear-gradient(180deg, rgba(212,175,55,0.18) 0%, rgba(252,247,232,0.95) 100%)"
-              : "linear-gradient(180deg, rgba(255,255,255,0.95) 0%, rgba(252,247,232,0.92) 100%)",
+              ? "linear-gradient(180deg, rgba(212,175,55,0.08) 0%, rgba(255,255,255,0.95) 100%)"
+              : "linear-gradient(180deg, rgba(255,255,255,0.95) 0%, rgba(255,253,247,0.9) 100%)",
             boxShadow: coreSelected
               ? "0 1px 0 rgba(255,255,255,0.7) inset, 0 14px 32px -16px rgba(160,123,31,0.55), 0 0 0 4px rgba(212,175,55,0.10)"
               : "0 1px 0 rgba(255,255,255,0.7) inset, 0 10px 26px -18px rgba(31,26,16,0.45)",
