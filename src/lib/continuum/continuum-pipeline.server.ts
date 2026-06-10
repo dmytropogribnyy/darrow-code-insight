@@ -191,7 +191,7 @@ export function buildDefaultContinuumHooks(sb: any): ContinuumHooks {
       if (rep?.ready_email_sent_at) return;
       const { reportReadyEmail, sendEmail } = await import("@/lib/email/resend.server");
       const { subject, html } = reportReadyEmail({
-        first_name: null,
+        first_name: ctxRef.first_name ?? null,
         download_url: `${appBaseUrl}/download/${result.download_token}`,
         result_url: `${appBaseUrl}/result/${result.download_token}`,
       });
