@@ -365,10 +365,52 @@ function LandingPage() {
           </div>
         </div>
 
+        {/* Attention bridge → CONTINUUM */}
+        <div className="max-w-[560px] sm:max-w-[640px] md:max-w-[720px] mx-auto px-4 sm:px-6 mt-10 sm:mt-12">
+          <div className="flex items-center gap-3" aria-hidden="true">
+            <div
+              className="h-px flex-1"
+              style={{
+                background:
+                  "linear-gradient(90deg, transparent 0%, rgba(212,175,55,0.55) 100%)",
+              }}
+            />
+            <span
+              className="font-sans font-bold uppercase px-3 py-1 rounded-full"
+              style={{
+                fontSize: "11px",
+                letterSpacing: "0.18em",
+                color: "#1F1A10",
+                background: "linear-gradient(180deg, #F2D27A 0%, #D4AF37 100%)",
+                boxShadow: "0 2px 8px -2px rgba(212,175,55,0.55)",
+              }}
+            >
+              Also available
+            </span>
+            <div
+              className="h-px flex-1"
+              style={{
+                background:
+                  "linear-gradient(270deg, transparent 0%, rgba(212,175,55,0.55) 100%)",
+              }}
+            />
+          </div>
+          <p
+            className="text-center mt-3 font-sans"
+            style={{
+              color: "#5C5340",
+              fontSize: "clamp(12.5px, 1.15vw, 13.5px)",
+              letterSpacing: "0.04em",
+            }}
+          >
+            Need timing too? Add a personal AI forecast ↓
+          </p>
+        </div>
+
         {/* CONTINUUM teaser — separate timing product, below chapters */}
         <div
           id="continuum"
-          className="max-w-[560px] sm:max-w-[640px] md:max-w-[720px] mx-auto px-4 sm:px-6 mt-8 sm:mt-10 scroll-mt-20"
+          className="max-w-[560px] sm:max-w-[640px] md:max-w-[720px] mx-auto px-4 sm:px-6 mt-4 sm:mt-5 scroll-mt-20 continuum-glow"
         >
           <ContinuumTeaser
             onSelect7d={() => {
