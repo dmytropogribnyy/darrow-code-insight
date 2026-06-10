@@ -46,7 +46,20 @@ export async function buildPlaceGeoArtifact(
   }
 
   const prompt = buildPlaceGeoPrompt(ctx, { first_name: opts.first_name ?? null });
-  const raw = await opts.call({ userPrompt: prompt, model: opts.model ?? "claude-sonnet-4-6" });
+  const raw: any = await opts.call({
+    userPrompt: prompt,
+    model: opts.model ?? "claude-sonnet-4-6",
+  });
+  // Defensive normalization for the generic addon tool: sections may arrive as a JSON string,
+  // and `variant` is OUR internal marker — stamp it rather than ask the model for it.
+  if (raw && typeof raw.sections === "string") {
+    try {
+      raw.sections = JSON.parse(raw.sections);
+    } catch {
+      /* leave as-is; schema will report */
+    }
+  }
+  if (raw && raw.variant == null) raw.variant = "geo_v1";
   const parsed = placeGeoSchema().safeParse(raw);
   if (!parsed.success) {
     throw new PlaceGeoGenerationError(
