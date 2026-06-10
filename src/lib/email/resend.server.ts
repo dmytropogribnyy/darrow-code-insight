@@ -1,5 +1,11 @@
 // Resend email gateway client (via Lovable connector gateway).
-import symbolDataUrl from "@/assets/darrow-symbol-small.png?inline";
+
+// Email-safe brand mark. Inline data-URL <img> gets stripped by Gmail and other
+// clients (renders as empty box). Use a unicode diamond styled with brand gold —
+// renders consistently across Gmail / Apple Mail / Outlook with no asset hosting.
+const BRAND_MARK = `<div style="text-align:center;line-height:1;margin:0 0 14px">
+  <span style="display:inline-block;font-family:Arial,Helvetica,sans-serif;font-size:36px;line-height:1;color:#D4AF37;mso-line-height-rule:exactly">&#9670;</span>
+</div>`;
 
 const GATEWAY_URL = "https://connector-gateway.lovable.dev/resend";
 
