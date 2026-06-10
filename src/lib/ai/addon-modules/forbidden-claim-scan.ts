@@ -14,8 +14,10 @@ const CATEGORIES: Array<{ category: string; re: RegExp }> = [
     re: /\b(crystal|gemstone|amethyst|quartz|obsidian|citrine|selenite|rose quartz|tiger'?s eye|talisman|amulet)\b/gi,
   },
   {
+    // NOTE: "manifest as / manifests as" is the benign verb ("shows up as") and is NOT flagged;
+    // only manifestation-as-a-luck-practice is ("manifestation", "manifest your abundance/wealth/…").
     category: "luck_healing_protection",
-    re: /\b(lucky|good luck|healing|heals?\b|protective energy|protection from|ward off|cleanse your|aura|chakra|manifest(ing|ation)?|energetic protection)\b/gi,
+    re: /\b(lucky|good luck|healing|heals?\b|protective energy|protection from|ward off|cleanse your|aura|chakra|energetic protection)\b|\bmanifestation\b|\bmanifest(?:ing)?\s+(?:your\s+|the\s+|more\s+|greater\s+)?(?:abundance|wealth|money|prosperity|riches|success|love|desires?|dreams?|reality|destiny)\b/gi,
   },
   {
     category: "magical_colors",
@@ -26,8 +28,10 @@ const CATEGORIES: Array<{ category: string; re: RegExp }> = [
     re: /\b(diagnos(e|is|ed)|disease|cure[sd]?\b|symptom|clinical|cortisol|inflammation|prescrib|psychosomatic)\b/gi,
   },
   {
+    // "invest in your skills / relationships / this work" is benign metaphor; only flag investing in
+    // an actual financial instrument (= financial advice).
     category: "financial_guarantee",
-    re: /\b(guaranteed (income|returns?|profit|wealth)|will (earn|make) (you )?money|invest in|asset allocation|buy or sell)\b/gi,
+    re: /\b(guaranteed (income|returns?|profit|wealth)|will (earn|make) (you )?money|invest in (the )?(market|stocks?|bonds?|crypto(currency)?|shares?|equities|securities|real estate|property|gold|mutual funds?|index funds?|etfs?|a fund)|asset allocation|buy or sell|portfolio allocation)\b/gi,
   },
   {
     category: "relationship_guarantee",

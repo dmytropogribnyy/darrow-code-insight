@@ -42,6 +42,44 @@ describe("scanForbiddenClaims", () => {
     );
     expect(v).toEqual([]);
   });
+
+  it("'manifest as' (verb) is benign; manifestation-magic is flagged", () => {
+    // Benign — "manifest/manifests as" = "shows up as".
+    expect(
+      scanForbiddenClaims(
+        "Saturn here can manifest as an internalized critic; it manifests as control.",
+      ),
+    ).toEqual([]);
+    // Magic practice — flagged.
+    for (const magic of [
+      "manifestation rituals for the year",
+      "manifest your abundance",
+      "manifesting wealth",
+      "manifest the money you deserve",
+    ]) {
+      expect(
+        scanForbiddenClaims(magic).some((x) => x.category === "luck_healing_protection"),
+        magic,
+      ).toBe(true);
+    }
+  });
+
+  it("'invest in your skills/relationships' is benign; investing in instruments is flagged", () => {
+    for (const benign of [
+      "invest in your skills",
+      "invest in the relationships that matter",
+      "invest in building things that last",
+      "how deeply you invest in this work",
+    ]) {
+      expect(scanForbiddenClaims(benign), benign).toEqual([]);
+    }
+    for (const advice of ["invest in stocks", "invest in crypto", "invest in real estate"]) {
+      expect(
+        scanForbiddenClaims(advice).some((x) => x.category === "financial_guarantee"),
+        advice,
+      ).toBe(true);
+    }
+  });
 });
 
 describe("scanUnbackedProofTags", () => {

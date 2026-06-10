@@ -56,12 +56,32 @@ function syntheticChart(): any {
       ascendant: { name: "Ascendant", sign: "Virgo" },
       aspects: [{ a: "Saturn", b: "Sun", type: "square", is_major: true }],
     },
-    numerology: { available: true, personal_year: 6, name_numerology: { available: false } },
-    bazi: { available: true, day_master: "Xin", elements: { dominant: "Metal" } },
-    transits: { available: true, aspects: [{ a: "Saturn", b: "Sun", high_priority: true }] },
-    solar_return: { available: true },
-    moon_phase: { available: true, phase: {}, zodiac: {}, forecast: {} },
-    bazi_flow: { available: true, usable: true },
+    numerology: {
+      available: true,
+      personal_year: 6,
+      personal_year_master_marker: null,
+      name_numerology: { available: false },
+    },
+    bazi: {
+      available: true,
+      day_master: "Xin",
+      elements: { dominant: "Metal", deficient: "Fire" },
+      professional: { dm_strength: "strong", favorable_elements: ["Fire", "Wood"] },
+    },
+    transits: {
+      available: true,
+      aspects: [{ a: "Saturn", b: "Sun", type: "square", orb: 1.8, high_priority: true }],
+    },
+    solar_return: {
+      available: true,
+      natal_comparison: { angularity: [{ planet: "Mars", angle: "MC", orb: 1.5 }] },
+    },
+    moon_phase: { available: true, phase: { name: "Waxing Gibbous" }, zodiac: { sign: "Taurus" } },
+    bazi_flow: {
+      available: true,
+      usable: true,
+      annual_pillar: { gan_zhi: "Jia-Chen", ten_god: "Direct Wealth" },
+    },
   };
 }
 
