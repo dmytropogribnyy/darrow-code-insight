@@ -77,7 +77,12 @@ describe("validate:place-geo", () => {
           ].filter(Boolean),
         )
         .join("\n");
-      const words = (allText.match(/\S+/g) ?? []).length;
+      // Contract word targets are PROSE targets — protocols/warnings/insights are extra
+      // structure, so length is judged on prose only (1,200–1,500 target, 1,600 cap, with an
+      // engineering tolerance band: models overshoot ~10%).
+      const words = Object.values(sections)
+        .map((s: any) => (String(s.prose ?? "").match(/\S+/g) ?? []).length)
+        .reduce((a, b) => a + b, 0);
       const acc = scanPlaceGeoAcceptance(allText, art!.context.cityNames);
       const forbidden = scanForbiddenClaims(allText);
       const density = scanTechnicalDensity(allText);
@@ -95,8 +100,8 @@ describe("validate:place-geo", () => {
       expect(acc.rawScoreLeaks, "raw score leak").toEqual([]);
       expect(acc.vaguePhrases, "vague geography").toEqual([]);
       expect(forbidden, "forbidden claims").toEqual([]);
-      expect(words).toBeGreaterThanOrEqual(1000);
-      expect(words).toBeLessThanOrEqual(1900);
+      expect(words, "prose too thin").toBeGreaterThanOrEqual(1100);
+      expect(words, "prose too long").toBeLessThanOrEqual(1800);
     },
     300_000,
   );
