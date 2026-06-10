@@ -60,6 +60,7 @@ export function buildDefaultContinuumHooks(sb: any): ContinuumHooks {
     intake_id?: string;
     email?: string | null;
     first_name?: string | null;
+    type?: ContinuumType;
   } = {};
 
   return {
@@ -85,6 +86,7 @@ export function buildDefaultContinuumHooks(sb: any): ContinuumHooks {
       ctxRef.intake_id = order.intake_id;
       ctxRef.email = customer?.email ?? null;
       ctxRef.first_name = customer?.first_name ?? null;
+      ctxRef.type = order.continuum_type as ContinuumType;
 
       const { getAstroProvider } = await import("@/lib/astro/provider");
       const provider = await getAstroProvider();
@@ -190,10 +192,14 @@ export function buildDefaultContinuumHooks(sb: any): ContinuumHooks {
         .maybeSingle();
       if (rep?.ready_email_sent_at) return;
       const { reportReadyEmail, sendEmail } = await import("@/lib/email/resend.server");
+      const { CONTINUUM_PRODUCTS } = await import("./continuum-config");
+      const product = ctxRef.type ? CONTINUUM_PRODUCTS[ctxRef.type] : null;
+      const label = product ? `CONTINUUM · ${product.label}` : "CONTINUUM";
       const { subject, html } = reportReadyEmail({
         first_name: ctxRef.first_name ?? null,
         download_url: `${appBaseUrl}/download/${result.download_token}`,
         result_url: `${appBaseUrl}/result/${result.download_token}`,
+        report_label: label,
       });
       await sendEmail({ to: ctxRef.email, subject, html });
       await sb

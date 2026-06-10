@@ -469,6 +469,14 @@ export async function runFullGenerationPipeline(order_id: string): Promise<void>
       const downloadUrl = `${appBaseUrl()}/download/${download_token}`;
       const resultUrl = `${appBaseUrl()}/result/${download_token}`;
       const chapterCount = modules.filter((m) => m !== "CORE").length;
+      // Name the report clearly in the email subject. Single-module purchases
+      // get a chapter-specific label; multi-module combined reports stay generic.
+      const reportLabel =
+        modules.length === 1
+          ? (modules[0] as string) === "CORE"
+            ? "CORE Report"
+            : `${modules[0]} chapter`
+          : null;
       const { subject, html } = reportReadyEmail({
         first_name: firstName,
         download_url: downloadUrl,
@@ -477,6 +485,7 @@ export async function runFullGenerationPipeline(order_id: string): Promise<void>
         has_core: modules.includes("CORE" as any),
         chapter_count: chapterCount,
         modules: modules as string[],
+        report_label: reportLabel,
       });
       const tMail = Date.now();
       try {

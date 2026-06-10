@@ -45,7 +45,7 @@ export const Route = createFileRoute("/api/public/jobs/resend-ready-email")({
         let q = s
           .from("reports")
           .select(
-            "id, intake_id, generation_status, pdf_url, download_token, ready_email_sent_at, modules_array",
+            "id, intake_id, generation_status, pdf_url, download_token, ready_email_sent_at, modules_array, module_code, continuum_type",
           )
           .limit(1);
         if (reportId) q = q.eq("id", reportId);
@@ -103,6 +103,17 @@ export const Route = createFileRoute("/api/public/jobs/resend-ready-email")({
         const modulesArray: string[] = Array.isArray(rep.modules_array) ? rep.modules_array : [];
         const hasCore = modulesArray.includes("CORE");
         const chapterCount = modulesArray.filter((m) => m !== "CORE").length;
+        let reportLabel: string | null = null;
+        if ((rep as any).continuum_type === "7d") reportLabel = "CONTINUUM · Next 7 Days";
+        else if ((rep as any).continuum_type === "30d") reportLabel = "CONTINUUM · Next 30 Days";
+        else if ((rep as any).module_code)
+          reportLabel =
+            (rep as any).module_code === "CORE"
+              ? "CORE Report"
+              : `${(rep as any).module_code} chapter`;
+        else if (modulesArray.length === 1)
+          reportLabel =
+            modulesArray[0] === "CORE" ? "CORE Report" : `${modulesArray[0]} chapter`;
         const { subject, html } = reportReadyEmail({
           first_name: customer.first_name ?? null,
           download_url: downloadUrl,
@@ -111,6 +122,7 @@ export const Route = createFileRoute("/api/public/jobs/resend-ready-email")({
           has_core: hasCore,
           chapter_count: chapterCount,
           modules: modulesArray,
+          report_label: reportLabel,
         });
         try {
           const result = await sendEmail({ to: customer.email, subject, html });
