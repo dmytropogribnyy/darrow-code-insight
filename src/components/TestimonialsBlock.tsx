@@ -117,8 +117,8 @@ function TestimonialCard({ t }: { t: Testimonial }) {
         </span>
       </div>
       <blockquote
-        className="font-serif leading-[1.6] flex-1 font-medium"
-        style={{ color: "#0E0B05", fontSize: "clamp(15px, 1.4vw, 16.5px)" }}
+        className="font-sans leading-[1.7] flex-1"
+        style={{ color: "#1F1A10", fontSize: "clamp(15px, 1.4vw, 16.5px)", fontFamily: "var(--font-sans)" }}
       >
         <span className="text-gold/70 mr-0.5 align-[-0.05em] font-serif" style={{ fontSize: "1.3em", lineHeight: 0 }}>
           “
@@ -128,6 +128,7 @@ function TestimonialCard({ t }: { t: Testimonial }) {
           ”
         </span>
       </blockquote>
+
       <figcaption className="mt-4 flex items-center gap-3">
         <Initials name={t.name} />
         <div className="min-w-0">
