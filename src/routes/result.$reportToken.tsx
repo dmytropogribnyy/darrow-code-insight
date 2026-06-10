@@ -486,6 +486,25 @@ function ResultPage() {
                         : "border-border bg-white/30 hover:border-gold/60")
                     }
                   >
+                    <span
+                      aria-hidden
+                      className={
+                        "mt-0.5 w-5 h-5 rounded-[4px] border-2 flex items-center justify-center flex-shrink-0 transition " +
+                        (active ? "border-gold bg-gold" : "border-gold/50 bg-white/40")
+                      }
+                    >
+                      {active && (
+                        <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                          <path
+                            d="M2.5 6.2L4.8 8.5L9.5 3.5"
+                            stroke="#0A0F1E"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                        </svg>
+                      )}
+                    </span>
                     <div className="flex-1">
                       <p
                         className="text-[12px] tracking-meta uppercase font-bold"
