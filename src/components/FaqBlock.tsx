@@ -163,7 +163,15 @@ const aboutFaqs: Faq[] = [
           Depending on what you choose, your order can include your CORE Report and any selected
           Focused Chapters as separate readings.
         </p>
-        <p>No account is required. Your report links are yours to keep.</p>
+        <p>
+          Every email also contains a link to <strong>Your Darrow Code Library</strong> — a personal
+          page where all your reports live together. You can return to it anytime, re-download your
+          PDFs and add more chapters to the same reading.
+        </p>
+        <p>
+          No account is required. Your download and Library links don&rsquo;t expire — they are
+          yours to keep.
+        </p>
         <p>
           Tap <strong>&ldquo;See a sample&rdquo;</strong> at the top of the page to preview the
           format before buying.
@@ -171,6 +179,7 @@ const aboutFaqs: Faq[] = [
       </div>
     ),
   },
+
   {
     question: "What Darrow Code is not",
     answer: (
