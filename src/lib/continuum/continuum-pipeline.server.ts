@@ -187,7 +187,7 @@ export function buildDefaultContinuumHooks(sb: any): ContinuumHooks {
       const appBaseUrl = (process.env.APP_BASE_URL ?? "").replace(/\/$/, "");
       const { data: rep } = await sb
         .from("reports")
-        .select("ready_email_sent_at")
+        .select("ready_email_sent_at, report_ref")
         .eq("download_token", result.download_token)
         .maybeSingle();
       if (rep?.ready_email_sent_at) return;
@@ -198,8 +198,10 @@ export function buildDefaultContinuumHooks(sb: any): ContinuumHooks {
       const { subject, html } = reportReadyEmail({
         first_name: ctxRef.first_name ?? null,
         download_url: `${appBaseUrl}/download/${result.download_token}`,
-        result_url: `${appBaseUrl}/#product-selector`,
+        result_url: `${appBaseUrl}/result/${result.download_token}`,
+        purchase_url: `${appBaseUrl}/#product-selector`,
         report_label: label,
+        report_ref: (rep?.report_ref as string | null) ?? result.report_ref ?? null,
       });
       await sendEmail({ to: ctxRef.email, subject, html });
       await sb
