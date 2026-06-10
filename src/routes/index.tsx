@@ -438,7 +438,29 @@ function LandingPage() {
               Enter your birth data — your personal timing brief PDF is generated right after
               checkout.
             </DialogDescription>
+            <div
+              className="mt-2 flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1 rounded-[10px] px-3.5 py-2.5 border"
+              style={{
+                borderColor: "rgba(212,175,55,0.45)",
+                background:
+                  "linear-gradient(180deg, rgba(255,255,255,0.92) 0%, rgba(252,247,232,0.92) 100%)",
+              }}
+            >
+              <span
+                className="font-sans"
+                style={{ color: "#5C5340", fontSize: "12.5px", letterSpacing: "0.04em" }}
+              >
+                {continuumOpen === "7d" ? "7-day AI timing brief" : "30-day AI timing brief"}
+              </span>
+              <span
+                className="font-mono font-bold"
+                style={{ color: "#0A0F1E", fontSize: "20px" }}
+              >
+                {continuumOpen === "7d" ? "$1.99" : "$3.99"}
+              </span>
+            </div>
           </DialogHeader>
+
           {continuumOpen && (
             <IntakeForm
               continuumType={continuumOpen}
