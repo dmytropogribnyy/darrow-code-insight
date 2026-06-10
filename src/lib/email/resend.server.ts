@@ -62,27 +62,38 @@ export function reportReadyEmail(args: {
   has_core?: boolean;
   chapter_count?: number;
   modules?: string[];
+  // Specific report name (e.g. "CORE Report", "LOVE chapter",
+  // "CONTINUUM · Next 7 Days"). When provided, subject and body name the
+  // exact report instead of the generic "Darrow Code report".
+  report_label?: string | null;
 }): { subject: string; html: string } {
   const name = args.first_name ?? "";
   const resultUrl = args.result_url ?? args.download_url;
+  const label = (args.report_label ?? "").trim();
 
-  const subject = "Your premium Darrow Code report is ready";
+  const subject = label
+    ? `Your Darrow Code — ${label} is ready`
+    : "Your premium Darrow Code report is ready";
+  const intro = label
+    ? `Your <strong>${escape(label)}</strong> is ready.`
+    : "Your premium Darrow Code report is ready.";
   const greeting = name ? `Hi ${escape(name)},` : "Hi,";
 
   return {
     subject,
     html: `<!doctype html><html><body style="font-family:Georgia,'Times New Roman',serif;color:#151922;background:#EFEAE0;margin:0;padding:0;-webkit-font-smoothing:antialiased">
-      <div style="display:none;max-height:0;overflow:hidden;opacity:0;color:#EFEAE0">Your premium Darrow Code report is ready.</div>
+      <div style="display:none;max-height:0;overflow:hidden;opacity:0;color:#EFEAE0">${escape(label || "Your premium Darrow Code report")} is ready.</div>
       <div style="max-width:600px;margin:0 auto;background:#F6F4EF">
 
         <div style="background:#0A0F1E;padding:28px 0;text-align:center">
           ${BRAND_MARK}
-          <div style="font-family:'Inter',Helvetica,Arial,sans-serif;font-size:13px;letter-spacing:5px;color:#D4AF37;text-transform:uppercase;font-weight:600">Darrow Code</div>
+          <div style="font-family:'Inter',Helvetica,Arial,sans-serif;font-size:13px;letter-spacing:5px;color:#D4AF37;text-transform:uppercase;font-weight:600">Darrow Code${label ? ` · ${escape(label)}` : ""}</div>
         </div>
 
         <div style="padding:44px 36px 36px">
           <p style="font-size:15px;line-height:1.65;color:#3A3528;margin:0 0 18px">${greeting}</p>
-          <p style="font-size:15px;line-height:1.65;color:#3A3528;margin:0 0 24px">Your premium Darrow Code report is ready.</p>
+          <p style="font-size:15px;line-height:1.65;color:#3A3528;margin:0 0 24px">${intro}</p>
+
 
           <p style="font-size:14px;line-height:1.65;color:#3A3528;margin:0 0 8px">Download your PDF:</p>
           <p style="font-size:14px;line-height:1.65;margin:0 0 28px">
