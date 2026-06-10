@@ -125,7 +125,7 @@ export function ProductSelector({
               <p
                 className="uppercase font-bold"
                 style={{
-                  color: "#8B6914",
+                  color: "#5C4410",
                   fontSize: "clamp(13px, 1.25vw, 14.5px)",
                   letterSpacing: "0.18em",
                 }}
@@ -164,7 +164,7 @@ export function ProductSelector({
             to="/sample"
             className="font-sans font-medium underline-offset-4 hover:underline transition-colors"
             style={{
-              color: "#8B6914",
+              color: "#5C4410",
               fontSize: "clamp(12px, 1.1vw, 13px)",
               letterSpacing: "0.02em",
             }}
@@ -205,7 +205,7 @@ export function ProductSelector({
               <p
                 className="uppercase font-bold"
                 style={{
-                  color: "#8B6914",
+                  color: "#5C4410",
                   fontSize: "clamp(13px, 1.25vw, 14.5px)",
                   letterSpacing: "0.18em",
                 }}
@@ -246,7 +246,7 @@ export function ProductSelector({
             to="/sample"
             className="font-sans font-medium underline-offset-4 hover:underline transition-colors"
             style={{
-              color: "#8B6914",
+              color: "#5C4410",
               fontSize: "clamp(12px, 1.1vw, 13px)",
               letterSpacing: "0.02em",
             }}
@@ -313,7 +313,7 @@ export function ProductSelector({
                     <p
                       className="uppercase font-bold"
                       style={{
-                        color: "#8B6914",
+                        color: "#5C4410",
                         fontSize: "clamp(12.5px, 1.2vw, 13.5px)",
                         letterSpacing: "0.16em",
                       }}
