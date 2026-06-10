@@ -232,7 +232,16 @@ function LandingPage() {
               >
                 CORE — $4.99
               </button>
-              . Add chapters ($2.99 each).
+              . Add{" "}
+              <button
+                type="button"
+                onClick={() => jumpToChapter("LOVE")}
+                className="font-semibold text-[#D4AF37] border-b border-transparent hover:border-[#D4AF37]/70 hover:text-[#E6C35A] transition-colors duration-150 pb-px cursor-pointer"
+                aria-label="Jump to chapters"
+              >
+                chapters
+              </button>{" "}
+              ($2.99 each).
               <br />
               Or unlock{" "}
               <button
