@@ -183,8 +183,8 @@ export function ProductSelector({
           style={{
             border: allSelected ? "2px solid #B8860B" : "2px solid #D4AF37",
             background: allSelected
-              ? "linear-gradient(180deg, rgba(212,175,55,0.22) 0%, rgba(252,247,232,0.96) 100%)"
-              : "linear-gradient(180deg, rgba(212,175,55,0.12) 0%, rgba(255,251,238,0.95) 100%)",
+              ? "linear-gradient(180deg, rgba(212,175,55,0.12) 0%, rgba(255,255,255,0.96) 100%)"
+              : "linear-gradient(180deg, rgba(212,175,55,0.06) 0%, rgba(255,255,255,0.95) 100%)",
             boxShadow: allSelected
               ? "0 1px 0 rgba(255,255,255,0.7) inset, 0 16px 36px -16px rgba(160,123,31,0.65), 0 0 0 4px rgba(212,175,55,0.12)"
               : "0 1px 0 rgba(255,255,255,0.7) inset, 0 12px 30px -16px rgba(160,123,31,0.5)",
