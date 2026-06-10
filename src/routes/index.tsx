@@ -232,16 +232,7 @@ function LandingPage() {
               >
                 CORE — $4.99
               </button>
-              . Add{" "}
-              <button
-                type="button"
-                onClick={() => jumpToChapter("LOVE")}
-                className="font-semibold text-[#D4AF37] border-b border-transparent hover:border-[#D4AF37]/70 hover:text-[#E6C35A] transition-colors duration-150 pb-px cursor-pointer"
-                aria-label="Jump to chapters"
-              >
-                chapters
-              </button>{" "}
-              ($2.99 each).
+              .
               <br />
               Or unlock{" "}
               <button
@@ -268,7 +259,19 @@ function LandingPage() {
               </button>{" "}
               ($1.99 / $3.99).
             </p>
-            <div className="mt-0 flex flex-wrap justify-center gap-x-3 gap-y-1.5">
+            <p className="mt-4 text-center font-sans text-[16px] sm:text-[17px] md:text-[18px] text-light-grey leading-[1.65]">
+              Add{" "}
+              <button
+                type="button"
+                onClick={() => jumpToChapter("LOVE")}
+                className="font-semibold text-[#D4AF37] border-b border-transparent hover:border-[#D4AF37]/70 hover:text-[#E6C35A] transition-colors duration-150 pb-px cursor-pointer"
+                aria-label="Jump to chapters"
+              >
+                chapters
+              </button>{" "}
+              ($2.99 each):
+            </p>
+            <div className="mt-1.5 flex flex-wrap justify-center gap-x-3 gap-y-1.5">
               {["LOVE", "MONEY", "BODY", "YEAR", "STYLE", "PLACE"].map((m, i) => (
                 <span key={m} className="flex items-center gap-x-3">
                   <button
@@ -283,6 +286,7 @@ function LandingPage() {
                 </span>
               ))}
             </div>
+
 
 
             {/* Primary hero CTA — scrolls to product selector / intake */}
