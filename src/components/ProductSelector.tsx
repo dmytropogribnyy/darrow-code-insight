@@ -352,32 +352,33 @@ export function ProductSelector({
         }}
       >
         {quote && quote.saved_cents > 0 && (
-          <span
-            aria-hidden="true"
-            className="absolute top-3 right-3 inline-flex items-center rounded-full px-2.5 py-1 font-sans font-bold uppercase"
-            style={{
-              fontSize: "10.5px",
-              letterSpacing: "0.1em",
-              color: "#1F1A10",
-              background: "linear-gradient(180deg, #F2D27A 0%, #D4AF37 100%)",
-              boxShadow: "0 2px 6px -2px rgba(212,175,55,0.6)",
-            }}
-          >
-            Best value
-          </span>
+          <div className="mb-2.5 flex">
+            <span
+              className="inline-flex items-center rounded-full px-2.5 py-1 font-sans font-bold uppercase"
+              style={{
+                fontSize: "10.5px",
+                letterSpacing: "0.1em",
+                color: "#1F1A10",
+                background: "linear-gradient(180deg, #F2D27A 0%, #D4AF37 100%)",
+                boxShadow: "0 2px 6px -2px rgba(212,175,55,0.6)",
+              }}
+            >
+              Best value
+            </span>
+          </div>
         )}
         <div
-          className="flex items-baseline justify-between gap-3"
+          className="flex items-baseline justify-between gap-4"
           style={{ fontSize: "clamp(15px, 1.45vw, 17px)" }}
         >
           <span
-            className="font-serif font-semibold leading-tight"
+            className="font-serif font-semibold leading-tight min-w-0 break-words"
             style={{ color: "#1F1A10", fontSize: "clamp(17px, 1.7vw, 20px)" }}
           >
             {quote ? quote.label : "Nothing selected"}
           </span>
           <span
-            className="font-mono font-bold whitespace-nowrap"
+            className="font-mono font-bold whitespace-nowrap shrink-0"
             style={{ color: "#0A0F1E", fontSize: "clamp(22px, 2.4vw, 28px)" }}
           >
             {quote ? formatPrice(quote.cents) : "—"}
