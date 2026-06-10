@@ -342,18 +342,27 @@ function LandingPage() {
             onClear={clear}
             locked={checkoutOpen}
           />
-          {checkoutOpen && (
-            <div className="mt-3 flex justify-center">
-              <button
-                type="button"
-                onClick={handleChangeSelection}
-                className="font-sans font-medium text-[14px] min-h-[44px] px-3 inline-flex items-center transition-colors border-b border-transparent hover:border-current"
-                style={{ color: "#D4AF37" }}
-              >
-                + Add more to your order
-              </button>
-            </div>
-          )}
+          {/* Continue CTA — opens intake modal, mirrors Continuum pattern */}
+          <div className="mt-6 flex flex-col items-center">
+            <button
+              type="button"
+              onClick={handleContinueToIntake}
+              disabled={!hasAnySelection}
+              className="inline-flex items-center justify-center font-sans font-semibold rounded-full px-7 py-3.5 sm:px-8 sm:py-4 bg-gold text-navy hover:bg-[#E6C35A] transition-colors duration-200 shadow-[0_8px_24px_-10px_rgba(212,175,55,0.55)] disabled:opacity-50 disabled:cursor-not-allowed"
+              style={{ fontSize: "clamp(15px, 1.4vw, 16.5px)", letterSpacing: "0.02em" }}
+              aria-label="Continue to enter birth data"
+            >
+              Continue → Enter Birth Data
+            </button>
+            <p
+              className="mt-3 font-sans text-[12.5px] sm:text-[13px] text-[#6B6B6B] text-center"
+              style={{ letterSpacing: "0.02em" }}
+            >
+              {hasAnySelection
+                ? "Next: enter your birth data, then checkout."
+                : "Pick at least one report to continue."}
+            </p>
+          </div>
         </div>
 
         {/* CONTINUUM teaser — separate timing product, below chapters */}
