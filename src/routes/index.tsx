@@ -501,17 +501,17 @@ function LandingPage() {
         </DialogContent>
       </Dialog>
 
-      {/* TESTIMONIALS — paper section */}
-      <section className="flex-1">
-        <div className="max-w-[480px] sm:max-w-[640px] md:max-w-[760px] mx-auto px-4 sm:px-6 pt-8 sm:pt-10 pb-2 sm:pb-3">
-          <TestimonialsBlock />
-        </div>
-      </section>
-
       {/* FAQ — paper section */}
       <section className="flex-1" id="about">
         <div className="max-w-[480px] sm:max-w-[560px] md:max-w-[640px] mx-auto px-4 sm:px-6 pt-6 sm:pt-8 pb-6 sm:pb-8">
           <FaqBlock />
+        </div>
+      </section>
+
+      {/* TESTIMONIALS — paper section, below FAQ */}
+      <section className="flex-1">
+        <div className="max-w-[480px] sm:max-w-[640px] md:max-w-[760px] mx-auto px-4 sm:px-6 pt-4 sm:pt-6 pb-8 sm:pb-10">
+          <TestimonialsBlock />
         </div>
       </section>
 
