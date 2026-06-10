@@ -37,8 +37,8 @@ describe("buildPlaceGeoContext", () => {
     const ctx = await buildPlaceGeoContext("k", PARIS, fetchers as any);
     expect(ctx.usable).toBe(true);
     expect(fetchers.cityCheck).toHaveBeenCalledTimes(1);
-    // Lisbon fixture country=PT -> region exists -> all 6 passes run
-    expect(fetchers.recommendations).toHaveBeenCalledTimes(6);
+    // Lisbon fixture country=PT -> region exists -> all 8 passes run (every focus regional+global)
+    expect(fetchers.recommendations).toHaveBeenCalledTimes(8);
     const a = ctx.allowedProofAnchorCandidates.join(" | ");
     expect(a).toMatch(/Lisbon, PT — Jupiter MC \(10H\)/);
     expect(a).toMatch(/Oviedo, ES — Jupiter MC line, ~\d+ km/);

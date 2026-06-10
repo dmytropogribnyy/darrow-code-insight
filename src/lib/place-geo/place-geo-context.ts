@@ -34,13 +34,19 @@ type Fetchers = {
   recommendations: typeof fetchAcgRecommendations;
 };
 
+// Every focus gets BOTH a reachable regional pass and a global pass — matches on other
+// continents must surface for every topic, not only career/home. Global passes use a lower
+// population floor so island cities (Funchal, Reykjavík, Honolulu, Palma…) clear the filter.
+const GLOBAL_MIN_POPULATION = 100_000;
 const CALL_PLAN: Array<{ focus: AcgFocus; scope: "regional" | "global"; limit: number }> = [
   { focus: "career", scope: "regional", limit: 5 },
   { focus: "career", scope: "global", limit: 5 },
   { focus: "romance", scope: "regional", limit: 5 },
+  { focus: "romance", scope: "global", limit: 4 },
   { focus: "home", scope: "regional", limit: 5 },
   { focus: "home", scope: "global", limit: 5 },
   { focus: "health", scope: "regional", limit: 3 },
+  { focus: "health", scope: "global", limit: 3 },
 ];
 
 function cap(s: string): string {
@@ -103,6 +109,7 @@ export async function buildPlaceGeoContext(
         countryScope: p.scope === "regional" ? "selected_countries" : "all",
         ...(p.scope === "regional" ? { countries: region! } : {}),
         limit: p.limit,
+        ...(p.scope === "global" ? { minPopulation: GLOBAL_MIN_POPULATION } : {}),
       }),
     ),
   );
