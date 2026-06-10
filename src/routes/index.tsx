@@ -5,6 +5,7 @@ import { SiteFooter } from "@/components/SiteFooter";
 import { IntakeForm } from "@/components/IntakeForm";
 import { ProductSelector } from "@/components/ProductSelector";
 import { FaqBlock } from "@/components/FaqBlock";
+import { TestimonialsBlock } from "@/components/TestimonialsBlock";
 import { ContinuumTeaser } from "@/components/ContinuumTeaser";
 import {
   Dialog,
