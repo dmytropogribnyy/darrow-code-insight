@@ -53,7 +53,7 @@ function GeneratingPage() {
           setDetail("Your private link will also arrive by email when ready.");
         }
         if (res.generation_status === "processing" || res.job_status === "processing") {
-          setStatus("Synthesising your patterns…");
+          setStatus("Synthesizing your patterns…");
           setDetail("Multi-chapter selections can take 10–20 minutes — your link will arrive by email.");
         }
         if (res.job_recovery_pending) {
