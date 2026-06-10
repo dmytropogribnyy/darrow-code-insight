@@ -194,11 +194,11 @@ export function buildDefaultContinuumHooks(sb: any): ContinuumHooks {
       const { reportReadyEmail, sendEmail } = await import("@/lib/email/resend.server");
       const { CONTINUUM_PRODUCTS } = await import("./continuum-config");
       const product = ctxRef.type ? CONTINUUM_PRODUCTS[ctxRef.type] : null;
-      const label = product ? `CONTINUUM · ${product.label}` : "CONTINUUM";
+      const label = product ? product.label : "CONTINUUM";
       const { subject, html } = reportReadyEmail({
         first_name: ctxRef.first_name ?? null,
         download_url: `${appBaseUrl}/download/${result.download_token}`,
-        result_url: `${appBaseUrl}/result/${result.download_token}`,
+        result_url: `${appBaseUrl}/#product-selector`,
         report_label: label,
       });
       await sendEmail({ to: ctxRef.email, subject, html });

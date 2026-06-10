@@ -23,7 +23,7 @@ const CLOSING = COVER.replace(
   "page-break-after:always;break-after:page;",
   "page-break-before:always;break-before:page;page-break-after:auto;break-after:auto;",
 );
-const BODY_PAGE = `width:210mm;min-height:297mm;padding:24mm 26mm;background:#FAF7F2;color:#151922;box-sizing:border-box;page-break-before:always;break-before:page;`;
+const BODY_PAGE = `width:210mm;min-height:297mm;padding:24mm 26mm 32mm;background:#FAF7F2;color:#151922;box-sizing:border-box;page-break-before:always;break-before:page;`;
 const GOLD_MARK = `<div style="width:34pt;height:34pt;margin:0 auto 24pt;transform:rotate(45deg);background:#D4AF37;-webkit-print-color-adjust:exact;print-color-adjust:exact;"></div>`;
 const BRAND = `font-family:Arial,Helvetica,sans-serif;color:#D4AF37;font-size:11pt;letter-spacing:6pt;text-transform:uppercase;`;
 const H2 = `font-family:Georgia,'Times New Roman',serif;color:#4A402D;font-size:20pt;font-weight:400;margin:0 0 12pt;`;
