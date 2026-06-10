@@ -15,36 +15,36 @@ const TESTIMONIALS: Testimonial[] = [
   {
     quote:
       "I've read horoscopes my whole life. This is the first one that actually sounded like it knew me — not a generic sun-sign blurb. The CORE report felt like a private letter.",
-    name: "Hannah Whitaker",
-    location: "Brooklyn, NY",
+    name: "Hannah",
+    location: "United States",
     context: "CORE Report",
   },
   {
     quote:
       "Bought CORE Complete on a whim before a big career pivot. The MONEY and YEAR chapters were uncomfortably accurate. I keep going back to it.",
-    name: "Marcus Bell",
-    location: "Austin, TX",
+    name: "Marcus",
+    location: "Great Britain",
     context: "CORE Complete",
   },
   {
     quote:
       "The LOVE chapter put words to a pattern I've been repeating for ten years. Worth way more than the price. Beautifully written, too — not woo-woo at all.",
-    name: "Sienna Park",
-    location: "Los Angeles, CA",
+    name: "Sienna",
+    location: "France",
     context: "CORE + LOVE",
   },
   {
     quote:
       "I added the 30-day CONTINUUM brief and used the daily protocol all month. Calm, specific, no fluff. It reads like a thoughtful coach, not an app.",
-    name: "Daniel Rosales",
-    location: "Chicago, IL",
+    name: "Daniel",
+    location: "Germany",
     context: "CONTINUUM · 30 Days",
   },
   {
     quote:
       "Premium feel from the first page. Clean PDF, real depth, no upsells inside. Gifted CORE Complete to two friends — both said the same thing: this is different.",
-    name: "Avery Lindholm",
-    location: "Seattle, WA",
+    name: "Avery",
+    location: "United States",
     context: "CORE Complete",
   },
 ];
