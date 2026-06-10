@@ -87,17 +87,31 @@ function renderSection(title: string, sec: AddonSection): string {
 
 // Warm dark closing/integration page (sample DNA: a calm integration note, not a sell).
 function renderClosing(sec: AddonSection): string {
-  const body = escape(sec.prose || sec.scenario || sec.opening_line || "");
+  const raw = String(sec.prose || sec.scenario || sec.opening_line || "");
   const insight = sec.key_insight ? escape(sec.key_insight) : "";
+  const sentences = raw
+    .split(/\n{2,}|(?<=\.)\s+(?=[A-Z])/)
+    .map((p) => p.trim())
+    .filter(Boolean);
+  const grouped: string[] = [];
+  for (let i = 0; i < sentences.length; i += 3) {
+    grouped.push(sentences.slice(i, i + 3).join(" "));
+  }
+  const bodyHtml = (grouped.length ? grouped : [raw])
+    .map(
+      (p) =>
+        `<p style="font-family:Georgia,'Times New Roman',serif;font-size:13pt;color:#F1ECE0;margin:0 0 14pt;line-height:1.75;text-align:left;">${escape(p)}</p>`,
+    )
+    .join("");
   return (
-    `<section style="${CLOSING}">${GOLD_MARK}` +
-    `<div style="${BRAND}margin-bottom:24pt;">Darrow Code</div>` +
-    `<h2 style="font-family:Georgia,'Times New Roman',serif;color:#D4AF37;font-size:22pt;font-weight:400;margin:0 0 16pt;">Integration</h2>` +
-    `<p style="font-family:Georgia,'Times New Roman',serif;font-style:italic;color:#E5E7EB;font-size:14pt;margin:0 auto;max-width:120mm;line-height:1.6;">${body}</p>` +
+    `<section style="${CLOSING}"><div style="max-width:150mm;width:100%;margin:0 auto;text-align:left;">${GOLD_MARK}` +
+    `<div style="${BRAND}margin-bottom:20pt;text-align:center;">Darrow Code</div>` +
+    `<h2 style="font-family:Georgia,'Times New Roman',serif;color:#D4AF37;font-size:22pt;font-weight:400;margin:0 0 18pt;text-align:center;">Integration</h2>` +
+    bodyHtml +
     (insight
-      ? `<p style="font-family:Georgia,'Times New Roman',serif;color:#F6F4EF;font-size:13pt;margin:18pt auto 0;max-width:120mm;line-height:1.55;">${insight}</p>`
+      ? `<p style="font-family:Georgia,'Times New Roman',serif;color:#F6F4EF;font-size:13pt;font-weight:600;margin:18pt 0 0;line-height:1.6;text-align:left;border-top:0.5pt solid #3a4256;padding-top:14pt;">${insight}</p>`
       : "") +
-    `</section>`
+    `</div></section>`
   );
 }
 
