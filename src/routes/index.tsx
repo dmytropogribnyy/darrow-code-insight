@@ -55,9 +55,18 @@ function LandingPage() {
   const [selected, setSelected] = useState<Set<Selectable>>(new Set(["CORE"]));
   const [checkoutOpen, setCheckoutOpen] = useState(false);
   const [resetSignal, setResetSignal] = useState(0);
+  const [intakeOpen, setIntakeOpen] = useState(false);
   const [continuumOpen, setContinuumOpen] = useState<ContinuumType | null>(null);
   const [continuumResetSignal, setContinuumResetSignal] = useState(0);
   const selectorRef = useRef<HTMLDivElement>(null);
+
+  const hasAnySelection = selected.size > 0;
+  const chaptersList = Array.from(selected).filter((c): c is ModuleCode => c !== "CORE");
+  const handleContinueToIntake = () => {
+    setResetSignal((n) => n + 1);
+    setCheckoutOpen(false);
+    setIntakeOpen(true);
+  };
 
   const toggle = (code: Selectable) =>
     setSelected((s) => {
@@ -71,6 +80,7 @@ function LandingPage() {
 
   const handleChangeSelection = () => {
     setCheckoutOpen(false);
+    setIntakeOpen(false);
     setResetSignal((n) => n + 1);
     requestAnimationFrame(() => {
       selectorRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -332,18 +342,27 @@ function LandingPage() {
             onClear={clear}
             locked={checkoutOpen}
           />
-          {checkoutOpen && (
-            <div className="mt-3 flex justify-center">
-              <button
-                type="button"
-                onClick={handleChangeSelection}
-                className="font-sans font-medium text-[14px] min-h-[44px] px-3 inline-flex items-center transition-colors border-b border-transparent hover:border-current"
-                style={{ color: "#D4AF37" }}
-              >
-                + Add more to your order
-              </button>
-            </div>
-          )}
+          {/* Continue CTA — opens intake modal, mirrors Continuum pattern */}
+          <div className="mt-6 flex flex-col items-center">
+            <button
+              type="button"
+              onClick={handleContinueToIntake}
+              disabled={!hasAnySelection}
+              className="inline-flex items-center justify-center font-sans font-semibold rounded-full px-7 py-3.5 sm:px-8 sm:py-4 bg-gold text-navy hover:bg-[#E6C35A] transition-colors duration-200 shadow-[0_8px_24px_-10px_rgba(212,175,55,0.55)] disabled:opacity-50 disabled:cursor-not-allowed"
+              style={{ fontSize: "clamp(15px, 1.4vw, 16.5px)", letterSpacing: "0.02em" }}
+              aria-label="Continue to enter birth data"
+            >
+              Continue → Enter Birth Data
+            </button>
+            <p
+              className="mt-3 font-sans text-[12.5px] sm:text-[13px] text-[#6B6B6B] text-center"
+              style={{ letterSpacing: "0.02em" }}
+            >
+              {hasAnySelection
+                ? "Next: enter your birth data, then checkout."
+                : "Pick at least one report to continue."}
+            </p>
+          </div>
         </div>
 
         {/* CONTINUUM teaser — separate timing product, below chapters */}
@@ -391,36 +410,53 @@ function LandingPage() {
         </DialogContent>
       </Dialog>
 
-      {/* INTAKE — paper section */}
-      <section className="flex-1">
-        <div className="max-w-[480px] mx-auto px-4 sm:px-6 pt-6 sm:pt-8 pb-4 sm:pb-5">
-          <p
-            className="text-center font-medium text-[14px] sm:text-[15px] mb-5 leading-[1.55]"
-            style={{ color: "#4A402D" }}
-          >
-            Enter your birth data — checkout comes next, then your private astrology PDF.
-          </p>
-          <div className="relative">
-            {/* Subtle gold accent line above card */}
-            <div
-              aria-hidden="true"
-              className="absolute -top-px left-6 right-6 h-px"
-              style={{
-                background:
-                  "linear-gradient(90deg, transparent 0%, rgba(212,175,55,0.5) 50%, transparent 100%)",
-              }}
+      {/* INTAKE modal — opens after the user picks CORE / chapters */}
+      <Dialog
+        open={intakeOpen}
+        onOpenChange={(o) => {
+          if (!o) {
+            setIntakeOpen(false);
+            setCheckoutOpen(false);
+          }
+        }}
+      >
+        <DialogContent className="max-w-[520px] max-h-[90vh] overflow-y-auto bg-paper">
+          <DialogHeader>
+            <DialogTitle className="font-serif text-[22px]" style={{ color: "#1F1A10" }}>
+              {selected.has("CORE") && chaptersList.length === 6
+                ? "CORE Complete"
+                : selected.has("CORE") && chaptersList.length === 0
+                  ? "CORE Report"
+                  : selected.has("CORE")
+                    ? `CORE + ${chaptersList.length} chapter${chaptersList.length > 1 ? "s" : ""}`
+                    : `${chaptersList.length} chapter${chaptersList.length > 1 ? "s" : ""}`}
+            </DialogTitle>
+            <DialogDescription style={{ color: "#4A402D" }}>
+              Enter your birth data — checkout comes next, then your private astrology PDF.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="intake-card">
+            <IntakeForm
+              includesCore={selected.has("CORE")}
+              chapters={chaptersList}
+              onCheckoutOpen={() => setCheckoutOpen(true)}
+              resetSignal={resetSignal}
             />
-            <div className="intake-card">
-              <IntakeForm
-                includesCore={selected.has("CORE")}
-                chapters={Array.from(selected).filter((c): c is ModuleCode => c !== "CORE")}
-                onCheckoutOpen={() => setCheckoutOpen(true)}
-                resetSignal={resetSignal}
-              />
-            </div>
           </div>
-        </div>
-      </section>
+          {checkoutOpen && (
+            <div className="mt-3 flex justify-center">
+              <button
+                type="button"
+                onClick={handleChangeSelection}
+                className="font-sans font-medium text-[14px] min-h-[44px] px-3 inline-flex items-center transition-colors border-b border-transparent hover:border-current"
+                style={{ color: "#D4AF37" }}
+              >
+                + Change selection
+              </button>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
 
       {/* FAQ — paper section */}
       <section className="flex-1" id="about">
