@@ -80,6 +80,7 @@ function LandingPage() {
 
   const handleChangeSelection = () => {
     setCheckoutOpen(false);
+    setIntakeOpen(false);
     setResetSignal((n) => n + 1);
     requestAnimationFrame(() => {
       selectorRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
