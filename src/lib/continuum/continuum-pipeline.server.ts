@@ -55,7 +55,12 @@ export async function runContinuumGeneration(
 // ── Real default hooks (Supabase + AI + PDF). Runs only when dispatched (flag-ON, paid). ──
 export function buildDefaultContinuumHooks(sb: any): ContinuumHooks {
   const MODEL = "claude-sonnet-4-6";
-  const ctxRef: { customer_id?: string; intake_id?: string; email?: string | null } = {};
+  const ctxRef: {
+    customer_id?: string;
+    intake_id?: string;
+    email?: string | null;
+    first_name?: string | null;
+  } = {};
 
   return {
     loadContext: async (order_id) => {
