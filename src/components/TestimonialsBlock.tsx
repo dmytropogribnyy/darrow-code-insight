@@ -69,8 +69,7 @@ function StarRow() {
 }
 
 function Initials({ name }: { name: string }) {
-  const parts = name.split(" ").filter(Boolean);
-  const initials = ((parts[0]?.[0] ?? "") + (parts[1]?.[0] ?? "")).toUpperCase();
+  const initials = (name.trim()[0] ?? "").toUpperCase();
   return (
     <div
       className="grid place-items-center rounded-full shrink-0 font-serif font-semibold"
