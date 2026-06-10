@@ -266,7 +266,7 @@ export function ProductSelector({
             letterSpacing: "0.2em",
           }}
         >
-          — or pick individual chapters —
+          — or pick also individual chapters —
         </p>
         <p
           className="text-center font-sans font-normal mb-4"
@@ -276,7 +276,8 @@ export function ProductSelector({
             fontSize: "clamp(12.5px, 1.15vw, 13.5px)",
           }}
         >
-          Pick any chapter on its own, or combine several
+          Pick any chapter on its own, or combine several and save more
+
         </p>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6">
