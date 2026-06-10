@@ -230,9 +230,9 @@ function LandingPage() {
                 className="font-semibold text-[#D4AF37] border-b border-transparent hover:border-[#D4AF37]/70 hover:text-[#E6C35A] transition-colors duration-150 pb-px cursor-pointer"
                 aria-label="Jump to CORE Report"
               >
-                CORE
+                CORE — $4.99
               </button>
-              . Add the chapters you want.
+              . Add chapters ($2.99 each).
               <br />
               Or unlock{" "}
               <button
@@ -241,11 +241,11 @@ function LandingPage() {
                 className="font-semibold text-[#D4AF37] border-b border-transparent hover:border-[#D4AF37]/70 hover:text-[#E6C35A] transition-colors duration-150 pb-px cursor-pointer"
                 aria-label="Jump to CORE Complete bundle"
               >
-                CORE Complete
+                CORE Complete — $14.99
               </button>
               .
               <br />
-              Need timing? Add a{" "}
+              Need timing? Add{" "}
               <button
                 type="button"
                 onClick={() => {
@@ -257,7 +257,7 @@ function LandingPage() {
               >
                 Continuum
               </button>{" "}
-              7-day or 30-day AI forecast.
+              ($1.99 / $3.99).
             </p>
             <div className="mt-4 flex flex-wrap justify-center gap-x-3 gap-y-1.5">
               {["LOVE", "MONEY", "BODY", "YEAR", "STYLE", "PLACE"].map((m, i) => (
@@ -274,26 +274,7 @@ function LandingPage() {
                 </span>
               ))}
             </div>
-            {/* Price line — all tiers visible, wraps cleanly on mobile */}
-            <ul
-              className="mt-5 sm:mt-6 flex flex-wrap items-center justify-center gap-x-3 gap-y-1.5 text-center font-sans text-light-grey leading-relaxed list-none p-0"
-              style={{ fontSize: "clamp(14px, 1.25vw, 15.5px)" }}
-            >
-              <li className="whitespace-nowrap">
-                <span className="text-gold font-semibold">CORE</span> <span>$4.99</span>
-              </li>
-              <li aria-hidden="true" className="text-[#6B6B6B]">
-                ·
-              </li>
-              <li className="whitespace-nowrap">Chapters $2.99 each</li>
-              <li aria-hidden="true" className="text-[#6B6B6B]">
-                ·
-              </li>
-              <li className="whitespace-nowrap">
-                <span className="text-gold font-semibold">CORE Complete</span>{" "}
-                <span className="text-gold font-semibold">$14.99</span>
-              </li>
-            </ul>
+
 
             {/* Primary hero CTA — scrolls to product selector / intake */}
             <div className="mt-7 sm:mt-8 flex flex-col items-center">
