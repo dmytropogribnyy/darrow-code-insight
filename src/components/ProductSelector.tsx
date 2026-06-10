@@ -352,101 +352,113 @@ export function ProductSelector({
       {/* Order summary — always full opacity, even when locked; clickable when a selection exists */}
       {(() => {
         const clickable = !!onContinue && !locked && hasAnySelection;
-        const commonClass =
+        const baseClass =
           "block w-full text-left rounded-[14px] px-6 py-5 mb-1 border-2 relative overflow-hidden transition-transform";
-        const commonStyle = {
+        const clickableClass =
+          " cursor-pointer hover:-translate-y-[1px] hover:shadow-[0_14px_32px_-14px_rgba(31,26,16,0.55)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#D4AF37]/70";
+        const style = {
           borderColor: "rgba(212,175,55,0.55)",
           background:
             "linear-gradient(180deg, rgba(255,255,255,0.96) 0%, rgba(252,247,232,0.96) 100%)",
           boxShadow:
             "0 10px 28px -14px rgba(31,26,16,0.45), inset 0 1px 0 rgba(255,255,255,0.6)",
-        } as const;
-        const InnerTag = clickable ? "button" : "div";
-        return (
-          <InnerTag
-            {...(clickable
-              ? {
-                  type: "button" as const,
-                  onClick: onContinue,
-                  "aria-label": "Continue to enter your birth data",
-                  className: `${commonClass} cursor-pointer hover:-translate-y-[1px] hover:shadow-[0_14px_32px_-14px_rgba(31,26,16,0.55)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#D4AF37]/70`,
-                }
-              : { className: commonClass })}
-            style={commonStyle}
-          >
-
-        {quote && quote.saved_cents > 0 && (
-          <div className="mb-2.5 flex">
-            <span
-              className="inline-flex items-center rounded-full px-2.5 py-1 font-sans font-bold uppercase"
-              style={{
-                fontSize: "10.5px",
-                letterSpacing: "0.1em",
-                color: "#1F1A10",
-                background: "linear-gradient(180deg, #F2D27A 0%, #D4AF37 100%)",
-                boxShadow: "0 2px 6px -2px rgba(212,175,55,0.6)",
-              }}
-            >
-              Best value
-            </span>
-          </div>
-        )}
-        <div
-          className="flex items-baseline justify-between gap-4"
-          style={{ fontSize: "clamp(15px, 1.45vw, 17px)" }}
-        >
-          <span
-            className="font-serif font-semibold leading-tight min-w-0 break-words"
-            style={{ color: "#1F1A10", fontSize: "clamp(17px, 1.7vw, 20px)" }}
-          >
-            {quote ? quote.label : "Nothing selected"}
-          </span>
-          <span
-            className="font-mono font-bold whitespace-nowrap shrink-0"
-            style={{ color: "#0A0F1E", fontSize: "clamp(22px, 2.4vw, 28px)" }}
-          >
-            {quote ? formatPrice(quote.cents) : "—"}
-          </span>
-        </div>
-        {quote && quote.saved_cents > 0 && (
+        };
+        const inner = (
           <>
-            <div
-              aria-hidden="true"
-              className="my-3 h-px w-full"
-              style={{
-                background:
-                  "linear-gradient(90deg, transparent 0%, rgba(212,175,55,0.45) 50%, transparent 100%)",
-              }}
-            />
-            <div
-              className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2"
-              style={{ fontSize: "clamp(13px, 1.2vw, 14px)" }}
-            >
-              <span style={{ color: "#5C5340" }} className="font-sans min-w-0">
-                If bought separately{" "}
-                <span className="line-through ml-0.5 whitespace-nowrap" style={{ color: "#8A7E5E" }}>
-                  {formatPrice(quote.separate_cents)}
+            {quote && quote.saved_cents > 0 && (
+              <div className="mb-2.5 flex">
+                <span
+                  className="inline-flex items-center rounded-full px-2.5 py-1 font-sans font-bold uppercase"
+                  style={{
+                    fontSize: "10.5px",
+                    letterSpacing: "0.1em",
+                    color: "#1F1A10",
+                    background: "linear-gradient(180deg, #F2D27A 0%, #D4AF37 100%)",
+                    boxShadow: "0 2px 6px -2px rgba(212,175,55,0.6)",
+                  }}
+                >
+                  Best value
                 </span>
+              </div>
+            )}
+            <div
+              className="flex items-baseline justify-between gap-4"
+              style={{ fontSize: "clamp(15px, 1.45vw, 17px)" }}
+            >
+              <span
+                className="font-serif font-semibold leading-tight min-w-0 break-words"
+                style={{ color: "#1F1A10", fontSize: "clamp(17px, 1.7vw, 20px)" }}
+              >
+                {quote ? quote.label : "Nothing selected"}
               </span>
               <span
-                className="font-sans font-bold inline-flex items-center rounded-full px-3 py-1 whitespace-nowrap shrink-0"
-                style={{
-                  color: "#1F1A10",
-                  background: "rgba(212,175,55,0.18)",
-                  border: "1px solid rgba(212,175,55,0.45)",
-                  fontSize: "clamp(12.5px, 1.15vw, 13.5px)",
-                  letterSpacing: "0.01em",
-                }}
+                className="font-mono font-bold whitespace-nowrap shrink-0"
+                style={{ color: "#0A0F1E", fontSize: "clamp(22px, 2.4vw, 28px)" }}
               >
-                You save {formatPrice(quote.saved_cents)}
+                {quote ? formatPrice(quote.cents) : "—"}
               </span>
             </div>
+            {quote && quote.saved_cents > 0 && (
+              <>
+                <div
+                  aria-hidden="true"
+                  className="my-3 h-px w-full"
+                  style={{
+                    background:
+                      "linear-gradient(90deg, transparent 0%, rgba(212,175,55,0.45) 50%, transparent 100%)",
+                  }}
+                />
+                <div
+                  className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2"
+                  style={{ fontSize: "clamp(13px, 1.2vw, 14px)" }}
+                >
+                  <span style={{ color: "#5C5340" }} className="font-sans min-w-0">
+                    If bought separately{" "}
+                    <span
+                      className="line-through ml-0.5 whitespace-nowrap"
+                      style={{ color: "#8A7E5E" }}
+                    >
+                      {formatPrice(quote.separate_cents)}
+                    </span>
+                  </span>
+                  <span
+                    className="font-sans font-bold inline-flex items-center rounded-full px-3 py-1 whitespace-nowrap shrink-0"
+                    style={{
+                      color: "#1F1A10",
+                      background: "rgba(212,175,55,0.18)",
+                      border: "1px solid rgba(212,175,55,0.45)",
+                      fontSize: "clamp(12.5px, 1.15vw, 13.5px)",
+                      letterSpacing: "0.01em",
+                    }}
+                  >
+                    You save {formatPrice(quote.saved_cents)}
+                  </span>
+                </div>
+              </>
+            )}
           </>
-        )}
-          </InnerTag>
+        );
+        if (clickable) {
+          return (
+            <button
+              type="button"
+              onClick={onContinue}
+              aria-label="Continue to enter your birth data"
+              className={baseClass + clickableClass}
+              style={style}
+            >
+              {inner}
+            </button>
+          );
+        }
+        return (
+          <div className={baseClass} style={style}>
+            {inner}
+          </div>
         );
       })()}
     </div>
+
 
   );
 }
