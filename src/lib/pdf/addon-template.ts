@@ -119,11 +119,14 @@ export function renderAddonModuleHtmlSafe(
   module: ModuleCode,
   payload: AddonModulePayload,
   clientName = "you",
+  // PLACE-GEO v1: variant renderers (e.g. geo PLACE) pass their own section keys/disclaimer/
+  // title; default behaviour for all existing modules is unchanged.
+  opts: { sectionKeys?: readonly string[]; disclaimer?: string; title?: string } = {},
 ): string {
-  const title = MODULE_TITLE[module];
+  const title = opts.title ?? MODULE_TITLE[module];
   const sections = payload.sections ?? {};
-  const keys = ADDON_SECTION_KEYS[module];
-  const disclaimer = ADDON_DISCLAIMER[module];
+  const keys = opts.sectionKeys ?? ADDON_SECTION_KEYS[module];
+  const disclaimer = opts.disclaimer ?? ADDON_DISCLAIMER[module];
 
   const out: string[] = [];
 
