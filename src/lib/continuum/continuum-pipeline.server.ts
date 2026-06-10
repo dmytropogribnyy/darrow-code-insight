@@ -84,6 +84,7 @@ export function buildDefaultContinuumHooks(sb: any): ContinuumHooks {
       ctxRef.customer_id = order.customer_id;
       ctxRef.intake_id = order.intake_id;
       ctxRef.email = customer?.email ?? null;
+      ctxRef.first_name = customer?.first_name ?? null;
 
       const { getAstroProvider } = await import("@/lib/astro/provider");
       const provider = await getAstroProvider();
