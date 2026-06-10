@@ -515,9 +515,18 @@ function renderV4Protocols(protocols: Array<{ title: string; body: string }>, pr
 
 function v3Section(title: string, field: unknown): string {
   const prose = getCoreSectionProse(field);
-  const { html, proof } = renderProseBlocks(prose);
+  const { html, proof: proofFromProse } = renderProseBlocks(prose);
   const protocols = getCoreSectionProtocols(field);
   const warningsList = getCoreSectionWarnings(field);
+
+  // CORE-HUMAN-VOICE v3.2: explicit per-section proof_tags take priority (machinery belongs in
+  // the proof line, not prose); the trailing-bracket proof extracted from prose stays as the
+  // back-compat fallback for older payloads. Mirrors v4StandardSection. Routing below unchanged.
+  const explicitProofTags: string[] =
+    field && typeof field === "object" && Array.isArray((field as any).proof_tags)
+      ? ((field as any).proof_tags as any[]).filter(Boolean)
+      : [];
+  const proof = explicitProofTags.length > 0 ? explicitProofTags.join(" · ") : proofFromProse;
 
   const firstParaMatch = html.match(/^<p [^>]*>[\s\S]*?<\/p>/);
   const firstPara = firstParaMatch ? firstParaMatch[0] : "";

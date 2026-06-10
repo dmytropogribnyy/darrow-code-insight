@@ -65,6 +65,10 @@ const SectionObjectSchema = z
     prose: z.string(),
     protocols: z.array(ProtocolObject).optional(),
     warning_signals: z.array(z.string()).optional(),
+    // CORE-HUMAN-VOICE v3.2 (additive, schema_version stays "core_v3"): explicit per-section
+    // technical proof anchors so chart machinery lives HERE, not in body prose. Optional →
+    // old prose-only / trailing-bracket reports still validate.
+    proof_tags: z.array(z.string().min(1)).max(5).optional(),
   })
   .passthrough();
 
