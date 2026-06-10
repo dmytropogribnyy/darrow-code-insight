@@ -5,6 +5,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { SiteFooter } from "@/components/SiteFooter";
+import { ContinuumTeaser } from "@/components/ContinuumTeaser";
 import { SiteHeader } from "@/components/SiteHeader";
 import { StripeEmbeddedCheckoutBox } from "@/components/StripeEmbeddedCheckout";
 import { getReportContext, createUpsellCheckout } from "@/utils/checkout.functions";
@@ -593,6 +594,24 @@ function ResultPage() {
             )}
           </div>
         )}
+
+        {/* CONTINUUM — separate timing product */}
+        <div className="mt-14 border-t border-border pt-10">
+          <h2 className="font-serif text-center text-warm-brown" style={{ fontSize: 24 }}>
+            Add a timing brief
+          </h2>
+          <p className="text-center text-[13.5px] mt-2 mb-6" style={{ color: "#2E2519" }}>
+            CONTINUUM is a separate AI timing brief — what to do <em>now</em>, not who you are.
+          </p>
+          <ContinuumTeaser
+            onSelect7d={() => {
+              window.location.href = "/#continuum";
+            }}
+            onSelect30d={() => {
+              window.location.href = "/#continuum";
+            }}
+          />
+        </div>
 
         <div className="mt-12 text-center">
           <Link to="/" className="text-[12px] text-neutral-grey hover:text-charcoal">
