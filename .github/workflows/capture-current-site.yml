@@ -1,0 +1,99 @@
+name: Capture current public product surfaces
+
+on:
+  push:
+    branches:
+      - fix/replace-legacy-product-visuals
+    paths:
+      - .github/workflows/capture-current-site.yml
+
+permissions:
+  contents: write
+
+jobs:
+  capture:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out capture branch
+        uses: actions/checkout@v4
+        with:
+          ref: fix/replace-legacy-product-visuals
+
+      - name: Install Playwright
+        run: |
+          npm install --no-save playwright@1.56.1
+          npx playwright install --with-deps chromium
+
+      - name: Capture current live product surfaces
+        run: |
+          mkdir -p assets/product
+          node <<'NODE'
+          const { chromium } = require('playwright');
+
+          (async () => {
+            const browser = await chromium.launch({ headless: true });
+            const page = await browser.newPage({
+              viewport: { width: 1440, height: 1000 },
+              deviceScaleFactor: 1,
+            });
+
+            await page.emulateMedia({ reducedMotion: 'reduce' });
+            await page.goto('https://darrowcode.com/', {
+              waitUntil: 'networkidle',
+              timeout: 90000,
+            });
+            await page.addStyleTag({
+              content: `
+                *, *::before, *::after {
+                  animation-duration: 0s !important;
+                  animation-delay: 0s !important;
+                  transition-duration: 0s !important;
+                  caret-color: transparent !important;
+                }
+              `,
+            });
+            await page.waitForTimeout(1500);
+
+            await page.screenshot({
+              path: 'assets/product/current-home-hero.png',
+              clip: { x: 0, y: 0, width: 1440, height: 1000 },
+            });
+
+            const selector = page.locator('#product-selector').first();
+            await selector.waitFor({ state: 'visible', timeout: 30000 });
+            const box = await selector.boundingBox();
+            if (!box) throw new Error('Product selector bounding box is unavailable');
+
+            const documentHeight = await page.evaluate(() => document.documentElement.scrollHeight);
+            const clipY = Math.max(0, Math.floor(box.y - 80));
+            const clipHeight = Math.min(1120, documentHeight - clipY);
+            await page.screenshot({
+              path: 'assets/product/current-product-selector.png',
+              clip: { x: 0, y: clipY, width: 1440, height: clipHeight },
+            });
+
+            await browser.close();
+          })().catch((error) => {
+            console.error(error);
+            process.exit(1);
+          });
+          NODE
+
+      - name: Verify image files
+        run: |
+          file assets/product/current-home-hero.png
+          file assets/product/current-product-selector.png
+          test -s assets/product/current-home-hero.png
+          test -s assets/product/current-product-selector.png
+
+      - name: Commit captured assets
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add assets/product/current-home-hero.png assets/product/current-product-selector.png
+          if git diff --cached --quiet; then
+            echo "No capture changes to commit."
+            exit 0
+          fi
+          git commit -m "assets: capture current live product surfaces"
+          git push origin HEAD:fix/replace-legacy-product-visuals
