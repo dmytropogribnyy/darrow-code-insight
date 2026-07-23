@@ -1,44 +1,69 @@
 # Current product surfaces
 
-The following visuals come from the current live Darrow Code product pages. They are referenced from the live product CDN rather than copied from unverified repository assets, so the public overview follows the current product identity instead of historical branding.
+This page reflects the current live Darrow Code homepage and product catalog verified on 23 July 2026. Historical UNVEIL and Full Destiny Codex materials are intentionally excluded.
 
-No customer records, birth details, account identifiers, payment information, internal URLs, or operational diagnostics are shown.
+The current product identity is defined by the live homepage, the CORE / CORE Complete report family, six focused chapters, Continuum timing reports, Almanac, and Tarot Mirror. No customer records, birth details, account identifiers, payment information, internal URLs, or operational diagnostics are shown here.
 
-## COSMIC CORE CODE: UNVEIL
+## Current homepage
 
-A guided entry product focused on foundational personal orientation and decision clarity.
+The homepage leads with the current Darrow Code navigation and the message **“Your zodiac sign is only the surface.”** It positions the service as private AI-assisted horoscope and Tarot readings delivered as personal PDF reports.
 
 <p align="center">
-  <a href="https://darrowcode.com/unveil">
-    <img src="https://images.squarespace-cdn.com/content/v1/6986775d46b036681430f364/dea77b33-306a-4532-9d68-ff5df764869f/Unveil%2B%281920%2Bx%2B1080%2B%D0%BF%D0%B8%D0%BA%D1%81.%29.png" alt="COSMIC CORE CODE UNVEIL product presentation" width="92%" />
-  </a>
+  <img src="https://darrowcode.com/__l5e/assets-v1/82be404a-f5cc-4a55-9bc5-353b3761656b/darrow-code-hero.webp" alt="Current Darrow Code homepage hero artwork" width="72%" />
 </p>
 
+## Birth-chart report family
+
+The first product block is **Choose Your Birth Chart Report**. Customers can start with CORE, select CORE Complete, or combine focused report chapters.
+
 <p align="center">
-  <img src="https://images.squarespace-cdn.com/content/v1/6986775d46b036681430f364/0fa874fe-fa57-412f-8e5f-bf2d9b86ada1/Cosmic%2BCode%2BUnveil%2B01.png" alt="UNVEIL report presentation preview" width="44%" />
-  <img src="https://images.squarespace-cdn.com/content/v1/6986775d46b036681430f364/7fec6b0a-901d-465f-88b0-a7de9038012b/Cosmic%2BCode%2BUnveil%2B02.png" alt="UNVEIL product content preview" width="44%" />
+  <img src="https://darrowcode.com/thumbnails/core.webp" alt="Current CORE report cover" width="26%" />
+  <img src="https://darrowcode.com/thumbnails/core-complete.webp" alt="Current CORE Complete report cover" width="26%" />
 </p>
 
-## FULL DESTINY CODEX
+Current report modules:
 
-A long-range orientation product focused on life direction, transitions, and timing context.
+- **CORE** — the foundation report
+- **CORE Complete** — CORE plus all six focused chapters
+- **LOVE** — relationship patterns
+- **MONEY** — work, money, and value patterns
+- **BODY** — stress and recovery rhythm
+- **YEAR** — personal timing and opportunity patterns
+- **STYLE** — aesthetic signature and presence
+- **PLACE** — environment and location patterns
+
+## Timing and standalone products
+
+### Continuum
+
+A separate 7-day or 30-day personal timing brief with pressure zones, green windows, and practical protocols.
 
 <p align="center">
-  <a href="https://darrowcode.com/full-destiny-codex">
-    <img src="https://images.squarespace-cdn.com/content/v1/6986775d46b036681430f364/c8d919d2-b13a-4a77-b5fb-a3597d6b6664/Full%2BCodex%2B%281920%2Bx%2B1080%2B%D0%BF%D0%B8%D0%BA%D1%81.%29.png" alt="Full Destiny Codex product presentation" width="92%" />
-  </a>
+  <img src="https://darrowcode.com/__l5e/assets-v1/a1b8fd3d-2647-4ab6-83f7-a8a82ab6a992/continuum-banner.webp" alt="Current Continuum timing report artwork" width="88%" />
 </p>
 
+### Almanac
+
+A personal auspicious-date report for selected events, locations, and timeframes.
+
 <p align="center">
-  <img src="https://images.squarespace-cdn.com/content/v1/6986775d46b036681430f364/63399909-da55-44ef-9433-e4851bb5a608/Full%2BDestiny%2BCodex%2B01.png" alt="Full Destiny Codex report presentation preview" width="44%" />
-  <img src="https://images.squarespace-cdn.com/content/v1/6986775d46b036681430f364/7653d606-731a-4d9c-b1d9-66e1f1291838/Full%2BDestiny%2BCodex%2B02.png" alt="Full Destiny Codex product content preview" width="44%" />
+  <img src="https://darrowcode.com/__l5e/assets-v1/69ef4e07-0efe-4f3c-a65a-31ebcb7f422a/almanac-banner.webp" alt="Current Almanac product artwork" width="88%" />
+</p>
+
+### Tarot Mirror
+
+A private three-card reflection generated for one clear question after checkout.
+
+<p align="center">
+  <img src="https://darrowcode.com/tarot/tarot-hero.webp" alt="Current Tarot Mirror product artwork" width="88%" />
 </p>
 
 ## What these surfaces demonstrate
 
-- A coherent customer-facing product identity rather than an engineering-only interface
-- Distinct product positioning for foundational and long-range report journeys
-- Digital multi-page PDF delivery presented as a finished paid product
-- A clear separation between public marketing surfaces and the private transactional implementation
+- A coherent current product identity rather than an engineering-only interface
+- A modular report catalog with foundation, add-on, timing, calendar, and Tarot journeys
+- Finished paid PDF products rather than raw AI chat output
+- Clear separation between public marketing surfaces and the private transactional implementation
+- Consistent visual language across report selection, checkout entry points, and delivery promises
 
-The live pages remain the source of truth for current product copy, pricing, and visual identity.
+The live homepage remains the source of truth for current copy, pricing, and visual identity. Repository screenshots and copied assets must be revalidated against it before publication.
