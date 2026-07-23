@@ -67,3 +67,48 @@ jobs:
 
           print("Markdown structure and internal links are valid.")
           PY
+
+      - name: Enforce public-repository boundaries
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+          import sys
+
+          root = Path.cwd()
+          failures = []
+          forbidden = {
+              "private repository suffix": re.compile(r"617bca75", re.I),
+              "private repository name": re.compile(r"darrow-code-insight-617bca75", re.I),
+              "local workspace path": re.compile(r"(?:[A-Z]:[\\/]|/home/|/Users/|/mnt/)", re.I),
+              "legacy product tagline": re.compile(r"Personal orientation for a better quality of life", re.I),
+              "OpenAI-style secret": re.compile(r"\bsk-(?:proj-)?[A-Za-z0-9_-]{20,}"),
+              "Stripe secret": re.compile(r"\b(?:sk|rk)_(?:live|test)_[A-Za-z0-9]{16,}"),
+              "JWT-shaped token": re.compile(r"\beyJ[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\b"),
+          }
+
+          allowed_suffixes = {
+              ".md", ".yml", ".yaml", ".json", ".ts", ".tsx", ".js", ".mjs", ".svg", ".txt", ".gitignore"
+          }
+
+          for path in sorted(p for p in root.rglob("*") if p.is_file() and ".git" not in p.parts):
+              if path.name.startswith(".env"):
+                  failures.append(f"{path}: environment file must not be committed")
+                  continue
+              if path.suffix.lower() not in allowed_suffixes and path.name != ".gitignore":
+                  continue
+              try:
+                  text = path.read_text(encoding="utf-8")
+              except UnicodeDecodeError:
+                  continue
+              for label, pattern in forbidden.items():
+                  if pattern.search(text):
+                      failures.append(f"{path}: contains {label}")
+
+          if failures:
+              print("\n".join(failures))
+              sys.exit(1)
+
+          print("Public repository boundary checks are clean.")
+          PY
