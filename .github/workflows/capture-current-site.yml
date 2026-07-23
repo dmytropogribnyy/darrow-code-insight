@@ -63,14 +63,10 @@ jobs:
           }
 
           async function scrollToProductSelector(page) {
-            const title = page.getByText('Choose Your Birth Chart Report', { exact: false }).first();
-            if (await title.count()) {
-              await title.scrollIntoViewIfNeeded().catch(() => {});
-              await page.evaluate(() => window.scrollBy(0, -80));
-            } else {
-              const fallbackY = await page.evaluate(() => Math.min(1250, Math.max(700, document.documentElement.scrollHeight * 0.2)));
-              await page.evaluate((y) => window.scrollTo(0, y), fallbackY);
-            }
+            const heading = page.getByText('Choose your personal astrology PDF', { exact: false }).first();
+            await heading.waitFor({ state: 'visible', timeout: 30000 });
+            await heading.scrollIntoViewIfNeeded();
+            await page.evaluate(() => window.scrollBy(0, -100));
             await pause(1200);
           }
 
@@ -119,9 +115,9 @@ jobs:
             await pause(2200);
             const maxScroll = await videoPage.evaluate(() => Math.max(0, Math.min(
               document.documentElement.scrollHeight - window.innerHeight,
-              2600,
+              3600,
             )));
-            const steps = 145;
+            const steps = 155;
             for (let i = 0; i <= steps; i += 1) {
               const t = i / steps;
               const eased = t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
@@ -180,5 +176,5 @@ jobs:
                   assets/product/current-site-walkthrough-poster.webp \
                   assets/product/current-site-walkthrough.mp4
           git diff --cached --quiet && exit 0
-          git commit -m "assets: add current product captures"
+          git commit -m "assets: refresh current product captures"
           git push origin HEAD:fix/replace-legacy-product-visuals
