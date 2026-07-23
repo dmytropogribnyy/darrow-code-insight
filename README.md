@@ -67,7 +67,7 @@ See [Architecture and quality](docs/architecture-and-quality.md) for the system 
 
 Payment events are verified before order-state changes. Sensitive operations use server-side authorization, protected report access, redirect safety checks, bot protection, secret-hygiene controls, and explicit test-mode boundaries. Analytics activation follows consent state.
 
-Public health and product documentation avoid customer data and operational secrets. See the [security policy](SECURITY.md) for responsible disclosure guidance.
+Public-facing status and product documentation avoid customer data and operational secrets. See the [security policy](SECURITY.md) for responsible disclosure guidance.
 
 ## Technology
 
