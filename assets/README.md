@@ -1,6 +1,8 @@
 # Visual assets
 
-Current product visuals are not yet published. Historical branding is excluded, as is any image whose current status cannot be verified.
+Current product visuals are not yet published in this repository. Historical branding is excluded, as is any image whose current status cannot be verified.
+
+The live product at [darrowcode.com](https://darrowcode.com/) is the visual source of truth. A file found in the private engineering repository is not considered current merely because it still exists there.
 
 ## Planned captures
 
@@ -15,7 +17,7 @@ Current product visuals are not yet published. Historical branding is excluded, 
 
 Before adding any image:
 
-1. Confirm that it comes from the current product UI and not a legacy build.
+1. Confirm that it comes from the current live product UI and not a legacy build or unused repository asset.
 2. Use synthetic or fully anonymized data.
 3. Remove names, email addresses, birth details, account identifiers, order IDs, payment information, and report-access links.
 4. Remove internal URLs, local paths, prompts, diagnostics, provider information, configuration, and environment values.
