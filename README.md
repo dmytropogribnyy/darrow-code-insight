@@ -1,5 +1,9 @@
 # Darrow Code Insight
 
+[![Documentation quality](https://github.com/dmytropogribnyy/darrow-code-insight/actions/workflows/docs-quality.yml/badge.svg)](https://github.com/dmytropogribnyy/darrow-code-insight/actions/workflows/docs-quality.yml)
+
+[Live product](https://darrowcode.com/) · [Sample report](https://darrowcode.com/sample) · [Engineering portfolio](https://dmytropogribnyy.github.io/)
+
 Darrow Code Insight is a full-stack AI-assisted report product that turns guided customer input into a validated, professionally rendered digital report. It coordinates intake, checkout, controlled content generation, HTML/PDF rendering, protected access, and delivery as one recoverable workflow.
 
 The current product line focuses on personal insight and orientation reports built from structured birth details and curated interpretation rules. The engineering challenge is broader than text generation: every paid order must move safely through data preparation, quality gates, document production, storage, and customer delivery.
@@ -14,6 +18,22 @@ The current product line focuses on personal insight and orientation reports bui
 | Core workflow | Intake → verified payment → durable generation → validation → HTML/PDF → protected delivery |
 | Engineering focus | Quality gates, recoverable background work, secure access, observability, and release confidence |
 | Ownership | Independently designed and engineered end to end |
+
+## Product workflow
+
+```mermaid
+flowchart LR
+    A[Guided intake] --> B[Validated order]
+    B --> C[Verified payment]
+    C --> D[Durable generation job]
+    D --> E[Controlled AI generation]
+    E --> F[Acceptance gates]
+    F --> G[HTML and PDF rendering]
+    G --> H[Protected access and delivery]
+    D -. recovery .-> I[Operations and admin]
+    F -. rejected output .-> I
+    G -. render or delivery failure .-> I
+```
 
 ## Customer journey
 
@@ -39,6 +59,14 @@ Returning customers can access account flows, while authenticated administration
 - Consent-aware analytics and marketing behavior
 - Background processing, retry limits, recovery paths, health signals, and alerting
 
+## What this repository demonstrates
+
+- **Transactional workflow design** — payment, generation, rendering, storage, and delivery are modeled as explicit states rather than a single long request.
+- **AI output quality engineering** — generated content is treated as an untrusted artifact that must pass deterministic and report-specific acceptance checks.
+- **Release confidence** — automated tests, type checks, linting, formatting, build validation, and targeted diagnostics cover critical product boundaries.
+- **Operational resilience** — queued, stuck, failed, and incomplete work can be identified and recovered without creating a second purchase.
+- **Privacy-aware delivery** — protected report access, server-side authorization, consent controls, and redacted public status surfaces are part of the product design.
+
 ## Why reliability matters
 
 A personalized paid report crosses several independent boundaries: customer input, payment confirmation, data preparation, generation, validation, rendering, storage, and delivery. Treating these as disconnected integrations would make partial failure difficult to detect and recover from.
@@ -61,7 +89,7 @@ Quality engineering covers:
 - consent, security helpers, administrative operations, and recovery selection;
 - linting, formatting, type checking, automated tests, build verification, and targeted diagnostics.
 
-See [Architecture and quality](docs/architecture-and-quality.md) for the system view.
+See [Architecture and quality](docs/architecture-and-quality.md) for the system view and [AI output quality controls](case-studies/ai-output-quality-controls.md) for a focused case study.
 
 ## Security and privacy
 
@@ -93,5 +121,6 @@ Current-identity UI captures will be added after a dedicated redaction and publi
 
 - [Architecture and quality](docs/architecture-and-quality.md)
 - [Report-generation reliability](case-studies/report-generation-reliability.md)
+- [AI output quality controls](case-studies/ai-output-quality-controls.md)
 - [Security policy](SECURITY.md)
 - [Visual asset plan](assets/README.md)
