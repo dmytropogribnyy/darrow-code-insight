@@ -1,0 +1,69 @@
+name: Documentation quality
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  documentation:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Check Markdown formatting and internal links
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+          import sys
+
+          root = Path.cwd().resolve()
+          failures = []
+          link_pattern = re.compile(r"!?\[[^\]]*\]\(([^)]+)\)")
+
+          for document in sorted(root.rglob("*.md")):
+              relative = document.relative_to(root)
+              text = document.read_text(encoding="utf-8")
+              lines = text.splitlines()
+
+              if any(line.endswith((" ", "\t")) for line in lines):
+                  failures.append(f"{relative}: trailing whitespace")
+              if any("\t" in line for line in lines):
+                  failures.append(f"{relative}: tab character")
+
+              headings = [
+                  len(match.group(1))
+                  for line in lines
+                  if (match := re.match(r"^(#+)\s+\S", line))
+              ]
+              if not headings or headings[0] != 1:
+                  failures.append(f"{relative}: first heading must be level 1")
+              if headings.count(1) != 1:
+                  failures.append(f"{relative}: expected exactly one level-1 heading")
+              if any(current > previous + 1 for previous, current in zip(headings, headings[1:])):
+                  failures.append(f"{relative}: heading level skipped")
+
+              for raw_target in link_pattern.findall(text):
+                  target = raw_target.strip().split()[0].strip("<>")
+                  if not target or target.startswith(("#", "http://", "https://", "mailto:")):
+                      continue
+                  path_part = target.split("#", 1)[0]
+                  destination = (document.parent / path_part).resolve()
+                  if root not in destination.parents and destination != root:
+                      failures.append(f"{relative}: link leaves repository: {target}")
+                  elif not destination.exists():
+                      failures.append(f"{relative}: missing link target: {target}")
+
+          if failures:
+              print("\n".join(failures))
+              sys.exit(1)
+
+          print("Markdown structure and internal links are valid.")
+          PY
