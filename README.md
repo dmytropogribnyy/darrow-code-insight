@@ -2,143 +2,144 @@
 
 [![Documentation quality](https://github.com/dmytropogribnyy/darrow-code-insight/actions/workflows/docs-quality.yml/badge.svg)](https://github.com/dmytropogribnyy/darrow-code-insight/actions/workflows/docs-quality.yml)
 
-[Live product](https://darrowcode.com/) · [Product surfaces](docs/product-surfaces.md) · [Engineering portfolio](https://dmytropogribnyy.github.io/)
-
-Darrow Code Insight is a full-stack AI-assisted report product that turns guided customer input into a validated, professionally rendered digital report. It coordinates intake, checkout, controlled content generation, HTML/PDF rendering, protected access, and delivery as one recoverable workflow.
-
-The current product line focuses on personal insight and orientation reports built from structured birth details and curated interpretation rules. The engineering challenge is broader than text generation: every paid order must move safely through data preparation, quality gates, document production, storage, and customer delivery.
-
-> This repository contains the public product and engineering overview. Detailed implementation and operational configuration are maintained in a private engineering repository.
-
-## Current product surfaces
+[Live product](https://darrowcode.com/) · [Product walkthrough](assets/product/current-site-walkthrough.mp4) · [Architecture & quality](docs/architecture-and-quality.md) · [Engineering portfolio](https://dmytropogribnyy.github.io/)
 
 <p align="center">
-  <a href="https://darrowcode.com/unveil">
-    <img src="https://images.squarespace-cdn.com/content/v1/6986775d46b036681430f364/dea77b33-306a-4532-9d68-ff5df764869f/Unveil%2B%281920%2Bx%2B1080%2B%D0%BF%D0%B8%D0%BA%D1%81.%29.png" alt="COSMIC CORE CODE UNVEIL" width="47%" />
-  </a>
-  <a href="https://darrowcode.com/full-destiny-codex">
-    <img src="https://images.squarespace-cdn.com/content/v1/6986775d46b036681430f364/c8d919d2-b13a-4a77-b5fb-a3597d6b6664/Full%2BCodex%2B%281920%2Bx%2B1080%2B%D0%BF%D0%B8%D0%BA%D1%81.%29.png" alt="Full Destiny Codex" width="47%" />
-  </a>
+  <img src="assets/product/current-home-hero.webp" alt="Darrow Code current desktop homepage" width="100%" />
 </p>
 
-These visuals are served by the current live product pages and contain no customer or operational data. See the [product-surface gallery](docs/product-surfaces.md) for additional report presentation views.
+**Darrow Code Insight** is a production AI-assisted digital-report product that turns structured customer input into private, professionally rendered PDF readings. The platform combines product design, guided intake, verified checkout, controlled AI generation, deterministic quality gates, document rendering, protected access, and email delivery in one recoverable workflow.
 
-## At a glance
+> This repository is the public product and engineering showcase for a real independently developed product. Production source code, customer data, secrets, prompts, and operational configuration remain private.
 
-| Area | Scope |
+## Product walkthrough
+
+[![Watch the current Darrow Code product walkthrough](assets/product/current-site-walkthrough-poster.webp)](assets/product/current-site-walkthrough.mp4)
+
+The walkthrough is a real browser capture of the current public product: homepage, product positioning, report selection, and the transition into the CORE product family. No login, checkout, customer information, or internal tooling is shown.
+
+## Product at a glance
+
+| Area | Current scope |
 | --- | --- |
-| Product | Guided purchase and delivery of personalized digital reports |
+| Product | Private AI-assisted astrology, timing, and Tarot reports delivered as PDFs |
+| Product families | CORE, CORE Complete, six focused chapters, Continuum, Almanac, Tarot Mirror |
 | Core workflow | Intake → verified payment → durable generation → validation → HTML/PDF → protected delivery |
-| Engineering focus | Quality gates, recoverable background work, secure access, observability, and release confidence |
-| Ownership | Independently designed and engineered end to end |
+| Engineering focus | AI output quality, transactional reliability, recovery, privacy, observability, and release confidence |
+| Ownership | Product design, full-stack engineering, QA automation, delivery architecture, and operational readiness |
 
-## Product workflow
+## Current product experience
 
-[![Darrow Code Insight public product workflow](assets/product-workflow.svg)](docs/architecture-and-quality.md)
+<table>
+  <tr>
+    <td width="72%" valign="top">
+      <img src="assets/product/current-product-selector.webp" alt="Current Darrow Code product selector with CORE and CORE Complete" width="100%" />
+    </td>
+    <td width="28%" valign="top">
+      <img src="assets/product/current-home-mobile.webp" alt="Current Darrow Code mobile homepage" width="100%" />
+    </td>
+  </tr>
+</table>
 
-## Customer journey
+The current catalog supports several distinct customer journeys:
 
-1. A customer selects a report and completes a guided intake.
-2. Submitted data is validated and prepared for processing.
+- **CORE** — the foundational personal birth-chart report.
+- **CORE Complete** — CORE plus LOVE, MONEY, BODY, YEAR, STYLE, and PLACE as separate private PDFs.
+- **Continuum** — personal 7-day and 30-day timing reports, including recurring delivery options.
+- **Almanac** — a personal best-date report for selected activities and timeframes.
+- **Tarot Mirror** — a private three-card symbolic reflection for one clear question.
+
+See [Current product surfaces](docs/product-surfaces.md) for capture provenance and a focused visual review.
+
+## What I built
+
+| Capability | Engineering responsibility |
+| --- | --- |
+| Product UX | Responsive storefront, modular report selection, guided intake, samples, consent-aware customer flows |
+| Transactional backend | Payment-aware order creation, verified event handling, durable background processing, idempotent recovery |
+| AI quality layer | Structured context assembly, schema validation, forbidden-claim checks, report-specific acceptance gates |
+| Document delivery | Branded HTML/PDF rendering, protected report access, download and email delivery |
+| Reliability | Timeouts, bounded retries, circuit breakers, stuck-work detection, replay-safe recovery paths |
+| Quality engineering | Automated tests, type checks, linting, formatting, build validation, diagnostics, browser and PDF checks |
+| Security & privacy | Server-side authorization, protected assets, secret hygiene, bot protection, consent-controlled analytics |
+
+## End-to-end workflow
+
+[![Darrow Code Insight product workflow](assets/product-workflow.svg)](docs/architecture-and-quality.md)
+
+1. A customer selects a report and completes a structured intake.
+2. Inputs are validated and normalized before transactional processing.
 3. Verified checkout establishes the paid order.
 4. Durable background work assembles context and performs controlled AI-assisted generation.
-5. Acceptance checks evaluate structure, completeness, and content constraints.
-6. Approved content is rendered as a web experience and downloadable PDF.
-7. The report is exposed through protected access and delivered by email.
+5. Deterministic and report-specific acceptance checks evaluate the generated artifact.
+6. Approved content is rendered as a branded web experience and downloadable PDF.
+7. Protected access is created and the report is delivered by email.
+8. Failed or incomplete work can be inspected and recovered without creating a duplicate purchase.
 
-Returning customers can access account flows, while authenticated administration supports order, report, support, subscription, and system operations.
+## Engineering evidence
 
-## Product capabilities
-
-- Guided product selection and structured data collection
-- Payment-aware order and report orchestration
-- Controlled AI-assisted generation from prepared context
-- Schema, content, and acceptance validation before rendering
-- Branded HTML and PDF report output
-- Protected result access, download, and email delivery
-- Customer account and authenticated administration workflows
-- Consent-aware analytics and marketing behavior
-- Background processing, retry limits, recovery paths, health signals, and alerting
-
-## Verification snapshot
-
-A full local verification run of the audited product tree on 23 July 2026 produced:
+A full local verification run of the audited production tree on **23 July 2026** completed with:
 
 | Check | Result |
 | --- | --- |
 | Automated tests | **1,264 passed**, 22 skipped |
 | Test files | **154 passed**, 1 skipped |
 | Public documentation workflow | Passing |
-| Public/private repository separation | Verified |
+| Public/private repository boundary | Verified |
 
-The snapshot records an actual completed run rather than an estimated coverage claim. Test totals will evolve with the private product implementation.
+This is a dated verification snapshot, not a permanent coverage claim; the private production implementation continues to evolve.
 
-## What this repository demonstrates
+### Quality model
 
-- **Transactional workflow design** — payment, generation, rendering, storage, and delivery are modeled as explicit states rather than a single long request.
-- **AI output quality engineering** — generated content is treated as an untrusted artifact that must pass deterministic and report-specific acceptance checks.
-- **Release confidence** — automated tests, type checks, linting, formatting, build validation, and targeted diagnostics cover critical product boundaries.
-- **Operational resilience** — queued, stuck, failed, and incomplete work can be identified and recovered without creating a second purchase.
-- **Privacy-aware delivery** — protected report access, server-side authorization, consent controls, and redacted public status surfaces are part of the product design.
+- **Generated content is untrusted by default.** It must pass structural, semantic, safety, and product-specific checks before rendering.
+- **Paid work is durable.** Generation is not treated as one fragile request; explicit states make partial failure visible and recoverable.
+- **Retries are bounded and idempotent.** Recovery avoids duplicate reports, duplicate delivery, and duplicate purchase side effects.
+- **Release gates cover product boundaries.** Tests exercise generation decisions, validation contracts, payment safety, delivery, rendering, consent, and recovery behavior.
+- **Public evidence is deliberately scoped.** This repository demonstrates the system without exposing proprietary prompts, private schemas, credentials, or customer records.
 
-## Why reliability matters
+Read the focused case studies:
 
-A personalized paid report crosses several independent boundaries: customer input, payment confirmation, data preparation, generation, validation, rendering, storage, and delivery. Treating these as disconnected integrations would make partial failure difficult to detect and recover from.
+- [Report-generation reliability](case-studies/report-generation-reliability.md)
+- [AI output quality controls](case-studies/ai-output-quality-controls.md)
 
-Darrow Code Insight models the journey as an explicit pipeline. Paid work is represented as durable background jobs, validation gates prevent rejected content from advancing, and recovery logic distinguishes queued, stuck, failed, and incomplete delivery states.
+## Architecture and technology
 
-Read the [report-generation reliability case study](case-studies/report-generation-reliability.md).
+The product uses a TypeScript and React stack with TanStack Start, TanStack Router, and Vite. Server-side workflows coordinate Stripe checkout, Supabase-backed application services, controlled model-provider access, background processing, and browser-based PDF rendering for a Cloudflare-oriented runtime.
 
-## Architecture and quality
+**Core technologies:**
 
-The product uses a TypeScript and React stack with TanStack Start and Vite. Server-side workflows coordinate Stripe checkout, Supabase-backed application services, controlled provider access, AI-assisted generation, and browser-based PDF rendering for a Cloudflare-oriented runtime.
-
-Quality engineering covers:
-
-- generation decisions and report-module contracts;
-- structured output and acceptance rules;
-- provider throttling, timeouts, retries, and cost controls;
-- payment-event and delivery safety;
-- PDF layout and rendering behavior;
-- consent, security helpers, administrative operations, and recovery selection;
-- linting, formatting, type checking, automated tests, build verification, and targeted diagnostics.
-
-See [Architecture and quality](docs/architecture-and-quality.md) for the system view and [AI output quality controls](case-studies/ai-output-quality-controls.md) for a focused case study.
-
-## Selected production code
-
-The public repository includes one intentionally selected implementation excerpt: [stale deployment chunk recovery](examples/stale-chunk-recovery.ts). It detects dynamic-import failures after a deployment, performs a guarded browser reload, and prevents reload loops with a session cooldown.
-
-This small excerpt demonstrates the production approach without exposing proprietary generation, payment, data, or operational logic. See [Public engineering excerpts](examples/README.md).
-
-## Security and privacy
-
-Payment events are verified before order-state changes. Sensitive operations use server-side authorization, protected report access, redirect safety checks, bot protection, secret-hygiene controls, and explicit test-mode boundaries. Analytics activation follows consent state.
-
-Public-facing status and product documentation avoid customer data and operational secrets. See the [security policy](SECURITY.md) for responsible disclosure guidance.
-
-## Technology
-
-- TypeScript, React, TanStack Start, TanStack Router, and Vite
+- TypeScript, React, TanStack Start, TanStack Router, Vite
 - Zod and React Hook Form for typed validation and guided input
 - Supabase for application data, authentication, storage, and scheduled work
 - Stripe for checkout and verified payment events
 - Cloudflare runtime services and browser rendering
-- HTML, browser-based rendering, and PDF tooling
-- Vitest, ESLint, Prettier, and TypeScript release checks
+- HTML/PDF generation and delivery tooling
+- Vitest, ESLint, Prettier, TypeScript, Playwright, and targeted diagnostics
 
-## Engineering ownership
+See [Architecture and quality](docs/architecture-and-quality.md) for the system-level view.
 
-Darrow Code Insight is independently designed and engineered as a complete product. Ownership spans product architecture, implementation, automated testing, AI quality controls, report rendering, payment and delivery coordination, reliability and recovery, release validation, deployment preparation, and operational readiness.
+## Selected production-safe code
 
-Engineering by [Dmytro Pogribnyy](https://dmytropogribnyy.github.io/).
+The public repository includes one deliberately selected implementation excerpt: [stale deployment chunk recovery](examples/stale-chunk-recovery.ts). It detects dynamic-import failures after a deployment, performs a guarded reload, and prevents reload loops with a session cooldown.
 
-## Repository contents
+The excerpt demonstrates production hardening without disclosing proprietary generation, payment, data, or operational logic. See [Public engineering excerpts](examples/README.md).
+
+## Security and privacy
+
+Payment events are verified before order-state changes. Sensitive operations use server-side authorization, protected report access, redirect safety checks, bot protection, explicit test-mode boundaries, and secret-hygiene controls. Optional analytics activate only after consent.
+
+See [Security policy](SECURITY.md) for responsible disclosure guidance.
+
+## Repository map
 
 - [Current product surfaces](docs/product-surfaces.md)
 - [Architecture and quality](docs/architecture-and-quality.md)
 - [Report-generation reliability](case-studies/report-generation-reliability.md)
 - [AI output quality controls](case-studies/ai-output-quality-controls.md)
 - [Public engineering excerpts](examples/README.md)
+- [Visual asset provenance](assets/README.md)
 - [Security policy](SECURITY.md)
-- [Visual assets and publication policy](assets/README.md)
+
+## Engineering ownership
+
+Darrow Code Insight is independently designed and engineered end to end by [Dmytro Pogribnyy](https://dmytropogribnyy.github.io/), covering product architecture, implementation, automated testing, AI quality controls, report rendering, payment and delivery coordination, reliability, release validation, deployment preparation, and operational readiness.

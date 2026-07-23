@@ -1,44 +1,69 @@
 # Current product surfaces
 
-The following visuals come from the current live Darrow Code product pages. They are referenced from the live product CDN rather than copied from unverified repository assets, so the public overview follows the current product identity instead of historical branding.
+This page documents real captures of the current public Darrow Code product, verified on **23 July 2026** against the live site and the active Lovable project state.
 
-No customer records, birth details, account identifiers, payment information, internal URLs, or operational diagnostics are shown.
+No customer records, birth details, email addresses, account identifiers, payment information, internal URLs, or operational diagnostics are present in these captures.
 
-## COSMIC CORE CODE: UNVEIL
+## Desktop homepage
 
-A guided entry product focused on foundational personal orientation and decision clarity.
-
-<p align="center">
-  <a href="https://darrowcode.com/unveil">
-    <img src="https://images.squarespace-cdn.com/content/v1/6986775d46b036681430f364/dea77b33-306a-4532-9d68-ff5df764869f/Unveil%2B%281920%2Bx%2B1080%2B%D0%BF%D0%B8%D0%BA%D1%81.%29.png" alt="COSMIC CORE CODE UNVEIL product presentation" width="92%" />
-  </a>
-</p>
+The public experience leads with the current navigation, promotional messaging, and the headline **“Your zodiac sign is only the surface.”** It positions Darrow Code as private AI-assisted astrology, timing, and Tarot readings delivered as personal PDF reports.
 
 <p align="center">
-  <img src="https://images.squarespace-cdn.com/content/v1/6986775d46b036681430f364/0fa874fe-fa57-412f-8e5f-bf2d9b86ada1/Cosmic%2BCode%2BUnveil%2B01.png" alt="UNVEIL report presentation preview" width="44%" />
-  <img src="https://images.squarespace-cdn.com/content/v1/6986775d46b036681430f364/7fec6b0a-901d-465f-88b0-a7de9038012b/Cosmic%2BCode%2BUnveil%2B02.png" alt="UNVEIL product content preview" width="44%" />
+  <img src="../assets/product/current-home-hero.webp" alt="Current Darrow Code desktop homepage" width="100%" />
 </p>
 
-## FULL DESTINY CODEX
+## Product selection
 
-A long-range orientation product focused on life direction, transitions, and timing context.
+The current report selector presents CORE and CORE Complete first, followed by six focused chapters. Pricing and bundle presentation are shown exactly as rendered on the public site at capture time.
 
 <p align="center">
-  <a href="https://darrowcode.com/full-destiny-codex">
-    <img src="https://images.squarespace-cdn.com/content/v1/6986775d46b036681430f364/c8d919d2-b13a-4a77-b5fb-a3597d6b6664/Full%2BCodex%2B%281920%2Bx%2B1080%2B%D0%BF%D0%B8%D0%BA%D1%81.%29.png" alt="Full Destiny Codex product presentation" width="92%" />
-  </a>
+  <img src="../assets/product/current-product-selector.webp" alt="Current Darrow Code product selector" width="100%" />
 </p>
 
+Current birth-chart report family:
+
+- **CORE** — foundational personal report
+- **CORE Complete** — CORE plus all six focused chapters
+- **LOVE** — relationship and attraction patterns
+- **MONEY** — work, earning, and value patterns
+- **BODY** — stress signature and recovery rhythm
+- **YEAR** — personal timing and opportunity patterns
+- **STYLE** — aesthetic signature and presence
+- **PLACE** — environment and location patterns
+
+Additional current product journeys include Continuum timing reports, Almanac best-date selection, and Tarot Mirror.
+
+## Mobile experience
+
+The responsive mobile layout preserves the product identity, hierarchy, messaging, and primary navigation in a compact viewport.
+
 <p align="center">
-  <img src="https://images.squarespace-cdn.com/content/v1/6986775d46b036681430f364/63399909-da55-44ef-9433-e4851bb5a608/Full%2BDestiny%2BCodex%2B01.png" alt="Full Destiny Codex report presentation preview" width="44%" />
-  <img src="https://images.squarespace-cdn.com/content/v1/6986775d46b036681430f364/7653d606-731a-4d9c-b1d9-66e1f1291838/Full%2BDestiny%2BCodex%2B02.png" alt="Full Destiny Codex product content preview" width="44%" />
+  <img src="../assets/product/current-home-mobile.webp" alt="Current Darrow Code mobile homepage" width="390" />
 </p>
+
+## Walkthrough video
+
+[![Watch the current product walkthrough](../assets/product/current-site-walkthrough-poster.webp)](../assets/product/current-site-walkthrough.mp4)
+
+The walkthrough is a silent Playwright browser recording of the public homepage and product-selection journey. It does not enter checkout, authentication, forms, customer records, or administration.
+
+## Capture provenance
+
+| Asset | Source | Capture profile |
+| --- | --- | --- |
+| `current-home-hero.webp` | Live public homepage | Desktop, 1440 × 1000 |
+| `current-product-selector.webp` | Live public homepage | Desktop, focused report-selection viewport |
+| `current-home-mobile.webp` | Live public homepage | Mobile, 390 × 844 |
+| `current-site-walkthrough.mp4` | Live public homepage | Playwright browser recording, optimized with FFmpeg |
+| `current-site-walkthrough-poster.webp` | Current desktop capture | Static video poster |
 
 ## What these surfaces demonstrate
 
-- A coherent customer-facing product identity rather than an engineering-only interface
-- Distinct product positioning for foundational and long-range report journeys
-- Digital multi-page PDF delivery presented as a finished paid product
-- A clear separation between public marketing surfaces and the private transactional implementation
+- A complete customer-facing product rather than an engineering-only prototype
+- Responsive product design across desktop and mobile
+- A modular catalog with foundation, focused, timing, calendar, and Tarot journeys
+- Finished paid PDF products rather than raw AI chat output
+- Clear commercial hierarchy, product packaging, sample access, and delivery expectations
+- Separation between public product presentation and the private transactional implementation
 
-The live pages remain the source of truth for current product copy, pricing, and visual identity.
+The live site remains the source of truth. Captures are refreshed only after visual verification against the current published experience.
