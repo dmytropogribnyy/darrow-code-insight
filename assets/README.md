@@ -1,20 +1,33 @@
 # Visual assets
 
-This repository includes one public-safe engineering visual:
+This repository includes one committed public-safe engineering visual:
 
 - [`product-workflow.svg`](product-workflow.svg) — a purpose-built overview of the report workflow and its quality, reliability, and privacy controls.
 
-Current product UI screenshots are not yet published in this repository. Historical branding is excluded, as is any image whose current status cannot be verified.
+It also presents current product visuals from the live Darrow Code pages in:
 
-The live product at [darrowcode.com](https://darrowcode.com/) is the visual source of truth. A file found in the private engineering repository is not considered current merely because it still exists there.
+- [`docs/product-surfaces.md`](../docs/product-surfaces.md)
+- the opening section of [`README.md`](../README.md)
 
-## Planned UI captures
+Those visuals are served from the current public product CDN and contain no customer or operational data. They are not sourced from unverified legacy files.
+
+The live product at [darrowcode.com](https://darrowcode.com/) remains the visual source of truth. A file found in the private engineering repository is not considered current merely because it still exists there.
+
+## Visual provenance
+
+| Visual | Source | Publication status |
+| --- | --- | --- |
+| Product workflow | Created specifically for this public engineering overview | Committed in this repository |
+| UNVEIL product presentation | Current public product page | Embedded by exact public CDN URL |
+| Full Destiny Codex presentation | Current public product page | Embedded by exact public CDN URL |
+| Report presentation previews | Current public product pages | Embedded by exact public CDN URL |
+
+## Future UI captures
 
 | File | Intended view | Review focus |
 | --- | --- | --- |
-| `product-overview.webp` | Current landing or product overview | Current identity, clear product purpose, no stale copy |
 | `customer-flow.webp` | Guided intake or report-selection step | No names, birth details, email addresses, or account data |
-| `report-preview.webp` | Representative report reading or PDF view | Anonymized content, no customer identifiers, no hidden diagnostics |
+| `report-preview.webp` | Representative report reading or PDF view | Synthetic content, no customer identifiers, no hidden diagnostics |
 | `admin-overview.webp` | Safe operational or administration view | Synthetic records only; no internal URLs, IDs, payment data, or support details |
 
 ## Publication checklist
