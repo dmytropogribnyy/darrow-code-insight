@@ -1,6 +1,6 @@
 # Visual assets
 
-Current product visuals are not yet published. Historical branding and any image whose current status cannot be verified are excluded.
+Current product visuals are not yet published. Historical branding is excluded, as is any image whose current status cannot be verified.
 
 ## Planned captures
 
