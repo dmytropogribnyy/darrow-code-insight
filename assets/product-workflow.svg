@@ -1,0 +1,107 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="560" viewBox="0 0 1200 560" role="img" aria-labelledby="title desc">
+  <title id="title">Darrow Code Insight product workflow</title>
+  <desc id="desc">A public engineering overview showing guided intake, verified payment, durable background work, controlled AI generation, acceptance gates, document rendering, protected delivery, and the quality, reliability, and privacy controls supporting the workflow.</desc>
+
+  <defs>
+    <linearGradient id="background" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0A0F1E"/>
+      <stop offset="1" stop-color="#111A2E"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#D7B56D"/>
+      <stop offset="1" stop-color="#5CC8BE"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="8" stdDeviation="10" flood-color="#000000" flood-opacity="0.24"/>
+    </filter>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L10,5 L0,10 Z" fill="#6E7F9F"/>
+    </marker>
+  </defs>
+
+  <rect width="1200" height="560" rx="28" fill="url(#background)"/>
+  <rect x="36" y="34" width="1128" height="492" rx="24" fill="none" stroke="#263450" stroke-width="2"/>
+
+  <text x="70" y="92" fill="#F7F4EA" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="34" font-weight="700">Darrow Code Insight</text>
+  <text x="70" y="124" fill="#9EABC2" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="18">AI-assisted report workflow · quality gates · recoverable delivery</text>
+  <rect x="70" y="143" width="280" height="4" rx="2" fill="url(#accent)"/>
+
+  <g font-family="Inter, Segoe UI, Arial, sans-serif" font-size="14" text-anchor="middle" filter="url(#shadow)">
+    <g>
+      <rect x="50" y="190" width="140" height="92" rx="16" fill="#121D33" stroke="#31405F" stroke-width="2"/>
+      <circle cx="120" cy="216" r="12" fill="#D7B56D" opacity="0.95"/>
+      <text x="120" y="249" fill="#F7F4EA" font-weight="650">Guided</text>
+      <text x="120" y="269" fill="#C7D0E0">intake</text>
+    </g>
+    <g>
+      <rect x="210" y="190" width="140" height="92" rx="16" fill="#121D33" stroke="#31405F" stroke-width="2"/>
+      <circle cx="280" cy="216" r="12" fill="#D7B56D" opacity="0.95"/>
+      <text x="280" y="249" fill="#F7F4EA" font-weight="650">Verified</text>
+      <text x="280" y="269" fill="#C7D0E0">payment</text>
+    </g>
+    <g>
+      <rect x="370" y="190" width="140" height="92" rx="16" fill="#121D33" stroke="#31405F" stroke-width="2"/>
+      <circle cx="440" cy="216" r="12" fill="#D7B56D" opacity="0.95"/>
+      <text x="440" y="249" fill="#F7F4EA" font-weight="650">Durable</text>
+      <text x="440" y="269" fill="#C7D0E0">job</text>
+    </g>
+    <g>
+      <rect x="530" y="190" width="140" height="92" rx="16" fill="#142338" stroke="#3D6F7D" stroke-width="2"/>
+      <circle cx="600" cy="216" r="12" fill="#5CC8BE" opacity="0.95"/>
+      <text x="600" y="249" fill="#F7F4EA" font-weight="650">Controlled AI</text>
+      <text x="600" y="269" fill="#C7D0E0">generation</text>
+    </g>
+    <g>
+      <rect x="690" y="190" width="140" height="92" rx="16" fill="#142338" stroke="#3D6F7D" stroke-width="2"/>
+      <circle cx="760" cy="216" r="12" fill="#5CC8BE" opacity="0.95"/>
+      <text x="760" y="249" fill="#F7F4EA" font-weight="650">Acceptance</text>
+      <text x="760" y="269" fill="#C7D0E0">gates</text>
+    </g>
+    <g>
+      <rect x="850" y="190" width="140" height="92" rx="16" fill="#121D33" stroke="#31405F" stroke-width="2"/>
+      <circle cx="920" cy="216" r="12" fill="#D7B56D" opacity="0.95"/>
+      <text x="920" y="249" fill="#F7F4EA" font-weight="650">HTML / PDF</text>
+      <text x="920" y="269" fill="#C7D0E0">rendering</text>
+    </g>
+    <g>
+      <rect x="1010" y="190" width="140" height="92" rx="16" fill="#121D33" stroke="#31405F" stroke-width="2"/>
+      <circle cx="1080" cy="216" r="12" fill="#D7B56D" opacity="0.95"/>
+      <text x="1080" y="249" fill="#F7F4EA" font-weight="650">Protected</text>
+      <text x="1080" y="269" fill="#C7D0E0">delivery</text>
+    </g>
+  </g>
+
+  <g stroke="#6E7F9F" stroke-width="3" fill="none" marker-end="url(#arrow)">
+    <path d="M190 236 H206"/>
+    <path d="M350 236 H366"/>
+    <path d="M510 236 H526"/>
+    <path d="M670 236 H686"/>
+    <path d="M830 236 H846"/>
+    <path d="M990 236 H1006"/>
+  </g>
+
+  <text x="70" y="347" fill="#9EABC2" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="14" font-weight="600" letter-spacing="1.6">CROSS-CUTTING ENGINEERING CONTROLS</text>
+
+  <g font-family="Inter, Segoe UI, Arial, sans-serif" filter="url(#shadow)">
+    <g>
+      <rect x="70" y="375" width="330" height="106" rx="18" fill="#101A2E" stroke="#31405F" stroke-width="2"/>
+      <text x="94" y="413" fill="#D7B56D" font-size="18" font-weight="700">Quality engineering</text>
+      <text x="94" y="442" fill="#C7D0E0" font-size="14">Schema checks · deterministic scanners</text>
+      <text x="94" y="465" fill="#C7D0E0" font-size="14">Rendering assertions · release gates</text>
+    </g>
+    <g>
+      <rect x="435" y="375" width="330" height="106" rx="18" fill="#101A2E" stroke="#31405F" stroke-width="2"/>
+      <text x="459" y="413" fill="#5CC8BE" font-size="18" font-weight="700">Reliability &amp; recovery</text>
+      <text x="459" y="442" fill="#C7D0E0" font-size="14">Durable states · retries · watchdogs</text>
+      <text x="459" y="465" fill="#C7D0E0" font-size="14">Health signals · authenticated support</text>
+    </g>
+    <g>
+      <rect x="800" y="375" width="330" height="106" rx="18" fill="#101A2E" stroke="#31405F" stroke-width="2"/>
+      <text x="824" y="413" fill="#D7B56D" font-size="18" font-weight="700">Security &amp; privacy</text>
+      <text x="824" y="442" fill="#C7D0E0" font-size="14">Verified events · protected access</text>
+      <text x="824" y="465" fill="#C7D0E0" font-size="14">Consent controls · redacted status data</text>
+    </g>
+  </g>
+
+  <text x="1130" y="520" fill="#6E7F9F" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="12" text-anchor="end">Public engineering overview</text>
+</svg>
