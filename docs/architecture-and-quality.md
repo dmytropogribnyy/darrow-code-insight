@@ -66,7 +66,7 @@ Report generation runs as durable background work, with the payment request prov
 
 Operational controls include structured stage logs, a public-facing status response without personal data, alert conditions, throttled notifications, report watchdog logic, and authenticated support actions. Recovery can resume generation or delivery without creating a second purchase.
 
-The browser layer also handles a narrow deployment failure mode: an already-open tab can request a content-hashed chunk that was replaced by a new release. The public [stale-chunk recovery excerpt](../examples/stale-chunk-recovery.ts) shows the actual guarded reload mechanism used for that case.
+The browser layer also handles a narrow deployment failure mode: an already-open tab can request a content-hashed chunk that was replaced by a new release. The public [stale-chunk recovery excerpt](../examples/stale-chunk-recovery.ts) is a safety-hardened standalone adaptation of the mechanism used for that case.
 
 Read the [report-generation reliability case study](../case-studies/report-generation-reliability.md).
 
