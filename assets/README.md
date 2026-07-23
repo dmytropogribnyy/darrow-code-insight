@@ -10,7 +10,6 @@ The assets in this directory are public-safe materials selected specifically for
 | [`product/current-product-selector.webp`](product/current-product-selector.webp) | CORE, CORE Complete, and focused report selection | Real Playwright capture of the live public site |
 | [`product/current-home-mobile.webp`](product/current-home-mobile.webp) | Responsive mobile experience | Real Playwright capture of the live public site |
 | [`product/current-site-walkthrough.mp4`](product/current-site-walkthrough.mp4) | Short product walkthrough | Real Playwright recording, optimized with FFmpeg |
-| [`product/current-site-walkthrough-poster.webp`](product/current-site-walkthrough-poster.webp) | Walkthrough preview | Derived from the current desktop capture |
 | [`product-workflow.svg`](product-workflow.svg) | Public architecture and workflow overview | Purpose-built for this repository |
 
 The captures contain no customer information, checkout data, authenticated views, internal URLs, prompts, diagnostics, or operational configuration.

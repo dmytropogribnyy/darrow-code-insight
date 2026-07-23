@@ -14,7 +14,7 @@
 
 ## Product walkthrough
 
-[![Watch the current Darrow Code product walkthrough](assets/product/current-site-walkthrough-poster.webp)](assets/product/current-site-walkthrough.mp4)
+▶ **[Watch the current Darrow Code product walkthrough (MP4)](assets/product/current-site-walkthrough.mp4)**
 
 The walkthrough is a real browser capture of the current public product: homepage, product positioning, report selection, and the transition into the CORE product family. No login, checkout, customer information, or internal tooling is shown.
 

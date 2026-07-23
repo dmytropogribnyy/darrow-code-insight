@@ -43,7 +43,7 @@ The responsive mobile layout preserves the product identity, hierarchy, messagin
 
 ## Walkthrough video
 
-[![Watch the current product walkthrough](../assets/product/current-site-walkthrough-poster.webp)](../assets/product/current-site-walkthrough.mp4)
+▶ **[Watch the current product walkthrough (MP4)](../assets/product/current-site-walkthrough.mp4)**
 
 The walkthrough is a silent Playwright browser recording of the public homepage and product-selection journey. It does not enter checkout, authentication, forms, customer records, or administration.
 
@@ -55,7 +55,6 @@ The walkthrough is a silent Playwright browser recording of the public homepage 
 | `current-product-selector.webp` | Live public homepage | Desktop, focused report-selection viewport |
 | `current-home-mobile.webp` | Live public homepage | Mobile, 390 × 844 |
 | `current-site-walkthrough.mp4` | Live public homepage | Playwright browser recording, optimized with FFmpeg |
-| `current-site-walkthrough-poster.webp` | Current desktop capture | Static video poster |
 
 ## What these surfaces demonstrate
 
