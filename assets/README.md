@@ -1,45 +1,42 @@
 # Visual assets
 
-This repository includes one committed public-safe engineering visual:
+The assets in this directory are public-safe materials selected specifically for the Darrow Code Insight product and engineering showcase.
 
-- [`product-workflow.svg`](product-workflow.svg) — a purpose-built overview of the report workflow and its quality, reliability, and privacy controls.
+## Current product captures
 
-It also presents current product visuals from the live Darrow Code pages in:
-
-- [`docs/product-surfaces.md`](../docs/product-surfaces.md)
-- the opening section of [`README.md`](../README.md)
-
-Those visuals are served from the current public product CDN and contain no customer or operational data. They are not sourced from unverified legacy files.
-
-The live product at [darrowcode.com](https://darrowcode.com/) remains the visual source of truth. A file found in the private engineering repository is not considered current merely because it still exists there.
-
-## Visual provenance
-
-| Visual | Source | Publication status |
+| Asset | Purpose | Provenance |
 | --- | --- | --- |
-| Product workflow | Created specifically for this public engineering overview | Committed in this repository |
-| UNVEIL product presentation | Current public product page | Embedded by exact public CDN URL |
-| Full Destiny Codex presentation | Current public product page | Embedded by exact public CDN URL |
-| Report presentation previews | Current public product pages | Embedded by exact public CDN URL |
+| [`product/current-home-hero.webp`](product/current-home-hero.webp) | Desktop homepage and current product positioning | Real Playwright capture of the live public site |
+| [`product/current-product-selector.webp`](product/current-product-selector.webp) | CORE, CORE Complete, and focused report selection | Real Playwright capture of the live public site |
+| [`product/current-home-mobile.webp`](product/current-home-mobile.webp) | Responsive mobile experience | Real Playwright capture of the live public site |
+| [`product/current-site-walkthrough.mp4`](product/current-site-walkthrough.mp4) | Short product walkthrough | Real Playwright recording, optimized with FFmpeg |
+| [`product/current-site-walkthrough-poster.webp`](product/current-site-walkthrough-poster.webp) | Walkthrough preview | Derived from the current desktop capture |
+| [`product-workflow.svg`](product-workflow.svg) | Public architecture and workflow overview | Purpose-built for this repository |
 
-## Future UI captures
+The captures contain no customer information, checkout data, authenticated views, internal URLs, prompts, diagnostics, or operational configuration.
 
-| File | Intended view | Review focus |
-| --- | --- | --- |
-| `customer-flow.webp` | Guided intake or report-selection step | No names, birth details, email addresses, or account data |
-| `report-preview.webp` | Representative report reading or PDF view | Synthetic content, no customer identifiers, no hidden diagnostics |
-| `admin-overview.webp` | Safe operational or administration view | Synthetic records only; no internal URLs, IDs, payment data, or support details |
+## Source-of-truth policy
 
-## Publication checklist
+The live product at [darrowcode.com](https://darrowcode.com/) is the primary visual source of truth. The active Lovable project state and current implementation imports are used as secondary verification.
 
-Before adding any UI image:
+A visual is publishable only when it:
 
-1. Confirm that it comes from the current live product UI and not a legacy build or unused repository asset.
-2. Use synthetic or fully anonymized data.
-3. Remove names, email addresses, birth details, account identifiers, order IDs, payment information, and report-access links.
-4. Remove internal URLs, local paths, prompts, diagnostics, provider information, configuration, and environment values.
-5. Check browser chrome, notifications, open tabs, and background windows for accidental disclosure.
-6. Crop to the smallest area that still explains the product workflow.
-7. Review the final exported file rather than relying only on the source screenshot.
+1. appears in the current live product or is directly confirmed by the active project state;
+2. contains no personal, payment, authentication, or operational data;
+3. reflects the current product catalog and visual identity;
+4. has been reviewed in its final exported format;
+5. is optimized for repository display without materially degrading legibility.
 
-No placeholder image files should be committed. A UI visual is added only after it passes this checklist.
+## Capture process
+
+Current UI evidence is produced with a controlled browser workflow:
+
+1. open the public site in Playwright;
+2. set the required desktop or mobile viewport;
+3. wait for the page and public assets to finish loading;
+4. dismiss optional consent UI without entering any customer flow;
+5. capture the approved public surface;
+6. encode screenshots as WebP and the walkthrough as H.264 MP4 with FFmpeg;
+7. inspect the final files before publication.
+
+Temporary capture automation is not retained in the final repository. Only reviewed output assets and their provenance documentation remain.

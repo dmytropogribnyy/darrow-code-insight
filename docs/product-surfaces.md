@@ -1,69 +1,69 @@
 # Current product surfaces
 
-This page reflects the current live Darrow Code homepage and product catalog verified on 23 July 2026. Historical UNVEIL and Full Destiny Codex materials are intentionally excluded.
+This page documents real captures of the current public Darrow Code product, verified on **23 July 2026** against the live site and the active Lovable project state.
 
-The current product identity is defined by the live homepage, the CORE / CORE Complete report family, six focused chapters, Continuum timing reports, Almanac, and Tarot Mirror. No customer records, birth details, account identifiers, payment information, internal URLs, or operational diagnostics are shown here.
+No customer records, birth details, email addresses, account identifiers, payment information, internal URLs, or operational diagnostics are present in these captures.
 
-## Current homepage
+## Desktop homepage
 
-The homepage leads with the current Darrow Code navigation and the message **“Your zodiac sign is only the surface.”** It positions the service as private AI-assisted horoscope and Tarot readings delivered as personal PDF reports.
-
-<p align="center">
-  <img src="https://darrowcode.com/__l5e/assets-v1/82be404a-f5cc-4a55-9bc5-353b3761656b/darrow-code-hero.webp" alt="Current Darrow Code homepage hero artwork" width="72%" />
-</p>
-
-## Birth-chart report family
-
-The first product block is **Choose Your Birth Chart Report**. Customers can start with CORE, select CORE Complete, or combine focused report chapters.
+The public experience leads with the current navigation, promotional messaging, and the headline **“Your zodiac sign is only the surface.”** It positions Darrow Code as private AI-assisted astrology, timing, and Tarot readings delivered as personal PDF reports.
 
 <p align="center">
-  <img src="https://darrowcode.com/thumbnails/core.webp" alt="Current CORE report cover" width="26%" />
-  <img src="https://darrowcode.com/thumbnails/core-complete.webp" alt="Current CORE Complete report cover" width="26%" />
+  <img src="../assets/product/current-home-hero.webp" alt="Current Darrow Code desktop homepage" width="100%" />
 </p>
 
-Current report modules:
+## Product selection
 
-- **CORE** — the foundation report
+The current report selector presents CORE and CORE Complete first, followed by six focused chapters. Pricing and bundle presentation are shown exactly as rendered on the public site at capture time.
+
+<p align="center">
+  <img src="../assets/product/current-product-selector.webp" alt="Current Darrow Code product selector" width="100%" />
+</p>
+
+Current birth-chart report family:
+
+- **CORE** — foundational personal report
 - **CORE Complete** — CORE plus all six focused chapters
-- **LOVE** — relationship patterns
-- **MONEY** — work, money, and value patterns
-- **BODY** — stress and recovery rhythm
+- **LOVE** — relationship and attraction patterns
+- **MONEY** — work, earning, and value patterns
+- **BODY** — stress signature and recovery rhythm
 - **YEAR** — personal timing and opportunity patterns
 - **STYLE** — aesthetic signature and presence
 - **PLACE** — environment and location patterns
 
-## Timing and standalone products
+Additional current product journeys include Continuum timing reports, Almanac best-date selection, and Tarot Mirror.
 
-### Continuum
+## Mobile experience
 
-A separate 7-day or 30-day personal timing brief with pressure zones, green windows, and practical protocols.
-
-<p align="center">
-  <img src="https://darrowcode.com/__l5e/assets-v1/a1b8fd3d-2647-4ab6-83f7-a8a82ab6a992/continuum-banner.webp" alt="Current Continuum timing report artwork" width="88%" />
-</p>
-
-### Almanac
-
-A personal auspicious-date report for selected events, locations, and timeframes.
+The responsive mobile layout preserves the product identity, hierarchy, messaging, and primary navigation in a compact viewport.
 
 <p align="center">
-  <img src="https://darrowcode.com/__l5e/assets-v1/69ef4e07-0efe-4f3c-a65a-31ebcb7f422a/almanac-banner.webp" alt="Current Almanac product artwork" width="88%" />
+  <img src="../assets/product/current-home-mobile.webp" alt="Current Darrow Code mobile homepage" width="390" />
 </p>
 
-### Tarot Mirror
+## Walkthrough video
 
-A private three-card reflection generated for one clear question after checkout.
+[![Watch the current product walkthrough](../assets/product/current-site-walkthrough-poster.webp)](../assets/product/current-site-walkthrough.mp4)
 
-<p align="center">
-  <img src="https://darrowcode.com/tarot/tarot-hero.webp" alt="Current Tarot Mirror product artwork" width="88%" />
-</p>
+The walkthrough is a silent Playwright browser recording of the public homepage and product-selection journey. It does not enter checkout, authentication, forms, customer records, or administration.
+
+## Capture provenance
+
+| Asset | Source | Capture profile |
+| --- | --- | --- |
+| `current-home-hero.webp` | Live public homepage | Desktop, 1440 × 1000 |
+| `current-product-selector.webp` | Live public homepage | Desktop, focused report-selection viewport |
+| `current-home-mobile.webp` | Live public homepage | Mobile, 390 × 844 |
+| `current-site-walkthrough.mp4` | Live public homepage | Playwright browser recording, optimized with FFmpeg |
+| `current-site-walkthrough-poster.webp` | Current desktop capture | Static video poster |
 
 ## What these surfaces demonstrate
 
-- A coherent current product identity rather than an engineering-only interface
-- A modular report catalog with foundation, add-on, timing, calendar, and Tarot journeys
+- A complete customer-facing product rather than an engineering-only prototype
+- Responsive product design across desktop and mobile
+- A modular catalog with foundation, focused, timing, calendar, and Tarot journeys
 - Finished paid PDF products rather than raw AI chat output
-- Clear separation between public marketing surfaces and the private transactional implementation
-- Consistent visual language across report selection, checkout entry points, and delivery promises
+- Clear commercial hierarchy, product packaging, sample access, and delivery expectations
+- Separation between public product presentation and the private transactional implementation
 
-The live homepage remains the source of truth for current copy, pricing, and visual identity. Repository screenshots and copied assets must be revalidated against it before publication.
+The live site remains the source of truth. Captures are refreshed only after visual verification against the current published experience.
