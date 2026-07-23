@@ -1,14 +1,26 @@
 # Visual assets
 
-No visual assets are currently published.
+Current product visuals are not yet published. Historical branding and any image whose current status cannot be verified are excluded.
 
-The reviewed materials did not provide an image whose current product-identity status and public-safety could both be established with sufficient certainty. Historical branding is intentionally excluded.
+## Planned captures
 
-Future visuals should cover:
+| File | Intended view | Review focus |
+| --- | --- | --- |
+| `product-overview.webp` | Current landing or product overview | Current identity, clear product purpose, no stale copy |
+| `customer-flow.webp` | Guided intake or report-selection step | No names, birth details, email addresses, or account data |
+| `report-preview.webp` | Representative report reading or PDF view | Anonymized content, no customer identifiers, no hidden diagnostics |
+| `admin-overview.webp` | Safe operational or administration view | Synthetic records only; no internal URLs, IDs, payment data, or support details |
 
-- Current product landing or overview
-- Guided customer workflow
-- Current report preview
-- Administrative or operational overview
+## Publication checklist
 
-Before publication, each image must be confirmed as current and checked for names, email addresses, account identifiers, payment information, internal URLs, prompts, diagnostics, configuration, and other sensitive data.
+Before adding any image:
+
+1. Confirm that it comes from the current product UI and not a legacy build.
+2. Use synthetic or fully anonymized data.
+3. Remove names, email addresses, birth details, account identifiers, order IDs, payment information, and report-access links.
+4. Remove internal URLs, local paths, prompts, diagnostics, provider information, configuration, and environment values.
+5. Check browser chrome, notifications, open tabs, and background windows for accidental disclosure.
+6. Crop to the smallest area that still explains the product workflow.
+7. Review the final exported file rather than relying only on the source screenshot.
+
+No placeholder image files should be committed. A visual is added only after it passes this checklist.
