@@ -21,19 +21,7 @@ The current product line focuses on personal insight and orientation reports bui
 
 ## Product workflow
 
-```mermaid
-flowchart LR
-    A[Guided intake] --> B[Validated order]
-    B --> C[Verified payment]
-    C --> D[Durable generation job]
-    D --> E[Controlled AI generation]
-    E --> F[Acceptance gates]
-    F --> G[HTML and PDF rendering]
-    G --> H[Protected access and delivery]
-    D -. recovery .-> I[Operations and admin]
-    F -. rejected output .-> I
-    G -. render or delivery failure .-> I
-```
+[![Darrow Code Insight public product workflow](assets/product-workflow.svg)](docs/architecture-and-quality.md)
 
 ## Customer journey
 
@@ -115,7 +103,7 @@ Engineering by [Dmytro Pogribnyy](https://dmytropogribnyy.github.io/).
 
 ## Product visuals
 
-Current-identity UI captures will be added after a dedicated redaction and public-safety review. The required views and review checklist are documented in [Visual assets](assets/README.md). Historical branding is not used.
+The repository includes a public-safe workflow visual built specifically for this overview. Current-identity UI captures can be added only after a dedicated redaction and public-safety review. The capture requirements are documented in [Visual assets](assets/README.md), and historical branding is not used.
 
 ## Repository contents
 
@@ -123,4 +111,4 @@ Current-identity UI captures will be added after a dedicated redaction and publi
 - [Report-generation reliability](case-studies/report-generation-reliability.md)
 - [AI output quality controls](case-studies/ai-output-quality-controls.md)
 - [Security policy](SECURITY.md)
-- [Visual asset plan](assets/README.md)
+- [Visual assets and publication policy](assets/README.md)
