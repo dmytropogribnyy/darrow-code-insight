@@ -1,7 +1,7 @@
-// Public-safe production excerpt from the Darrow Code Insight application.
+// Public-safe adaptation of a production resilience mechanism from Darrow Code Insight.
 // When a deployment replaces hashed JavaScript assets, an already-open browser
 // tab can request a chunk that no longer exists. A guarded reload recovers the
-// customer session while the cooldown prevents an infinite reload loop.
+// customer session while the cooldown prevents repeated reload attempts.
 
 const RELOAD_KEY = "__darrow_stale_chunk_reload_at";
 const COOLDOWN_MS = 10_000;
@@ -15,7 +15,9 @@ function shouldReload(): boolean {
     sessionStorage.setItem(RELOAD_KEY, String(Date.now()));
     return true;
   } catch {
-    return true;
+    // Without durable cooldown state, reloading could create a loop for a
+    // persistent network or chunk-loading failure. Fail closed instead.
+    return false;
   }
 }
 
