@@ -32,11 +32,28 @@ The high-level platform includes:
 - Controlled AI-assisted content generation
 - Cloudflare-oriented runtime and browser-based PDF rendering
 
+## Quality model
+
+Quality controls are placed at the boundaries where a customer-visible failure or inconsistent paid-order state could occur.
+
+| Boundary | Risk being controlled | Representative control | Verification focus |
+| --- | --- | --- | --- |
+| Intake | Incomplete or malformed customer data | Typed schemas and guided validation | Validation and route-contract tests |
+| Payment | Work starting without a verified purchase | Verified payment events and explicit order-state transitions | Payment-safety and workflow tests |
+| Generation | Structurally invalid, unsafe, or off-voice content | Structured context, schema validation, deterministic scans, and report-specific acceptance | Scanner, acceptance, orchestration, and failure-path tests |
+| Rendering | Missing sections, layout drift, or unusable PDFs | Browser-based rendering, templates, page budgets, and render assertions | Template, page-layout, and rerender tests |
+| Delivery | A completed artifact not reaching the customer | Durable report state, protected access, email assembly, and delivery recovery | Delivery, access, email, and recovery tests |
+| Operations | Stuck or failed work remaining invisible | Structured stage logs, health signals, alerts, watchdog logic, and authenticated support actions | Health, diagnostics, selection, and support tests |
+
 ## Generation quality controls
 
 Generation begins with structured context rather than an unconstrained request. Report-specific acceptance modules check required shape and content before rendering. Confirmed safeguards include schema validation, content and voice rules, forbidden-claim scanning, technical-density checks, provider rate gates, timeouts, circuit breaking, retry budgets, and order-level cost controls.
 
+Deterministic scanners complement model instructions. They can reject unsupported claims, detect overly technical prose, verify that supporting tags are backed by prepared context, and enforce product-specific wording constraints. Generated output is therefore treated as an untrusted artifact until it passes the relevant acceptance path.
+
 These controls are designed to fail closed at important boundaries: a payment must be established before paid work proceeds, invalid generated content is not treated as an approved report, and a rendering or delivery failure does not silently become a completed order.
+
+Read the [AI output quality controls case study](../case-studies/ai-output-quality-controls.md).
 
 ## Document rendering
 
@@ -46,7 +63,9 @@ Approved report data is assembled into branded HTML and converted to PDF through
 
 Report generation runs as durable background work, with the payment request providing an initial dispatch and scheduled processing acting as a recovery path. The implementation distinguishes queued, processing, failed, stuck, and orphaned work so eligible jobs can be selected for retry or recovery.
 
-Operational controls include structured stage logs, a public health response without personal data, alert conditions, throttled notifications, report watchdog logic, and authenticated support actions. Recovery can resume generation or delivery without creating a second purchase.
+Operational controls include structured stage logs, a public-facing status response without personal data, alert conditions, throttled notifications, report watchdog logic, and authenticated support actions. Recovery can resume generation or delivery without creating a second purchase.
+
+Read the [report-generation reliability case study](../case-studies/report-generation-reliability.md).
 
 ## Security and privacy
 
@@ -56,6 +75,14 @@ Consent state governs analytics activation. The product also includes privacy, t
 
 ## Verification strategy
 
-The engineering suite uses Vitest across report generation, acceptance rules, AI usage controls, provider behavior, payment safety, delivery, email assembly, PDF rendering, consent, administration, security helpers, health tooling, and recovery decisions. ESLint, Prettier, TypeScript checks, build validation, and targeted diagnostic commands support release readiness.
+The engineering suite uses Vitest across report generation, acceptance rules, AI usage controls, provider behavior, payment safety, delivery, email assembly, PDF rendering, consent, administration, security helpers, health tooling, and recovery decisions.
+
+Verification is layered rather than concentrated in a single end-to-end path:
+
+1. Pure validation and scanner tests exercise deterministic rules quickly.
+2. Module and contract tests cover report assembly, payment decisions, delivery, and recovery selection.
+3. Rendering tests inspect templates, page behavior, and reusable artifacts.
+4. Workflow diagnostics exercise critical integration paths and operational recovery.
+5. ESLint, Prettier, TypeScript checks, build validation, and targeted commands support release readiness.
 
 This public repository adds a secret-free documentation workflow that checks basic Markdown structure and internal relative links. It does not deploy, access product infrastructure, or call any provider.
