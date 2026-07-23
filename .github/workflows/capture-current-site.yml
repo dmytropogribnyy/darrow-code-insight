@@ -1,76 +1,136 @@
 name: Capture current public product surfaces
 
 on:
-  pull_request:
+  push:
     branches:
-      - main
+      - fix/replace-legacy-product-visuals
     paths:
       - .github/workflows/capture-current-site.yml
-      - README.md
-      - docs/product-surfaces.md
+  workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   capture:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
-      - name: Check out pull request
+      - name: Check out capture branch
         uses: actions/checkout@v4
+        with:
+          ref: fix/replace-legacy-product-visuals
 
-      - name: Install Playwright
+      - name: Install browser tooling
         run: |
           npm install --no-save playwright@1.56.1
           npx playwright install --with-deps chromium
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg webp
 
       - name: Capture current live product surfaces
         run: |
-          mkdir -p captured-product-surfaces
+          rm -rf captured-product-surfaces
+          mkdir -p captured-product-surfaces assets/product
           node <<'NODE'
           const { chromium } = require('playwright');
 
+          const URL = 'https://darrowcode.com/';
+          const pause = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+          async function prepare(page) {
+            await page.goto(URL, { waitUntil: 'domcontentloaded', timeout: 90000 });
+            await page.waitForLoadState('networkidle', { timeout: 30000 }).catch(() => {});
+            await page.addStyleTag({ content: `
+              *, *::before, *::after {
+                animation-duration: 0s !important;
+                animation-delay: 0s !important;
+                transition-duration: 0s !important;
+                caret-color: transparent !important;
+              }
+              html { scroll-behavior: auto !important; }
+            ` });
+            await page.evaluate(() => {
+              for (const el of document.querySelectorAll('button')) {
+                const text = (el.textContent || '').toLowerCase();
+                if (text.includes('essential only') || text.includes('allow analytics')) {
+                  const container = el.closest('[role="dialog"], div');
+                  if (container) container.style.display = 'none';
+                }
+              }
+            });
+            await pause(1200);
+          }
+
           (async () => {
             const browser = await chromium.launch({ headless: true });
-            const page = await browser.newPage({
+
+            const desktop = await browser.newPage({
               viewport: { width: 1440, height: 1000 },
               deviceScaleFactor: 1,
             });
+            await desktop.emulateMedia({ reducedMotion: 'reduce' });
+            await prepare(desktop);
 
-            await page.emulateMedia({ reducedMotion: 'reduce' });
-            await page.goto('https://darrowcode.com/', {
-              waitUntil: 'networkidle',
-              timeout: 90000,
-            });
-            await page.addStyleTag({
-              content: `
-                *, *::before, *::after {
-                  animation-duration: 0s !important;
-                  animation-delay: 0s !important;
-                  transition-duration: 0s !important;
-                  caret-color: transparent !important;
-                }
-              `,
-            });
-            await page.waitForTimeout(1500);
-
-            await page.screenshot({
+            const heroText = desktop.getByText('Your zodiac sign is only the surface.', { exact: false }).first();
+            await heroText.waitFor({ state: 'visible', timeout: 30000 });
+            await desktop.screenshot({
               path: 'captured-product-surfaces/current-home-hero.png',
               clip: { x: 0, y: 0, width: 1440, height: 1000 },
             });
 
-            const selector = page.locator('#product-selector').first();
-            await selector.waitFor({ state: 'visible', timeout: 30000 });
-            const box = await selector.boundingBox();
-            if (!box) throw new Error('Product selector bounding box is unavailable');
-
-            const documentHeight = await page.evaluate(() => document.documentElement.scrollHeight);
-            const clipY = Math.max(0, Math.floor(box.y - 80));
-            const clipHeight = Math.min(1120, documentHeight - clipY);
-            await page.screenshot({
+            const selectorTitle = desktop.getByText('Choose Your Birth Chart Report', { exact: false }).first();
+            await selectorTitle.scrollIntoViewIfNeeded();
+            await pause(700);
+            const titleBox = await selectorTitle.boundingBox();
+            if (!titleBox) throw new Error('Product selector title is unavailable');
+            const scrollHeight = await desktop.evaluate(() => document.documentElement.scrollHeight);
+            const selectorY = Math.max(0, Math.floor(titleBox.y - 90));
+            const selectorHeight = Math.min(1150, scrollHeight - selectorY);
+            await desktop.screenshot({
               path: 'captured-product-surfaces/current-product-selector.png',
-              clip: { x: 0, y: clipY, width: 1440, height: clipHeight },
+              clip: { x: 0, y: selectorY, width: 1440, height: selectorHeight },
             });
+
+            const mobile = await browser.newPage({
+              viewport: { width: 390, height: 844 },
+              deviceScaleFactor: 1,
+              isMobile: true,
+              hasTouch: true,
+            });
+            await mobile.emulateMedia({ reducedMotion: 'reduce' });
+            await prepare(mobile);
+            await mobile.getByText('Your zodiac sign is only the surface.', { exact: false }).first()
+              .waitFor({ state: 'visible', timeout: 30000 });
+            await mobile.screenshot({
+              path: 'captured-product-surfaces/current-home-mobile.png',
+              clip: { x: 0, y: 0, width: 390, height: 844 },
+            });
+
+            const videoContext = await browser.newContext({
+              viewport: { width: 1440, height: 900 },
+              recordVideo: {
+                dir: 'captured-product-surfaces/video',
+                size: { width: 1440, height: 900 },
+              },
+            });
+            const videoPage = await videoContext.newPage();
+            await prepare(videoPage);
+            await pause(1800);
+            const maxScroll = await videoPage.evaluate(() => Math.min(
+              document.documentElement.scrollHeight - window.innerHeight,
+              2600,
+            ));
+            const steps = 110;
+            for (let i = 0; i <= steps; i += 1) {
+              const t = i / steps;
+              const eased = t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+              await videoPage.evaluate((y) => window.scrollTo(0, y), Math.round(maxScroll * eased));
+              await pause(85);
+            }
+            await pause(1800);
+            await videoPage.close();
+            await videoContext.close();
 
             await browser.close();
           })().catch((error) => {
@@ -79,17 +139,35 @@ jobs:
           });
           NODE
 
-      - name: Verify image files
+      - name: Optimize screenshots and video
         run: |
-          file captured-product-surfaces/current-home-hero.png
-          file captured-product-surfaces/current-product-selector.png
-          test -s captured-product-surfaces/current-home-hero.png
-          test -s captured-product-surfaces/current-product-selector.png
+          cwebp -quiet -q 86 captured-product-surfaces/current-home-hero.png -o assets/product/current-home-hero.webp
+          cwebp -quiet -q 86 captured-product-surfaces/current-product-selector.png -o assets/product/current-product-selector.webp
+          cwebp -quiet -q 86 captured-product-surfaces/current-home-mobile.png -o assets/product/current-home-mobile.webp
+          cp assets/product/current-home-hero.webp assets/product/current-site-walkthrough-poster.webp
+          VIDEO_SOURCE="$(find captured-product-surfaces/video -type f -name '*.webm' | head -n 1)"
+          test -n "$VIDEO_SOURCE"
+          ffmpeg -y -i "$VIDEO_SOURCE" -an -c:v libx264 -preset slow -crf 27 -pix_fmt yuv420p -movflags +faststart assets/product/current-site-walkthrough.mp4
 
-      - name: Upload review artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: current-product-surfaces
-          path: captured-product-surfaces/*.png
-          if-no-files-found: error
-          retention-days: 7
+      - name: Verify generated assets
+        run: |
+          test -s assets/product/current-home-hero.webp
+          test -s assets/product/current-product-selector.webp
+          test -s assets/product/current-home-mobile.webp
+          test -s assets/product/current-site-walkthrough-poster.webp
+          test -s assets/product/current-site-walkthrough.mp4
+          file assets/product/*
+          du -h assets/product/*
+
+      - name: Commit generated product assets
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add assets/product/current-home-hero.webp \
+                  assets/product/current-product-selector.webp \
+                  assets/product/current-home-mobile.webp \
+                  assets/product/current-site-walkthrough-poster.webp \
+                  assets/product/current-site-walkthrough.mp4
+          git diff --cached --quiet && exit 0
+          git commit -m "assets: add current product captures"
+          git push origin HEAD:fix/replace-legacy-product-visuals
