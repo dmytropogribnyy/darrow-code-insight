@@ -44,6 +44,7 @@ Quality controls are placed at the boundaries where a customer-visible failure o
 | Rendering | Missing sections, layout drift, or unusable PDFs | Browser-based rendering, templates, page budgets, and render assertions | Template, page-layout, and rerender tests |
 | Delivery | A completed artifact not reaching the customer | Durable report state, protected access, email assembly, and delivery recovery | Delivery, access, email, and recovery tests |
 | Operations | Stuck or failed work remaining invisible | Structured stage logs, health signals, alerts, watchdog logic, and authenticated support actions | Health, diagnostics, selection, and support tests |
+| Deployment | An open browser requests a replaced JavaScript chunk after release | Guarded stale-chunk detection and one-time reload | Browser-event and reload-loop safeguards |
 
 ## Generation quality controls
 
@@ -65,6 +66,8 @@ Report generation runs as durable background work, with the payment request prov
 
 Operational controls include structured stage logs, a public-facing status response without personal data, alert conditions, throttled notifications, report watchdog logic, and authenticated support actions. Recovery can resume generation or delivery without creating a second purchase.
 
+The browser layer also handles a narrow deployment failure mode: an already-open tab can request a content-hashed chunk that was replaced by a new release. The public [stale-chunk recovery excerpt](../examples/stale-chunk-recovery.ts) shows the actual guarded reload mechanism used for that case.
+
 Read the [report-generation reliability case study](../case-studies/report-generation-reliability.md).
 
 ## Security and privacy
@@ -84,5 +87,7 @@ Verification is layered rather than concentrated in a single end-to-end path:
 3. Rendering tests inspect templates, page behavior, and reusable artifacts.
 4. Workflow diagnostics exercise critical integration paths and operational recovery.
 5. ESLint, Prettier, TypeScript checks, build validation, and targeted commands support release readiness.
+
+A full local verification run of the audited product tree on 23 July 2026 completed with 154 test files passed, 1 skipped, 1,264 tests passed, and 22 skipped. This is a dated execution snapshot, not a permanent coverage promise.
 
 This public repository adds a secret-free documentation workflow that checks basic Markdown structure and internal relative links. It does not deploy, access product infrastructure, or call any provider.
